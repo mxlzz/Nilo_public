@@ -383,5 +383,38 @@ class Stage12(unittest.TestCase):
         self.assertEqual(item,previous)
 
 
+
+    def test_failed_legacy_reform_does_not_consume_identity_sequence(self):
+        from nilo_runtime.core.identity import EntropySession
+        session=EntropySession(7321,4321)
+        obj={"id":"legacy-id","name":"legado","portable":True,
+             "materials":["madera","madera"],"resistance":5}
+        self.p["items"].append(obj)
+        self.p["inventory"]["madera"]=-2
+        with session.bind():
+            before=(session.uuid_counter,session.physical_counter,
+                    session.id_rng.getstate())
+            rejected=self.action("dismantle",item=obj["id"])
+            after=(session.uuid_counter,session.physical_counter,
+                   session.id_rng.getstate())
+        self.assertFalse(rejected[2],rejected)
+        self.assertEqual(after,before)
+        self.assertNotIn("components",obj)
+
+    def test_successful_reform_advances_identity_once_and_publishes_components(self):
+        from nilo_runtime.core.identity import EntropySession
+        session=EntropySession(7321,4321)
+        with session.bind():
+            self.assertTrue(self.action("craft",materials=["madera"],
+                                        form="punta",name="herramienta")[2])
+            tool=self.p["items"][-1]
+            count=session.uuid_counter
+            done=self.action("modify",item=tool["id"],mode="add",
+                             materials=["madera"])
+            self.assertTrue(done[2],done)
+            self.assertEqual(session.uuid_counter,count+1)
+        self.assertEqual(len(tool["components"]),2)
+
+
 if __name__=="__main__":
     unittest.main()

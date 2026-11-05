@@ -176,6 +176,37 @@ def entropy_scoped(method):
     return wrapped
 
 
+
+@contextmanager
+def staged_identity():
+    """Reserva de IDs reversible para una operación física aún sin confirmar.
+
+    El PRNG de identidades no pertenece al RNG de decisiones. Un rechazo
+    restaura sus contadores y secuencia, sin afectar los IDs de otros mundos.
+    Las partidas legacy sin EntropySession mantienen el camino histórico.
+    """
+    session=_active.get()
+    if session is None or _legacy_global.get():
+        yield lambda: None
+        return
+    original_uuid=session.uuid_counter
+    original_physical=session.physical_counter
+    original_rng=session.id_rng.getstate()
+    accepted=False
+
+    def confirm():
+        nonlocal accepted
+        accepted=True
+
+    try:
+        yield confirm
+    finally:
+        if not accepted:
+            session.uuid_counter=original_uuid
+            session.physical_counter=original_physical
+            session.id_rng.setstate(original_rng)
+
+
 def physical_suffix(legacy_bits: int, *, rng: random.Random | None = None) -> int:
     """UUID físico moderno o RNG explícito; legado conserva el RNG global.
 

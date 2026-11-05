@@ -9,6 +9,7 @@ importa construction.py, world.py ni la aplicación.
 from __future__ import annotations
 
 from copy import deepcopy
+from nilo_runtime.core.identity import staged_identity
 from nilo_runtime.worlds.resources import (
     ResourceBalanceError, material_counts, check_materials,
 )
@@ -108,7 +109,10 @@ def execute_prepared(world,person,step,find_object,physical_materials,
     temporary_person["retired_items"]=list(person.get("retired_items",[]))
     temporary_person["inventory"]=dict(person["inventory"])
     try:
-        result=perform(temporary_world,temporary_person,step)
+        with staged_identity() as confirm_ids:
+            result=perform(temporary_world,temporary_person,step)
+            if result[2]:
+                confirm_ids()
     except (ResourceBalanceError,TypeError,ValueError,KeyError,IndexError,OverflowError):
         return _fail("El objeto no admite una intervención físicamente consistente; no modifiqué reservas ni piezas.")
     if not result[2]:return result

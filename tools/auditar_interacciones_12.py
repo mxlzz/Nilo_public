@@ -51,6 +51,8 @@ def inspect():
         failures.append("Falta preparación aislada de reformas")
     if "return execute_prepared(" not in construction:
         failures.append("La reforma aún se ejecuta sobre la entidad original")
+    if "with staged_identity() as confirm_ids:" not in intervention.read_text(encoding="utf-8"):
+        failures.append("Reforma rechazada puede consumir IDs definitivos")
     if "for m,n in cost.items():inv[m]-=n" in construction:
         failures.append("La reforma saltea el balance conservativo")
     mechanics=(ROOT/"mechanics.py").read_text(encoding="utf-8")
