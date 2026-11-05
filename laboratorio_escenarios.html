@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nilo — laboratorio de escenarios del motor</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45;color:#182025;background:#f4f5f4}
+*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid #cbd4d2;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+h1{font-size:21px;margin:0}h2{font-size:16px;margin:0 0 12px}h3{font-size:14px;margin:12px 0 6px}
+p{margin:6px 0 10px}.meta{color:#586568;font-size:12px}.button-row{display:flex;gap:7px;flex-wrap:wrap}
+button{border:1px solid #a6b6b3;background:#fff;border-radius:5px;padding:7px 10px;color:#172523;cursor:pointer;font:inherit;font-size:12px}
+button:hover{border-color:#356a5e;background:#eef5f1}button[disabled]{opacity:.45;cursor:default}
+button.active,button.primary{background:#265b50;color:white;border-color:#265b50}
+button.negative{border-color:#b55e59;color:#772e2d}.tabs{display:flex;gap:7px;align-items:center}.shell{display:grid;grid-template-columns:minmax(330px,.95fr) minmax(440px,1.45fr);gap:12px;padding:14px;max-width:1880px;margin:auto}
+.panel{min-width:0;background:white;border:1px solid #cad3d2;border-radius:7px;overflow:hidden}.panel-head{padding:12px 14px;border-bottom:1px solid #d6dedd;display:flex;align-items:center;justify-content:space-between;gap:8px}.panel-inner{padding:12px 14px}.list{display:grid;gap:4px}.list button{text-align:left;display:block;width:100%;padding:9px;border:1px solid transparent;background:#f7f8f7}.list button:hover,.list button.active{border-color:#7caca0;background:#e7f2ee}
+.case-num{font:11px ui-monospace,Consolas,monospace;color:#54746b;margin-right:6px}
+.group-title{padding:12px 3px 5px;font-size:11px;font-weight:700;letter-spacing:.045em;text-transform:uppercase;color:#4a6662;border-top:1px solid #e0e5e3;margin-top:10px}
+#cases{max-height:none;overflow:visible}.small{font-size:12px}.mono{font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font:11px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:5px 0;padding:10px;background:#f2f4f4;border-radius:4px;border:1px solid #e1e6e5;max-height:420px;overflow:auto}
+fieldset{border:1px solid #dde4e2;border-radius:6px;margin:10px 0;padding:10px}legend{font-size:12px;font-weight:650;padding:0 6px}
+.options{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0}.options button{min-width:42px;padding:6px 8px;font-size:12px}.options button.on{background:#d4eee3;border-color:#317564;color:#1e5347}
+label{font-size:12px;display:flex;align-items:center;gap:6px}
+input,select,textarea{border:1px solid #aebcb9;padding:7px 9px;border-radius:5px;font:12px system-ui;max-width:100%}textarea{font:12px/1.45 ui-monospace,Consolas,monospace;width:100%}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}.row input[type="number"]{width:90px}
+.rule{height:1px;background:#e3e9e7;margin:13px 0}
+.status{font:11px ui-monospace,Consolas,monospace;padding:4px 7px;background:#e5f2ea;border-radius:3px}
+.error{color:#8b2921;background:#fff2ef;border:1px solid #efd0ca;padding:8px;border-radius:5px;white-space:pre-wrap}
+.timeline{display:grid;gap:9px;margin:12px 0}
+.stage{border:1px solid #d8e1df;border-left:3px solid #699e91;border-radius:5px;padding:9px}
+.stage.warn{border-left-color:#c48b44}.stage.problem{border-left-color:#b25a52}
+.stage-head{display:flex;justify-content:space-between;align-items:start;gap:10px;font-size:13px}
+.metrics{display:flex;flex-wrap:wrap;gap:7px;margin:7px 0}
+.metric{border:1px solid #d8e0de;background:#f7faf9;border-radius:5px;padding:7px 9px;min-width:96px;font-size:12px}
+.metric strong{display:block;font:600 15px ui-monospace,Consolas,monospace;color:#21574c}
+.trace-list{display:grid;gap:5px;margin-top:7px}
+.trace-item{border:1px solid #dce3e2;border-radius:4px;padding:7px 9px;background:#fafbfa}
+.trace-item summary{cursor:pointer;font-size:12px}
+.trace-ref{color:#59736d;font:11px ui-monospace,Consolas,monospace}
+.trace-ref a{color:#276d5d}
+details summary{cursor:pointer;font-size:12px;font-weight:600}
+.note{background:#fff7e6;border:1px solid #ebdcb4;border-radius:5px;padding:10px;font-size:12px}
+#result{max-height:calc(100vh - 145px);overflow:auto}.left-stack{display:grid;grid-template-rows:minmax(210px,1fr) minmax(240px,1fr);gap:12px;height:calc(100vh - 125px);min-height:560px}.left-stack .panel{display:flex;flex-direction:column;min-height:0}.left-stack .panel-inner{min-height:0;overflow:auto;flex:1}.report-section{border:1px solid #d6e1dd;border-radius:6px;margin:10px 0;padding:11px;background:#fcfdfc}.report-section>summary{font-size:14px;font-weight:650}.help-inline{font-size:11px;padding:1px 6px;min-width:20px;border-radius:50%;margin-left:5px}.help-dialog{max-width:570px;width:min(90vw,570px);border:1px solid #a6bdb4;border-radius:9px;padding:22px;box-shadow:0 20px 80px #1115;color:#192a25}.help-dialog::backdrop{background:#1b292b88}.help-dialog p{white-space:pre-line;line-height:1.65}.llm-controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.llm-controls label{display:grid;gap:4px}.status-note{background:#eff7f3;border:1px solid #c7e3d7;border-radius:5px;padding:9px}.stage-summary{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.summary-table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}.summary-table td,.summary-table th{border-bottom:1px solid #dfe7e4;padding:6px;text-align:left}
+.op-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.op-grid button{overflow-wrap:anywhere;min-height:37px}
+#sandboxPane{grid-column:1}.shell.sandbox-active #sandboxPane{grid-column:1;grid-row:1}.shell.sandbox-active .result-panel{grid-column:2;grid-row:1}.hidden{display:none!important}.footer{color:#63736f;font-size:11px;max-width:1800px;margin:0 auto;padding:8px 18px 20px}
+@media(max-width:1000px){.shell{grid-template-columns:1fr}.left-stack{height:auto;min-height:0;grid-template-rows:300px auto}.left-stack #detailPanel{min-height:250px}.result-panel{grid-column:1}#sandboxPane{grid-column:1}}
+@media(max-width:730px){.shell{grid-template-columns:1fr;padding:8px}.panel-head{padding:10px}.op-grid{grid-template-columns:repeat(3,1fr)}.left-stack{grid-template-rows:260px auto}#result{max-height:none}}
+</style></head><body>
+<header>
+ <div><h1>Laboratorio del motor de Nilo</h1><div class="meta">Escenarios reproducibles · Ejecución real mediante Simulation · Código y mediciones</div></div>
+ <div class="tabs"><button id="tabCases" class="active">Escenarios</button><button id="tabSandbox">Sandbox de acciones</button><a class="meta" href="/historico">Partidas históricas</a><a class="meta" href="/sandbox">Laboratorio antiguo</a></div>
+</header>
+<div class="shell">
+ <div class="left-stack" id="leftColumn">
+ <section class="panel" id="catalogPanel">
+  <div class="panel-head"><strong>01 · Catálogo de escenarios</strong></div>
+  <div class="panel-inner">
+   <input id="filter" type="search" placeholder="Buscar escenario…" style="width:100%" aria-label="Buscar escenario">
+   <div class="list" id="cases"></div>
+  </div>
+ </section>
+ <section class="panel" id="detailPanel">
+  <div class="panel-head"><strong>02 · Condiciones y decisión</strong></div>
+  <div class="panel-inner">
+   <h2 id="caseTitle">Elegí un escenario</h2><p id="caseDescription" class="small"></p>
+   <div class="note" id="caseNote">Cada escenario prepara explícitamente sus condiciones. Después ejecuta el motor real sin un LLM.</div>
+   <h3>Órdenes que habría generado el LLM</h3>
+   <pre id="casePlan"></pre>
+   <div class="row"><label>Semilla <input id="caseSeed" type="number" min="0" max="1000000000" value="7321"></label></div>
+   <button class="primary" id="runCase">Ejecutar escenario</button>
+   <p id="caseMessage" class="meta"></p>
+  </div>
+ </section>
+ </div>
+ <section class="panel result-panel">
+  <div class="panel-head"><strong>03 · Resultado / código / mediciones</strong><button id="copyResult">Copiar informe</button></div>
+  <div class="panel-inner" id="result"><p class="meta">Ejecutá un escenario para inspeccionar sus etapas cronológicas.</p></div>
+ </section>
+ <section class="panel hidden" id="sandboxPane">
+  <div class="panel-head"><strong>Armar órdenes con botones</strong></div>
+  <div class="panel-inner">
+   <p class="small">Seleccioná una acción; aparecen sus destinos, métodos o materiales posibles. Podés agregar varias acciones y ejecutarlas como un único plan real.</p>
+   <div class="op-grid" id="opButtons"></div>
+   <div class="rule"></div>
+   <h3 id="chosenOp">Elegí una acción</h3>
+   <div id="actionOptions"></div>
+   <details><summary>Ver o ajustar orden estructurada</summary><textarea rows="6" id="draftJSON"></textarea></details>
+   <div class="row"><button id="addStep" class="primary">Agregar al plan</button><button id="clearPlan">Vaciar plan</button></div>
+   <h3>Plan que se enviará al motor</h3><div id="builtSteps" class="list"></div>
+   <div class="rule"></div>
+   <h3>Preparación explícita del escenario</h3>
+   <div class="options" id="fixtures"></div>
+   <div class="row">
+     <label>Semilla <input id="manualSeed" type="number" value="7321" min="0" max="1000000000"></label>
+     <label>Proyecto <select id="manualMode"><option value="sin_proyecto">Sin proyecto</option><option value="nuevo">Nuevo proyecto</option></select></label>
+   </div>
+   <button class="primary" id="runManual">Ejecutar plan real</button>
+   <p class="meta" id="manualInfo">El motor consume tiempo y registra resultados; las condiciones preparadas no cuentan como acciones de Nilo.</p>
+  </div>
+ </section>
+</div>
+<dialog id="helpDialog" class="help-dialog"><h2 id="helpTitle">Ayuda</h2><p id="helpText"></p><button id="helpClose" class="primary">Cerrar</button></dialog>
+<footer class="footer">La fuente de verdad es el motor ejecutado en una base SQLite temporal. Los rechazos son parte de la cobertura. No se consultan APIs de IA ni se modifica tu partida.</footer>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const escapeHTML=value=>String(value==null?"":value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let catalog=null,selected=null,last=null,manual=[],operation=null,draft={},preparations=new Set(["equipo"]);
+const FIXTURES=[
+ ["equipo","Materiales disponibles"],["sin_equipo","Sin materiales"],["roca_cerca","Roca próxima"],
+ ["roca_lejana","Roca lejana"],["arbol_cerca","Árbol próximo"],["agua_cerca","Agua próxima"],
+ ["piedra_agotada","Depósitos agotados"],["entrada_cueva","Entrada a cueva"],
+ ["salida_cueva","Dentro de cueva"],["plataforma","Plataforma preparada"],["pico","Herramienta de punta"],
+ ["superficie_revelada","Mapa superficial conocido"],["energia_critica","Energía crítica"],
+ ["recipiente","Recipiente preparado"],["dos_recipientes","Dos recipientes"]
+];
+function textJSON(data){return JSON.stringify(data,null,2)}
+function showError(err){$("result").innerHTML='<p class="error">'+escapeHTML(err.message||err)+'</p>'}
+async function getJSON(url,opts){
+ let r=await fetch(url,opts),j=await r.json();
+ if(!r.ok)throw Error(j.error||"HTTP "+r.status);
+ return j;
+}
+function casePlan(c){
+ if(c.deliberations)return c.deliberations;
+ return c.plan;
+}
+function listCases(){
+ const term=$("filter").value.trim().toLowerCase();
+ let html="";
+ for(let grp of catalog.grupos){
+   let cases=catalog.casos.filter(c=>c.group===grp.id&&(c.title+" "+c.description).toLowerCase().includes(term));
+   if(!cases.length)continue;
+   html+='<div class="group-title">'+escapeHTML(grp.id+" · "+grp.nombre)+" ("+cases.length+')</div>';
+   for(let c of cases)html+='<button class="'+(selected&&selected.id===c.id?"active":"")+'" data-id="'+escapeHTML(c.id)+'"><span class="case-num">'+escapeHTML(c.id)+'</span>'+escapeHTML(c.title)+'</button>';
+ }
+ $("cases").innerHTML=html;
+ $("cases").querySelectorAll("button[data-id]").forEach(b=>b.onclick=()=>selectCase(b.dataset.id));
+}
+function selectCase(id){
+ const c=catalog.casos.find(x=>x.id===id);
+ if(!c)return;
+ selected=c;
+ $("caseTitle").textContent=c.title;
+ $("caseDescription").textContent=c.description;
+ $("caseNote").textContent="Condiciones iniciales preparadas: "+(c.fixture.length?c.fixture.join(", "):"mundo nuevo sin ajustes")+" · Resultado esperado: "+c.expected+".";
+ // El catálogo de API excluye el plan para el índice; la definición completa
+ // viene del catálogo detallado, sin inventar una vista previa.
+ $("casePlan").textContent=textJSON(casePlan(c));
+ $("caseSeed").value=c.seed;
+ listCases();
+ $("caseMessage").textContent="";
+}
+function metric(label,value){return '<div class="metric"><strong>'+escapeHTML(value)+'</strong>'+escapeHTML(label)+'</div>'}
+function renderDiff(d){
+ if(!d||!Object.keys(d).length)return '<span class="meta">Sin variaciones registradas en estos campos.</span>';
+ return '<table class="summary-table"><tbody>'+Object.entries(d).map(([k,v])=>
+   '<tr><td><strong>'+escapeHTML(k)+'</strong></td><td class="mono">'+escapeHTML(textJSON(v))+'</td></tr>').join("")+'</tbody></table>';
+}
+function renderTrace(rows){
+ if(!rows||!rows.length)return '<p class="meta">La etapa no tiene funciones instrumentadas.</p>';
+ return '<div class="trace-list">'+rows.map((r,i)=>{
+   let code=(r.codigo||[]).map(x=>String(x.linea).padStart(4," ")+"  "+x.texto).join("\n");
+   let ref=last&&last.version?"v"+last.version:"main";
+   let url="https://github.com/mxlzz/Nilo/blob/"+ref+"/"+encodeURIComponent(r.archivo)+"#L"+r.inicio;
+   return '<div class="trace-item"><div><b>'+(i+1)+'. '+escapeHTML(r.explicacion)+'</b> <span class="trace-ref">'+escapeHTML(r.funcion)+"() · "+r.repeticiones+'×</span></div>'+
+    '<details><summary>Ver líneas de código · '+escapeHTML(r.archivo)+':'+r.inicio+'–'+r.fin+'</summary>'+
+    '<p class="trace-ref"><a target="_blank" rel="noopener" href="'+url+'">Abrir archivo fuente</a> · '+r.lineas_ejecutadas+' líneas ejecutadas'+(r.mas_lineas?' (primeras 14 mostradas)':'')+'</p><pre>'+escapeHTML(code)+'</pre></details></div>';
+ }).join("")+'</div>';
+}
+const HELP={
+ llm:"Este panel reconstruye una solicitud de deliberación para un LLM. La vista principal contiene los VALORES de los campos del mundo, exactamente como los prepara el constructor actual. En Gemini, las instrucciones del personaje tienen un rol de sistema, mientras los contratos de acciones y el JSON de situación se incluyen en el mensaje del usuario. En Groq, las instrucciones y las acciones comparten el rol de sistema; el usuario contiene el JSON. La solicitud serializada muestra literalmente el cuerpo JSON que se prepararía para transmitir. No se llama a ninguna API ni se inventa la respuesta del modelo.",
+ resumen:"Resume si el escenario alcanzó la clase de resultado prevista, sus diagnósticos y el tiempo simulado. Una prueba que termina como se esperaba no significa que todas las leyes físicas del motor sean correctas.",
+ diferencias:"Compara los valores internos al comenzar y al terminar el escenario. Inventario, reservas físicas, posición y proyectos son el estado del MOTOR, no el contexto completo del LLM. Los cambios de necesidades son magnitudes internas; el LLM recibe las sensaciones o mediciones que sobrevivan al filtrado.",
+ recorrido:"La secuencia muestra cómo el motor procesó una salida prefijada de LLM, con las funciones reales que intervinieron. Cada etapa muestra lo que hizo, su resultado, diferencias de estado y código ejecutado. Una decisión se normaliza, después se valida el plan y luego se ejecuta durante ticks. Las etapas intermedias no son nuevas decisiones del LLM.",
+ normalizacion:"La normalización transforma la respuesta estructurada del modelo al formato que entiende el motor. Reconoce las operaciones, valida la estructura de entrada, completa parámetros permitidos y descarta o rechaza formas inválidas. Todavía NO mueve a Nilo ni acredita materiales. Compará 'Entrada original' con 'Decisión normalizada' para ver qué cambió.",
+ plan:"Con una decisión normalizada, el motor decide qué pasos son admisibles y prepara la cola. Verifica requisitos, coherencia del plan, proyecto, agenda y continuidad. Aquí puede retirar una acción imposible sin ejecutar ninguna física. 'Plan aceptado' muestra los pasos que realmente quedaron disponibles para ejecutar.",
+ ejecucion:"El motor consume tiempo mediante ticks, realiza desplazamientos o trabajo físico, y registra mediciones y diagnósticos. Un bloque puede agrupar varios ticks necesarios para completar una acción. Abrí 'Cambios de esta etapa' para distinguir posición, reservas, inventario, conocimiento y registros antes y después.",
+ interrupcion:"La actividad fue interrumpida por una condición física, por ejemplo agotamiento. No significa que la acción se completara; deben revisarse las etapas previas y el estado pendiente.",
+ limite:"El escenario alcanzó el máximo de ticks de prueba. No equivale a una conclusión física sobre lo que Nilo puede lograr.",
+ diagnosticos:"Esta es una vista INTERNA del motor y de la instrumentación de prueba. Muestra estados, diagnósticos y datos de conservación. No se envía íntegramente al LLM. Solo los campos derivados por la percepción, proyección y presupuesto del constructor de solicitudes podrían aparecer en el mensaje posterior.",
+ codigo:"Estas son funciones y líneas de Python realmente ejecutadas en este ensayo. No son el texto que lee Nilo. La traza está seleccionada y abreviada: permite encontrar la causa probable sin recorrer todo el programa."
+};
+function helpButton(key){
+ return '<button type="button" class="help-inline" aria-label="Explicar esta sección" title="¿Qué significa?" data-help="'+escapeHTML(key)+'">?</button>';
+}
+function renderStage(stage,i){
+ const cls=stage.estado==="rechazado"?"problem":stage.tipo==="limite"?"warn":"";
+ let details="";
+ if(stage.analitica)details+='<h3>Cambios de esta etapa</h3>'+renderDiff(stage.analitica);
+ else details+='<p class="meta">Esta etapa no aporta mediciones de cambios físicos: transforma o comprueba información.</p>';
+ if(stage.diagnosticos&&stage.diagnosticos.length){
+  details+='<h3>Resultado físico y evidencias registradas</h3>';
+  for(const r of stage.diagnosticos){
+   const ar=r.action_result||{};
+   details+='<div class="status-note"><b>'+escapeHTML(ar.status||r.evaluation_status||"Resultado")+'</b> · '+
+    escapeHTML(r.op||ar.op||"")+"<p>"+(ar.facts||[]).map(escapeHTML).join(" · ")+"</p></div>";
+  }
+ }
+ if(stage.hechos&&stage.hechos.length){
+  details+='<h3>Hechos y registros generados</h3><ul class="small">'+
+   stage.hechos.map(e=>'<li><b>'+escapeHTML(e.tipo||"evento")+'</b>: '+escapeHTML(e.texto||"")+'</li>').join("")+'</ul>';
+ }
+ if(stage.ultima_medicion){
+  const m=stage.ultima_medicion;
+  details+='<details><summary>Medición completa · '+escapeHTML(m.id||"sin ID")+'</summary><pre>'+
+   escapeHTML(textJSON(m))+'</pre></details>';
+ }
+ if(stage.entrada)details+='<details><summary>Respuesta original de prueba (entrada)</summary><pre>'+escapeHTML(textJSON(stage.entrada))+'</pre></details>';
+ if(stage.salida)details+='<details><summary>Decisión normalizada (salida)</summary><pre>'+escapeHTML(textJSON(stage.salida))+'</pre></details>';
+ if(stage.aceptadas)details+='<details><summary>Plan admitido por el motor ('+stage.aceptadas.length+' pasos)</summary><pre>'+escapeHTML(textJSON(stage.aceptadas))+'</pre></details>';
+ details+='<details><summary>Código recorrido ('+(stage.codigo||[]).length+' funciones instrumentadas) '+helpButton("codigo")+'</summary>'+renderTrace(stage.codigo)+'</details>';
+ const kind=stage.tipo||"";
+ return '<details class="stage '+cls+'"><summary class="stage-summary"><b>'+(i+1)+'. '+escapeHTML(stage.titulo)+'</b>'+
+  '<span><span class="status">'+escapeHTML(stage.estado||"")+'</span>'+helpButton(kind in HELP?kind:"recorrido")+'</span></summary>'+
+  '<p class="small">'+escapeHTML(stage.descripcion||"")+'</p>'+details+'</details>';
+}
+function renderLLM(){
+ if(!last)return;
+ const moment=$("llmMoment").value,provider=$("llmProvider").value;
+ const view=moment==="despues"?last.contexto_final:last.contexto_inicial;
+ const req=view?.solicitudes?.[provider];
+ if(!req){$("llmBody").innerHTML='<p class="error">No se pudo reconstruir la solicitud para este proveedor.</p>';return}
+ const original=last.contexto_inicial.solicitudes[provider].datos_recibidos_con_valores;
+ const after=last.contexto_final.solicitudes[provider].datos_recibidos_con_valores;
+ const changed=[...new Set([...Object.keys(original),...Object.keys(after)])].filter(k=>
+  JSON.stringify(original[k])!==JSON.stringify(after[k]));
+ const comparison=changed.map(k=>({campo:k,
+  antes:Object.hasOwn(original,k)?original[k]:"(no enviado)",
+  despues:Object.hasOwn(after,k)?after[k]:"(no enviado)"}));
+ let html='<div class="status-note"><b>'+escapeHTML(req.proveedor.toUpperCase())+' · '+
+  escapeHTML(req.modelo_configurado)+'</b> · '+req.bytes_solicitud+
+  ' bytes del cuerpo JSON. <span class="meta">Solicitud calculada, no enviada a una API.</span></div>';
+ html+='<details open><summary>Valores del mundo que recibe el modelo '+helpButton("llm")+'</summary>'+
+  '<p class="meta">Son los valores concretos que superaron los filtros: inventario, percepción, sensaciones, proyectos y registros. Las llaves entre comillas son nombres de campo JSON, sus contenidos aparecen a la derecha.</p>'+
+  '<pre>'+escapeHTML(textJSON(req.datos_recibidos_con_valores))+'</pre></details>';
+ html+='<details><summary>Instrucciones del sistema (texto literal)</summary>'+
+  '<p class="meta">Instrucciones que establecen cómo decide Nilo y qué representa la simulación.</p>'+
+  '<pre>'+escapeHTML(req.mensaje_sistema)+'</pre></details>';
+ html+='<details><summary>Mensaje de usuario (texto literal, incluye contratos de acciones según proveedor)</summary>'+
+  '<pre>'+escapeHTML(req.mensaje_usuario)+'</pre></details>';
+ html+='<details><summary>Solicitud completa — cuerpo JSON exacto que se transmitiría</summary>'+
+  '<p class="meta">Incluye roles, instrucciones, acciones, valores, modelo y parámetros. Es el texto serializado por Python para el cuerpo HTTP. No incluye claves de API.</p>'+
+  '<pre>'+escapeHTML(req.solicitud_serializada)+'</pre></details>';
+ html+='<details><summary>Diferencias entre lo recibido antes y después ('+changed.length+' campos)</summary>'+
+  (comparison.length?'<pre>'+escapeHTML(textJSON(comparison))+'</pre>':
+    '<p class="meta">Los valores enviados no cambiaron entre ambos momentos.</p>')+'</details>';
+ html+='<details><summary>Qué se descartó antes de comunicarlo al LLM ('+
+  req.campos_omitidos.length+' campos)</summary>'+
+  '<p class="meta">Estos datos existían en la representación previa del escenario, pero NO forman parte del contexto finalmente enviado. Se muestran únicamente para la auditoría.</p>'+
+  '<pre>'+escapeHTML(textJSON(Object.fromEntries(req.campos_omitidos.map(k=>[
+    k,view.contexto_previo_con_valores[k]]))))+'</pre></details>';
+ $("llmBody").innerHTML=html;
+}
+function renderResult(r){
+ last=r;
+ let output='<h2>'+escapeHTML(r.titulo)+'</h2><p class="meta">'+escapeHTML(r.advertencia)+'</p>';
+ output+='<details class="report-section" open><summary>01 · Qué recibe el LLM '+helpButton("llm")+'</summary>'+
+  '<div class="llm-controls">'+
+  '<label>Momento<select id="llmMoment"><option value="despues">Después de ejecutar el escenario</option>'+
+  '<option value="antes">Antes de ejecutar el escenario</option></select></label>'+
+  '<label>Proveedor<select id="llmProvider"><option value="gemini">Gemini</option>'+
+  '<option value="groq">Groq</option></select></label></div><div id="llmBody"></div></details>';
+ output+='<details class="report-section"><summary>02 · Resultado general '+helpButton("resumen")+'</summary>'+
+  '<p class="status-note"><b>Verificación: '+escapeHTML(r.evaluacion||"sin evaluar")+
+  '</b> · Resultado esperado: '+escapeHTML(r.objetivo_esperado)+'</p>'+
+  '<div class="metrics">'+metric("Minutos simulados",r.tiempo_simulado)+
+  metric("Resultados registrados",r.diagnosticos_totales)+metric("Etapas",r.pasos.length)+
+  metric("Semilla",r.semilla)+'</div>'+
+  '<h3>Condiciones iniciales preparadas</h3><p class="small">'+
+  (r.preparacion.length?r.preparacion.map(escapeHTML).join("; "):"Mundo nuevo sin cambios artificiales")+
+  '</p></details>';
+ output+='<details class="report-section"><summary>03 · Diferencias del estado interno, antes y después '+helpButton("diferencias")+'</summary>'+
+  '<p class="meta">Son mediciones del motor, NO datos necesariamente recibidos por el LLM.</p>'+renderDiff(r.cambios)+'</details>';
+ output+='<details class="report-section"><summary>04 · Recorrido de ejecución paso a paso '+helpButton("recorrido")+'</summary>'+
+  '<p class="meta">Abrí una etapa para ver qué comprobó, qué cambió y qué código ejecutó.</p>'+
+  '<div class="timeline">'+r.pasos.map(renderStage).join("")+'</div></details>';
+ output+='<details class="report-section"><summary>05 · Diagnósticos y estado interno completo del escenario '+helpButton("diagnosticos")+'</summary>'+
+  '<p class="meta">Información técnica para el observador; no es el mensaje enviado a Nilo.</p>'+
+  '<pre>'+escapeHTML(textJSON({inicio:r.inicio,final:r.final,estados:r.estados,limites:r.reproduccion}))+
+  '</pre></details>';
+ $("result").innerHTML=output;
+ $("llmMoment").onchange=renderLLM;
+ $("llmProvider").onchange=renderLLM;
+ renderLLM();
+}
+async function runCase(){
+ if(!selected)return;
+ $("runCase").disabled=true;
+ $("caseMessage").textContent="Ejecutando el motor…";
+ try{
+  let r=await getJSON("/api/scenario/"+encodeURIComponent(selected.id)+"?seed="+encodeURIComponent($("caseSeed").value));
+  renderResult(r);$("caseMessage").textContent="Escenario completado; podés inspeccionar sus etapas.";
+ }catch(e){showError(e);$("caseMessage").textContent=e.message}
+ finally{$("runCase").disabled=false}
+}
+function activateSandbox(on){
+ $("tabSandbox").classList.toggle("active",on);$("tabCases").classList.toggle("active",!on);
+ $("leftColumn").classList.toggle("hidden",on);
+ document.querySelector(".shell").classList.toggle("sandbox-active",on);
+ $("sandboxPane").classList.toggle("hidden",!on);
+}
+const G={
+ go:[["Destino",[["(16,10)",{x:16,y:10}],["(23,7)",{x:23,y:7}],["(35,16)",{x:35,y:16}],
+                ["Árbol (pendiente)",{target:"arbol"}],["Piedra (pendiente)",{target:"piedra"}],
+                ["Agua",{target:"agua"}]]]],
+ explore:[["Sector",[["Automático",{}],["Norte",{direction:"north"}],["Sur",{direction:"south"}],
+   ["Este",{direction:"east"}],["Oeste",{direction:"west"}]]]],
+ inspect:[["Casilla",[["(15,10)",{x:15,y:10}],["(16,10)",{x:16,y:10}],["Cueva lejana",{x:23,y:7}]]]],
+ gather:[["Recurso",["piedra","madera","mineral oscuro","arcilla","fibra","cristal","hongo luminoso"].map(x=>[x,{target:x}])]],
+ experiment:[["Material",["piedra","madera","arcilla","fibra","mineral oscuro"].map(x=>[x,{target:x}])],
+             ["Método",["golpear","calentar","mojar","cargar","luz"].map(x=>[x,{method:x}])]],
+ combine:[["Materiales",[[ "Madera + fibra",{materials:["madera","fibra"]}],
+ ["Piedra + madera",{materials:["piedra","madera"]}]]],
+ ["Unión",["atar","unir","mezclar","apilar","compactar","trenzar"].map(x=>[x,{method:x}])]],
+ craft:[["Tipo",[[ "Punta",{form:"punta",name:"punta laboratorio",purpose:"excavar roca"}],
+ ["Filo",{form:"filo",name:"filo laboratorio",purpose:"cortar"}],
+ ["Recipiente",{form:"recipiente",name:"recipiente laboratorio",purpose:"contener"}]]],
+ ["Piezas",[[ "Madera + mineral",{materials:["madera","mineral oscuro"]}],
+ ["Madera + madera",{materials:["madera","madera"]}]]]],
+ build:[["Geometría",[[ "Plataforma",{geometry:{shape:"plataforma",size:2}}],
+ ["Hueco",{geometry:{shape:"hueco",size:2}}],
+ ["Macizo",{geometry:{shape:"macizo",size:2}}]]],
+ ["Material",[[ "Madera",{materials:["madera","madera"]}],
+ ["Piedra",{materials:["piedra","piedra"]}]]]],
+ use:[["Método",["excavar","golpear","cortar","mover","contener","llenar","flotar","navegar","resistir_carga","transmitir_movimiento"].map(x=>[x,{method:x,target:x==="excavar"?"roca":"piedra"}])],
+ ["Objeto",[[ "Herramienta preparada",{item:"$herramienta"}]]]],
+ excavate:[["Roca",[["Adyacente",{}],["(16,10)",{x:16,y:10}]]]],
+ interact:[["Método",["probar_carga","depositar_carga","recuperar_carga","llenar","rellenar","transferir","descargar","beber","guardar","retirar"].map(x=>[x,{method:x}])],
+ ["Objeto",[[ "Construcción preparada",{item:"$obra",material:"piedra",quantity:2}],
+ ["Recipiente 1",{item:"$vaso1",destination:"$vaso1",source:"$vaso1",quantity:0.18}],
+ ["Transferir entre dos",{source:"$vaso1",destination:"$vaso2",quantity:0.18}]]]],
+ rest:[["Minutos",[[ "20",{minutes:20}],["30",{minutes:30}],["60",{minutes:60}],["120",{minutes:120}]]]],
+ wait:[["Minutos",[[ "20",{minutes:20}],["30",{minutes:30}],["60",{minutes:60}],["120",{minutes:120}]]]],
+ eat:[],drink:[],forage:[],descend:[],ascend:[],
+ modify:[["Intervención",["add","replace","repair","remove"].map(x=>[x,{mode:x}])],
+ ["Objeto",[[ "Plataforma",{item:"$obra",materials:["madera"]}]]]],
+ dismantle:[["Objetivo",[[ "Plataforma",{item:"$obra",all:true}]]]],
+ assemble:[["Ensamblaje",[[ "Rueda + eje",{name:"mecanismo prueba",parts:[
+ {name:"eje",material:"madera",shape:"eje"},{name:"rueda",material:"madera",shape:"rueda"}],
+ joints:[{a:0,b:1,type:"articulada"}]}]]]],
+ design:[],propose:[],report_issue:[],compare:[],conclude:[]
+};
+const DEFAULT={
+ go:{x:16,y:10},explore:{},inspect:{x:15,y:10},gather:{target:"piedra"},
+ experiment:{target:"piedra",method:"golpear"},combine:{materials:["madera","fibra"],method:"atar"},
+ craft:{name:"punta prueba",purpose:"excavar",form:"punta",materials:["madera","mineral oscuro"]},
+ build:{name:"plataforma prueba",purpose:"probar cargas",materials:["madera","madera"],geometry:{shape:"plataforma",size:2}},
+ use:{item:"$herramienta",method:"excavar",target:"roca"},excavate:{},
+ interact:{method:"probar_carga",item:"$obra",material:"piedra",quantity:2},
+ rest:{minutes:30},wait:{minutes:30},
+ modify:{item:"$obra",mode:"add",materials:["madera"]},dismantle:{item:"$obra",all:true},
+ assemble:{name:"mecanismo prueba",parts:[{name:"eje",material:"madera",shape:"eje"},{name:"rueda",material:"madera",shape:"rueda"}],joints:[{a:0,b:1,type:"articulada"}]},
+ eat:{},drink:{},forage:{},descend:{},ascend:{},
+ design:{name:"prototipo documentado",purpose:"excavar",principle:"dureza",
+  procedure:"unir mango y punta",prediction:"puede fracturar roca",requirements:"madera",
+  components:[{name:"cabeza",material:"madera",function:"golpear",connection:"fija"}]},
+ propose:{phenomenon:"viscosidad",missing_capability:"resistencia al flujo",
+  rationale:"ensayo no modelado",experiment:"comparar dos líquidos"},
+ report_issue:{title:"Resultado inesperado",expected:"resultado correcto",
+  observed:"inconsistencia",rationale:"requiere revisar"},
+ compare:{topic:"dureza",evidence_ids:[],metric:"dureza"},
+ conclude:{topic:"dureza",evidence_ids:[]}
+};
+function chooseOp(op){
+ operation=op;draft={op,...JSON.parse(JSON.stringify(DEFAULT[op]||{}))};
+ $("chosenOp").textContent=op;
+ $("opButtons").querySelectorAll("button").forEach(b=>b.classList.toggle("active",b.dataset.op===op));
+ buildOptions();
+}
+function buildOptions(){
+ $("draftJSON").value=textJSON(draft);
+ $("actionOptions").innerHTML="";
+ (G[operation]||[]).forEach(([label,choices])=>{
+  const fs=document.createElement("fieldset"),legend=document.createElement("legend");
+  legend.textContent=label;fs.appendChild(legend);
+  const container=document.createElement("div");container.className="options";
+  choices.forEach(([name,settings])=>{
+   const btn=document.createElement("button");btn.type="button";btn.textContent=name;
+   btn.onclick=()=>{
+    // Alternativas de destino sustituye coordenadas por target o viceversa.
+    if(operation==="go"&&("x" in settings||"target" in settings)){
+     delete draft.x;delete draft.y;delete draft.target;
+    }
+    Object.assign(draft,JSON.parse(JSON.stringify(settings)));
+    buildOptions();
+   };
+   container.appendChild(btn);
+  });
+  fs.appendChild(container);$("actionOptions").appendChild(fs);
+ });
+ if(!(G[operation]||[]).length){
+  const p=document.createElement("p");p.className="meta";p.textContent="Sin opciones adicionales necesarias; podés inspeccionar los parámetros en el JSON."; $("actionOptions").appendChild(p);
+ }
+}
+function renderManual(){
+ $("builtSteps").innerHTML=manual.map((s,i)=>'<div class="row"><span class="mono">'+(i+1)+'. '+escapeHTML(textJSON(s))+'</span>'+
+  '<button data-rem="'+i+'" class="negative">Quitar</button></div>').join("")||'<p class="meta">Sin acciones todavía.</p>';
+ $("builtSteps").querySelectorAll("button[data-rem]").forEach(b=>b.onclick=()=>{manual.splice(Number(b.dataset.rem),1);renderManual()});
+}
+function renderFixtures(){
+ $("fixtures").innerHTML="";
+ FIXTURES.forEach(([id,label])=>{
+  const btn=document.createElement("button");btn.textContent=label;btn.className=preparations.has(id)?"on":"";
+  btn.onclick=()=>{preparations.has(id)?preparations.delete(id):preparations.add(id);renderFixtures()};
+  $("fixtures").appendChild(btn);
+ });
+}
+function initSandbox(){
+ $("opButtons").innerHTML="";
+ catalog.operaciones.forEach(op=>{
+  const btn=document.createElement("button");btn.dataset.op=op;btn.textContent=op;btn.onclick=()=>chooseOp(op);
+  $("opButtons").appendChild(btn);
+ });
+ chooseOp("go");renderManual();renderFixtures();
+}
+async function manualRun(){
+ if(!manual.length){$("manualInfo").textContent="Agregá al menos una acción.";return}
+ $("runManual").disabled=true;$("manualInfo").textContent="Ejecutando plan en Simulation real…";
+ try{
+  const data=await getJSON("/api/manual",{method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({steps:manual,seed:Number($("manualSeed").value),fixtures:[...preparations],mode:$("manualMode").value})});
+  renderResult(data);$("manualInfo").textContent="Plan ejecutado; inspeccioná la columna de resultados.";
+ }catch(e){showError(e);$("manualInfo").textContent=e.message}
+ finally{$("runManual").disabled=false}
+}
+$("filter").oninput=listCases;
+$("tabCases").onclick=()=>activateSandbox(false);
+$("tabSandbox").onclick=()=>activateSandbox(true);
+$("runCase").onclick=runCase;
+$("copyResult").onclick=()=>{if(last)navigator.clipboard.writeText(textJSON(last)).catch(()=>{})};
+$("addStep").onclick=()=>{
+ try{
+  if(manual.length>=12)throw Error("Máximo 12 acciones por deliberación");
+  const parsed=JSON.parse($("draftJSON").value);if(!parsed.op)throw Error("Falta op");
+  manual.push(parsed);renderManual();
+ }catch(e){$("manualInfo").textContent=e.message}
+};
+$("clearPlan").onclick=()=>{manual=[];renderManual()};
+$("helpClose").onclick=()=>$("helpDialog").close();
+document.addEventListener("click",event=>{
+ const button=event.target.closest("button[data-help]");
+ if(!button)return;
+ event.preventDefault();event.stopPropagation();
+ const key=button.dataset.help,help=HELP[key]||HELP.recorrido;
+ $("helpTitle").textContent=button.closest("summary")?.textContent.replace("?","").trim()||"Ayuda del laboratorio";
+ $("helpText").textContent=help;
+ $("helpDialog").showModal();
+});
+
+$("runManual").onclick=manualRun;
+getJSON("/api/catalog").then(data=>{
+ catalog=data;
+ listCases();if(data.casos.length)selectCase(data.casos[0].id);initSandbox();
+}).catch(showError);
+})();
+</script>
+</body></html>

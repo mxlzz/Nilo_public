@@ -1,0 +1,41 @@
+{
+  "format": "nilo-replay-v1",
+  "world_seed": 7321,
+  "rng_seed": 391,
+  "uuid_seed": 45,
+  "wall_start": 1700000000,
+  "speed": 60,
+  "seconds_per_tick": 10,
+  "max_ticks": 200,
+  "decisions": [
+    {
+      "cuaderno": "Voy a comprobar mis condiciones y observar el terreno.",
+      "objetivo": "Reconocer el entorno cercano",
+      "motivo": "Necesito evaluar lo que ya puedo comprobar.",
+      "plan": [
+        {
+          "op": "rest"
+        },
+        {
+          "op": "inspect",
+          "target": "suelo"
+        }
+      ],
+      "accion_proyecto": "nuevo",
+      "revisar_en_minutos": 100
+    },
+    {
+      "cuaderno": "Continúo observando qué zonas accesibles conozco.",
+      "objetivo": "Reconocer el entorno cercano",
+      "motivo": "Quiero contrastar el resultado anterior con nuevas observaciones.",
+      "plan": [
+        {
+          "op": "explore"
+        }
+      ],
+      "accion_proyecto": "continuar",
+      "revisar_en_minutos": 100
+    }
+  ],
+  "expected_fingerprint": "9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24"
+}

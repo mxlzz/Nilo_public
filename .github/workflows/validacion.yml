@@ -1,0 +1,37 @@
+name: Validación Nilo
+on:
+  push:
+    branches: [main, "work/**"]
+  pull_request:
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Pruebas sin credenciales
+        run: python -m unittest discover -s tests -v
+      - name: Escenarios físicos deterministas
+        run: python validar_escenarios.py --seed 7321
+      - name: Reproducir decisiones y estados sin proveedor
+        run: python reproducir.py tests/fixtures/replay_basico.json
+      - name: Comparar huellas entre procesos independientes
+        shell: bash
+        run: |
+          PYTHONHASHSEED=11 python reproducir.py tests/fixtures/replay_basico.json --diagnostics --output /tmp/replay_a.json > /dev/null
+          PYTHONHASHSEED=97 python reproducir.py tests/fixtures/replay_basico.json --diagnostics --output /tmp/replay_b.json > /dev/null
+          python - <<'PY'
+          import json
+          a=json.load(open('/tmp/replay_a.json'))
+          b=json.load(open('/tmp/replay_b.json'))
+          for key in ('state_sha256','archive_sha256','fingerprint'):
+              print(key,a[key],b[key])
+          for k in ('state_fields','person_fields','world_fields','archive_history_categories'):
+              da=a['diagnostics'][k]; db=b['diagnostics'][k]
+              delta={key:(da.get(key),db.get(key)) for key in sorted(set(da)|set(db)) if da.get(key)!=db.get(key)}
+              if delta: print('DIFERENCIAS',k,delta)
+          assert a['fingerprint']==b['fingerprint'], 'Reproducción entre procesos diferente'
+          PY

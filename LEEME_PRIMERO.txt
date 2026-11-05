@@ -1,0 +1,39 @@
+Nilo 05.7 - Agenda, autonomía y deliberación
+
+Edición Nilo 05.7: agenda diferida, reconsideración de métodos y espera segura de API.
+
+NILO 05.7 (alfa) - Programa completo y asistente de primer inicio
+
+1. Descomprimí la carpeta Nilo_05_7 en un lugar distinto de tus versiones anteriores.
+2. Ejecutá INICIAR_NILO.bat: incorpora automáticamente Python portable en su carpeta la primera vez, sin instalarlo en Windows.
+3. En el primer inicio elegí tu instalación anterior Nilo_05_6_2 o indicá su carpeta manualmente y copiá sus claves, si existen.
+4. Elegí por separado si querés importar UNA COPIA de la partida existente.
+5. Revisá la pestaña Ensayos para ver mediciones, comparaciones y conclusiones con pruebas.
+6. Tus datos anteriores se copian sin alterar la instalación de origen.
+
+Las rutinas solo repiten procedimientos comprobados bajo límites de necesidad y cercanía.
+Si no hay una actividad útil y segura, Nilo queda inactivo. La pausa automática del tiempo simulado se puede desactivar.
+No incluye editor dinámico de reglas físicas; está previsto para otra versión.
+
+La instalación de origen permanece intacta. Si ya existe la partida aquí, no se inicia
+el asistente otra vez. Usá RESPALDAR_PARTIDA.bat antes de cambios importantes.
+Nunca publiques config.env ni archivos SQLite.
+
+Para detalles de portabilidad y primer inicio: LEEME_PORTABLE.txt
+
+LABORATORIO DEL MOTOR (v0.6.1)
+- Doble clic en ABRIR_LABORATORIO.bat: abre el simulador de operaciones en el navegador.
+- Usa un mundo de prueba o una copia en memoria de la partida guardada. No necesita claves de API ni modifica la partida original.
+- Permite pulsar acciones y ver resultados físicos y trazas breves del código ejecutado.
+
+LABORATORIO DE ESCENARIOS (v0.6.2)
+- Doble clic en ABRIR_LABORATORIO.bat; abre http://127.0.0.1:8766.
+- Página principal: catálogo de 68 escenarios con código, etapas, resultados y mediciones; incluye ejecutar todos.
+- Pestaña Sandbox: botones para crear órdenes y planes de hasta 12 operaciones sobre el motor real.
+- Archivo físico antiguo en /sandbox. Ningún escenario altera el mundo original.
+
+DEPURADOR HISTORICO (v0.6.3)
+- Abri ABRIR_LABORATORIO.bat y selecciona Partidas historicas, o ingresa a http://127.0.0.1:8766/historico.
+- Abri la partida actual o carga un archivo .sqlite3. Recorre el slider para seleccionar acciones y deliberaciones.
+- Los nuevos checkpoints permiten repetir decisiones y acciones en una copia temporal, con trazas y resultados. Las partidas antiguas sin checkpoints son de consulta historica.
+- No se llama a Gemini ni Groq y la partida original no se modifica desde el laboratorio.

@@ -1,0 +1,21 @@
+config.env
+**/config.env
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+**/backups/
+**/respaldos/
+**/__pycache__/
+*.py[cod]
+.env
+*.log
+.venv/
+venv/
+*.zip
+.DS_Store
+
+# Preferencias propias de cada instalación (importadas con consentimiento)
+preferencias_interfaz.json
+preferencias_interfaz.json.tmp

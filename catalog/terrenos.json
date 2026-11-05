@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "environment_id": "isla_v1",
+  "labels": {
+    ".": "suelo",
+    ",": "hierba",
+    "~": "agua",
+    "^": "roca",
+    "#": "pared de piedra",
+    "T": "arboleda",
+    "o": "afloramiento mineral",
+    "c": "entrada a una cueva",
+    "e": "salida a superficie",
+    "r": "ruinas antiguas",
+    "=": "sendero",
+    "s": "arenal",
+    "h": "refugio",
+    ":": "galería",
+    "v": "ventilación caliente"
+  },
+  "yields": {
+    "T": [
+      "madera",
+      3
+    ],
+    "o": [
+      "mineral oscuro",
+      2
+    ],
+    "r": [
+      "piedra",
+      2
+    ],
+    "s": [
+      "arcilla",
+      3
+    ],
+    ",": [
+      "fibra",
+      3
+    ],
+    "^": [
+      "piedra",
+      2
+    ],
+    "v": [
+      "cristal",
+      1
+    ]
+  },
+  "gather_sources": {
+    "madera": "T",
+    "piedra": "^r",
+    "arcilla": "s",
+    "fibra": ",",
+    "mineral oscuro": "o",
+    "cristal": "v",
+    "hongo luminoso": "v"
+  },
+  "gather_aliases": {
+    "roca": "piedra",
+    "piedras": "piedra",
+    "afloramiento mineral": "mineral oscuro",
+    "arboleda": "madera",
+    "árbol": "madera",
+    "arenal": "arcilla",
+    "hierba": "fibra"
+  },
+  "inspect_aliases": {
+    "piedra": "roca",
+    "piedras": "roca",
+    "mineral oscuro": "afloramiento mineral",
+    "madera": "arboleda",
+    "arcilla": "arenal",
+    "fibra": "hierba"
+  },
+  "passable": ".,Tocrs=h:vse"
+}

@@ -1,0 +1,39 @@
+name: Paquete versionado Nilo
+on:
+  push:
+    branches: [main]
+    paths: [VERSION]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  versioned-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Comprobar reglas y compatibilidad
+        run: |
+          python -m unittest discover -s tests -v
+          python validar_escenarios.py --seed 7321
+          python reproducir.py tests/fixtures/replay_basico.json
+      - name: Construir Nilo-versión.zip
+        run: python empaquetar_version.py
+      - name: Publicar ZIP en GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(cat VERSION)"
+          tag="v${version}"
+          file="dist/Nilo-${version}.zip"
+          if gh release view "${tag}" >/dev/null 2>&1; then
+            gh release upload "${tag}" "${file}" --clobber
+          else
+            gh release create "${tag}" "${file}" --target "${GITHUB_SHA}" --title "Nilo ${version}" \
+              --notes "Distribución portable de Nilo. Descargá Nilo-${version}.zip y extraé la carpeta Nilo-${version}. La partida original y las claves API nunca forman parte del paquete."
+          fi

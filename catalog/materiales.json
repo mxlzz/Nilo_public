@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "description": "Propiedades internas del entorno isla_v1; no equivalen a conocimiento comprobado de Nilo.",
+  "materials": {
+    "madera": {
+      "world": {
+        "dureza": 3,
+        "resistencia": 5,
+        "peso": 2,
+        "combustible": 8,
+        "brillo": 0
+      },
+      "physics": {
+        "density": 0.62,
+        "permeability": 0.25
+      },
+      "recoverability": 0.82
+    },
+    "piedra": {
+      "world": {
+        "dureza": 7,
+        "resistencia": 8,
+        "peso": 8,
+        "combustible": 0,
+        "brillo": 0
+      },
+      "physics": {
+        "density": 2.5,
+        "permeability": 0.015
+      },
+      "recoverability": 0.9
+    },
+    "arcilla": {
+      "world": {
+        "dureza": 2,
+        "resistencia": 2,
+        "peso": 4,
+        "combustible": 0,
+        "brillo": 0
+      },
+      "physics": {
+        "density": 1.75,
+        "permeability": 0.35
+      },
+      "recoverability": 0.46
+    },
+    "fibra": {
+      "world": {
+        "dureza": 1,
+        "resistencia": 3,
+        "peso": 1,
+        "combustible": 6,
+        "brillo": 0
+      },
+      "physics": {
+        "density": 0.38,
+        "permeability": 0.82
+      },
+      "recoverability": 0.64
+    },
+    "mineral oscuro": {
+      "world": {
+        "dureza": 9,
+        "resistencia": 8,
+        "peso": 9,
+        "combustible": 0,
+        "brillo": 0
+      },
+      "physics": {
+        "density": 3.2,
+        "permeability": 0.015
+      },
+      "recoverability": 0.9
+    },
+    "hongo luminoso": {
+      "world": {
+        "dureza": 1,
+        "resistencia": 1,
+        "peso": 1,
+        "combustible": 3,
+        "brillo": 8
+      },
+      "physics": {
+        "density": 0.25,
+        "permeability": 0.65
+      },
+      "recoverability": 0.28
+    },
+    "cristal": {
+      "world": {
+        "dureza": 6,
+        "resistencia": 2,
+        "peso": 3,
+        "combustible": 0,
+        "brillo": 2
+      },
+      "physics": {
+        "density": 2.25,
+        "permeability": 0.001
+      },
+      "recoverability": 0.58
+    }
+  }
+}

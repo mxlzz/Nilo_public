@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "description": "Vocabulario existente de formas, piezas y uniones. No es una lista cerrada de objetos fabricables ni asigna efectos por nombre.",
+  "portable_words": [
+    "mazo",
+    "martillo",
+    "hacha",
+    "pico",
+    "cincel",
+    "palanca",
+    "cuchillo",
+    "tenaza",
+    "herramienta",
+    "martinete",
+    "pala",
+    "varilla",
+    "bastón",
+    "punzón",
+    "barra de hierro",
+    "recipiente",
+    "bolsa",
+    "frasco",
+    "raspador",
+    "taladro",
+    "barrena",
+    "sierra"
+  ],
+  "forms": {
+    "golpe": [
+      "mazo",
+      "martillo",
+      "martinete",
+      "percutor"
+    ],
+    "punta": [
+      "pico",
+      "cincel",
+      "punzón",
+      "taladro",
+      "barrena"
+    ],
+    "filo": [
+      "hacha",
+      "cuchillo",
+      "sierra",
+      "raspador"
+    ],
+    "palanca": [
+      "palanca",
+      "barra",
+      "varilla"
+    ],
+    "recipiente": [
+      "bolsa",
+      "frasco",
+      "recipiente",
+      "cuenco"
+    ]
+  },
+  "shapes": [
+    "macizo",
+    "hueco",
+    "plataforma",
+    "cilindro",
+    "rueda",
+    "eje",
+    "lámina"
+  ],
+  "joints": [
+    "fija",
+    "articulada",
+    "deslizante",
+    "flexible"
+  ]
+}

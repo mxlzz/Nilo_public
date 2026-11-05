@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nilo · Historial reproducible</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#1d272b;background:#f3f5f4;font-size:13px;line-height:1.45}
+*{box-sizing:border-box}body{margin:0}header{padding:15px 20px;background:#fff;border-bottom:1px solid #d1dcda;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+h1{font-size:20px;margin:0}h2{font-size:16px;margin:0 0 10px}h3{font-size:13px;margin:12px 0 6px}p{margin:6px 0 10px}
+a{color:#286659}button{border:1px solid #9aafaa;background:#fff;color:#1f3430;padding:8px 12px;border-radius:5px;cursor:pointer;font:inherit}
+button:hover{background:#edf7f3}button:disabled{opacity:.46;cursor:default}button.primary{background:#285e50;color:white;border-color:#285e50}
+input,select,textarea{font:inherit;background:white;border:1px solid #adbfba;border-radius:4px;padding:8px;color:#20312f}
+input[type="range"]{width:100%;accent-color:#285e50}
+textarea{width:100%;min-height:95px;font:12px/1.5 ui-monospace,Consolas,monospace}
+.layout{display:grid;grid-template-columns:minmax(270px,330px) minmax(340px,1fr) minmax(360px,1.1fr);gap:12px;max-width:1760px;margin:auto;padding:14px;align-items:start}
+.panel{background:#fff;border:1px solid #d2ddda;border-radius:7px;min-width:0;overflow:hidden}.heading{padding:11px 14px;border-bottom:1px solid #dfe7e4;font-weight:650}
+.body{padding:14px}.muted{color:#64726f;font-size:12px}.pill{display:inline-block;background:#e1eee6;border-radius:4px;padding:4px 8px;font:11px ui-monospace,Consolas,monospace;color:#30614f}
+.warn{background:#fff5dc;border:1px solid #e8d3a7;padding:10px;border-radius:5px;font-size:12px;color:#6f5225}
+.error{background:#fff1ee;border:1px solid #e6c5be;color:#852b22;padding:10px;border-radius:5px;white-space:pre-wrap}
+.block{margin:12px 0}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.row>*{min-width:0}
+.btnrow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.btnrow button{flex:1}
+.now{background:#edf5f1;border:1px solid #c1ddd0;padding:12px;border-radius:6px;margin:12px 0}
+.mono,pre{font:11px/1.5 ui-monospace,Consolas,"Liberation Mono",monospace}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;background:#f5f7f6;border:1px solid #e0e8e6;max-height:430px;overflow:auto;border-radius:5px}
+.timeline-items{max-height:61vh;overflow:auto;margin:10px 0}.timeline-items button{display:block;width:100%;text-align:left;background:#fafbfa;padding:8px 10px;border:1px solid #e0e8e4;margin:3px 0}
+.timeline-items button.active{background:#e5f3eb;border-color:#5ca28c}
+.tmeta{font:10px ui-monospace,Consolas,monospace;color:#527568}.itemtitle{display:block;font-weight:600;font-size:12px}
+.inside{display:grid;gap:9px}.stage{border-left:3px solid #699b8c;border-top:1px solid #e0e8e6;border-right:1px solid #e0e8e6;border-bottom:1px solid #e0e8e6;padding:8px;border-radius:5px}
+.stage details{margin-top:7px}.code-entry{padding:6px;border:1px solid #e3eae8;margin:5px 0;border-radius:4px}
+details>summary{cursor:pointer;font-weight:600;font-size:12px}
+.metrics{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.metric{border:1px solid #d7e3de;background:#f8faf9;padding:7px;border-radius:5px;min-width:80px;font-size:11px}
+.metric b{display:block;font-size:14px}.compare{border-collapse:collapse;width:100%;font-size:12px}.compare td,.compare th{border-bottom:1px solid #e4ebe9;text-align:left;padding:6px;vertical-align:top}
+#resultView{max-height:78vh;overflow:auto}
+@media(max-width:1200px){.layout{grid-template-columns:300px 1fr}.result-panel{grid-column:1/-1}}
+@media(max-width:700px){.layout{grid-template-columns:1fr;padding:8px}.result-panel{grid-column:auto}.timeline-items{max-height:240px}header{padding:12px}}
+</style></head>
+<body>
+<header>
+ <div><h1>Depurador histórico de Nilo</h1><div class="muted">Elegí un momento, examiná la decisión y reproducí el motor desde su estado anterior</div></div>
+ <nav class="row"><a href="/">Escenarios</a><a href="/sandbox">Sandbox físico</a><span class="pill">Historial</span></nav>
+</header>
+<main class="layout">
+<section class="panel">
+ <div class="heading">01 · Cargar una partida</div>
+ <div class="body">
+  <p class="muted">Podés abrir la partida de la carpeta actual o seleccionar otra base SQLite. La original se consulta en modo lectura.</p>
+  <div class="btnrow"><button id="defaultFile">Usar partida actual</button></div>
+  <input id="file" type="file" accept=".sqlite3,.sqlite,.db" aria-label="Elegir archivo de partida" style="width:100%">
+  <p id="fileStatus" class="muted">Buscando partida local…</p>
+  <div class="block"><label for="filter">Filtrar momentos</label>
+    <select id="filter" style="width:100%"><option value="all">Decisiones y acciones</option>
+    <option value="decision">Solo deliberaciones</option><option value="action">Solo acciones</option>
+    <option value="failure">Fallos registrados</option><option value="old">Momentos sin checkpoint</option></select></div>
+  <div class="block"><input id="search" type="search" placeholder="Buscar acción o momento…" style="width:100%" aria-label="Buscar en historial"></div>
+  <div class="row"><span id="count" class="muted">Sin eventos</span></div>
+  <div id="events" class="timeline-items"></div>
+ </div>
+</section>
+<section class="panel">
+ <div class="heading">02 · Seleccionar el momento</div>
+ <div class="body">
+  <div class="row"><button id="prev" aria-label="Anterior">‹</button><strong id="marker">—</strong><button id="next" aria-label="Siguiente">›</button></div>
+  <input type="range" id="timeline" min="0" max="0" step="1" value="0" aria-label="Momento de la partida">
+  <div class="row" style="justify-content:space-between"><span id="firstLabel" class="muted">Inicio</span><span id="lastLabel" class="muted">Final</span></div>
+  <div class="now"><span class="pill" id="kind">Sin seleccionar</span><h2 id="eventTitle" style="margin-top:8px">Cargá una partida</h2>
+    <p id="eventDescription" class="muted"></p>
+    <span class="muted" id="eventVersion"></span>
+  </div>
+  <h3>Decisión u operación registrada</h3><pre id="command">—</pre>
+  <div class="block" id="legacyWarning" hidden><div class="warn">Este momento no tiene estado anterior preservado. Podés consultar el registro auténtico, pero no reproducirlo con exactitud.</div></div>
+  <details id="editContainer"><summary>Modificar la orden para una simulación alternativa</summary>
+    <p class="muted">El estado inicial será el mismo; solo cambia la orden seleccionada. No se modifica la partida.</p>
+    <textarea id="override" spellcheck="false" aria-label="Orden alternativa JSON"></textarea>
+    <button id="resetOverride">Restaurar orden original</button>
+  </details>
+  <div class="btnrow"><button id="replay" class="primary">Reproducir procesamiento</button></div>
+  <p id="runStatus" class="muted"></p>
+ </div>
+</section>
+<section class="panel result-panel">
+ <div class="heading">03 · Resultado, diferencias y código</div>
+ <div class="body" id="resultView"><p class="muted">Seleccioná una acción o deliberación. Los hechos de una partida antigua se pueden inspeccionar aunque no tengan checkpoint.</p></div>
+</section>
+</main>
+<script>
+(()=>{
+"use strict";
+const $=id=>document.getElementById(id);
+const safe=v=>String(v===undefined||v===null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const json=v=>JSON.stringify(v,null,2);
+let events=[],view=[],selected=null,details=null,oldText="";
+const isReplayable=e=>Boolean(e&&e.replayable);
+async function ask(url,options){
+ let response=await fetch(url,options),body=await response.json();
+ if(!response.ok)throw Error(body.error||"Respuesta no válida");
+ return body;
+}
+function setMessage(msg,bad=false){
+ $("runStatus").textContent=msg;
+ $("runStatus").style.color=bad?"#9d332b":"";
+}
+function showData(data){
+ events=data.entries||[];
+ $("fileStatus").textContent=data.source+" · "+events.length+" momentos · "+
+    data.checkpoint_count+" puntos restaurables";
+ if(!events.length){$("events").innerHTML='<p class="muted">La partida no tiene eventos relevantes.</p>';return}
+ filterEvents();
+}
+function filterEvents(){
+ let filter=$("filter").value,term=$("search").value.toLowerCase();
+ view=events.filter(e=>{
+   let match=filter==="all"||
+     (filter==="decision"&&(e.kind==="decision"||e.kind==="llm_decision"))||
+     (filter==="action"&&(e.kind==="action"||e.kind==="diagnostic"))||
+     (filter==="failure"&&e.failed===true)||
+     (filter==="old"&&!e.replayable);
+   return match&&(e.label+" "+e.op+" "+e.title).toLowerCase().includes(term);
+ });
+ $("count").textContent=view.length+" momentos visibles";
+ $("timeline").max=Math.max(0,view.length-1);
+ $("firstLabel").textContent=view[0]?.label||"—";
+ $("lastLabel").textContent=view[view.length-1]?.label||"—";
+ if(!view.length){$("events").innerHTML='<p class="muted">No hay coincidencias.</p>';return}
+ let at=view.findIndex(e=>selected&&e.id===selected.id);
+ selectIndex(at>=0?at:0);
+}
+function selectIndex(index){
+ if(!view.length)return;
+ const i=Math.max(0,Math.min(view.length-1,index));
+ selected=view[i];
+ $("timeline").value=i;$("marker").textContent=(i+1)+" / "+view.length;
+ $("prev").disabled=i===0;$("next").disabled=i===view.length-1;
+ let left=Math.max(0,i-7),right=Math.min(view.length,i+8);
+ $("events").innerHTML=view.slice(left,right).map((e,j)=>'<button class="'+(e.id===selected.id?"active":"")+'" data-index="'+(left+j)+'"><span class="tmeta">'+
+  safe(e.label)+" · "+safe(e.kind)+(e.replayable?" · Restaurable":" · Registro")+'</span><span class="itemtitle">'+safe(e.op)+" · "+safe(e.title||"")+'</span></button>').join("");
+ $("events").querySelectorAll("button[data-index]").forEach(b=>b.onclick=()=>selectIndex(Number(b.dataset.index)));
+ $("kind").textContent=selected.replayable?"Punto restaurable":"Registro histórico";
+ $("eventTitle").textContent=selected.op;
+ $("eventDescription").textContent=selected.label+" · "+(selected.title||"");
+ $("eventVersion").textContent=selected.engine_version?"Motor registrado: "+selected.engine_version:"";
+ $("legacyWarning").hidden=selected.replayable;
+ $("replay").disabled=!selected.replayable;
+ $("editContainer").hidden=!selected.replayable;
+ $("command").textContent="Cargando registro…";
+ $("override").value="";
+ details=null;oldText="";
+ $("resultView").innerHTML='<p class="muted">Cargando detalles del momento seleccionado…</p>';
+ setMessage("");
+ ask("/api/history/event?id="+encodeURIComponent(selected.id)).then(r=>{
+  if(selected.id!==r.id)return;
+  details=r;oldText=json(r.command||{});
+  $("command").textContent=oldText;
+  $("override").value=oldText;
+  if(!r.replayable){
+   $("command").textContent=json(r.historical);
+   $("resultView").innerHTML='<h3>Hecho documentado</h3><pre>'+safe(json(r.historical))+'</pre>'+
+     '<div class="warn">La base no conserva un estado anterior recuperable para este evento.</div>';
+  }else{
+   let related=(r.related||[]).filter(x=>x.category==="diagnostic");
+   $("resultView").innerHTML='<h3>Registro original disponible</h3>'+
+     (related.length?related.map(x=>'<details><summary>Diagnóstico del archivo</summary><pre>'+safe(json(x.payload))+'</pre></details>').join(""):
+     '<p class="muted">No hay diagnóstico asociado de forma inequívoca a este checkpoint. Se mostrará la nueva ejecución por separado.</p>');
+  }
+ }).catch(err=>{$("resultView").innerHTML='<p class="error">'+safe(err.message)+'</p>'});
+}
+function renderTrace(trace){
+ if(!trace||!trace.length)return '<p class="muted">Sin funciones instrumentadas en esta etapa.</p>';
+ return trace.map((r,i)=>{
+  let rows=(r.codigo||[]).map(x=>String(x.linea).padStart(4," ")+"  "+x.texto).join("\n");
+  return '<div class="code-entry"><b>'+(i+1)+'. '+safe(r.explicacion)+'</b>'+
+   '<span class="muted"> · '+safe(r.funcion)+"() · "+r.lineas_ejecutadas+' líneas</span>'+
+   '<details><summary>'+safe(r.archivo)+' líneas '+r.inicio+'–'+r.fin+'</summary>'+
+   '<pre>'+safe(rows)+'</pre></details></div>';
+ }).join("");
+}
+function renderReplay(data){
+ let changes=data.changes||{};
+ let html='<h2>Reproducción aislada</h2>'+
+   '<div class="warn">'+safe(data.limits||"")+'</div>'+
+   '<div class="metrics">'+
+    '<div class="metric"><b>'+data.completed_actions+'</b>acciones terminadas</div>'+
+    '<div class="metric"><b>'+safe(data.version_recorded)+'</b>versión histórica</div>'+
+    '<div class="metric"><b>'+(data.unfinished?"Sí":"No")+'</b>quedaron pasos pendientes</div></div>';
+ const rows=Object.entries(data.outcome_comparison||{});
+ html+='<h3>Comparación con el resultado original</h3>'+
+  (data.recorded_outcome?'<table class="compare"><thead><tr><th>Indicador</th><th>Original</th><th>Reejecutado</th></tr></thead><tbody>'+
+   rows.map(([key,v])=>'<tr><td>'+safe(key)+(v.same===true?' · igual':v.same===false?' · distinto':'')+'</td>'+
+   '<td><pre>'+safe(json(v.original))+'</pre></td><td><pre>'+safe(json(v.experimental))+'</pre></td></tr>').join("")+'</tbody></table>':
+   '<p class="muted">No se encontró un resultado histórico atribuible con certeza a este punto. No se inventa una comparación.</p>');
+ html+='<h3>Diferencias antes/después</h3>'+
+   (Object.keys(changes).length?'<table class="compare"><tbody>'+
+     Object.entries(changes).map(([key,value])=>'<tr><th>'+safe(key)+'</th><td><pre>'+safe(json(value))+'</pre></td></tr>').join("")+'</tbody></table>':
+     '<p class="muted">No hubo cambios en los campos físicos medidos.</p>');
+ html+='<h3>Recorrido de código ejecutado</h3><div class="inside">'+
+   (data.stages||[]).map((st,i)=>'<div class="stage"><b>'+(i+1)+'. '+safe(st.name)+'</b>'+
+     (st.plan?'<details><summary>Plan validado</summary><pre>'+safe(json(st.plan))+'</pre></details>':"")+
+     '<details><summary>Ver funciones y líneas ('+(st.trace||[]).length+')</summary>'+renderTrace(st.trace)+'</details></div>').join("")+'</div>';
+ html+='<details><summary>Estado inicial y final</summary><pre>'+safe(json({before:data.before,after:data.after}))+'</pre></details>';
+ $("resultView").innerHTML=html;
+}
+async function replay(){
+ if(!details?.replayable)return;
+ $("replay").disabled=true;setMessage("Reproduciendo el motor desde el estado anterior…");
+ try{
+  let current=$("override").value.trim();
+  let override=current===oldText?null:JSON.parse(current);
+  let r=await ask("/api/history/replay",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({id:details.id,override,max_ticks:400})});
+  renderReplay(r);setMessage("Reproducción completada sin modificar la partida.");
+ }catch(err){setMessage(err.message,true)}
+ finally{$("replay").disabled=false}
+}
+async function loadLocal(){
+ try{const data=await ask("/api/history/default");showData(data)}
+ catch(err){$("fileStatus").textContent=err.message}
+}
+$("file").onchange=async e=>{
+ const f=e.target.files?.[0];if(!f)return;
+ $("fileStatus").textContent="Leyendo "+f.name+"…";
+ if(f.size>200*1024*1024){$("fileStatus").textContent="Máximo 200 MB por archivo.";return}
+ try{
+  const data=await ask("/api/history/upload",{method:"POST",
+    headers:{"Content-Type":"application/octet-stream"},body:f});
+  showData(data);
+ }catch(err){$("fileStatus").textContent=err.message}
+};
+$("defaultFile").onclick=loadLocal;
+$("filter").onchange=filterEvents;$("search").oninput=filterEvents;
+$("timeline").oninput=e=>selectIndex(Number(e.target.value));
+$("prev").onclick=()=>selectIndex(Number($("timeline").value)-1);
+$("next").onclick=()=>selectIndex(Number($("timeline").value)+1);
+$("resetOverride").onclick=()=>{$("override").value=oldText};
+$("replay").onclick=replay;
+ask("/api/history/catalog").then(showData).catch(e=>{$("fileStatus").textContent=e.message});
+})();
+</script></body></html>

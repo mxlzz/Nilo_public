@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nilo · Laboratorio del motor 0.6.1</title>
+<style>
+:root{color-scheme:dark;--bg:#111416;--surface:#191e20;--up:#20282a;--line:#344144;--ink:#ecf0ed;--muted:#9eb0b0;--accent:#a9cbbd;--warn:#e3bc89;--bad:#e6a39d;--good:#a8d3b0;--mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}h1,h2,h3,p{margin:0}h1{font-size:20px;font-weight:650;letter-spacing:-.04em}h2{font-size:15px;font-weight:640}h3{font-size:13px}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+header{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}.eyebrow{font:11px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--accent)}.sub{color:var(--muted);font-size:12px;margin-top:5px}.pill{border:1px solid var(--line);background:#253031;color:#d2e0db;border-radius:30px;font:11px var(--mono);padding:7px 12px}.layout{padding:16px;display:grid;grid-template-columns:minmax(260px,.82fr) minmax(300px,1fr) minmax(320px,1.18fr);gap:14px;align-items:start;max-width:1700px;margin:0 auto}.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-width:0}.panel>header{padding:15px 17px;position:static;background:transparent;border-bottom:1px solid var(--line)}.panelbody{padding:16px}.section+.section{padding-top:15px;margin-top:15px;border-top:1px solid var(--line)}.field{display:grid;gap:6px;margin:10px 0}.field label{font-size:11px;color:var(--muted)}input,select,textarea,button{font:inherit}input,select,textarea{width:100%;border-radius:7px;border:1px solid #485558;background:#11181a;color:var(--ink);padding:9px 10px;min-width:0}textarea{font:12px/1.5 var(--mono);resize:vertical}input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid #99c8b4;outline-offset:2px}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:9px}.threecol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+button{padding:10px 13px;border:1px solid #506261;background:#263332;color:var(--ink);border-radius:8px;cursor:pointer}button:hover{border-color:var(--accent);background:#2c3e3a}button.primary{background:var(--accent);color:#14221f;border-color:var(--accent);font-weight:650}button.primary:hover{background:#c4e0d1}button:disabled{opacity:.45;cursor:not-allowed}.buttonrow{display:flex;flex-wrap:wrap;gap:8px}.buttonrow button{flex:1}.checkrow{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}.checkrow input{width:auto}.small{font-size:12px;color:var(--muted)}.notice{border:1px solid #5e5846;background:#302c24;padding:11px 13px;border-radius:8px;font-size:12px;color:#e8d8bf;margin-bottom:13px}.status{font:12px var(--mono);color:var(--muted)}
+.mapwrap{padding:14px;background:#101819;overflow-x:auto}.mapgrid{display:grid;width:max-content;grid-template-columns:repeat(15,26px);gap:2px;margin:auto}.cell{width:26px;height:26px;padding:0;display:grid;place-items:center;border-radius:3px;border:1px solid transparent;background:#273232;color:#97aba4;font:15px var(--mono);cursor:pointer}.cell.unknown{background:#171e20;color:#364549;cursor:default}.cell.edge{color:#8c9799}.cell.rock{background:#34404a;color:#c5ced8}.cell.tree{background:#254a39;color:#b5e0c5}.cell.water{background:#253f50;color:#acd1eb}.cell.site{background:#514334;color:#f0d6a9}.cell.sand{background:#474136;color:#e1ca9d}.cell.self{background:#b2cfbd;color:#11221c;font-weight:900}.cell.selected{outline:2px solid #f3c88b;outline-offset:0;z-index:1}.cell:not(.unknown):hover{border-color:#e2d2b2}.mapkey{display:flex;gap:8px 15px;flex-wrap:wrap;margin-top:13px;color:var(--muted);font:11px var(--mono)}.mapkey b{color:var(--ink)}.kv{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #2c373a;font-size:12px}.kv b{font-family:var(--mono);font-weight:500;color:#d9e4df}.tablewrap{max-height:230px;overflow:auto}.jump{background:transparent;border:none;padding:1px 4px;color:var(--accent);font-size:12px;text-align:left}.statebox{display:flex;flex-wrap:wrap;gap:7px;padding:10px 0}.statebox span{font:11px var(--mono);color:#cbd9d3;border:1px solid #394947;border-radius:6px;padding:5px 7px}.divider{height:1px;background:var(--line);margin:14px 0}.label{font:10px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+.output{padding:16px}.resulttitle{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}.tag{font:11px var(--mono);border-radius:5px;padding:5px 7px;background:#2b3c34;color:var(--good)}.tag.failed{background:#452c2b;color:var(--bad)}.tag.neutral{background:#383728;color:var(--warn)}.facts{padding-left:18px;margin:8px 0 13px}.facts li{margin-bottom:7px;overflow-wrap:anywhere}.trace{display:grid;gap:7px}.step{background:var(--up);border:1px solid #354347;border-radius:8px;padding:9px 11px}.stephead{display:flex;justify-content:space-between;align-items:center;gap:8px}.stephead strong{font-size:12px;font-weight:600}.src{font:11px var(--mono);white-space:nowrap}.step p{font-size:11px;color:var(--muted);margin-top:2px}.muted{color:var(--muted)}.jsonbox{font:11px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:440px;overflow:auto;padding:12px;border-radius:7px;background:#101719;border:1px solid var(--line)}.history{font-size:11px;color:var(--muted);display:grid;gap:6px}.historyentry{display:flex;gap:10px;border-bottom:1px solid #283438;padding-bottom:6px}.historyentry b{color:var(--ink)}.tabs{display:flex;gap:6px}.tabs button{padding:6px 8px;font-size:11px}.tabs button.on{background:#accfbd;color:#14211d;border-color:#accfbd}.hidden{display:none!important}.error{color:#ffc5bb;font-size:12px;white-space:pre-wrap}.footer{max-width:1700px;margin:auto;padding:10px 22px 28px;color:var(--muted);font-size:11px}
+@media(max-width:1180px){.layout{grid-template-columns:minmax(290px,.85fr) minmax(330px,1fr)}.results{grid-column:1/-1}}@media(max-width:670px){.layout{grid-template-columns:minmax(0,1fr);padding:10px}.results{grid-column:auto}.mapgrid{grid-template-columns:repeat(15, min(6vw,26px))}.cell{width:min(6vw,26px);height:min(6vw,26px);font-size:12px}header{padding:14px}}
+</style>
+</head>
+<body>
+<header>
+ <div><div class="eyebrow">NILO / LABORATORIO</div><h1>Cómo funciona el motor</h1><p class="sub">Probá acciones sin LLM. Respuestas y trazas extraídas del código real.</p></div>
+ <span class="pill">0.6.1 · Estado aislado en RAM</span>
+</header>
+<main class="layout">
+<section class="panel">
+ <header><h2>01 · Preparar escenario</h2></header>
+ <div class="panelbody">
+  <div class="field"><label for="originMode">Origen del mundo</label><select id="originMode"><option value="nuevo">Mundo nuevo</option><option value="partida">Copiar última partida guardada</option></select></div>
+  <div class="field"><label for="seed">Semilla (mundo nuevo)</label><input id="seed" type="number" min="0" max="1000000000" step="1" value="7321"></div>
+  <label class="checkrow"><input id="kit" type="checkbox" checked> Añadir materiales de prueba al inventario de la copia</label>
+  <div class="buttonrow" style="margin-top:13px"><button id="reset" type="button">Reiniciar laboratorio</button></div>
+  <p class="small" style="margin-top:9px" id="originNote"></p>
+  <div class="section">
+   <h2>02 · Elegir acción</h2>
+   <div class="field"><label for="operation">Operación que elegiría Nilo</label><select id="operation"></select></div>
+   <div id="fields"></div>
+   <details style="margin:14px 0"><summary class="small" style="cursor:pointer">Entrada estructurada (opcional / avanzada)</summary>
+    <p class="small" style="margin:7px 0">Los controles generan el comando. Si querés probar un contrato especial, podés reemplazarlo por JSON.</p>
+    <label class="checkrow"><input id="custom" type="checkbox"> Usar mi JSON</label>
+    <textarea id="raw" rows="5" spellcheck="false"></textarea>
+   </details>
+   <button id="run" type="button" class="primary" style="width:100%">Ejecutar acción en la copia</button>
+   <p class="error" id="error" aria-live="polite" style="margin-top:9px"></p>
+  </div>
+ </div>
+</section>
+<section class="panel">
+ <header><h2>03 · Mundo de prueba</h2><span class="status" id="pos"></span></header>
+ <div class="mapwrap"><div id="map" class="mapgrid" role="group" aria-label="Mapa revelado; elegí una casilla"></div>
+ <div class="mapkey"><span><b>@</b> Nilo</span><span><b>?</b> desconocido</span><span><b>^</b> roca</span><span><b>T</b> árbol</span><span><b>c</b> cueva</span><span><b>~</b> agua</span></div>
+ </div>
+ <div class="panelbody">
+  <p class="small">Hacé clic en una casilla conocida para usar sus coordenadas en acciones compatibles.</p>
+  <div class="statebox" id="metadata"></div>
+  <div class="section"><h3>Inventario</h3><div class="tablewrap" id="inventory"></div></div>
+  <div class="section"><h3>Lugares y objetos conocidos</h3><div class="tablewrap" id="places"></div></div>
+ </div>
+</section>
+<section class="panel results">
+ <header><h2>04 · Resultado y recorrido del código</h2><div class="tabs"><button id="tabResult" class="on">Resultado</button><button id="tabPrompt">Vista LLM</button></div></header>
+ <div class="output" id="resultView">
+  <div id="result"><p class="small">Elegí una operación y ejecutala para ver qué ocurrió y qué funciones se recorrieron.</p></div>
+  <div class="section">
+   <h3>Historial de esta copia</h3><div id="history" class="history" style="margin-top:9px"></div>
+  </div>
+ </div>
+ <div class="output hidden" id="promptView">
+  <div class="notice">Esta vista reconstruye el contexto de una deliberación. No contacta a Gemini ni Groq y no cuenta como consulta.</div>
+  <div class="buttonrow"><button id="gemini" class="primary">Ver contexto Gemini</button><button id="groq">Ver contexto Groq</button></div>
+  <p class="small" style="margin:11px 0" id="promptInfo"></p>
+  <div id="promptTrace"></div>
+  <details style="margin-top:13px" open><summary class="small" style="cursor:pointer">Contexto exacto enviado al proveedor</summary><pre id="promptJSON" class="jsonbox"></pre></details>
+ </div>
+</section>
+</main>
+<div class="footer">Alcance: ejecuta reglas físicas del entorno, navegación, resultados, mediciones y preparación de contexto. El tiempo se aplica por operación, sin reproducir todos los ticks, la agenda ni las deliberaciones autónomas. Los archivos de la partida original nunca se escriben desde este laboratorio.</div>
+<script>
+(function(){
+"use strict";
+var state=null,point=null;
+var el=function(id){return document.getElementById(id)};
+var esc=function(v){return String(v===undefined||v===null?"":v).replace(/[&<>"']/g,function(s){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]})};
+var MATS=["madera","piedra","arcilla","fibra","mineral oscuro","alimento","cristal","hongo luminoso"];
+var METHODS=["llenar","rellenar","transferir","descargar","beber","guardar","retirar","probar_carga","depositar_carga","recuperar_carga"];
+var OP_NAMES={
+"go":"Ir a un lugar","explore":"Explorar","inspect":"Inspeccionar","gather":"Recolectar",
+"excavate":"Excavar","build":"Construir estructura","craft":"Fabricar herramienta",
+"modify":"Modificar objeto","dismantle":"Desmontar","interact":"Interactuar",
+"use":"Usar herramienta","experiment":"Experimentar material","combine":"Combinar",
+"assemble":"Ensamblar mecanismo","rest":"Descansar","wait":"Esperar",
+"drink":"Beber","eat":"Comer","forage":"Buscar alimento","descend":"Descender",
+"ascend":"Ascender","design":"Diseñar","compare":"Comparar ensayos",
+"conclude":"Registrar conclusión","propose":"Proponer ampliación","report_issue":"Reportar anomalía"
+};
+function field(id,label,kind,options,value){
+ var current=value===undefined?"":value;
+ var html='<div class="field"><label for="f_'+esc(id)+'">'+esc(label)+'</label>';
+ if(kind==="select"){
+   html+='<select id="f_'+esc(id)+'">';
+   (options||[]).forEach(function(option){
+     var p=Array.isArray(option)?option:[option,option];
+     html+='<option value="'+esc(p[0])+'"'+(String(current)===String(p[0])?' selected':'')+'>'+esc(p[1])+'</option>';
+   });
+   html+='</select>';
+ }else if(kind==="textarea")html+='<textarea id="f_'+esc(id)+'" rows="3">'+esc(current)+'</textarea>';
+ else html+='<input id="f_'+esc(id)+'" type="'+(kind||"text")+'" value="'+esc(current)+'"'+(kind==="number"?' step="any"':'')+'>';
+ return html+'</div>';
+}
+function pair(x,y){
+ return '<div class="twocol">'+field("x","Coordenada X","number",[],x)+field("y","Coordenada Y","number",[],y)+'</div>';
+}
+function optionsOfObjects(){
+ var list=[["","Seleccionar…"]];
+ (state?state.items:[]).forEach(function(v){list.push([v.id,v.name+" · "+v.id])});
+ (state?state.structures:[]).forEach(function(v){list.push([v.id,v.name+" · "+v.id])});
+ return list;
+}
+function choicesMaterials(){return MATS.map(function(x){return [x,x]})}
+function renderForm(){
+ var op=el("operation").value,xy=point||(state?state.position:[15,10,0]);var x=xy[0],y=xy[1],html="";
+ if(op==="go"){html+=field("goMode","Tipo de destino","select",[["coords","Coordenadas conocidas"],["agua","Orilla de agua conocida"]],"coords");html+=pair(x,y);html+='<p class="small">El destino por nombre (piedra, cueva, etc.) está planificado para #133; todavía no existe en 0.6.1.</p>'}
+ else if(op==="explore"){html+=field("direction","Sector","select",[["","Automático"],["north","Norte"],["south","Sur"],["east","Este"],["west","Oeste"]],"");html+=field("region","Región conocida opcional (X,Y)","text",[],"")}
+ else if(op==="gather"){html+=field("target","Material a recolectar","select",choicesMaterials(),"piedra")}
+ else if(op==="inspect"){html+=field("inspectMode","Inspeccionar","select",[["coords","Casilla elegida"],["object","Objeto por ID"]],"coords");html+=pair(x,y);html+=field("item","Objeto","select",optionsOfObjects())}
+ else if(op==="excavate"){html+=field("excavateMode","Seleccionar roca","select",[["auto","Roca adyacente automática"],["coords","Coordenadas de roca adyacente"]],"auto");html+=pair(x,y)}
+ else if(op==="experiment"){html+=field("target","Material","select",choicesMaterials(),"piedra");html+=field("method","Prueba","select",["golpear","calentar","mojar","cargar","luz"].map(function(t){return [t,t]}),"golpear")}
+ else if(op==="combine"){html+=field("material1","Primer material","select",choicesMaterials(),"madera");html+=field("material2","Segundo material","select",choicesMaterials(),"fibra");html+=field("method","Método","select",["unir","atar","apilar","mezclar","compactar","trenzar"].map(function(t){return [t,t]}),"atar")}
+ else if(op==="build"||op==="craft"){html+=field("name","Nombre","text",[],op==="build"?"Soporte experimental":"Herramienta experimental");html+=field("purpose","Propósito propuesto","text",[],"Probar materiales");html+=field("material1","Material 1","select",choicesMaterials(),"madera");html+=field("material2","Material 2","select",[["","Ninguno"]].concat(choicesMaterials()),"madera");html+=field("shape","Geometría","select",["macizo","hueco","plataforma"].map(function(t){return [t,t]}),"plataforma");html+=field("size","Tamaño esquemático","number",[],2);if(op==="craft")html+=field("form","Forma funcional","select",["punta","filo","golpe","palanca","recipiente","simple"].map(function(t){return [t,t]}),"punta")}
+ else if(op==="modify"){html+=field("item","Objeto","select",optionsOfObjects());html+=field("mode","Intervención","select",["add","replace","remove","repair"].map(function(t){return [t,t]}),"add");html+=field("material1","Material añadido / sustituto","select",choicesMaterials(),"madera");html+=field("component","ID de pieza (para reemplazar/quitar/reparar)","text",[],"")}
+ else if(op==="dismantle"){html+=field("item","Objeto","select",optionsOfObjects())}
+ else if(op==="use"){html+=field("item","Herramienta","select",optionsOfObjects());html+=field("method","Método físico","select",["excavar","golpear","cortar","mover","contener","llenar","flotar","navegar","resistir_carga","transmitir_movimiento"].map(function(t){return [t,t]}),"excavar");html+=field("target","Material/objetivo","text",[],"roca")}
+ else if(op==="interact"){html+=field("method","Interacción","select",METHODS.map(function(t){return [t,t]}),"probar_carga");html+=field("item","Obra/recipiente","select",optionsOfObjects());html+=field("source","Origen (si corresponde)","select",optionsOfObjects());html+=field("destination","Destino (si corresponde)","select",optionsOfObjects());html+=field("material","Material","select",choicesMaterials(),"piedra");html+=field("quantity","Cantidad","number",[],2)}
+ else if(op==="rest"||op==="wait"){html+=field("minutes","Minutos simulados","number",[],30)}
+ else if(op==="drink"){html+=field("item","Recipiente (opcional)","select",optionsOfObjects())}
+ else if(op==="design"){html+=field("name","Nombre","text",[],"Nueva idea");html+=field("purpose","Propósito","text",[],"Una función por probar");html+=field("principle","Fundamento","text",[],"Probar relación entre piezas");html+=field("procedure","Procedimiento","textarea",[],"Construir y ensayar");html+=field("prediction","Predicción","text",[],"Observar el efecto");html+=field("requirements","Requisitos","text",[],"madera")}
+ else if(op==="propose"){html+=field("phenomenon","Fenómeno","text",[],"efecto aún no representado");html+=field("missing_capability","Capacidad faltante","text",[],"evaluación física");html+=field("rationale","Fundamento","textarea",[],"No encuentro una prueba implementada");html+=field("experiment","Experimento propuesto","textarea",[],"Contrastar dos estados")}
+ else if(op==="report_issue"){html+=field("title","Título","text",[],"Resultado inesperado");html+=field("expected","Esperado","textarea",[],"Resultado que esperaba");html+=field("observed","Observado","textarea",[],"Resultado registrado");html+=field("rationale","Motivo","text",[],"Comparar la evidencia")}
+ else if(op==="compare"||op==="conclude"){html+=field("topic","Tema","text",[],"Ensayos anteriores");html+=field("evidence_ids","IDs de mediciones separados por coma","text",[],"");if(op==="compare")html+=field("metric","Métrica","text",[],"dureza")}
+ else if(op==="assemble"){html+=field("name","Nombre","text",[],"Mecanismo simple");html+=field("material1","Pieza 1","select",choicesMaterials(),"madera");html+=field("material2","Pieza 2","select",choicesMaterials(),"madera");html+=field("joint","Tipo de unión","select",["fija","articulada","deslizante","flexible"].map(function(t){return [t,t]}),"articulada")}
+ else html+='<p class="small" style="padding:12px 0">Esta acción no necesita parámetros adicionales.</p>';
+ el("fields").innerHTML=html;
+ el("raw").value=JSON.stringify(makeStep(),null,2);
+ Array.prototype.forEach.call(el("fields").querySelectorAll("input,select,textarea"),function(input){input.addEventListener("input",function(){if(!el("custom").checked)el("raw").value=JSON.stringify(makeStep(),null,2)})});
+}
+function v(id){return el("f_"+id)?el("f_"+id).value:""}
+function makeStep(){
+ var op=el("operation").value,s={op:op};
+ function coords(){s.x=Number(v("x"));s.y=Number(v("y"))}
+ function materialPair(){var a=[v("material1")];if(v("material2"))a.push(v("material2"));return a}
+ if(op==="go"){if(v("goMode")==="agua")s.target="agua";else coords()}
+ else if(op==="explore"){if(v("direction"))s.direction=v("direction");if(v("region").trim()){var a=v("region").split(",");if(a.length===2)s.region={x:Number(a[0]),y:Number(a[1])}}}
+ else if(op==="inspect"){if(v("inspectMode")==="object"){s.target=v("item")}else coords()}
+ else if(op==="excavate"){if(v("excavateMode")==="coords")coords()}
+ else if(op==="gather"||op==="experiment"){s.target=v("target");if(op==="experiment")s.method=v("method")}
+ else if(op==="combine"){s.materials=materialPair();s.method=v("method")}
+ else if(op==="build"||op==="craft"){s.name=v("name");s.purpose=v("purpose");s.materials=materialPair();s.geometry={shape:v("shape"),size:Number(v("size"))};if(op==="craft")s.form=v("form")}
+ else if(op==="modify"){s.item=v("item");s.mode=v("mode");if(["add","replace","repair"].includes(s.mode))s.materials=[v("material1")];if(v("component"))s.component=v("component")}
+ else if(op==="dismantle"){s.item=v("item");s.all=true}
+ else if(op==="use"){s.item=v("item");s.method=v("method");s.target=v("target")}
+ else if(op==="interact"){s.method=v("method");if(v("item"))s.item=v("item");if(v("source"))s.source=v("source");if(v("destination"))s.destination=v("destination");s.material=v("material");s.quantity=Number(v("quantity"))}
+ else if(op==="rest"||op==="wait")s.minutes=Number(v("minutes"));
+ else if(op==="drink"){if(v("item"))s.item=v("item")}
+ else if(op==="design"){["name","purpose","principle","procedure","prediction","requirements"].forEach(function(t){s[t]=v(t)});s.components=[{name:"pieza",material:"madera",function:"sostener",connection:"fija"}]}
+ else if(op==="propose"){["phenomenon","missing_capability","rationale","experiment"].forEach(function(t){s[t]=v(t)})}
+ else if(op==="report_issue"){["title","expected","observed","rationale"].forEach(function(t){s[t]=v(t)})}
+ else if(op==="compare"||op==="conclude"){s.topic=v("topic");s.evidence_ids=v("evidence_ids").split(",").map(function(t){return t.trim()}).filter(Boolean);if(op==="compare")s.metric=v("metric")}
+ else if(op==="assemble"){s.name=v("name");s.parts=[{name:"cuerpo",material:v("material1"),shape:"eje"},{name:"móvil",material:v("material2"),shape:"rueda"}];s.joints=[{a:0,b:1,type:v("joint")}]}
+ return s;
+}
+function drawTrace(rows,target){
+ if(!rows||!rows.length)return '<p class="small">No se registraron funciones instrumentadas para esta operación.</p>';
+ return '<div class="label">Funciones realmente ejecutadas · '+rows.length+'</div><div class="trace">'+rows.map(function(r,i){
+  return '<div class="step"><div class="stephead"><strong>'+(i+1)+'. '+esc(r.text)+'</strong><a class="src" href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.file)+':'+r.first+'–'+r.last+'</a></div>'+
+   '<p>'+esc(r.function)+'() · '+r.line_count+' líneas ejecutadas'+(r.count>1?' · '+r.count+' llamadas':'')+'</p></div>';
+ }).join("")+'</div>';
+}
+function renderResult(last){
+ if(!last){el("result").innerHTML='<p class="small">Elegí una operación para ver su resultado y los pasos realmente ejecutados en el motor.</p>';return}
+ var r=last.result,cls=r.success?"":"failed";
+ if(r.status==="no_evaluable")cls="neutral";
+ var html='<div class="resulttitle"><h3>'+esc(OP_NAMES[last.step.op]||last.step.op)+'</h3><span class="tag '+cls+'">'+esc(r.status)+'</span></div>';
+ html+='<div class="label">Respuesta del motor</div><ul class="facts">'+(r.facts||[]).map(function(t){return '<li>'+esc(t)+'</li>'}).join("")+'</ul>';
+ html+='<div class="statebox"><span>Duración: '+esc(r.duration_minutes)+' min</span><span>Contrato: '+esc((last.diagnostic||{}).code||"—")+'</span></div>';
+ if(last.measurement)html+='<details style="margin:12px 0"><summary class="small" style="cursor:pointer">Efectos medidos</summary><pre class="jsonbox">'+esc(JSON.stringify(last.measurement,null,2))+'</pre></details>';
+ html+=drawTrace(last.trace);
+ html+='<details style="margin-top:12px"><summary class="small" style="cursor:pointer">Acción estructurada y diagnóstico técnico</summary><pre class="jsonbox">'+esc(JSON.stringify({step:last.step,physical:r.physical,diagnostic:last.diagnostic},null,2))+'</pre></details>';
+ el("result").innerHTML=html;
+}
+function renderState(s,keepForm){
+ state=s;el("originNote").textContent=s.origin;
+ el("pos").textContent="("+s.position.join(", ")+")";
+ el("metadata").innerHTML='<span>Casillas conocidas: '+s.known+'</span><span>Minuto: '+s.minute+'</span><span>Obras: '+s.structures.length+'</span><span>Herramientas: '+s.items.length+'</span>';
+ el("map").innerHTML="";
+ s.map.forEach(function(row){
+ row.forEach(function(c){
+  var b=document.createElement("button");b.type="button";
+  b.className="cell "+(c.ch==="@"?"self":c.ch==="?"?"unknown":c.ch==="^"||c.ch==="#"?"rock":c.ch==="T"?"tree":c.ch==="~"?"water":["c","e","r","v","h"].includes(c.ch)?"site":c.ch==="s"?"sand":"");
+  b.textContent=c.ch;b.title="("+c.x+","+c.y+") · "+(c.known?"conocido":"desconocido");
+  b.disabled=!c.selectable;
+  if(point&&point[0]===c.x&&point[1]===c.y)b.classList.add("selected");
+  b.addEventListener("click",function(){point=[c.x,c.y,s.position[2]];renderState(state,true);if(el("f_x"))el("f_x").value=c.x;if(el("f_y"))el("f_y").value=c.y;if(!el("custom").checked)el("raw").value=JSON.stringify(makeStep(),null,2)});
+  el("map").appendChild(b);
+ });
+ });
+ el("inventory").innerHTML=Object.keys(s.inventory).sort().map(function(k){return '<div class="kv"><span>'+esc(k)+'</span><b>'+esc(s.inventory[k])+'</b></div>'}).join("")||'<p class="small">Sin materiales</p>';
+ var places=s.sites.map(function(x){return {name:x.name,pos:x.pos}});
+ places=places.concat(s.structures.map(function(x){return {name:x.name+" · "+x.id,pos:x.pos}}));
+ el("places").innerHTML=places.map(function(x){
+  return '<div class="kv"><span>'+esc(x.name)+'</span><button class="jump" data-x="'+x.pos[0]+'" data-y="'+x.pos[1]+'" data-z="'+x.pos[2]+'">'+esc(x.pos.join(","))+'</button></div>';
+ }).join("")||'<p class="small">Sin hitos descubiertos</p>';
+ Array.prototype.forEach.call(el("places").querySelectorAll(".jump"),function(btn){
+  btn.addEventListener("click",function(){point=[Number(btn.dataset.x),Number(btn.dataset.y),Number(btn.dataset.z)];if(el("f_x"))el("f_x").value=point[0];if(el("f_y"))el("f_y").value=point[1];if(!el("custom").checked)el("raw").value=JSON.stringify(makeStep(),null,2)});
+ });
+ el("history").innerHTML=(s.history||[]).map(function(x){return '<div class="historyentry"><b>'+esc(x.op)+'</b><span>'+esc(x.facts[0]||x.status)+'</span></div>'}).join("")||'<p class="small">Sin pruebas todavía.</p>';
+ renderResult(s.last);
+ if(!keepForm)renderForm();
+}
+function err(msg){el("error").textContent=msg||""}
+async function post(path,body){
+ var res=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+ var data=await res.json();if(!res.ok)throw Error(data.error||"Error HTTP "+res.status);return data;
+}
+async function run(){
+ err("");el("run").disabled=true;
+ try{var step=el("custom").checked?JSON.parse(el("raw").value):makeStep();var s=await post("/api/act",{step:step});renderState(s,true)}
+ catch(e){err(String(e.message||e))}
+ finally{el("run").disabled=false}
+}
+async function reset(){
+ err("");el("reset").disabled=true;
+ try{var s=await post("/api/reset",{mode:el("originMode").value,seed:Number(el("seed").value),kit:el("kit").checked});point=null;renderState(s,false)}
+ catch(e){err(String(e.message||e))}
+ finally{el("reset").disabled=false}
+}
+async function payload(provider){
+ el("promptInfo").textContent="Generando vista de "+provider+" (sin llamar al modelo)…";
+ try{
+ var r=await fetch("/api/payload?provider="+encodeURIComponent(provider));var data=await r.json();
+ if(!r.ok)throw Error(data.error||"No disponible");
+ el("promptInfo").textContent="Campos: "+Object.keys(data.context).length+" · Omitidos por presupuesto: "+(data.sections_omitted.length?data.sections_omitted.join(", "):"ninguno");
+ el("promptTrace").innerHTML=drawTrace(data.trace);
+ el("promptJSON").textContent=JSON.stringify(data.context,null,2);
+ }catch(e){el("promptInfo").textContent="Error: "+String(e.message||e)}
+}
+el("operation").addEventListener("change",renderForm);
+el("run").addEventListener("click",run);el("reset").addEventListener("click",reset);
+el("originMode").addEventListener("change",function(){el("seed").disabled=this.value==="partida"});
+el("custom").addEventListener("change",function(){if(!this.checked)el("raw").value=JSON.stringify(makeStep(),null,2)});
+el("tabResult").addEventListener("click",function(){el("resultView").classList.remove("hidden");el("promptView").classList.add("hidden");this.classList.add("on");el("tabPrompt").classList.remove("on")});
+el("tabPrompt").addEventListener("click",function(){el("resultView").classList.add("hidden");el("promptView").classList.remove("hidden");this.classList.add("on");el("tabResult").classList.remove("on");if(!el("promptJSON").textContent)payload("gemini")});
+el("gemini").addEventListener("click",function(){payload("gemini")});el("groq").addEventListener("click",function(){payload("groq")});
+fetch("/api/state").then(function(r){return r.json()}).then(function(s){
+ Object.keys(OP_NAMES).forEach(function(op){var opt=document.createElement("option");opt.value=op;opt.textContent=OP_NAMES[op]+" · "+op;el("operation").appendChild(opt)});
+ el("operation").value="explore";renderState(s,false);
+}).catch(function(e){err("No se pudo conectar al motor: "+String(e))});
+})();
+</script></body></html>
