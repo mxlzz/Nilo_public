@@ -1,6 +1,6 @@
 # Nilo 0.7 · Etapa 05 — Reloj y ejecución temporal
 
-**Fecha:** 4/11/2026 · **Rama:** `refactor/0.7` · **Estado: COMPLETADA.** [CI integral #41888419832](https://github.com/mxlzz/Nilo/actions/runs/41888419832), commit `ae11f74b2e256aa1dbe1fb3c0e96094a108f032a`: **success**. [Compatibilidad histórica #41888419813](https://github.com/mxlzz/Nilo/actions/runs/41888419813): **success**, seis partidas sintéticas abiertas. [Plan maestro](PLAN_REESTRUCTURACION_NILO_07.md) · [Issues #141](https://github.com/mxlzz/Nilo/issues/141) y [#142](https://github.com/mxlzz/Nilo/issues/142).
+**Fecha:** 4/11/2026 · **Rama:** `refactor/0.7` · **Estado: COMPLETADA.** CI integral `referencia privada #41888419832` (`referencia-historica-privada-actions-runs-41888419832`), commit `ae11f74b2e256aa1dbe1fb3c0e96094a108f032a`: **success**. Compatibilidad histórica `referencia privada #41888419813` (`referencia-historica-privada-actions-runs-41888419813`): **success**, seis partidas sintéticas abiertas. [Plan maestro](PLAN_REESTRUCTURACION_NILO_07.md) · [Issues #67](https://github.com/mxlzz/Nilo_public/issues/67) y [#68](https://github.com/mxlzz/Nilo_public/issues/68).
 
 ## 1. Auditoría de 0.6.4 y anomalías concretas
 
@@ -10,9 +10,9 @@ Nilo maneja cuatro escalas diferentes: segundos reales de `time.monotonic()` par
 | --- | --- | --- |
 | Velocidad | `timing.effective_speed` con ×1, ×10, ×60 y ×80; escritura como máximo ×2; consulta LLM ×1 sin acción pendiente | La escala del reloj funciona, pero carecía de un contrato de fases reutilizable |
 | Inicio de acción | `_tick_slice` crea `pending` con `total` y `remaining` a partir de `ACTION_DURATIONS`, descanso solicitado y fatiga | `total` es una **estimación de trabajo**, no la duración declarada por el handler |
-| Navegación | `start_navigation` reemplaza `pending.total` por `len(route)*travel_minutes_per_tile` | Para `go/explore` equivale al viaje; para `gather` **pierde el trabajo de extracción** (#142) |
+| Navegación | `start_navigation` reemplaza `pending.total` por `len(route)*travel_minutes_per_tile` | Para `go/explore` equivale al viaje; para `gather` **pierde el trabajo de extracción** (#68) |
 | Acreditación de efectos | `environment.perform_result` ocurre cuando `remaining<=0` | En `gather` remoto el inventario aumenta en cuanto llega, sin que transcurra el trabajo |
-| Resultados | `action_result.duration_minutes`, `measurement.duration_minutes`, `pending.total` | No miden el mismo intervalo y el archivo anterior no especificaba sus distintas responsabilidades (#141) |
+| Resultados | `action_result.duration_minutes`, `measurement.duration_minutes`, `pending.total` | No miden el mismo intervalo y el archivo anterior no especificaba sus distintas responsabilidades (#67) |
 | Interrupción | Colapso borra `pending` y `plan` | Guardaba operación/minutos parciales pero no fase de viaje/trabajo ni duración prevista desagregada |
 | Guardado | `snapshot` JSON en SQLite | `pending.remaining` y `clock_minutes` sobreviven a reinicios; no deben recalcularse con `time.time()` salvo migraciones especiales de escritura |
 | Espera sin tareas | `auto_wait_frozen` detiene el mundo cuando no hay acciones y el proveedor no responde | El cooldown externo debe continuar en reloj real; no se acelera con el mundo |
@@ -21,7 +21,7 @@ Nilo maneja cuatro escalas diferentes: segundos reales de `time.monotonic()` par
 
 ## 2. Contrato de dominio implementado
 
-[`nilo_runtime/core/clock.py`](https://github.com/mxlzz/Nilo/blob/refactor/0.7/nilo_runtime/core/clock.py) define funciones puras:
+[`nilo_runtime/core/clock.py`](https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/nilo_runtime/core/clock.py) define funciones puras:
 
 - `clamp_real_elapsed`: avanza hasta 20 segundos reales por iteración para evitar que una suspensión del proceso «pague» trabajo futuro al reanudar. Rechaza tiempos negativos, infinitos y NaN en ejecuciones modernas.
 - `TimePlan` / `plan_time`: separa `planned_travel_minutes` y `planned_work_minutes`; `planned_total_minutes=travel+work`. `go`, `explore` y otras navegaciones son viajes sin trabajo agregado artificialmente.
@@ -32,7 +32,7 @@ No se crea un nuevo reloj, un segundo sistema de acciones ni un planificador aut
 
 ## 3. Cambios de ejecución
 
-- [`nilo.py`](https://github.com/mxlzz/Nilo/blob/refactor/0.7/nilo.py) agrega `pending.timing` **solo para acciones nuevas** con versión interna 1 y fase actual. No altera el esquema principal de save v5 ni los formatos de acciones ya existentes.
+- [`nilo.py`](https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/nilo.py) agrega `pending.timing` **solo para acciones nuevas** con versión interna 1 y fase actual. No altera el esquema principal de save v5 ni los formatos de acciones ya existentes.
 - **`gather` con navegación:** el estado inicial programa `viaje + trabajo de extracción`. Al alcanzar la fuente solo se completa la fase `travel`; durante `work` no se consume depósito ni aumenta inventario. `perform_result(gather)` se ejecuta al concluir ambas fases. La fatiga sigue aplicando a viaje y trabajo. Una ruta bloqueada cancela la ejecución y no concede materiales.
 - **`gather` adyacente:** mantiene un solo bloque de trabajo; no existe viaje fantasma. El trabajo previsto es `ACTION_DURATIONS['gather']*fatigue_multiplier`. La duración que declare el handler tras extraer puede diferir del estimado; queda etiquetada como `handler_declared_minutes`.
 - **`go` / `explore` / otras navegaciones:** conservan el total de viaje y sus efectos por casillas vencidas. No se agrega una segunda fase ficticia. `due` se calcula solo con `elapsed_travel_minutes`, sin mover posiciones al consumir trabajo posterior de `gather`.
@@ -48,11 +48,11 @@ Los replays `historical_replay` y `legacy_replay_rules` mantienen el algoritmo o
 
 ## 5. Ensayos y criterios de cierre
 
-[`tests/test_tiempo_07.py`](https://github.com/mxlzz/Nilo/blob/refactor/0.7/tests/test_tiempo_07.py) incorpora pruebas puras de planificación y duración, recolección distante y adyacente, viaje `go` sin trabajo adicional, ruta bloqueada, colapso a mitad de extracción, reanudación SQLite en fase `work`, trabajos múltiples que no acreditan construcciones anticipadas, pausa real y cambio a ×80 sin saltar trabajo, límites de velocidad y selección ×2 de escritura.
+[`tests/test_tiempo_07.py`](https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/tests/test_tiempo_07.py) incorpora pruebas puras de planificación y duración, recolección distante y adyacente, viaje `go` sin trabajo adicional, ruta bloqueada, colapso a mitad de extracción, reanudación SQLite en fase `work`, trabajos múltiples que no acreditan construcciones anticipadas, pausa real y cambio a ×80 sin saltar trabajo, límites de velocidad y selección ×2 de escritura.
 
 La puerta de salida exige: suite completa + escenarios físicos + auditor de arquitectura + ZIP portable + dos replays históricos con huella `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`, y reimportación sin alterar originales de seis saves sintéticos de 0.5.9.4.2/0.6.0/0.6.4.
 
-**Comprobado:** [CI #41888419832](https://github.com/mxlzz/Nilo/actions/runs/41888419832) completó **709 tests (1 omitido)**, con auditor de arquitectura e identidad, cinco procesos con RNG independiente, escenarios físicos, arranque desde ZIP extraído y dos replays que conservaron exactamente la huella `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`. [CI #41888419813](https://github.com/mxlzz/Nilo/actions/runs/41888419813) importó **6/6 partidas sintéticas históricas** desde copias sin alterar originales. Las regresiones temporales de pruebas de itinerarios iniciales se corrigieron antes del cierre: corredor efectivamente transitable, selección controlada de fuente de madera y propagación de la duración del handler por el coordinador.
+**Comprobado:** CI `referencia privada #41888419832` (`referencia-historica-privada-actions-runs-41888419832`) completó **709 tests (1 omitido)**, con auditor de arquitectura e identidad, cinco procesos con RNG independiente, escenarios físicos, arranque desde ZIP extraído y dos replays que conservaron exactamente la huella `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`. CI `referencia privada #41888419813` (`referencia-historica-privada-actions-runs-41888419813`) importó **6/6 partidas sintéticas históricas** desde copias sin alterar originales. Las regresiones temporales de pruebas de itinerarios iniciales se corrigieron antes del cierre: corredor efectivamente transitable, selección controlada de fuente de madera y propagación de la duración del handler por el coordinador.
 
 ## 6. Deuda relacionada, fuera de esta etapa
 

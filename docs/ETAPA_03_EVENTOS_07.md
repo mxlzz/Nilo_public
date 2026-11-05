@@ -1,6 +1,6 @@
 # Nilo 0.7 · Etapa 03 — Resultados, eventos y procedencia verificable
 
-**Fecha:** 4/11/2026. **Rama:** `refactor/0.7`. **Estado: COMPLETADA.** [CI general #41875118726](https://github.com/mxlzz/Nilo/actions/runs/41875118726), commit `37df274b94a34bf0f3ef5c6823049874e43b5572`: success. [Compatibilidad histórica #41874894941](https://github.com/mxlzz/Nilo/actions/runs/41874894941): success. [Plan completo](PLAN_REESTRUCTURACION_NILO_07.md) · [Seguimiento](ESTADO_REESTRUCTURACION_07.md) · [PR draft #155](https://github.com/mxlzz/Nilo/pull/155).
+**Fecha:** 4/11/2026. **Rama:** `refactor/0.7`. **Estado: COMPLETADA.** CI general `referencia privada #41875118726` (`referencia-historica-privada-actions-runs-41875118726`), commit `37df274b94a34bf0f3ef5c6823049874e43b5572`: success. Compatibilidad histórica `referencia privada #41874894941` (`referencia-historica-privada-actions-runs-41874894941`): success. [Plan completo](PLAN_REESTRUCTURACION_NILO_07.md) · [Seguimiento](ESTADO_REESTRUCTURACION_07.md) · PR draft `referencia privada #155` (`referencia-historica-privada-pull-155`).
 
 ## 1. Auditoría localizada
 
@@ -35,7 +35,7 @@ Un `status=verified_success` informa que el handler completó su operación; **n
 
 ## 3. Contraste con la referencia e integridad
 
-Pruebas de etapa [`tests/test_eventos_07.py`](https://github.com/mxlzz/Nilo/blob/refactor/0.7/tests/test_eventos_07.py):
+Pruebas de etapa [`tests/test_eventos_07.py`](https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/tests/test_eventos_07.py):
 
 - Solo una clase `ActionResult` para imports nuevos/legados; adaptador de cuatro campos estable.
 - Contradicciones entre `success` y `status` rechazadas al convertir; duraciones inválidas rechazadas.
@@ -45,7 +45,7 @@ Pruebas de etapa [`tests/test_eventos_07.py`](https://github.com/mxlzz/Nilo/blob
 - Integración con `Simulation`: `action_outcomes`, `measurements` y eventos narrativos comparten IDs coherentes al completar una acción.
 - El auditor de imports y el verificador del paquete ZIP siguen siendo obligatorios.
 
-**Verificación ejecutada:** [CI #41875118726](https://github.com/mxlzz/Nilo/actions/runs/41875118726) pasó **680 pruebas (1 omitida)**, auditor estructural, escenarios físicos, importación desde ZIP extraído y dos replays con fingerprint idéntico `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`. [CI #41874894941](https://github.com/mxlzz/Nilo/actions/runs/41874894941) probó la apertura de seis SQLite sintéticos históricos desde tres versiones usando el runtime refactorizado. Estos ensayos no representan corridas reales prolongadas de LLM.
+**Verificación ejecutada:** CI `referencia privada #41875118726` (`referencia-historica-privada-actions-runs-41875118726`) pasó **680 pruebas (1 omitida)**, auditor estructural, escenarios físicos, importación desde ZIP extraído y dos replays con fingerprint idéntico `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`. CI `referencia privada #41874894941` (`referencia-historica-privada-actions-runs-41874894941`) probó la apertura de seis SQLite sintéticos históricos desde tres versiones usando el runtime refactorizado. Estos ensayos no representan corridas reales prolongadas de LLM.
 
 ## 4. Límite explícito de migración
 
@@ -58,4 +58,4 @@ Pruebas de etapa [`tests/test_eventos_07.py`](https://github.com/mxlzz/Nilo/blob
 
 ## 5. Puerta de salida
 
-**Puerta de salida superada**: CI general y de compatibilidad histórica exitosos, suite, replay y ZIP verificados. [Registro de avance](ESTADO_REESTRUCTURACION_07.md) e issue maestro #151 actualizados. El programa en `main`, el release 0.6.4 y las partidas privadas no se modifican. **La etapa 04 — Identidades y aleatoriedad — queda habilitada, todavía no iniciada.**
+**Puerta de salida superada**: CI general y de compatibilidad histórica exitosos, suite, replay y ZIP verificados. [Registro de avance](ESTADO_REESTRUCTURACION_07.md) e issue maestro #74 actualizados. El programa en `main`, el release 0.6.4 y las partidas privadas no se modifican. **La etapa 04 — Identidades y aleatoriedad — queda habilitada, todavía no iniciada.**

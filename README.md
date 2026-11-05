@@ -45,7 +45,7 @@ El **sandbox de botones** permite elegir cualquiera de las 26 operaciones, param
 - **Recipientes (corrección de .27):** la vía tipada principal `action_results.py` y las variables autorizadas de predicción ahora coinciden con el laboratorio: `capacidad_util_agua`. Las etiquetas de mediciones históricas permanecen legibles; no existe pérdida de agua en el tiempo.
 - **Interfaz:** apartado de diseños muestra funciones comprobadas con IDs de medición y aclara la diferencia con prototipos. Continúa sin cambiar las reglas físicas de sueño o seguridad.
 
-**Límites:** no es todavía la evaluación integral de autonomía del issue #14; la semántica de objetivos abiertos sigue dependiendo de la deliberación autónoma de Nilo. La prueba prolongada con modelos reales continúa pendiente.
+**Límites:** no es todavía la evaluación integral de autonomía del issue #2; la semántica de objetivos abiertos sigue dependiendo de la deliberación autónoma de Nilo. La prueba prolongada con modelos reales continúa pendiente.
 
 ---
 
@@ -66,13 +66,13 @@ El **sandbox de botones** permite elegir cualquiera de las 26 operaciones, param
 
 ## Nilo 0.5.9.3.26 · Cuaderno, vínculos completos y verificación de interfaz (2026-11-01)
 
-**Tercera etapa acordada: #79, #96, #97, #98, #99.** Basada en 0.5.9.3.25, sin modificar reglas de autonomía, física corporal, tiempos de las acciones ni sus datos históricos.
+**Tercera etapa acordada: #38, #51, #52, #53, #54.** Basada en 0.5.9.3.25, sin modificar reglas de autonomía, física corporal, tiempos de las acciones ni sus datos históricos.
 
-- **#79 — Relaciones del Cuaderno:** `recordLinks` muestra TODOS los registros relacionados directamente, agrupados por familia sin subtítulos ni separadores, con prioridad de fase y orden histórico dentro de cada grupo; se elimina el control «Ver N relaciones más».
+- **#38 — Relaciones del Cuaderno:** `recordLinks` muestra TODOS los registros relacionados directamente, agrupados por familia sin subtítulos ni separadores, con prioridad de fase y orden histórico dentro de cada grupo; se elimina el control «Ver N relaciones más».
 - `History.relations_for`, `relations_batch` y `Simulation.public_state` dejan de truncar vínculos a 40/25/32 por registro. La consulta individual `/api/record` también devuelve el grafo completo. Se deduplican referencias por entidad y se conserva la procedencia de las mediciones vinculadas al cuaderno.
 - Los cortes de indexación de evidencias y `entity_links` (80/100/150) también se retiran. Migración `indexed_v2_full` reconstruye los índices de IDs explícitos una sola vez en bases existentes, sin reinterpretar texto, inventar relaciones ni modificar las partidas.
-- **Integración con #92:** las transferencias, recargas, consumos, descargas y almacenamientos de recipientes ahora enlazan las herramientas u obras reales por ID, y distinguen origen/destino cuando hay evidencia tipada de éxito. La narración sin efecto físico o una operación rechazada no crea vínculo. Se conservan las variaciones de inventario como registros de material, sin inventar objetos.
-- **#96–#99:** conservar las ayudas corporales vigentes, popovers flotantes, filtros y motivos de Investigaciones/Proyectos, y contorno del objetivo físico en el mapa. Esta versión agrega regresiones de arranque e integración contra el nuevo motor; no afirma verificación visual en Windows sin prueba humana.
+- **Integración con #49:** las transferencias, recargas, consumos, descargas y almacenamientos de recipientes ahora enlazan las herramientas u obras reales por ID, y distinguen origen/destino cuando hay evidencia tipada de éxito. La narración sin efecto físico o una operación rechazada no crea vínculo. Se conservan las variaciones de inventario como registros de material, sin inventar objetos.
+- **#51–#54:** conservar las ayudas corporales vigentes, popovers flotantes, filtros y motivos de Investigaciones/Proyectos, y contorno del objetivo físico en el mapa. Esta versión agrega regresiones de arranque e integración contra el nuevo motor; no afirma verificación visual en Windows sin prueba humana.
 - Pruebas de relaciones con más de 150 entidades por categoría, reconstrucción de índices históricos, ausencia de vínculos por texto, orden/presentación ejecutados en Node, simulación de transferencia con persistencia/reapertura SQLite; también se ejecutan pruebas y replays históricos.
 
 **Pendiente de observación:** confirmar visualmente el comportamiento de ayudas, filtros, contorno y navegación/lectura del Cuaderno en una partida real; en acciones instantáneas el contorno puede no permanecer en pantalla. La cobertura futura de vínculos con terreno o fichas navegables de materiales depende de identidades físicas todavía no instrumentadas.
@@ -81,25 +81,25 @@ El **sandbox de botones** permite elegir cualquiera de las 26 operaciones, param
 
 ## Nilo 0.5.9.3.25 · Capacidades físicas y recipientes (2026-11-01)
 
-**Segunda etapa acordada: #104, #80, #62 y #92.** Esta versión añade un primer módulo operativo completo, pero NO presupone que toda la arquitectura de plugins futuros esté terminada.
+**Segunda etapa acordada: #59, #39, #30 y #49.** Esta versión añade un primer módulo operativo completo, pero NO presupone que toda la arquitectura de plugins futuros esté terminada.
 
-- **#104:** fabricación de objetos blandos y duplicados materiales independientes; sin veto universal por resistencia media inferior a 3 ni pérdida automática de materiales por ese veto. La resistencia sigue representada para evaluar usos. Se conserva el límite de componentes y las restricciones de obra fija superpuesta.
-- **#62:** registro cerrado y versionado de capacidades físicas en `capabilities.py`, con despacho genérico `interact` y módulo `vessels.py`; se registra la versión de contenidos en el mundo al primer uso, y la evidencia de cada operación incluye ID y versión. Las partidas anteriores no cambian de leyes hasta ejecutar una operación nueva; si una partida requiere otra versión o la capacidad está deshabilitada, la operación se rechaza. No se cargan paquetes arbitrarios ni se habilitan propuestas automáticamente. Quedan pendientes activación explícita por instalación, migraciones entre versiones incompatibles y generación de otros módulos.
-- **#92:** recipientes esquemáticos pueden llenarse parcialmente desde agua ambiental contigua, transferir cantidad comprobable entre dos objetos, descargar al entorno, beber explícitamente del contenido, guardar y retirar sólidos del inventario. Se valida capacidad, disponibilidad, cercanía, material compatible, integridad y cantidad sin duplicaciones. El agua ambiental aún no tiene un balance de depósito finito; descargar no produce charcos modelados. Los recipientes llenos no pueden desmontarse ni modificarse de manera que el contenido exceda la capacidad final sin vaciarlos o transferirlos previamente. La acción histórica `use/llenar` permanece para compatibilidad; el módulo nuevo utiliza `interact/rellenar`.
-- **#80:** métodos físicos reconocidos por registro y diagnóstico tipado de la ausencia de método, con alcance, variables no evaluables e ID de evidencia. Los rechazos del módulo por precondición se distinguen de fallos físicos medidos y de `no_evaluable`. No se reinterpreta el historial anterior, ni se infiere filtración/potabilidad a partir de contención.
-- Continúan sin cambiar los contratos corporales #100–#103, la autonomía del personaje, la física geométrica detallada y la interfaz del run anterior. Replays históricos preservados.
+- **#59:** fabricación de objetos blandos y duplicados materiales independientes; sin veto universal por resistencia media inferior a 3 ni pérdida automática de materiales por ese veto. La resistencia sigue representada para evaluar usos. Se conserva el límite de componentes y las restricciones de obra fija superpuesta.
+- **#30:** registro cerrado y versionado de capacidades físicas en `capabilities.py`, con despacho genérico `interact` y módulo `vessels.py`; se registra la versión de contenidos en el mundo al primer uso, y la evidencia de cada operación incluye ID y versión. Las partidas anteriores no cambian de leyes hasta ejecutar una operación nueva; si una partida requiere otra versión o la capacidad está deshabilitada, la operación se rechaza. No se cargan paquetes arbitrarios ni se habilitan propuestas automáticamente. Quedan pendientes activación explícita por instalación, migraciones entre versiones incompatibles y generación de otros módulos.
+- **#49:** recipientes esquemáticos pueden llenarse parcialmente desde agua ambiental contigua, transferir cantidad comprobable entre dos objetos, descargar al entorno, beber explícitamente del contenido, guardar y retirar sólidos del inventario. Se valida capacidad, disponibilidad, cercanía, material compatible, integridad y cantidad sin duplicaciones. El agua ambiental aún no tiene un balance de depósito finito; descargar no produce charcos modelados. Los recipientes llenos no pueden desmontarse ni modificarse de manera que el contenido exceda la capacidad final sin vaciarlos o transferirlos previamente. La acción histórica `use/llenar` permanece para compatibilidad; el módulo nuevo utiliza `interact/rellenar`.
+- **#39:** métodos físicos reconocidos por registro y diagnóstico tipado de la ausencia de método, con alcance, variables no evaluables e ID de evidencia. Los rechazos del módulo por precondición se distinguen de fallos físicos medidos y de `no_evaluable`. No se reinterpreta el historial anterior, ni se infiere filtración/potabilidad a partir de contención.
+- Continúan sin cambiar los contratos corporales #55–#58, la autonomía del personaje, la física geométrica detallada y la interfaz del run anterior. Replays históricos preservados.
 - Tests nuevos de conservación de contenidos, duplicados, intentos rechazados sin efectos, consumo explícito, cambios de capacidad, diagnóstico y arranque. Se complementan con la suite y replays de CI.
 
 ---
 
 ## Nilo 0.5.9.3.24 · Casilla de intervención en mapa (2026-11-01)
 
-- #99: marca con un contorno interior discreto la casilla concreta de una intervención física durante una acción pendiente, sin modificar símbolos, rastro ni geometría. Disponible en superficie y cueva, y en mapas cercano y general.
+- #54: marca con un contorno interior discreto la casilla concreta de una intervención física durante una acción pendiente, sin modificar símbolos, rastro ni geometría. Disponible en superficie y cueva, y en mapas cercano y general.
 - El motor expone `active_intervention` de solo lectura: `x,y,z,op`, exclusivamente si puede identificar una casilla observada y real. No se escribe en SQLite ni modifica memoria, acciones, tiempos o necesidades.
 - Inspección: admite terreno por coordenadas, terreno/obra inequívocos y omite herramientas portátiles. Excavación: valida roca adyacente y herramienta con capacidad. Recolección: muestra fuente real cuando ya se trabaja allí, no casilla de apoyo; `forage` utiliza el selector físico compartido. Obras fijas: se distingue de modificaciones de herramientas portátiles.
 - Durante una navegación, incluso si ya hay fuente seleccionada, no se anticipa el contorno: aparece solo durante intervención física, si ese estado dura hasta el próximo refresco. En operaciones que se ejecutan instantáneamente al terminar un trayecto, puede no ser visible; no se introducen esperas artificiales para forzar animaciones.
 - Si se cancela la acción, se pierde conciencia, cambia de nivel o el terreno no está revelado, no aparece marca. Pueden comprobarse estos casos con pruebas de contrato y ejecución de mapa JavaScript.
-- Basada en la corrección de arranque 0.5.9.3.23.1. Sin cambios de #79, #80, #62, #92 o de supervivencia.
+- Basada en la corrección de arranque 0.5.9.3.23.1. Sin cambios de #38, #39, #30, #49 o de supervivencia.
 
 ---
 
@@ -108,27 +108,27 @@ El **sandbox de botones** permite elegir cualquiera de las 26 operaciones, param
 - La versión 0.5.9.3.23 intentaba ejecutar `stored('nilo.researchView.v1',...)` **antes de inicializar `const stored`**, provocando un `ReferenceError` de JavaScript durante el arranque de la página.
 - La 0.5.9.3.23.1 corrige el orden de las declaraciones sin cambiar las reglas del motor, el formato de partidas ni los filtros.
 - Se añadió una prueba de ejecución real de la secuencia de inicialización con Node.js; `node --check` no detectaba este fallo en tiempo de ejecución.
-- No contiene cambios del mapa (#99): la 0.5.9.3.24 quedó suspendida hasta resolver y verificar el arranque.
+- No contiene cambios del mapa (#54): la 0.5.9.3.24 quedó suspendida hasta resolver y verificar el arranque.
 
 ---
 
 ## Nilo 0.5.9.3.23 — Lectura de registros (2026-11-01)
 
-- #96: ayudas de hidratación, alimentación y energía actualizadas conforme a las reglas efectivamente publicadas en 0.5.9.3.22 (sin ingestas por umbral; descanso libre y colapso).
-- #97: ayudas contextuales de Ensayos y otras secciones como popup flotante en `body`, sin desplazar registros; cierre por Escape, clic exterior, scroll y cambio de solapa.
-- #98: filtro **independiente** de investigaciones por estado, incluyendo integradas; motivos registrados de pausas, abandonos y cierre en fichas, sin inferir razones ausentes.
+- #51: ayudas de hidratación, alimentación y energía actualizadas conforme a las reglas efectivamente publicadas en 0.5.9.3.22 (sin ingestas por umbral; descanso libre y colapso).
+- #52: ayudas contextuales de Ensayos y otras secciones como popup flotante en `body`, sin desplazar registros; cierre por Escape, clic exterior, scroll y cambio de solapa.
+- #53: filtro **independiente** de investigaciones por estado, incluyendo integradas; motivos registrados de pausas, abandonos y cierre en fichas, sin inferir razones ausentes.
 - El filtro de Proyectos se conserva exactamente como en 0.5.9.3.22.
-- No incluye agrupación de relaciones del Cuaderno #79 ni resaltado de casillas de intervención #99; ambos requieren pruebas específicas y quedan para otra versión.
+- No incluye agrupación de relaciones del Cuaderno #38 ni resaltado de casillas de intervención #54; ambos requieren pruebas específicas y quedan para otra versión.
 
 ---
 
 ## Nilo 0.5.9.3.22 — Autonomía corporal y agenda
 
-- #100: `rest(minutes)` permite descansar de 1 a 1440 minutos simulados (30 por defecto). Al caer a energía ≤5, el estado inconsciente interrumpe la acción; se recupera a energía ≥40 sin deliberar durante el colapso.
-- #101: no hay ingesta ni provisiones automáticas por umbrales del motor. Comer, beber, descansar y recolectar requieren decisión de Nilo o delegación verificable.
-- #102: la agenda no bloquea acciones por sed, hambre o energía mediante umbrales generales; se siguen comprobando precondiciones físicas por operación.
-- #103: las rutas y acciones físicas aplican un factor consistente de fatiga al iniciar la acción; la calibración dinámica durante rutas largas queda para evaluación posterior.
-- Las reglas históricas pueden reproducirse sin transformar sus consumos ni descansos anteriores. No incorpora cambios de interfaz #79/#96–#99 ni nuevas capacidades de recipientes #92.
+- #55: `rest(minutes)` permite descansar de 1 a 1440 minutos simulados (30 por defecto). Al caer a energía ≤5, el estado inconsciente interrumpe la acción; se recupera a energía ≥40 sin deliberar durante el colapso.
+- #56: no hay ingesta ni provisiones automáticas por umbrales del motor. Comer, beber, descansar y recolectar requieren decisión de Nilo o delegación verificable.
+- #57: la agenda no bloquea acciones por sed, hambre o energía mediante umbrales generales; se siguen comprobando precondiciones físicas por operación.
+- #58: las rutas y acciones físicas aplican un factor consistente de fatiga al iniciar la acción; la calibración dinámica durante rutas largas queda para evaluación posterior.
+- Las reglas históricas pueden reproducirse sin transformar sus consumos ni descansos anteriores. No incorpora cambios de interfaz #38/#96–#54 ni nuevas capacidades de recipientes #49.
 
 ---
 
@@ -138,56 +138,56 @@ El **sandbox de botones** permite elegir cualquiera de las 26 operaciones, param
 - Barra superior: Marcar como leído, filtro e Indicador quedan juntos sin el botón QMP que provocaba desplazamiento horizontal.
 - Necesidades: ayudas (?) con información vigente de energía hasta 100, sin versión anterior ni leyenda redundante; Abrigo y Seguridad atenuados, recuperan contraste al enfocar.
 - Actividad: porcentaje y tiempos simulados y reales en una línea.
-- Cuaderno (#79): se verificó el flujo de relaciones físicas creado en 0.5.9.3.20, con movimientos de inventario y herramientas/obras por ID cuando constan en las mediciones y sus relaciones.
-- Autonomía (#94): sin misión de investigar descanso; conservar recuperación física, mediciones y ensayos elegidos por Nilo. Prompt y contexto no priorizan el estudio refugio/intemperie; dejan de producirse conclusiones automáticas atribuidas a él. Una comparación explícita con evidencia sigue disponible.
+- Cuaderno (#38): se verificó el flujo de relaciones físicas creado en 0.5.9.3.20, con movimientos de inventario y herramientas/obras por ID cuando constan en las mediciones y sus relaciones.
+- Autonomía (#50): sin misión de investigar descanso; conservar recuperación física, mediciones y ensayos elegidos por Nilo. Prompt y contexto no priorizan el estudio refugio/intemperie; dejan de producirse conclusiones automáticas atribuidas a él. Una comparación explícita con evidencia sigue disponible.
 - Proyectos opcionales: acción sin_proyecto para deliberar/actuar sin abrir proyecto. No se modifican las reglas de pausa ni de recordatorios.
 - Compatibilidad: las reproducciones antiguas conservan la conducta física y la comparación automática de sus reglas históricas; no se borran resultados pasados al importar una partida.
-- Seguimiento abierto: verificar vínculos visuales en runs nuevos (#79) y autonomía real del personaje (#94).
+- Seguimiento abierto: verificar vínculos visuales en runs nuevos (#38) y autonomía real del personaje (#50).
 
 ---
 
 ## Nilo 0.5.9.3.20 — Lectura compacta y recuperación completa de energía
 
-- **Energía (#91):** la recuperación deja de interrumpirse al cruzar 75. Una pausa, reposo en refugio o inactividad pueden reponer energía hasta el límite natural de la escala (100); siguen existiendo consumo por actividad, hidratación y nutrición. El criterio experimental `rest_comparable` continúa exigiendo mediciones controladas: no convierte en válida una prueba saturada. El replay histórico conserva reglas antiguas; nuevos guiones pueden seleccionar `"ruleset":"0.5.9.3.20"`.
-- **Cuaderno — Registros relacionados (#79, primer corte):** sin tocar una palabra del texto de Nilo, el archivo reúne movimientos de inventario medidos (por ejemplo, madera +2 / piedra −1) y herramientas/construcciones identificadas por ID real, versión o uso en acciones. Los materiales son saldos de inventario, no objetos individuales. Para las partidas antiguas se muestran deltas físicos existentes; las asociaciones nuevas con instancias solo existen si hay snapshots identificables. **Quedan para el desarrollo del catálogo 0.6:** fichas navegables y otras relaciones con el entorno.
-- **Desplegables (#84):** abrir otro registro del mismo grupo cierra el anterior. Un ensayo y una predicción, o diseños y obras, son grupos independientes; los detalles técnicos anidados permanecen disponibles.
-- **Ayuda contextual (#85):** las tarjetas de explicación pasan a botones (?) en Ensayos, Creaciones, Hallazgos, Investigaciones (predicciones), Propuestas y Agenda. En Ensayos se ubica junto a «Todas las mediciones»; conserva el estado dinámico de comparación de descansos en la ayuda.
-- **Pestañas (#90):** un clic sobre la pestaña activa o una distinta vuelve al registro más reciente, sin reiniciar filtros ni redirigir saltos explícitos a registros históricos. En Chat, el gesto lleva al mensaje más reciente al final.
-- **Conducta (#49):** los registros de habilidades tienen fondo/borde de novedad visible cuando activan el indicador de la solapa.
-- **Compatibilidad:** sin cambios en `agenda.py`, en la selección de pausas/recordatorios (#81), ni en la estructura física del mundo. El empaquetado contiene `physical_links.py` y las pruebas de regresión. Se conserva importación de partidas y la verificación determinista histórica.
-- **Otros issues:** #55 (direcciones narradas), #80 (matriz de capacidades), #62 (registro modular), #77 (planilla maestra), #69 (síntesis episódica) y las expansiones de física requieren trabajo separado; no se cierran artificialmente.
+- **Energía (#48):** la recuperación deja de interrumpirse al cruzar 75. Una pausa, reposo en refugio o inactividad pueden reponer energía hasta el límite natural de la escala (100); siguen existiendo consumo por actividad, hidratación y nutrición. El criterio experimental `rest_comparable` continúa exigiendo mediciones controladas: no convierte en válida una prueba saturada. El replay histórico conserva reglas antiguas; nuevos guiones pueden seleccionar `"ruleset":"0.5.9.3.20"`.
+- **Cuaderno — Registros relacionados (#38, primer corte):** sin tocar una palabra del texto de Nilo, el archivo reúne movimientos de inventario medidos (por ejemplo, madera +2 / piedra −1) y herramientas/construcciones identificadas por ID real, versión o uso en acciones. Los materiales son saldos de inventario, no objetos individuales. Para las partidas antiguas se muestran deltas físicos existentes; las asociaciones nuevas con instancias solo existen si hay snapshots identificables. **Quedan para el desarrollo del catálogo 0.6:** fichas navegables y otras relaciones con el entorno.
+- **Desplegables (#42):** abrir otro registro del mismo grupo cierra el anterior. Un ensayo y una predicción, o diseños y obras, son grupos independientes; los detalles técnicos anidados permanecen disponibles.
+- **Ayuda contextual (#43):** las tarjetas de explicación pasan a botones (?) en Ensayos, Creaciones, Hallazgos, Investigaciones (predicciones), Propuestas y Agenda. En Ensayos se ubica junto a «Todas las mediciones»; conserva el estado dinámico de comparación de descansos en la ayuda.
+- **Pestañas (#47):** un clic sobre la pestaña activa o una distinta vuelve al registro más reciente, sin reiniciar filtros ni redirigir saltos explícitos a registros históricos. En Chat, el gesto lleva al mensaje más reciente al final.
+- **Conducta (#21):** los registros de habilidades tienen fondo/borde de novedad visible cuando activan el indicador de la solapa.
+- **Compatibilidad:** sin cambios en `agenda.py`, en la selección de pausas/recordatorios (#40), ni en la estructura física del mundo. El empaquetado contiene `physical_links.py` y las pruebas de regresión. Se conserva importación de partidas y la verificación determinista histórica.
+- **Otros issues:** #26 (direcciones narradas), #39 (matriz de capacidades), #30 (registro modular), #37 (planilla maestra), #33 (síntesis episódica) y las expansiones de física requieren trabajo separado; no se cierran artificialmente.
 
 ---
 
 ## Nilo 0.5.9.3.19 — Cierre verificado de reconocimiento y hallazgo de agua
 
-- **#31, bug confirmado en run de día 2:** el proyecto «Reconocimiento del terreno y hallazgo de agua.» quedaba al 95 % pese a que Nilo solicitó `completar` 23 deliberaciones consecutivas y había exploraciones, agua observada e inspecciones con mediciones reales. El evaluador de objetivos ignoraba las palabras «reconocimiento» y «hallazgo» y no podía aceptar sus propias pruebas.
+- **#13, bug confirmado en run de día 2:** el proyecto «Reconocimiento del terreno y hallazgo de agua.» quedaba al 95 % pese a que Nilo solicitó `completar` 23 deliberaciones consecutivas y había exploraciones, agua observada e inspecciones con mediciones reales. El evaluador de objetivos ignoraba las palabras «reconocimiento» y «hallazgo» y no podía aceptar sus propias pruebas.
 - **Validación específica y conservadora:** para ese tipo de objetivo, el motor exige evidencia de exploración del terreno y hallazgo comprobado de agua (observación real durante exploración, llegada a orilla o inspección), junto con una referencia auténtica en `prueba_cierre`. Los resultados de `conclude`, las frases del cuaderno o el simple nombre de una construcción **no** acreditan esos hechos.
 - **Referencia pertinente:** cuando Nilo cita una medición válida, el verificador puede elegirla en vez de comparar contra una muestra histórica distinta. Ante un intento de cierre sin cita pertinente, explica qué IDs sí acreditarían ese objetivo.
 - **Seguridad epistémica:** localizar agua **no** prueba que sea potable. La comprobación de potabilidad/purificación continúa exigiendo una métrica física específica.
 - **Partidas existentes:** pueden continuar desde una copia de la versión anterior; no se modifican leyes, inventario, objetos, supervivencia ni se cierra de oficio ningún proyecto. Nilo debe decidir pedir nuevamente el cierre. No se alteran decisiones históricas.
 - **Pruebas:** evidencia combinada, ausencia de agua, ausencia de exploración, citas no pertinentes, no confusión con ruinas ni potabilidad, cierre de proyecto integrado y retrocompatibilidad de replays.
-- **Interfaz:** las dos ideas de futuras mejoras se registraron en [#84](https://github.com/mxlzz/Nilo/issues/84) (un desplegable por sección) y [#85](https://github.com/mxlzz/Nilo/issues/85) (ayudas (?) en lugar de tarjetas descriptivas). No se incluyen en este parche de bloqueo cognitivo.
+- **Interfaz:** las dos ideas de futuras mejoras se registraron en [#42](https://github.com/mxlzz/Nilo_public/issues/42) (un desplegable por sección) y [#43](https://github.com/mxlzz/Nilo_public/issues/43) (ayudas (?) en lugar de tarjetas descriptivas). No se incluyen en este parche de bloqueo cognitivo.
 
 ---
 
 ## Nilo 0.5.9.3.18 — Recordatorios condicionados y filtros de estado
 
-- **#81 · Recordatorios autoestablecidos:** Nilo puede declarar en la Agenda un recordatorio sin pasos físicos (`"modo":"recordatorio"`) asociado al proyecto que decide pausar, con una condición verificable como `energia < 60`. Al cumplirse, aparece una sola señal y el recordatorio vuelve al contexto de deliberación; Nilo decide si retoma la investigación. **No se ejecuta automáticamente** una prueba ni se declara logrado el objetivo.
+- **#40 · Recordatorios autoestablecidos:** Nilo puede declarar en la Agenda un recordatorio sin pasos físicos (`"modo":"recordatorio"`) asociado al proyecto que decide pausar, con una condición verificable como `energia < 60`. Al cumplirse, aparece una sola señal y el recordatorio vuelve al contexto de deliberación; Nilo decide si retoma la investigación. **No se ejecuta automáticamente** una prueba ni se declara logrado el objetivo.
 - **Agenda y Proyectos:** desplegable de estado junto a «Indicador», con «Vigentes», «Agendados», «Finalizados», «Bloqueados» y «Todos», manteniendo los controles en una sola línea (desplazamiento horizontal cuando el espacio no alcanza). El filtro se recuerda por solapa, no altera el historial ni las marcas de lectura. Los recordatorios se distinguen visualmente de las tareas ejecutables.
 - **Conservación:** tareas delegadas previas, progreso, replays históricos y reglas físicas mantienen comportamiento. Las condiciones no satisfacen por sí mismas los criterios de éxito experimental. La agenda anterior sigue siendo válida sin `modo`.
-- **Alcance:** esta versión implementa el primer tramo de #81, pero **no** la clasificación centralizada completa de capacidades físicas (#80/#62), que permanece pendiente. La conducta del LLM con el recordatorio debe medirse en un run.
+- **Alcance:** esta versión implementa el primer tramo de #40, pero **no** la clasificación centralizada completa de capacidades físicas (#39/#62), que permanece pendiente. La conducta del LLM con el recordatorio debe medirse en un run.
 - **Pruebas:** normalización y deduplicación, evento único al cruzar umbral, pausa y reconocimiento al retomar, visibilidad en contexto compacto, compatibilidad de render y controles.
 
 ---
 
 ## Nilo 0.5.9.3.17 — evidencias de diagnóstico y navegación conocida
 
-- **#58, PR #72:** integrado `diagnostic_support.py`. `propose` y `report_issue` conservan el origen y la pertinencia de cada evidencia. IDs inexistentes o ensayos ajenos al fenómeno no se convierten en pruebas; una revisión humana llega a las deliberaciones posteriores sin atribuirle condición de evidencia física. Nilo sigue eligiendo libremente si presenta solicitudes.
-- **#47:** el contexto LLM conserva la navegación hacia **lugares realmente revelados**, incluso cuando un proveedor aplica `compact_context`. Informa coordenadas, nivel del mapa y el estado de una ruta conocida (`en_destino`, `ruta_conocida`, `sin_ruta_conocida`, `otro_nivel`). Si no existe ruta conocida, **no concluye que el sitio sea inaccesible**. Los lugares no descubiertos nunca se exponen.
+- **#29, PR `referencia privada #72`:** integrado `diagnostic_support.py`. `propose` y `report_issue` conservan el origen y la pertinencia de cada evidencia. IDs inexistentes o ensayos ajenos al fenómeno no se convierten en pruebas; una revisión humana llega a las deliberaciones posteriores sin atribuirle condición de evidencia física. Nilo sigue eligiendo libremente si presenta solicitudes.
+- **#20:** el contexto LLM conserva la navegación hacia **lugares realmente revelados**, incluso cuando un proveedor aplica `compact_context`. Informa coordenadas, nivel del mapa y el estado de una ruta conocida (`en_destino`, `ruta_conocida`, `sin_ruta_conocida`, `otro_nivel`). Si no existe ruta conocida, **no concluye que el sitio sea inaccesible**. Los lugares no descubiertos nunca se exponen.
 - **Compatibilidad:** la simulación física, los mapas y las acciones `go` y `inspect` permanecen intactos. El nuevo campo informa, pero no ordena desplazamientos ni modifica proyectos o recuerdos históricos.
 - **Verificación:** tests deterministas de la selección de evidencia de `propose` y `report_issue`, revisiones humanas, rutas conocidas y ocultas, contexto compacto, escenarios y replay. Las decisiones efectivas del LLM deberán compararse con runs.
-- **Pendientes:** reconsideración de descansos improductivos (#14), modelo modular de operaciones (#62), memoria longitudinal general (#47/#65), planilla maestra de definiciones. No se incluyen todavía en esta entrega.
+- **Pendientes:** reconsideración de descansos improductivos (#2), modelo modular de operaciones (#30), memoria longitudinal general (#20/#65), planilla maestra de definiciones. No se incluyen todavía en esta entrega.
 
 ---
 
@@ -196,7 +196,7 @@ El **sandbox de botones** permite elegir cualquiera de las 26 operaciones, param
 - **Catálogo físico separado**: `catalog/materiales.json`, `catalog/terrenos.json` y `catalog/objetos.json`, leídos y validados por `catalogo.py`; `world.py`, `physics.py`, `construction.py`, `mechanics.py` y `environments.py` conservan sus contratos y propiedades anteriores. Cada partida recibe copias independientes de los materiales.
 - **×80 funcional**: la ruta HTTP `/api/settings` y el motor comparten velocidades `×1/×10/×60/×80`; se rechazan `×300` y `×600`, que habían quedado obsoletos.
 - **Consultas LLM**: mínimo global configurable de **15 segundos** por defecto en instalaciones nuevas, validado entre 10 y 300 segundos. Las instalaciones actualizadas conservan su `config.env` anterior (por ejemplo, 60 segundos) y el valor efectivo aparece en **Configuración → Modelo y consultas**. No se eluden cooldowns/429 ni cuotas de proveedor.
-- **Límites**: esta extracción no constituye todavía un registro de operaciones instalables, ni física composicional general, ni un sistema de organismos. No se agregaron efectos físicos ni objetivos a Nilo. El diagnóstico autónomo del PR #72 sigue separado.
+- **Límites**: esta extracción no constituye todavía un registro de operaciones instalables, ni física composicional general, ni un sistema de organismos. No se agregaron efectos físicos ni objetivos a Nilo. El diagnóstico autónomo del PR `referencia privada #72` sigue separado.
 - **Pruebas y paquete**: catálogo incluido en el ZIP portable, pruebas unitarias de compatibilidad, simulación determinista y prueba HTTP de ×80. [Contrato y pendientes 0.6](docs/CATALOGO_MODULAR.md).
 
 ---
@@ -206,8 +206,8 @@ El **sandbox de botones** permite elegir cualquiera de las 26 operaciones, param
 - **Mapa:** un botón alterna entre mostrarlo u ocultarlo; las referencias se despliegan con un `details` independiente, dentro del mapa. La opción histórica «Solo mapa» se migra a mapa visible con las referencias plegadas. Ocultar el mapa deja visibles las solapas de recursos.
 - **Recursos:** Materiales, Herramientas y Obras comparten espacio en tres solapas. Se conservan los accesos a las fichas y los conteos se actualizan con el mundo.
 - **Color:** dos nuevos temas neutros, **Grises oscuros** y **Grises claros** (fondo casi blanco), además de Bosque, Grafito y Terracota. El estado elegido se conserva como preferencia visual portable.
-- **Navegación:** eliminado el botón «Volver a conexión anterior» de la columna de registros (#71). Se conserva «← Volver» dentro del diálogo histórico y sus relaciones verificadas.
-- **Alcance:** solo cambios de presentación y preferencias visuales; motor, proyectos, evidencias, físicas y partidas sin modificaciones. El PR de diagnóstico autónomo #72 sigue separado y pendiente de evaluación.
+- **Navegación:** eliminado el botón «Volver a conexión anterior» de la columna de registros (#34). Se conserva «← Volver» dentro del diálogo histórico y sus relaciones verificadas.
+- **Alcance:** solo cambios de presentación y preferencias visuales; motor, proyectos, evidencias, físicas y partidas sin modificaciones. El PR de diagnóstico autónomo `referencia privada #72` sigue separado y pendiente de evaluación.
 
 ---
 
@@ -225,12 +225,12 @@ El **sandbox de botones** permite elegir cualquiera de las 26 operaciones, param
 
 **Hallazgos del run de 14,6 días y alcance de esta entrega:**
 
-- **Cierre de proyectos (#31):** una prueba exitosa perteneciente a un proyecto ya no basta para completarlo. El cierre debe citar uno de los IDs que acreditan los criterios físicos del objetivo: fabricación, contención de un material concreto, recuperación de energía, desplazamiento o exploración. Los objetivos compuestos necesitan pruebas de cada requisito instrumentado. Si el motor no mide pérdida cero, estanqueidad, potabilidad o planificación futura, la conclusión permanece sin verificar. La decisión de pausar/abandonar sigue disponible. Esto es un validador conservador, **no** una comprensión semántica universal de cualquier objetivo.
-- **Investigación y continuidad (#47):** las nuevas preguntas registran IDs de proyectos de origen; al pausar o abandonar un proyecto solo se modifican estados de investigaciones con vínculo explícito, conservando el historial. Cuando el mismo tema se retoma, se puede reabrir el mismo ID. No se reasignan investigaciones antiguas por parecidos textuales y archivar no demuestra una hipótesis.
+- **Cierre de proyectos (#13):** una prueba exitosa perteneciente a un proyecto ya no basta para completarlo. El cierre debe citar uno de los IDs que acreditan los criterios físicos del objetivo: fabricación, contención de un material concreto, recuperación de energía, desplazamiento o exploración. Los objetivos compuestos necesitan pruebas de cada requisito instrumentado. Si el motor no mide pérdida cero, estanqueidad, potabilidad o planificación futura, la conclusión permanece sin verificar. La decisión de pausar/abandonar sigue disponible. Esto es un validador conservador, **no** una comprensión semántica universal de cualquier objetivo.
+- **Investigación y continuidad (#20):** las nuevas preguntas registran IDs de proyectos de origen; al pausar o abandonar un proyecto solo se modifican estados de investigaciones con vínculo explícito, conservando el historial. Cuando el mismo tema se retoma, se puede reabrir el mismo ID. No se reasignan investigaciones antiguas por parecidos textuales y archivar no demuestra una hipótesis.
 - **QMP:** páginas de acontecimientos diversificadas por categoría con hasta 12 hechos principales; una serie administrativa de proyectos deja de desplazar siempre los ensayos y descubrimientos. «¿Qué más?» vuelve a buscar pendientes dentro del snapshot, en lugar de excluirlos por un techo de relevancia. Se conserva la confirmación de lectura únicamente de referencias presentadas o evaluadas y las vinculadas expresamente.
-- **Pruebas (#15):** casos sintéticos derivados de cierres indebidos del run, revisión de una investigación asociada a proyecto y continuación de QMP. No se adjunta ni altera la partida original.
+- **Pruebas (#3):** casos sintéticos derivados de cierres indebidos del run, revisión de una investigación asociada a proyecto y continuación de QMP. No se adjunta ni altera la partida original.
 
-**Pendientes conocidos:** la interpretación general de objetivos con propiedades físicas arbitrarias, la indexación de investigaciones antiguas y una síntesis verdaderamente basada en episodios (no fichas, **#69**) requieren diseño adicional. La estructura modular sigue en #62.
+**Pendientes conocidos:** la interpretación general de objetivos con propiedades físicas arbitrarias, la indexación de investigaciones antiguas y una síntesis verdaderamente basada en episodios (no fichas, **#33**) requieren diseño adicional. La estructura modular sigue en #30.
 
 ---
 
@@ -264,7 +264,7 @@ Esta versión no introduce cálculo topológico de rutas antes/después ni modif
 - **Versión y distribución:** `VERSION` y encabezado muestran 0.5.9.3.10. El manifiesto del paquete se actualiza para incluir las dependencias recientes y verificar los archivos actuales.
 - **Compatibilidad:** los proyectos activos de partidas existentes conservan su historial. Los estados nuevos solo aparecen cuando Nilo toma una nueva decisión.
 
-Este release **no completa** todo el #58 ni implementa el sistema modular #62. El próximo paso de evaluación (#15) será comparar estos cambios con el run observado, con sus limitaciones metodológicas.
+Este release **no completa** todo el #29 ni implementa el sistema modular #30. El próximo paso de evaluación (#3) será comparar estos cambios con el run observado, con sus limitaciones metodológicas.
 
 ---
 
@@ -273,11 +273,11 @@ Este release **no completa** todo el #58 ni implementa el sistema modular #62. E
 - **«¿Qué me perdí?»**: apartados temáticos breves, extensión adaptada al número e importancia de novedades, pasajes más narrativos solo para hitos destacados. Agrupación de referencias por tipo con enlaces directos. La primera página analiza hasta 12 acontecimientos destacados; «¿Qué más?» conserva el resto de prioridad suficiente.
 - **Lectura de resúmenes**: una vez que la interfaz recibe el resumen confirma tanto las fuentes destacadas de la página como las fuentes evaluadas de menor prioridad en el mismo snapshot. Se preservan sucesos posteriores y acontecimientos relevantes que esperan otra página. Cada resumen conserva referencias auditables, incluso cuando no requiere LLM porque solo había rutina.
 - **Diagnóstico autónomo**: señales estructuradas y agrupación de intentos repetidos por operación, objetivo y estado, con IDs originales. Distingue uso incorrecto, fallo físico, fenómeno no evaluable y posible contradicción del contrato. Nilo elige si experimentar, cambiar de estrategia, reportar o proponer; ninguna regla física se modifica automáticamente.
-- **Construcciones (#56 y #57)**: al pulsar una obra del mapa o lista se abre la ficha completa en «Creaciones». Desaparece el panel intermedio. Los planos históricos exponen los lotes, materiales, cambios entre revisiones y estados de piezas preservados.
+- **Construcciones (#27 y #28)**: al pulsar una obra del mapa o lista se abre la ficha completa en «Creaciones». Desaparece el panel intermedio. Los planos históricos exponen los lotes, materiales, cambios entre revisiones y estados de piezas preservados.
 - **Velocidades**: ×1, ×10, ×60 y ×80. Las partidas con ×300 o ×600 se migran a ×80. La escritura se mantiene limitada a ×2. Ninguna velocidad modifica las cuotas ni el intervalo mínimo real del LLM.
 - **Sin cambios en el estado físico por cambiar de interfaz**. Se mantienen pruebas de replay y migración. Se recomienda conservar la carpeta/partida anterior antes de importar.
 
-**Pendiente deliberadamente:** #55 requiere una reproducción concreta de la contradicción direccional, y el diagnóstico cognitivo #58 continúa siendo incremental; no se declara resuelto en su totalidad.
+**Pendiente deliberadamente:** #26 requiere una reproducción concreta de la contradicción direccional, y el diagnóstico cognitivo #29 continúa siendo incremental; no se declara resuelto en su totalidad.
 
 ---
 
@@ -299,10 +299,10 @@ Este release **no completa** todo el #58 ni implementa el sistema modular #62. E
 - **Consultando al LLM:** velocidad temporal efectiva ×1 mientras está deliberando, sin alterar la velocidad seleccionada ni los límites reales del proveedor.
 - **Esperas:** la pausa automática (×0) incluye el intervalo ordinario entre llamadas si no quedan actividades útiles. Conserva el avance para rutinas seguras y tareas cuya condición depende del reloj simulado. El reintento LLM sigue gobernado por tiempo real.
 - **Cuaderno:** en ×300 y ×600 se muestra el texto íntegro sin animación y se conserva la duración simulada de su escritura; ×1, ×10 y ×60 mantienen el modo anterior (×2 al escribir en modos acelerados).
-- **Interfaz:** indica velocidad efectiva; las habilidades no leídas de Conducta reciben resaltado como los demás registros, solucionando #49. Por ahora no se cambia cuándo el contador de una habilidad genera una novedad.
+- **Interfaz:** indica velocidad efectiva; las habilidades no leídas de Conducta reciben resaltado como los demás registros, solucionando #21. Por ahora no se cambia cuándo el contador de una habilidad genera una novedad.
 - **Compatibilidad:** migración sin cambios en el mundo, reglas físicas o cuotas. Nuevo replay determinista con tiempos fraccionados y pruebas de regresión.
 
-Relacionado: [#50](https://github.com/mxlzz/Nilo/issues/50) y [#49](https://github.com/mxlzz/Nilo/issues/49).
+Relacionado: [#22](https://github.com/mxlzz/Nilo_public/issues/22) y [#21](https://github.com/mxlzz/Nilo_public/issues/21).
 
 ---
 
@@ -313,7 +313,7 @@ Relacionado: [#50](https://github.com/mxlzz/Nilo/issues/50) y [#49](https://gith
 - **Cierre de proyectos:** no se utilizan registros de conclusión como avances físicos. Las pruebas que dicen «no está comprobada» o «sin funcionamiento verificado» no permiten cerrar un objetivo como si estuviera demostrado. La potabilidad requiere una medición física explícita, todavía ausente del escenario actual.
 - **Compatibilidad:** conserva partidas anteriores y no altera retrospectivamente hechos históricos. Cambia únicamente la evaluación de nuevos pasos y decisiones. Se mantienen los límites del mundo físico y la libertad de Nilo para elegir proyectos.
 - **Pruebas:** recuperación de la cueva tras actividad posterior, compactación de contexto, evidencia derivada y cierre de proyectos sin demostración.
-- **Pendiente:** revisar los casos ya cerrados erróneamente sin cambiar la historia de la partida; probar corridas comparables (#15) y la calidad del ciclo de investigación (#17 y #31).
+- **Pendiente:** revisar los casos ya cerrados erróneamente sin cambiar la historia de la partida; probar corridas comparables (#3) y la calidad del ciclo de investigación (#5 y #13).
 
 ---
 
@@ -324,16 +324,16 @@ Relacionado: [#50](https://github.com/mxlzz/Nilo/issues/50) y [#49](https://gith
 - **Lectura exacta:** confirma únicamente los registros expresamente incluidos y enlazados en la respuesta, una vez montada la síntesis en pantalla. Los demás siguen sin leer; novedades nuevas no se pierden. Las distintas vistas de una misma conclusión conservan sus marcas de lectura.
 - **Historial:** cada capa queda registrada como un resumen independiente, con fuentes trazables y fecha. El observador externo sigue sin intervenir en la memoria ni decisiones de Nilo.
 - **Pruebas:** 150 eventos con un hecho importante en la posición 130, continuación sin repetición, sucesos nuevos durante la síntesis, deduplicación de hallazgos, ausencia de falsos marcados y conservación de actividad rutinaria.
-- **Pendiente:** para estudiar el motor se propone un observatorio con métricas reproducibles [issue #45](https://github.com/mxlzz/Nilo/issues/45). Para un entorno urbano futuro: [issue #44](https://github.com/mxlzz/Nilo/issues/44).
+- **Pendiente:** para estudiar el motor se propone un observatorio con métricas reproducibles [issue #19](https://github.com/mxlzz/Nilo_public/issues/19). Para un entorno urbano futuro: [issue #18](https://github.com/mxlzz/Nilo_public/issues/18).
 
 ---
 
 ## Nilo 0.5.9.3.4 — desplegables estables y lectura de enlaces internos
 
 - **Desplegables:** todos los registros expandidos de Cuaderno, Novedades, Investigaciones, Ensayos, Creaciones, Propuestas, Agenda y demás solapas conservan su estado abierto al actualizarse los datos; incluye desplegables anidados y aparición de nuevos registros.
-- **Lectura al navegar:** seguir un vínculo a un registro relacionado confirma como leído **el registro de origen**, no el de destino. Se mantiene la navegación, el estado persistente por solapa y el marcado explícito de toda la solapa. Soluciona [issue #40](https://github.com/mxlzz/Nilo/issues/40).
+- **Lectura al navegar:** seguir un vínculo a un registro relacionado confirma como leído **el registro de origen**, no el de destino. Se mantiene la navegación, el estado persistente por solapa y el marcado explícito de toda la solapa. Soluciona [issue #15](https://github.com/mxlzz/Nilo_public/issues/15).
 - **Pruebas:** regresión con Node.js para conservar un desplegable anidado cuando se insertan otros registros; comprobación de lectura de origen y compatibilidad con tarjetas y notificaciones anteriores.
-- **Pendiente por separado:** [issue #41](https://github.com/mxlzz/Nilo/issues/41) recoge el rediseño de «¿Qué me perdí?» con relevancia decreciente y continuación «¿Qué más?». Este paquete **no altera** la selección ni las marcas de lectura de los resúmenes.
+- **Pendiente por separado:** [issue #16](https://github.com/mxlzz/Nilo_public/issues/16) recoge el rediseño de «¿Qué me perdí?» con relevancia decreciente y continuación «¿Qué más?». Este paquete **no altera** la selección ni las marcas de lectura de los resúmenes.
 
 ---
 
@@ -443,7 +443,7 @@ Relacionado: [#50](https://github.com/mxlzz/Nilo/issues/50) y [#49](https://gith
 
 ## Nilo 0.5.9.2.4 — descarga versionada e importación desde otra carpeta
 
-**Para descargar:** usá [GitHub Releases](https://github.com/mxlzz/Nilo/releases) y elegí el archivo `Nilo-0.5.9.2.4.zip`. Al descomprimirlo se crea una carpeta `Nilo-0.5.9.2.4` que contiene `INICIAR_NILO.bat`.
+**Para descargar:** usá [GitHub Releases](https://github.com/mxlzz/Nilo_public/releases) y elegí el archivo `Nilo-0.5.9.2.4.zip`. Al descomprimirlo se crea una carpeta `Nilo-0.5.9.2.4` que contiene `INICIAR_NILO.bat`.
 
 **Importante:** la función automática **Code → Download ZIP** de GitHub siempre genera `Nilo-main.zip` (y `Nilo-main/` dentro) cuando descargás la rama principal. Ese nombre lo elige GitHub; para tener el nombre de versión, descargá el ZIP de **Releases**. Una nueva versión que cambia `VERSION` y supera las pruebas crea/publica su propio paquete mediante el workflow `.github/workflows/paquete.yml`. Alternativamente, desde el código fuente es posible crear el mismo paquete con `python empaquetar_version.py`.
 

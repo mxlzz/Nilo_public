@@ -1,6 +1,6 @@
 # Nilo 0.7 · Etapa 06 — Registro y validación de acciones
 
-**Fecha:** 4/11/2026 · **Rama:** `refactor/0.7` · **Estado: COMPLETADA.** [CI integral #41892936356](https://github.com/mxlzz/Nilo/actions/runs/41892936356): **success, 718 tests (1 omitida), replay exacto, auditor y ZIP**. [CI de compatibilidad #41893382694](https://github.com/mxlzz/Nilo/actions/runs/41893382694): **success, seis partidas sintéticas históricas abiertas sobre copias**. [Plan maestro](PLAN_REESTRUCTURACION_NILO_07.md) · [Etapa 05](ETAPA_05_TIEMPO_07.md) · [PR draft #155](https://github.com/mxlzz/Nilo/pull/155).
+**Fecha:** 4/11/2026 · **Rama:** `refactor/0.7` · **Estado: COMPLETADA.** CI integral `referencia privada #41892936356` (`referencia-historica-privada-actions-runs-41892936356`): **success, 718 tests (1 omitida), replay exacto, auditor y ZIP**. CI de compatibilidad `referencia privada #41893382694` (`referencia-historica-privada-actions-runs-41893382694`): **success, seis partidas sintéticas históricas abiertas sobre copias**. [Plan maestro](PLAN_REESTRUCTURACION_NILO_07.md) · [Etapa 05](ETAPA_05_TIEMPO_07.md) · PR draft `referencia privada #155` (`referencia-historica-privada-pull-155`).
 
 ## 1. Auditoría de fuentes operativas (0.6.4–etapa 05)
 
@@ -20,7 +20,7 @@ Esta auditoría **no** presupone que las reglas físicas de cada operación son 
 
 ## 2. Registro canónico
 
-[`nilo_runtime/core/operations.py`](https://github.com/mxlzz/Nilo/blob/refactor/0.7/nilo_runtime/core/operations.py) es la fuente única de:
+[`nilo_runtime/core/operations.py`](https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/nilo_runtime/core/operations.py) es la fuente única de:
 
 - **Nombre y texto de manual**: `ACTION_GUIDE`, `COMMON_RULES` y `SUPPORTED_OPERATIONS` se trasladaron textualmente desde `action_contracts.py`, manteniendo su orden y las aclaraciones sobre conocimiento observable. `manual_lines()` alimenta directamente el prompt LLM. No se regeneró ni reescribió el contenido de instrucciones histórico.
 - **Duración**: `ACTION_DURATIONS` se trasladó íntegra desde `nilo.py`, como estimación temporal (no se interpreta como tiempo realmente medido). Cada `OperationSpec` obtiene `planned_minutes` de esa única fuente. No cambian los tiempos ni velocidades definidos en la etapa 05.
@@ -38,14 +38,14 @@ Se comprueba en importación que las operaciones del manual y la tabla de duraci
 - `IslandPlanner.validate_plan` consulta `validate_operation` al comienzo de cada paso y sigue comprobando **después** alcance, recursos, geometría y capacidad a partir de hechos del mundo. No convierte condiciones hipotéticas en efectos.
 - `nilo.py` consulta `get_spec(op).planned_minutes` y `.executor` en vez de duplicar una tabla de tiempos y el árbol de acciones documentales. `ACTION_DURATIONS` sigue importable desde `nilo.py` como alias por compatibilidad.
 - `environments.IslandEnvironment` consulta la familia registrada antes de preparar una navegación o ejecutar física. Rechaza enviar un `design` al handler físico, pero permite `interact` como operación física genérica.
-- [`nilo_runtime/application/operation_dispatch.py`](https://github.com/mxlzz/Nilo/blob/refactor/0.7/nilo_runtime/application/operation_dispatch.py) concentra el despacho **documental**. Mantiene la semántica anterior: `design` registra ficha sin construir; `propose` solicita una capacidad sin instalarla; `report_issue` registra un posible error; `compare` y `conclude` solo documentan evidencia disponible mediante IDs. Los efectos secundarios de archivo y cierre de investigación se preservan; el dispatcher no genera recursos materiales.
+- [`nilo_runtime/application/operation_dispatch.py`](https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/nilo_runtime/application/operation_dispatch.py) concentra el despacho **documental**. Mantiene la semántica anterior: `design` registra ficha sin construir; `propose` solicita una capacidad sin instalarla; `report_issue` registra un posible error; `compare` y `conclude` solo documentan evidencia disponible mediante IDs. Los efectos secundarios de archivo y cierre de investigación se preservan; el dispatcher no genera recursos materiales.
 - El laboratorio usa `ACTION_GUIDE` reexportada por `action_contracts`, ahora originada en el mismo registro. Ningún método `interact` se eleva a operación sin declararlo expresamente.
 
 **Distinción crítica que motivó una regresión inicial:** para `design`, `prediction` es una **cadena descriptiva**; para un ensayo medible, `prediction` es un **objeto** con hipótesis, métrica y umbral. La validación acepta la cadena de diseño sin equipararla a evidencia física. Este cambio se verificó contra `laboratorio_casos`.
 
 ## 4. Tests y controles permanentes
 
-[`tests/test_operaciones_07.py`](https://github.com/mxlzz/Nilo/blob/refactor/0.7/tests/test_operaciones_07.py) verifica:
+[`tests/test_operaciones_07.py`](https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/tests/test_operaciones_07.py) verifica:
 
 - Paridad exacta de nombres y duraciones entre guía, normalizador, reloj, validación y registro; contratos pre/post, clases de ejecutor y navegación.
 - El manual LLM tiene el mismo orden y texto que el registro; `spec_for` expone duración, ruta y requisitos; el mapa de especificaciones es inmutable.
@@ -54,9 +54,9 @@ Se comprueba en importación que las operaciones del manual y la tabla de duraci
 - `IslandPlanner` rechaza operaciones inexistentes sin anular otras válidas; `execute_document` no construye objetos y rechaza rutas físicas; compare/conclude sin mediciones no inventan evidencia.
 - Las capacidades concretas `llenar`, `probar_carga`, etc. permanecen detrás de `interact`.
 
-[`tools/auditar_operaciones_07.py`](https://github.com/mxlzz/Nilo/blob/refactor/0.7/tools/auditar_operaciones_07.py) se ejecuta desde `validacion.yml` en cada push de `refactor/**`: busca mediante AST nuevas definiciones de `ACTION_GUIDE`, `ACTION_DURATIONS` o `DOCUMENT_EXECUTORS` fuera del registro, verifica paridad guía/reloj/LLM, rutas físicas, manual y ausencia de colisiones de métodos de capacidades. El ZIP portable incluye el registro y el adaptador, comprobados al extraer.
+[`tools/auditar_operaciones_07.py`](https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/tools/auditar_operaciones_07.py) se ejecuta desde `validacion.yml` en cada push de `refactor/**`: busca mediante AST nuevas definiciones de `ACTION_GUIDE`, `ACTION_DURATIONS` o `DOCUMENT_EXECUTORS` fuera del registro, verifica paridad guía/reloj/LLM, rutas físicas, manual y ausencia de colisiones de métodos de capacidades. El ZIP portable incluye el registro y el adaptador, comprobados al extraer.
 
-**Puerta de cierre superada.** [CI integral #41892936356](https://github.com/mxlzz/Nilo/actions/runs/41892936356): **success, 718 pruebas (1 omitida)**, banco de escenarios, auditoría de capas/identidades/operaciones, escenarios físicos, ZIP portable extraído y fingerprint histórico en dos procesos exactamente `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`. [CI histórica #41893382694](https://github.com/mxlzz/Nilo/actions/runs/41893382694): **success, 6/6 partidas sintéticas** de 0.5.9.4.2, 0.6.0 y 0.6.4 importadas a copias, sin modificar las originales; incluyó auditoría del registro de operaciones. Se verificó además una comparación literal del bloque completo de manual/instrucciones y de la tabla de duraciones frente al commit de etapa 05: **ambos coinciden exactamente**.
+**Puerta de cierre superada.** CI integral `referencia privada #41892936356` (`referencia-historica-privada-actions-runs-41892936356`): **success, 718 pruebas (1 omitida)**, banco de escenarios, auditoría de capas/identidades/operaciones, escenarios físicos, ZIP portable extraído y fingerprint histórico en dos procesos exactamente `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`. CI histórica `referencia privada #41893382694` (`referencia-historica-privada-actions-runs-41893382694`): **success, 6/6 partidas sintéticas** de 0.5.9.4.2, 0.6.0 y 0.6.4 importadas a copias, sin modificar las originales; incluyó auditoría del registro de operaciones. Se verificó además una comparación literal del bloque completo de manual/instrucciones y de la tabla de duraciones frente al commit de etapa 05: **ambos coinciden exactamente**.
 
 ## 5. Deuda explícita, sin segundo motor
 

@@ -1,6 +1,6 @@
 # Laboratorio como centro de ajustes del motor — propuesta del 4/11/2026
 
-> **Estado:** diseño exploratorio documentado, **pendiente de aprobación**. No hay versión asignada, implementación iniciada ni modificación de la física, el prompt o la configuración de una partida por registrar esta propuesta. Guía principal: [issue #146](https://github.com/mxlzz/Nilo/issues/146); seguimiento: [#147](https://github.com/mxlzz/Nilo/issues/147), [#148](https://github.com/mxlzz/Nilo/issues/148), [#149](https://github.com/mxlzz/Nilo/issues/149).
+> **Estado:** diseño exploratorio documentado, **pendiente de aprobación**. No hay versión asignada, implementación iniciada ni modificación de la física, el prompt o la configuración de una partida por registrar esta propuesta. Guía principal: [issue #70](https://github.com/mxlzz/Nilo_public/issues/70); seguimiento: [#71](https://github.com/mxlzz/Nilo_public/issues/71), [#72](https://github.com/mxlzz/Nilo_public/issues/72), [#73](https://github.com/mxlzz/Nilo_public/issues/73).
 
 ## Objetivo
 
@@ -24,13 +24,13 @@ El **editor de prompts** debe permitir cambios en una variante y mostrar su efec
 
 ## Tres etapas independientes, priorizadas por utilidad
 
-### A. Entorno experimental, sin tocar motor instalado — [#147](https://github.com/mxlzz/Nilo/issues/147)
+### A. Entorno experimental, sin tocar motor instalado — [#71](https://github.com/mxlzz/Nilo_public/issues/71)
 
 Introducir perfiles de ajustes en un formato estructurado y validado. Editar las instrucciones, activar o desactivar información del contexto, guardar/cargar variantes y comparar dos escenarios desde el mismo estado y semilla. Extraer gradualmente constantes actualmente integradas en Python para poder configurarlas **sin duplicar física**. Mostrar origen, transformación y destino de cada campo del contexto. Registrar la configuración exacta usada en cada ensayo.
 
 **Aceptación:** cambiar un campo cambia el payload de prueba como se espera, pero no el estado ni la configuración global de Nilo; pruebas de igualdad con baseline y de aislamiento.
 
-### B. Aplicación segura, backups y restore — [#148](https://github.com/mxlzz/Nilo/issues/148)
+### B. Aplicación segura, backups y restore — [#72](https://github.com/mxlzz/Nilo_public/issues/72)
 
 Guardar y cargar **checkpoints de configuración** con nombre; al pulsar **Aplicar al motor**, realizar validación y copia automática previa de configuraciones/archivos afectados con manifest y hashes. Preparar aplicación atómica y rollback ante error; exigir detener/reiniciar el motor si los cambios no pueden cargarse en caliente. **Restaurar** selecciona un backup verificable y revierte el motor/configuración. La partida se conserva por defecto.
 
@@ -38,7 +38,7 @@ El checkpoint **completo de una partida** es otra operación: si se solicita, co
 
 **Aceptación:** aplicación/restauración deja un historial legible; ante falla de escritura se conserva la configuración original; la base de la partida no retrocede al restaurar reglas.
 
-### C. Experimentos avanzados — [#149](https://github.com/mxlzz/Nilo/issues/149)
+### C. Experimentos avanzados — [#73](https://github.com/mxlzz/Nilo_public/issues/73)
 
 Ampliar parámetros físicos configurables con invariantes, comparar resultados de múltiples perfiles/versions, y ejecutar **deliberaciones reales con Gemini/Groq** solo cuando el observador lo solicite y pueda revisar proveedor, modelo y costo. Comparar resultados físicos por semilla y decisiones cognitivas mediante corridas repetidas, sin prometer reproducibilidad de las respuestas del LLM.
 
@@ -51,7 +51,7 @@ Ampliar parámetros físicos configurables con invariantes, comparar resultados 
 - **Aplicación en uso:** proteger o pausar la instancia activa antes de modificar archivos que un proceso ya tiene cargados; verificar restauración sin corrupción.
 - **Auditoría:** almacenar cambios, hashes, perfil, semilla, motor, prompt, proveedor y si la acción se ejecutó en el sandbox o se aplicó.
 - **Reproducción:** respetar los límites documentados en [LABORATORIO_HISTORICO.md](LABORATORIO_HISTORICO.md): UUID, RNG, reloj real y evidencias archivadas pueden impedir identidad bit a bit; los checkpoints de 0.6.3 son históricos de mundo, **no** checkpoints de configuración.
-- **Pruebas:** además de verificar que una operación termine, controlar invariantes físicas y diferencias concretas, especialmente [#141](https://github.com/mxlzz/Nilo/issues/141), [#142](https://github.com/mxlzz/Nilo/issues/142) y [#143](https://github.com/mxlzz/Nilo/issues/143).
+- **Pruebas:** además de verificar que una operación termine, controlar invariantes físicas y diferencias concretas, especialmente [#67](https://github.com/mxlzz/Nilo_public/issues/67), [#68](https://github.com/mxlzz/Nilo_public/issues/68) y [#69](https://github.com/mxlzz/Nilo_public/issues/69).
 
 ## Decisiones pendientes antes de programar
 

@@ -36,7 +36,7 @@
 
 ## Nilo 0.6.0 · Primer corte funcional: construcciones que soportan cargas (2/11/2026)
 
-**Alcance:** primer corte físico de 0.6; capacidades materiales nuevas, sin afirmar completada toda la física composicional. Refs #21, #62, #17, #88.
+**Alcance:** primer corte físico de 0.6; capacidades materiales nuevas, sin afirmar completada toda la física composicional. Refs #8, #30, #5, #45.
 
 - Segundo módulo físico independiente `structural_loads.py`, instalado en el registro cerrado de capacidades: `cargas_estructurales` v1.0.0. `interact` dispone de `probar_carga`, `depositar_carga` y `recuperar_carga` para **obras fijas accesibles** por ID.
 - La capacidad de soporte depende de la resistencia de los componentes reales, su desgaste, geometría de plataforma/macizo/hueco y relación tamaño/piezas. Renombrar una obra no cambia la carga admisible. El resultado usa unidades abstractas; **no** certifica seguridad estructural, cerramientos ni clima.
@@ -53,7 +53,7 @@
 
 ## Nilo 0.5.9.4.2 · Proyección perceptiva del contexto LLM (2/11/2026)
 
-**Alcance:** primer corte implementado del [#130](https://github.com/mxlzz/Nilo/issues/130), resultado de la [auditoría de contexto](AUDITORIA_CONTEXTO_LLM_2026-11-02.md), PR #131. La física del mundo, la memoria SQLite y el cálculo de necesidades permanecen sin cambios.
+**Alcance:** primer corte implementado del [#63](https://github.com/mxlzz/Nilo_public/issues/63), resultado de la [auditoría de contexto](AUDITORIA_CONTEXTO_LLM_2026-11-02.md), PR `referencia privada #131`. La física del mundo, la memoria SQLite y el cálculo de necesidades permanecen sin cambios.
 
 - `cognitive_projection.py`: vista del personaje diferenciada del estado del motor, sin mutar los registros; aplicada antes de serializar deliberaciones de Gemini, Groq y OpenAI-compatible, así como el chat. Ningún proveedor recibe scores internos solo por omitir el modo compacto.
 - Los proyectos ya no presentan a Nilo `progress` numérico estimado; reciben estado, resultados físicos registrados, IDs de evidencias y motivos de pausas. La UI/historial puede seguir mostrando ese valor sin validarlo como prueba.
@@ -62,27 +62,27 @@
 - Un antecedente pertinente de proyecto pausado con su motivo se conserva en el núcleo del contexto incluso bajo presupuesto Groq. No obliga a retomarlo ni a dejarlo.
 - Se corrige un sesgo: investigar un **refugio** sin investigar recuperación de energía deja de activar automáticamente la telemetría especializada del descanso.
 - Pruebas de contexto sobre estado normal, saturado, versiones heredadas y tres rutas de proveedor. El auditor `auditar_contexto_llm.py` incorpora el antecedente derivado; sin credenciales ni llamadas de red.
-- **Pendiente de comprobar en run LLM real:** reducción de bucles, cambios espontáneos de interés, preservación de oportunidades fuera de contexto. El cambio no introduce tareas ni una cuota de creatividad. La reconsideración de `explore` fallido (#14) y el `interact` ambiental (#62/0.6) siguen pendientes.
+- **Pendiente de comprobar en run LLM real:** reducción de bucles, cambios espontáneos de interés, preservación de oportunidades fuera de contexto. El cambio no introduce tareas ni una cuota de creatividad. La reconsideración de `explore` fallido (#2) y el `interact` ambiental (#30/0.6) siguen pendientes.
 
 ---
 
 ## Nilo 0.5.9.4.1 · Corrección del bucle de validación de refugios (2/11/2026)
 
-**Origen:** corrida real de 0.5.9.4 en la que Nilo vuelve repetidamente a inspeccionar y descansar junto a un refugio sin conseguir una prueba funcional. Esta corrección es del **motor y la memoria contextual**, no del ajuste visual pendiente en #96.
+**Origen:** corrida real de 0.5.9.4 en la que Nilo vuelve repetidamente a inspeccionar y descansar junto a un refugio sin conseguir una prueba funcional. Esta corrección es del **motor y la memoria contextual**, no del ajuste visual pendiente en #51.
 
 - **Continuidad por identidad física:** una construcción creada en un proyecto previo se reconoce al verificar un proyecto posterior que la modifica, pero solo con IDs de obra coincidentes en mediciones verificadas; no basta el nombre.
 - **Cierre conservador:** construir, modificar o inspeccionar registra hechos distintos. Una mejora funcional o una protección climática no se acreditan por el número de piezas, ni por una inspección, ni por descansos saturados. Los objetivos que dependen de propiedades no instrumentadas reciben una causa explícita en `ultimo_cierre_rechazado`.
 - **Memoria de decisiones:** nuevas deliberaciones reciben antecedentes relevantes de proyectos e investigaciones pausadas, incluidos sus motivos; se preservan también en el contexto reducido. Crear un proyecto relacionado no lo convierte automáticamente en continuación ni obliga a abandonarlo.
 - **Regresión:** tests sobre continuidad entre proyectos, IDs físicos, no-evaluabilidad de abrigo, construcción simple de refugio y recuperación contextual de pausas.
-- **Límites:** no introduce clima, protección geométrica, nuevos fenómenos físicos ni impide repetir actividades legítimas. La eficacia conductual debe evaluarse con una nueva corrida LLM comparable (#15); la estructura de la física de refugios pertenece a 0.6 (#21).
+- **Límites:** no introduce clima, protección geométrica, nuevos fenómenos físicos ni impide repetir actividades legítimas. La eficacia conductual debe evaluarse con una nueva corrida LLM comparable (#3); la estructura de la física de refugios pertenece a 0.6 (#8).
 
-[PR #128](https://github.com/mxlzz/Nilo/pull/128).
+PR `referencia privada #128` (`referencia-historica-privada-pull-128`).
 
 ---
 
 ## Nilo 0.5.9.4 · Corridas comparables y evaluación reproducible (2/11/2026)
 
-**Alcance:** [#15](https://github.com/mxlzz/Nilo/issues/15), con evidencia pertinente para [#14](https://github.com/mxlzz/Nilo/issues/14), [#94](https://github.com/mxlzz/Nilo/issues/94) y preparación observacional de 0.6.
+**Alcance:** [#3](https://github.com/mxlzz/Nilo_public/issues/3), con evidencia pertinente para [#2](https://github.com/mxlzz/Nilo_public/issues/2), [#50](https://github.com/mxlzz/Nilo_public/issues/50) y preparación observacional de 0.6.
 
 - **`evaluar_corridas.py`**: lectura **solo lectura** de uno a ocho SQLite (snapshot, archivo histórico, sesiones, usos de modelos), informe JSON/Markdown; métricas de exploración, experimentación, mantenimiento, resultados físicos y evidencia antigua disponible. Compara partidas con avisos de falta de condiciones equivalentes; no pretende inferir mejoría ni causalidad por un puntaje.
 - **Origen auditable** de nuevas acciones: si consta, `llm`, `demo`, `agenda`, `espera`, `rutina` o `motor`; `desconocido` para acciones antiguas. Añade a los diagnósticos de `explore` orientado tramos recorridos y casillas reveladas, sin cambiar navegación.
@@ -97,7 +97,7 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 
 ## Nilo 0.5.9.3.35 · Exploración dirigida y cardinales verificados (2/11/2026)
 
-**Alcance:** [#106](https://github.com/mxlzz/Nilo/issues/106) y [#55](https://github.com/mxlzz/Nilo/issues/55), con casos verificables para el protocolo de [#15](https://github.com/mxlzz/Nilo/issues/15).
+**Alcance:** [#60](https://github.com/mxlzz/Nilo_public/issues/60) y [#26](https://github.com/mxlzz/Nilo_public/issues/26), con casos verificables para el protocolo de [#3](https://github.com/mxlzz/Nilo_public/issues/3).
 
 - `explore` **sin parámetros** conserva la selección de frontera aleatoria anterior, sus penalizaciones de recorrido/visitas y el estado RNG para compatibilidad de partidas y replays antiguos.
 - Nilo puede elegir `{"op":"explore","direction":"north"}` (north/south/east/west; alias castellanos aceptados) y/o `{"region":{"x":14,"y":9}}`. La región debe ser una **casilla ya conocida del mismo nivel** y actúa como anclaje, sin convertirse en destino oculto ni revelar su contenido.
@@ -105,7 +105,7 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 - El motor sigue eligiendo rutas `known_only`, respetando obstáculos, agua y nivel; ejecuta pasos de tres minutos progresivamente, con revelado local y rastro real. En un resultado orientado registra dirección solicitada, frontera escogida, tramos recorridos, desplazamiento neto cardinal y casillas observadas; una intención textual no se convierte en resultado físico acreditado.
 - Contexto LLM y guía operativa de Gemini/Groq explican la convención de coordenadas: **norte −Y, sur +Y, este +X, oeste −X**. El título de la acción también muestra el sector que Nilo eligió.
 - Pruebas con ambos niveles, cardinales, alias, región conocida/desconocida, ausencia de frontera sectorial, compatibilidad de exploración genérica y navegación histórica; sin nuevos objetivos, recursos ni física.
-- **Pendiente:** evaluar con runs reales si mejora la continuidad de intereses espaciales sin provocar exploraciones repetitivas (#15). No se modifica el diagnóstico de una narración histórica cuyo desplazamiento no se pueda reproducir.
+- **Pendiente:** evaluar con runs reales si mejora la continuidad de intereses espaciales sin provocar exploraciones repetitivas (#3). No se modifica el diagnóstico de una narración histórica cuyo desplazamiento no se pueda reproducir.
 
 **Siguiente paso preferido:** revisar solo dependencias técnicas efectivas y preparar el hito `0.5.9.4` antes del salto físico propuesto para `0.6`. La guía vigente se mantiene en `docs/FUTUROS_CAMINOS.md`.
 
@@ -113,7 +113,7 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 
 ## Nilo 0.5.9.3.34.1 · Percepción corporal cualitativa (2/11/2026)
 
-**Alcance:** #120 (sensaciones), #94 (autonomía), #96 (interfaz), #64 (selección contextual) y pruebas para #15.
+**Alcance:** #62 (sensaciones), #50 (autonomía), #51 (interfaz), #31 (selección contextual) y pruebas para #3.
 
 - El **motor** conserva las cinco reservas internas continuas, umbrales, tensión corporal, recuperación y efectos físicos. `needs_summary` sigue dando números al observador y a la interfaz.
 - La **deliberación y el chat del personaje** reciben únicamente etiquetas perceptivas para hidratación, alimentación y energía: «bien hidratado», «completamente saciado», «con mucha energía», «sin sed», «sin hambre», «descansado», «algo de sed/hambre», «algo cansado», «mucha sed/hambre», «muy cansado», «sed/hambre extrema», «agotamiento severo» o «inconsciente» según el estado. Los umbrales permanecen privados del motor.
@@ -123,13 +123,13 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 - Las etiquetas visibles del **observador** son específicas para cada necesidad; conserva porcentajes, tasas y ayudas numéricas para inspeccionar la simulación.
 - Se mantienen replays, importación, SQLite y el mecanismo de delegación finita de la .34. **No** incorpora embeddings, FTS5, nuevos modelos fisiológicos ni el alcance de exploración dirigida reservado para .35.
 
-**Validación:** límites de categorías, no mutación de reservas, protección del payload Groq/Gemini y disponibilidad de resultados realmente medidos en un contexto de investigación. El impacto conductual con modelos reales permanece pendiente (#15).
+**Validación:** límites de categorías, no mutación de reservas, protección del payload Groq/Gemini y disponibilidad de resultados realmente medidos en un contexto de investigación. El impacto conductual con modelos reales permanece pendiente (#3).
 
 ---
 
 ## Nilo 0.5.9.3.34 · Percepción corporal y memoria contextual (2/11/2026)
 
-**Integración coordinada:** [#120](https://github.com/mxlzz/Nilo/issues/120), [#101](https://github.com/mxlzz/Nilo/issues/101), [#96](https://github.com/mxlzz/Nilo/issues/96), [#47](https://github.com/mxlzz/Nilo/issues/47) y [#64](https://github.com/mxlzz/Nilo/issues/64).
+**Integración coordinada:** [#62](https://github.com/mxlzz/Nilo_public/issues/62), [#56](https://github.com/mxlzz/Nilo_public/issues/56), [#51](https://github.com/mxlzz/Nilo_public/issues/51), [#20](https://github.com/mxlzz/Nilo_public/issues/20) y [#31](https://github.com/mxlzz/Nilo_public/issues/31).
 
 - **Sensaciones:** nueva vista derivada para sed, hambre y cansancio, separada de las reservas físicas de 0–100. Sed/hambre: ≥90 ninguna; 60–<90 normal sin urgencia; 30–<60 progresiva; 15–<30 intensa; <15 crítica. Cansancio: ≥90 ninguno, 60–<90 normal, 30–<60 progresivo, 12–<30 intenso, <12 tensión corporal, ≤5 inconsciencia. No se cambian tasas ni reglas fisiológicas; descansar, comer o beber siguen siendo elecciones de Nilo.
 - **Autocuidado delegado:** las preferencias de espera \`rest\`, \`drink\` y \`eat\` se ejecutan solo una vez por delegación salvo repetición explícita \`veces\` (1–8), con condición opcional \`menor_que\` definida por Nilo. La cuota se descuenta al **programar** el paso; una deliberación posterior puede renovar la autorización. No se introducen umbrales globales de ingestión ni descanso; la ruta de replay histórico permanece diferenciada.
@@ -138,7 +138,7 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 - **Interfaz:** barras conservadas con etiqueta de sensación corporal, ayudas consistentes para las tres reservas, abrigo y seguridad sin nueva física.
 - **Compatibilidad:** sin modificación del mundo, física o historia existente, sin embeddings ni índices FTS5 todavía. Pruebas de límites 90/60/30/15, consentimiento de rutinas, contexto Groq/Gemini, recuperación y replay.
 
-**Aún pendiente:** evaluación longitudinal del impacto real en decisiones (#15, 0.5.9.4); búsqueda histórica por FTS5, memoria consultable bajo demanda y consolidación (#47/#65) en futuras iteraciones; exploración orientada (#106) propuesta para la siguiente versión.
+**Aún pendiente:** evaluación longitudinal del impacto real en decisiones (#3, 0.5.9.4); búsqueda histórica por FTS5, memoria consultable bajo demanda y consolidación (#20/#65) en futuras iteraciones; exploración orientada (#60) propuesta para la siguiente versión.
 
 ---
 
@@ -159,14 +159,14 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 
 ## Nilo 0.5.9.3.32 · Progreso físico, continuidad y reconsideración (1/11/2026)
 
-- **Navegación (#117):** el progreso y los contadores del proyecto ahora usan el número de casillas reveladas desde el inicio real de la acción (`pending.behavior_revealed_at_start`). Un bloqueo tras descubrir casillas se registra como descubrimiento parcial; recorrer una ruta ya revelada no da crédito nuevo. Los registros antiguos sin marcador no reciben avances ficticios.
-- **Estancamiento (#14):** en reglas actuales, varias operaciones `explore`, `inspect` o `use` sin progreso son evidencia para reconsiderar, pero el motor no prohíbe indiscriminadamente toda la familia de acciones ni borra planes legítimos. El detector de duplicados exactos conserva el plan en vez de cancelarlo; presenta el aviso y Nilo conserva la decisión. Los contadores se reinician tras progreso físico verificado.
-- **Cierre de proyectos (#31):** rechazos con códigos distintos para `sin_mediciones_del_proyecto`, `condicion_fisica_no_demostrada`, `criterio_no_instrumentado` y cita faltante. Ningún porcentaje, texto del diario ni paso de agenda acredita por sí mismo cumplimiento. El diagnóstico no relaja las validaciones físicas existentes.
-- **Agenda/continuidad (#31/#81):** una secuencia completada mantiene estado de ejecución y marca por separado su propósito como no verificado automáticamente. El contexto conserva el motivo de pausa y expone proyectos con recordatorios cumplidos para que Nilo decida reanudarlos, incluidos los contextos reducidos.
+- **Navegación (#61):** el progreso y los contadores del proyecto ahora usan el número de casillas reveladas desde el inicio real de la acción (`pending.behavior_revealed_at_start`). Un bloqueo tras descubrir casillas se registra como descubrimiento parcial; recorrer una ruta ya revelada no da crédito nuevo. Los registros antiguos sin marcador no reciben avances ficticios.
+- **Estancamiento (#2):** en reglas actuales, varias operaciones `explore`, `inspect` o `use` sin progreso son evidencia para reconsiderar, pero el motor no prohíbe indiscriminadamente toda la familia de acciones ni borra planes legítimos. El detector de duplicados exactos conserva el plan en vez de cancelarlo; presenta el aviso y Nilo conserva la decisión. Los contadores se reinician tras progreso físico verificado.
+- **Cierre de proyectos (#13):** rechazos con códigos distintos para `sin_mediciones_del_proyecto`, `condicion_fisica_no_demostrada`, `criterio_no_instrumentado` y cita faltante. Ningún porcentaje, texto del diario ni paso de agenda acredita por sí mismo cumplimiento. El diagnóstico no relaja las validaciones físicas existentes.
+- **Agenda/continuidad (#13/#81):** una secuencia completada mantiene estado de ejecución y marca por separado su propósito como no verificado automáticamente. El contexto conserva el motivo de pausa y expone proyectos con recordatorios cumplidos para que Nilo decida reanudarlos, incluidos los contextos reducidos.
 - **Replays:** `reproducir.py` identifica cada replay histórico y preserva la huella original de cualquier ruleset publicado. Los cambios de instrumentación .32 solo se aplican a ejecución vigente. No se reescriben históricos SQLite ni se crean objetivos.
 - **Pruebas:** navegación revelada antes del cierre, rutas repetidas, bloqueo parcial, ausencia de marcador, distinción de objetivos, agenda y continuidad voluntaria; suite integral y replays.
 
-**Pendiente de evaluación:** verificar si estas correcciones reducen efectivamente falsos estancamientos en corridas reales comparables (#15). La exploración dirigida (#106), índices de memoria (#47/#65) y ampliación composicional de herramientas (#88/#89) quedan para la siguiente etapa.
+**Pendiente de evaluación:** verificar si estas correcciones reducen efectivamente falsos estancamientos en corridas reales comparables (#3). La exploración dirigida (#60), índices de memoria (#20/#65) y ampliación composicional de herramientas (#45/#89) quedan para la siguiente etapa.
 
 ---
 
@@ -182,13 +182,13 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 ## Nilo 0.5.9.3.30 · Memoria contextual y revisión informativa de estrategias (1/11/2026)
 
 - **Episodios nuevos con procedencia:** los registros de experiencia incorporan ID estable, objetivo registrado, proyecto, ubicación al finalizar, objeto físico identificado por el motor, ID de acción e ID de medición cuando existen. Los históricos no se reinterpretan ni se les asignan posiciones o identidades inventadas.
-- **Recuperación contextual:** se consideran objetivo, último intento del proyecto, vínculo exacto de entidad, proyecto y cercanía a ubicaciones realmente registradas. Se conservan las reglas de no revelar lugares ocultos. Sigue siendo una selección en memoria, no el futuro índice SQLite general de #47/#65.
+- **Recuperación contextual:** se consideran objetivo, último intento del proyecto, vínculo exacto de entidad, proyecto y cercanía a ubicaciones realmente registradas. Se conservan las reglas de no revelar lugares ocultos. Sigue siendo una selección en memoria, no el futuro índice SQLite general de #20/#65.
 - **Revisión semántica:** un nuevo módulo compara deliberaciones del mismo proyecto por secuencia operativa y un conjunto limitado de efectos verificables. Puede identificar variantes de desplazamientos cortos seguidos de descansos investigativos saturados. Exige tres deliberaciones equivalentes sin información nueva y distingue direcciones/regiones distintas de exploración y cambios de métodos o resultados.
 - **Autonomía:** la señal es informativa. No descarta planes, prohíbe descansos, cambia proyectos ni exige nuevas llamadas al LLM. Se entrega en contexto completo y compacto. Permanece activo el detector previo de duplicados exactos, independiente de la nueva señal.
 - **Compatibilidad de reproducción:** las partidas con rulesets históricos conservan la estructura exacta de los episodios y el historial de decisiones al ejecutar replays; la nueva instrumentación solo se aplica a sesiones con reglas actuales.
 - **Pruebas:** casos deterministas de procedencia, recuperación de un episodio antiguo frente a cientos de entradas recientes, compatibilidad de históricos, progresos que invalidan la repetición y estrategias espaciales distintas. No se afirma eficacia conductual sin un run comparativo con proveedor real.
 
-**Pendiente:** recuperación indexada desde SQLite, consultas históricas a demanda, análisis de repetición por resultados físicos más ricos, comparación en runs controlados (#15) y autonomía de propuestas (#58).
+**Pendiente:** recuperación indexada desde SQLite, consultas históricas a demanda, análisis de repetición por resultados físicos más ricos, comparación en runs controlados (#3) y autonomía de propuestas (#29).
 
 ---
 
@@ -212,7 +212,7 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 - **Recipientes (corrección de .27):** la vía tipada principal `action_results.py` y las variables autorizadas de predicción ahora coinciden con el laboratorio: `capacidad_util_agua`. Las etiquetas de mediciones históricas permanecen legibles; no existe pérdida de agua en el tiempo.
 - **Interfaz:** apartado de diseños muestra funciones comprobadas con IDs de medición y aclara la diferencia con prototipos. Continúa sin cambiar las reglas físicas de sueño o seguridad.
 
-**Límites:** no es todavía la evaluación integral de autonomía del issue #14; la semántica de objetivos abiertos sigue dependiendo de la deliberación autónoma de Nilo. La prueba prolongada con modelos reales continúa pendiente.
+**Límites:** no es todavía la evaluación integral de autonomía del issue #2; la semántica de objetivos abiertos sigue dependiendo de la deliberación autónoma de Nilo. La prueba prolongada con modelos reales continúa pendiente.
 
 ---
 
@@ -233,13 +233,13 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 
 ## Nilo 0.5.9.3.26 · Cuaderno, vínculos completos y verificación de interfaz (2026-11-01)
 
-**Tercera etapa acordada: #79, #96, #97, #98, #99.** Basada en 0.5.9.3.25, sin modificar reglas de autonomía, física corporal, tiempos de las acciones ni sus datos históricos.
+**Tercera etapa acordada: #38, #51, #52, #53, #54.** Basada en 0.5.9.3.25, sin modificar reglas de autonomía, física corporal, tiempos de las acciones ni sus datos históricos.
 
-- **#79 — Relaciones del Cuaderno:** `recordLinks` muestra TODOS los registros relacionados directamente, agrupados por familia sin subtítulos ni separadores, con prioridad de fase y orden histórico dentro de cada grupo; se elimina el control «Ver N relaciones más».
+- **#38 — Relaciones del Cuaderno:** `recordLinks` muestra TODOS los registros relacionados directamente, agrupados por familia sin subtítulos ni separadores, con prioridad de fase y orden histórico dentro de cada grupo; se elimina el control «Ver N relaciones más».
 - `History.relations_for`, `relations_batch` y `Simulation.public_state` dejan de truncar vínculos a 40/25/32 por registro. La consulta individual `/api/record` también devuelve el grafo completo. Se deduplican referencias por entidad y se conserva la procedencia de las mediciones vinculadas al cuaderno.
 - Los cortes de indexación de evidencias y `entity_links` (80/100/150) también se retiran. Migración `indexed_v2_full` reconstruye los índices de IDs explícitos una sola vez en bases existentes, sin reinterpretar texto, inventar relaciones ni modificar las partidas.
-- **Integración con #92:** las transferencias, recargas, consumos, descargas y almacenamientos de recipientes ahora enlazan las herramientas u obras reales por ID, y distinguen origen/destino cuando hay evidencia tipada de éxito. La narración sin efecto físico o una operación rechazada no crea vínculo. Se conservan las variaciones de inventario como registros de material, sin inventar objetos.
-- **#96–#99:** conservar las ayudas corporales vigentes, popovers flotantes, filtros y motivos de Investigaciones/Proyectos, y contorno del objetivo físico en el mapa. Esta versión agrega regresiones de arranque e integración contra el nuevo motor; no afirma verificación visual en Windows sin prueba humana.
+- **Integración con #49:** las transferencias, recargas, consumos, descargas y almacenamientos de recipientes ahora enlazan las herramientas u obras reales por ID, y distinguen origen/destino cuando hay evidencia tipada de éxito. La narración sin efecto físico o una operación rechazada no crea vínculo. Se conservan las variaciones de inventario como registros de material, sin inventar objetos.
+- **#51–#54:** conservar las ayudas corporales vigentes, popovers flotantes, filtros y motivos de Investigaciones/Proyectos, y contorno del objetivo físico en el mapa. Esta versión agrega regresiones de arranque e integración contra el nuevo motor; no afirma verificación visual en Windows sin prueba humana.
 - Pruebas de relaciones con más de 150 entidades por categoría, reconstrucción de índices históricos, ausencia de vínculos por texto, orden/presentación ejecutados en Node, simulación de transferencia con persistencia/reapertura SQLite; también se ejecutan pruebas y replays históricos.
 
 **Pendiente de observación:** confirmar visualmente el comportamiento de ayudas, filtros, contorno y navegación/lectura del Cuaderno en una partida real; en acciones instantáneas el contorno puede no permanecer en pantalla. La cobertura futura de vínculos con terreno o fichas navegables de materiales depende de identidades físicas todavía no instrumentadas.
@@ -248,25 +248,25 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 
 ## Nilo 0.5.9.3.25 · Capacidades físicas y recipientes (2026-11-01)
 
-**Segunda etapa acordada: #104, #80, #62 y #92.** Esta versión añade un primer módulo operativo completo, pero NO presupone que toda la arquitectura de plugins futuros esté terminada.
+**Segunda etapa acordada: #59, #39, #30 y #49.** Esta versión añade un primer módulo operativo completo, pero NO presupone que toda la arquitectura de plugins futuros esté terminada.
 
-- **#104:** fabricación de objetos blandos y duplicados materiales independientes; sin veto universal por resistencia media inferior a 3 ni pérdida automática de materiales por ese veto. La resistencia sigue representada para evaluar usos. Se conserva el límite de componentes y las restricciones de obra fija superpuesta.
-- **#62:** registro cerrado y versionado de capacidades físicas en `capabilities.py`, con despacho genérico `interact` y módulo `vessels.py`; se registra la versión de contenidos en el mundo al primer uso, y la evidencia de cada operación incluye ID y versión. Las partidas anteriores no cambian de leyes hasta ejecutar una operación nueva; si una partida requiere otra versión o la capacidad está deshabilitada, la operación se rechaza. No se cargan paquetes arbitrarios ni se habilitan propuestas automáticamente. Quedan pendientes activación explícita por instalación, migraciones entre versiones incompatibles y generación de otros módulos.
-- **#92:** recipientes esquemáticos pueden llenarse parcialmente desde agua ambiental contigua, transferir cantidad comprobable entre dos objetos, descargar al entorno, beber explícitamente del contenido, guardar y retirar sólidos del inventario. Se valida capacidad, disponibilidad, cercanía, material compatible, integridad y cantidad sin duplicaciones. El agua ambiental aún no tiene un balance de depósito finito; descargar no produce charcos modelados. Los recipientes llenos no pueden desmontarse ni modificarse de manera que el contenido exceda la capacidad final sin vaciarlos o transferirlos previamente. La acción histórica `use/llenar` permanece para compatibilidad; el módulo nuevo utiliza `interact/rellenar`.
-- **#80:** métodos físicos reconocidos por registro y diagnóstico tipado de la ausencia de método, con alcance, variables no evaluables e ID de evidencia. Los rechazos del módulo por precondición se distinguen de fallos físicos medidos y de `no_evaluable`. No se reinterpreta el historial anterior, ni se infiere filtración/potabilidad a partir de contención.
-- Continúan sin cambiar los contratos corporales #100–#103, la autonomía del personaje, la física geométrica detallada y la interfaz del run anterior. Replays históricos preservados.
+- **#59:** fabricación de objetos blandos y duplicados materiales independientes; sin veto universal por resistencia media inferior a 3 ni pérdida automática de materiales por ese veto. La resistencia sigue representada para evaluar usos. Se conserva el límite de componentes y las restricciones de obra fija superpuesta.
+- **#30:** registro cerrado y versionado de capacidades físicas en `capabilities.py`, con despacho genérico `interact` y módulo `vessels.py`; se registra la versión de contenidos en el mundo al primer uso, y la evidencia de cada operación incluye ID y versión. Las partidas anteriores no cambian de leyes hasta ejecutar una operación nueva; si una partida requiere otra versión o la capacidad está deshabilitada, la operación se rechaza. No se cargan paquetes arbitrarios ni se habilitan propuestas automáticamente. Quedan pendientes activación explícita por instalación, migraciones entre versiones incompatibles y generación de otros módulos.
+- **#49:** recipientes esquemáticos pueden llenarse parcialmente desde agua ambiental contigua, transferir cantidad comprobable entre dos objetos, descargar al entorno, beber explícitamente del contenido, guardar y retirar sólidos del inventario. Se valida capacidad, disponibilidad, cercanía, material compatible, integridad y cantidad sin duplicaciones. El agua ambiental aún no tiene un balance de depósito finito; descargar no produce charcos modelados. Los recipientes llenos no pueden desmontarse ni modificarse de manera que el contenido exceda la capacidad final sin vaciarlos o transferirlos previamente. La acción histórica `use/llenar` permanece para compatibilidad; el módulo nuevo utiliza `interact/rellenar`.
+- **#39:** métodos físicos reconocidos por registro y diagnóstico tipado de la ausencia de método, con alcance, variables no evaluables e ID de evidencia. Los rechazos del módulo por precondición se distinguen de fallos físicos medidos y de `no_evaluable`. No se reinterpreta el historial anterior, ni se infiere filtración/potabilidad a partir de contención.
+- Continúan sin cambiar los contratos corporales #55–#58, la autonomía del personaje, la física geométrica detallada y la interfaz del run anterior. Replays históricos preservados.
 - Tests nuevos de conservación de contenidos, duplicados, intentos rechazados sin efectos, consumo explícito, cambios de capacidad, diagnóstico y arranque. Se complementan con la suite y replays de CI.
 
 ---
 
 ## Nilo 0.5.9.3.24 · Casilla de intervención en mapa (2026-11-01)
 
-- #99: marca con un contorno interior discreto la casilla concreta de una intervención física durante una acción pendiente, sin modificar símbolos, rastro ni geometría. Disponible en superficie y cueva, y en mapas cercano y general.
+- #54: marca con un contorno interior discreto la casilla concreta de una intervención física durante una acción pendiente, sin modificar símbolos, rastro ni geometría. Disponible en superficie y cueva, y en mapas cercano y general.
 - El motor expone `active_intervention` de solo lectura: `x,y,z,op`, exclusivamente si puede identificar una casilla observada y real. No se escribe en SQLite ni modifica memoria, acciones, tiempos o necesidades.
 - Inspección: admite terreno por coordenadas, terreno/obra inequívocos y omite herramientas portátiles. Excavación: valida roca adyacente y herramienta con capacidad. Recolección: muestra fuente real cuando ya se trabaja allí, no casilla de apoyo; `forage` utiliza el selector físico compartido. Obras fijas: se distingue de modificaciones de herramientas portátiles.
 - Durante una navegación, incluso si ya hay fuente seleccionada, no se anticipa el contorno: aparece solo durante intervención física, si ese estado dura hasta el próximo refresco. En operaciones que se ejecutan instantáneamente al terminar un trayecto, puede no ser visible; no se introducen esperas artificiales para forzar animaciones.
 - Si se cancela la acción, se pierde conciencia, cambia de nivel o el terreno no está revelado, no aparece marca. Pueden comprobarse estos casos con pruebas de contrato y ejecución de mapa JavaScript.
-- Basada en la corrección de arranque 0.5.9.3.23.1. Sin cambios de #79, #80, #62, #92 o de supervivencia.
+- Basada en la corrección de arranque 0.5.9.3.23.1. Sin cambios de #38, #39, #30, #49 o de supervivencia.
 
 ---
 
@@ -275,17 +275,17 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 - La versión 0.5.9.3.23 intentaba ejecutar `stored('nilo.researchView.v1',...)` **antes de inicializar `const stored`**, provocando un `ReferenceError` de JavaScript durante el arranque de la página.
 - La 0.5.9.3.23.1 corrige el orden de las declaraciones sin cambiar las reglas del motor, el formato de partidas ni los filtros.
 - Se añadió una prueba de ejecución real de la secuencia de inicialización con Node.js; `node --check` no detectaba este fallo en tiempo de ejecución.
-- No contiene cambios del mapa (#99): la 0.5.9.3.24 quedó suspendida hasta resolver y verificar el arranque.
+- No contiene cambios del mapa (#54): la 0.5.9.3.24 quedó suspendida hasta resolver y verificar el arranque.
 
 ---
 
 ## Nilo 0.5.9.3.23 — Lectura de registros (2026-11-01)
 
-- #96: ayudas de hidratación, alimentación y energía actualizadas conforme a las reglas efectivamente publicadas en 0.5.9.3.22 (sin ingestas por umbral; descanso libre y colapso).
-- #97: ayudas contextuales de Ensayos y otras secciones como popup flotante en `body`, sin desplazar registros; cierre por Escape, clic exterior, scroll y cambio de solapa.
-- #98: filtro **independiente** de investigaciones por estado, incluyendo integradas; motivos registrados de pausas, abandonos y cierre en fichas, sin inferir razones ausentes.
+- #51: ayudas de hidratación, alimentación y energía actualizadas conforme a las reglas efectivamente publicadas en 0.5.9.3.22 (sin ingestas por umbral; descanso libre y colapso).
+- #52: ayudas contextuales de Ensayos y otras secciones como popup flotante en `body`, sin desplazar registros; cierre por Escape, clic exterior, scroll y cambio de solapa.
+- #53: filtro **independiente** de investigaciones por estado, incluyendo integradas; motivos registrados de pausas, abandonos y cierre en fichas, sin inferir razones ausentes.
 - El filtro de Proyectos se conserva exactamente como en 0.5.9.3.22.
-- No incluye agrupación de relaciones del Cuaderno #79 ni resaltado de casillas de intervención #99; ambos requieren pruebas específicas y quedan para otra versión.
+- No incluye agrupación de relaciones del Cuaderno #38 ni resaltado de casillas de intervención #54; ambos requieren pruebas específicas y quedan para otra versión.
 
 ---
 
@@ -304,7 +304,7 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 - QMP se traslada al pie anclado de la columna del registro, visible al recorrer o cambiar solapas. Barra superior de lectura compacta, sin carrusel horizontal.
 - Necesidades: se corrige la explicación energética para la versión vigente, se elimina leyenda redundante y se atenúan los indicadores inactivos de abrigo y seguridad.
 - Actividad: porcentaje y ambos tiempos restantes en un único renglón.
-- Cuaderno: se conservan y verifican vínculos físicos basados en mediciones y IDs reales, incorporados en la versión anterior (#79).
+- Cuaderno: se conservan y verifican vínculos físicos basados en mediciones y IDs reales, incorporados en la versión anterior (#38).
 - Se retira la promoción cognitiva especial del estudio de descanso: deja de inyectarse en cada deliberación la recomendación de comparar tasas y no se generan conclusiones espontáneas por descansos rutinarios. Las mediciones objetivas persisten.
 - Se habilita la deliberación sin proyecto formal mediante sin_proyecto, sin alterar el control previo de pausas/recordatorios.
 - Replays antiguos conservan los estados y textos originales; las partidas importadas no pierden historial.
@@ -328,7 +328,7 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 - Reconocimiento del terreno: exigir exploración verificada; hallazgo de agua: observación, inspección o llegada a orilla probada y autoría del proyecto. Preferir dentro de la prueba de cierre las mediciones pertinentes que Nilo cite.
 - Si el objetivo es verificable pero la cita es inválida, comunicar los IDs válidos para evitar deliberaciones repetidas sin información nueva. Nunca permitir cierre basándose únicamente en narración.
 - Localizar agua no demuestra potabilidad; robustecido el reconocimiento de «potable», «potabilidad» y «purificación».
-- Sin cambios de física, interfaz ni estado histórico. Próximos cambios de interfaz en #84 y #85. Validación determinista y de compatibilidad incluida.
+- Sin cambios de física, interfaz ni estado histórico. Próximos cambios de interfaz en #42 y #43. Validación determinista y de compatibilidad incluida.
 
 ---
 
@@ -337,17 +337,17 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 - Nuevo recordatorio condicionado elegido por Nilo. El proyecto puede quedar pausado hasta que se cumpla una condición; su cumplimiento habilita volver a considerarlo en una deliberación, sin lanzar acciones ni simular un resultado físico.
 - Mantener separado un recordatorio (`modo: recordatorio`, sin pasos) de una tarea delegada de Agenda. Se conserva la compatibilidad con tareas antiguas; el evento se genera una sola vez y se reconoce al retomar el proyecto.
 - Interfaz: en Agenda y Proyectos, filtro compacto por estado junto al indicador de novedades. Controles en una sola línea, con desplazamiento horizontal de ser necesario. Preferencias de filtro persistentes por solapa; no modifica lectura ni archivo.
-- No se cambian leyes, valores físicos, tasas de supervivencia ni contadores cognitivos históricos. #80 (diagnóstico central de límites físicos) continúa pendiente para el registro modular #62.
+- No se cambian leyes, valores físicos, tasas de supervivencia ni contadores cognitivos históricos. #39 (diagnóstico central de límites físicos) continúa pendiente para el registro modular #30.
 - Pruebas de nuevo comportamiento, interfaz, escenarios y replays antiguos.
 
 ---
 
 ## Nilo 0.5.9.3.17 · Diagnóstico trazable y orientación (2026-11-01)
 
-- Integrado el PR #72: las propuestas de fenómenos no modelados y los reportes de posibles defectos seleccionan evidencias identificables. Sin IDs auténticos y pertinentes no presentan vínculo probatorio ficticio. Devoluciones humanas anteriores se recuperan al deliberar, sin confundirse con mediciones.
+- Integrado el PR `referencia privada #72`: las propuestas de fenómenos no modelados y los reportes de posibles defectos seleccionan evidencias identificables. Sin IDs auténticos y pertinentes no presentan vínculo probatorio ficticio. Devoluciones humanas anteriores se recuperan al deliberar, sin confundirse con mediciones.
 - El contexto LLM, también en su formato reducido, incorpora lugares ya revelados y rutas comprobables sobre el mapa conocido, con distinción explícita entre ausencia de ruta conocida, estar en otro nivel y llegar al sitio. No expone lugares todavía ocultos.
 - No se impone un nuevo objetivo, una ruta ni una cuota de solicitudes a Nilo. Las leyes físicas y partidas anteriores no cambian.
-- Se difirió el cambio en la contabilización de descansos saturados: modificaba el resultado de una reproducción histórica y necesita una política de compatibilidad por versión. #14 permanece abierto.
+- Se difirió el cambio en la contabilización de descansos saturados: modificaba el resultado de una reproducción histórica y necesita una política de compatibilidad por versión. #2 permanece abierto.
 - Pruebas del diagnóstico, reconocimiento espacial, compresión, mundo, escenarios y replay determinista.
 
 ---
@@ -359,7 +359,7 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 - La API de velocidad ahora acepta ×80 y rechaza ×300/×600, en concordancia con los botones y el motor.
 - Valor predeterminado del mínimo real entre deliberaciones exitosas: 15 s en nuevas instalaciones; acotado a 10–300 s y respetando cuotas y cooldowns de proveedores. El archivo `config.env` existente se preserva, sin reemplazar automáticamente su valor.
 - Configuración muestra el intervalo real utilizado.
-- Pruebas del catálogo, velocidades vía HTTP, límites de cadencia, escenarios y replay. No se incorporó el PR #72 ni se alteraron los runs actuales.
+- Pruebas del catálogo, velocidades vía HTTP, límites de cadencia, escenarios y replay. No se incorporó el PR `referencia privada #72` ni se alteraron los runs actuales.
 
 ---
 
@@ -388,7 +388,7 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 - ×300 y ×600 en controles, API y estado persistido. Motor dividido en subpasos de hasta un minuto simulado con corte exacto al terminar una acción.
 - Consulta activa del LLM a ×1 temporal; pausa automática ×0 también en cooldown ordinario sin tareas, respetando las agendas cuyo reloj debe avanzar y los reintentos por tiempo real.
 - Escritura rápida sin animación a ×300/×600; duración simulada conservada, ×2 en modos anteriores.
-- Etiqueta de velocidad efectiva y resaltado de habilidades pendientes en Conducta (#49).
+- Etiqueta de velocidad efectiva y resaltado de habilidades pendientes en Conducta (#21).
 - Replay determinista actualizado al nuevo procesamiento del tiempo; pruebas de regresión, escenarios y verificación de paquete íntegro.
 
 ---
@@ -417,7 +417,7 @@ Uso: `python evaluar_corridas.py "partida_A.sqlite3" "partida_B.sqlite3" --json 
 - El redibujado de la solapa ya no cierra los desplegables que el usuario abrió, incluso cuando Nilo sigue escribiendo o inserta novedades. Se preserva la identidad de cada ficha y sus elementos anidados.
 - Abrir un vínculo documental dentro de una ficha registra como leído el documento **de origen** al completar la navegación; el de destino conserva su estado previo. Funciona en Cuaderno, Novedades y las solapas con seguimiento de lectura.
 - Pruebas de actualización con registros nuevos intercalados, restauración de estado anidado y navegación sin marcar automáticamente el destino. Se actualizó la prueba histórica que solo contemplaba aperturas de Novedades.
-- Los cambios de síntesis jerarquizada de «¿Qué me perdí?» están registrados en issue #41 para una implementación independiente.
+- Los cambios de síntesis jerarquizada de «¿Qué me perdí?» están registrados en issue #16 para una implementación independiente.
 
 ---
 

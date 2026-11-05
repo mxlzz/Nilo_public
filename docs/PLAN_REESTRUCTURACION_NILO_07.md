@@ -1,6 +1,12 @@
 # Nilo 0.7 — Plan de reestructuración integral por etapas
 
-**Decisión de versión (4/11/2026):** reservar `0.7` para el resultado integrado de la reestructuración de Nilo. La base comparativa es `0.6.4`. Esta hoja es una **propuesta de ejecución detallada**, todavía sin implementación ni fecha de publicación. La nueva física térmica queda fuera de `0.7` y se considera para `0.8`. Referencias: [auditoría 0.6.4](AUDITORIA_ARQUITECTURA_NILO_07_2026-11-04.md), [#151](https://github.com/mxlzz/Nilo/issues/151).
+**Estado vigente al 5/11/2026:** etapas 00–08 completadas en `refactor/0.7`;
+etapa 09 pendiente. El seguimiento actual está en
+[ESTADO_REESTRUCTURACION_07.md](ESTADO_REESTRUCTURACION_07.md) y el cierre de la
+migración pública en [MIGRACION_PUBLICA_ETAPA_03.md](MIGRACION_PUBLICA_ETAPA_03.md).
+La descripción de propuesta que sigue se conserva como registro del plan original.
+
+**Decisión de versión (4/11/2026):** reservar `0.7` para el resultado integrado de la reestructuración de Nilo. La base comparativa es `0.6.4`. Esta hoja es una **propuesta de ejecución detallada**, todavía sin implementación ni fecha de publicación. La nueva física térmica queda fuera de `0.7` y se considera para `0.8`. Referencias: [auditoría 0.6.4](AUDITORIA_ARQUITECTURA_NILO_07_2026-11-04.md), [#74](https://github.com/mxlzz/Nilo_public/issues/74).
 
 ## Principio de trabajo
 
@@ -22,8 +28,8 @@ No reescribir el sistema entero de una vez ni dejar dos motores permanentes. Tra
 | **01 · Arquitectura definitiva de paquetes** | Volver a estudiar todos los imports y ciclos, las 63 fuentes, HTML, scripts, datos, tests y flujos completos. Fijar propietarios de reglas, dependencias permitidas y estructura mínima de `core/worlds/physics/agent/cognition/storage/app/lab`. | Matriz archivo viejo → propietario nuevo y contratos; grafo sin dependencias circulares de dominio. |
 | **02 · Estado de dominio** | Auditar `self.s`, `person`, mundo, marcadores, defaults, datos de UI y mezclas entre hecho, hipótesis y percepción. Reescribir esquemas tipados/versionados y validación en límites. | Esquemas estables y fixtures con serialización equivalente; proyecciones no mutan estado. |
 | **03 · Eventos y resultados** | Reauditar tuplas antiguas, `ActionResult`, eventos y consumidores de texto; reemplazar cadenas interpretadas por eventos tipados, procedencia, causalidad, errores y efectos explícitos. | Un resultado contractual común, sin inferir éxito ni evidencia por la narrativa. |
-| **04 · Identidades y aleatoriedad** | Rastrear `uuid4`, RNG global, semillas, IDs físicos/lógicos y serialización de estados. Centralizar identidad y secuencias reproducibles (#143). | Reanudar desde save preserva RNG e IDs; replays repetibles en el alcance declarado. |
-| **05 · Reloj y ejecución temporal** | Revisar minutaje, `tick`, fases, pausas, interrupciones, velocidad y actividades automáticas. Rehacer contrato de duración prevista/transcurrida y fases (#141/#142). | Viaje/trabajo/acreditación coherentes; ningún efecto futuro se acredita antes de tiempo. |
+| **04 · Identidades y aleatoriedad** | Rastrear `uuid4`, RNG global, semillas, IDs físicos/lógicos y serialización de estados. Centralizar identidad y secuencias reproducibles (#69). | Reanudar desde save preserva RNG e IDs; replays repetibles en el alcance declarado. |
+| **05 · Reloj y ejecución temporal** | Revisar minutaje, `tick`, fases, pausas, interrupciones, velocidad y actividades automáticas. Rehacer contrato de duración prevista/transcurrida y fases (#67/#142). | Viaje/trabajo/acreditación coherentes; ningún efecto futuro se acredita antes de tiempo. |
 | **06 · Registro y validación de acciones** | Revisar manuales, contratos, parseo LLM, planificador, `ACTION_DURATIONS` y dispatchers. Un registro tipado produce documentación, requisitos y validación. | Una única definición de operación para LLM/planificador/ejecución/laboratorio; se elimina el dispatcher duplicado. |
 | **07 · Núcleo orquestador** | Desarmar `nilo.py` y `Simulation`: vida de sesión, reloj, cola, deliberación, acciones, UI, migraciones y servidor. Reescribir coordinación pequeña por casos de uso. | Motor ejecutable sin HTTP/UI, integrable por API, con escenarios pasando por la misma ruta. |
 
@@ -32,12 +38,12 @@ No reescribir el sistema entero de una vez ni dejar dos motores permanentes. Tra
 | Paso | Revisión profunda y reescritura | Puerta de salida |
 |---|---|---|
 | **08 · Mundo y generación** | Revisar topología, niveles, generación, semillas, catálogos y pertenencia de propiedades al entorno. Extraer `worlds/island` sin reglas cognitivas. | Mismo mundo inicial por semilla y contrato para otro entorno sin implementarlo todavía. |
-| **09 · Navegación y exploración** | Revisar BFS, frontera, revelado, rutas, ascenso/descenso, `go/explore`, errores de accesibilidad y complejidad. Rehacer índices y consultas deterministas. | Rutas válidas, información solo conocida, menor costo medido, pruebas de no progreso (#14). |
+| **09 · Navegación y exploración** | Revisar BFS, frontera, revelado, rutas, ascenso/descenso, `go/explore`, errores de accesibilidad y complejidad. Rehacer índices y consultas deterministas. | Rutas válidas, información solo conocida, menor costo medido, pruebas de no progreso (#2). |
 | **10 · Recursos e inventario** | Auditar `gather/forage`, depósitos, transferencia, límites, consumo, extracción remota, mensajes y regresiones de materiales. Rehacer operaciones de conservación y fases. | Conservación y no-negatividad; extracción imposible sin trabajo; resultados sin parsing textual. |
 | **11 · Materiales, objetos y componentes** | Revisar catálogos JSON, `catalogo`, `physics`, identidades, forma, uniones y `setdefault` con efectos. Definir propiedades físicas por datos/mediciones, no nombres. | Consistencia catálogo/motor, invariancia frente a etiquetas y objetos legados compatibles. |
 | **12 · Interacciones y construcción** | Auditar `craft/build/modify/design/interact/use`, recipientes, cargas, mecanismos, proyectos materiales y efectos no evaluables. Rehacer handlers por capacidad física y resultados probables/medidos. | Ensayos comparables; propiedades no comprobadas no se convierten en capacidades; sin duplicación de física. |
-| **13 · Necesidades corporales y descanso** | Revisar fisiología, acciones voluntarias vs involuntarias, umbrales, sueño, refugio/seguridad, tiempo y efectos físicos. Reescribir política física aislada de decisiones del personaje. | Sensaciones coherentes, descanso y condiciones verificables; renombrar refugio no cambia protección (#152). |
-| **14 · Observación del entorno** | Auditar `island_views`, snapshots, percepción local, campos ocultos, visualizaciones y efectos secundarios. Rehacer proyecciones de solo lectura diferenciadas para usuario y agente. | Hash del estado idéntico antes/después de leer/renderizar; cero conocimiento oculto (#153). |
+| **13 · Necesidades corporales y descanso** | Revisar fisiología, acciones voluntarias vs involuntarias, umbrales, sueño, refugio/seguridad, tiempo y efectos físicos. Reescribir política física aislada de decisiones del personaje. | Sensaciones coherentes, descanso y condiciones verificables; renombrar refugio no cambia protección (#75). |
+| **14 · Observación del entorno** | Auditar `island_views`, snapshots, percepción local, campos ocultos, visualizaciones y efectos secundarios. Rehacer proyecciones de solo lectura diferenciadas para usuario y agente. | Hash del estado idéntico antes/después de leer/renderizar; cero conocimiento oculto (#76). |
 
 ### C. Agente y cognición
 
@@ -51,10 +57,10 @@ No reescribir el sistema entero de una vez ni dejar dos motores permanentes. Tra
 
 | Paso | Revisión profunda y reescritura | Puerta de salida |
 |---|---|---|
-| **18 · Persistencia, migración e historial** | Revisar `archive`, WAL, snapshots, relaciones, versión de esquema y sincronizaciones completas. Rehacer repositorios y migraciones transaccionales por esquema, con escrituras incrementales donde aporten. | Partidas históricas importadas con IDs/historial intactos, backups restaurables y benchmarks documentados (#65). |
+| **18 · Persistencia, migración e historial** | Revisar `archive`, WAL, snapshots, relaciones, versión de esquema y sincronizaciones completas. Rehacer repositorios y migraciones transaccionales por esquema, con escrituras incrementales donde aporten. | Partidas históricas importadas con IDs/historial intactos, backups restaurables y benchmarks documentados (#32). |
 | **19 · Servidor, API y observatorio** | Revisar rutas HTTP embebidas, interfaces de lectura/escritura, errores, versiones y datos privados/configuración. Extraer `app/server` y proyecciones API con contratos. | La API no altera leyes al consultar; pruebas de operaciones/errores y compatibilidad explícita. |
 | **20 · Interfaz principal** | Auditar `interfaz.html` (~175 KB), JS/CSS embebido, handlers inline, solapas, enlaces, estados, ayudas, preferencias y actualización. Separar assets y renderizadores sin rediseño visual innecesario. | Paridad funcional y pruebas de navegación/lectura; UI no modifica mundo accidentalmente. |
-| **21 · Laboratorio unificado y centro de ajustes** | Auditar los tres laboratorios, `MotorLab` paralelo, replay, configuración y propuesta #146–#149. Unificar sobre el motor real; perfiles validados, diff, backups y restore **sin** escritura directa arbitraria a código Python. | Mismas reglas/acciones en simulación y laboratorio; experimentos aislados; aplicar/restaurar sin corromper partidas. |
+| **21 · Laboratorio unificado y centro de ajustes** | Auditar los tres laboratorios, `MotorLab` paralelo, replay, configuración y propuesta #70–#73. Unificar sobre el motor real; perfiles validados, diff, backups y restore **sin** escritura directa arbitraria a código Python. | Mismas reglas/acciones en simulación y laboratorio; experimentos aislados; aplicar/restaurar sin corromper partidas. |
 
 ### E. Verificación, reducción de legado y publicación
 
@@ -77,9 +83,9 @@ No reescribir el sistema entero de una vez ni dejar dos motores permanentes. Tra
 ## Renumeración de hitos (decisión 4/11/2026)
 
 - **0.7.0** — consolidación arquitectónica descrita arriba.
-- **0.8** — termodinámica y ciclos ambientales por fases separadas, antes #22/0.7.
-- **0.9** — autonomía prolongada/procedimientos, antes #23/0.8; alcance revisable según lo que quede resuelto en 0.7.
-- **0.10** — transferencia entre mundos, antes #24/0.9; el identificador 0.10 es posterior a 0.9 en versionado por componentes, aunque su asignación sigue tentativa.
+- **0.8** — termodinámica y ciclos ambientales por fases separadas, antes #9/0.7.
+- **0.9** — autonomía prolongada/procedimientos, antes #10/0.8; alcance revisable según lo que quede resuelto en 0.7.
+- **0.10** — transferencia entre mundos, antes #11/0.9; el identificador 0.10 es posterior a 0.9 en versionado por componentes, aunque su asignación sigue tentativa.
 - **1.0** — horizonte de estabilidad de runs prolongados, sujeto a evaluación; no desplazado mecánicamente.
 
 Las anotaciones en `ROADMAP_0571.md` conservan la numeración histórica; el orden vigente se establece aquí y en `FUTUROS_CAMINOS.md`.
