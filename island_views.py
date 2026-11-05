@@ -9,6 +9,7 @@ from __future__ import annotations
 from copy import deepcopy
 
 from world import DIRS, H, TERRAINS, W, enrich_structure, structure_symbol, tile_key, valid
+from nilo_runtime.worlds.shelter import sheltered
 
 
 def survival_conditions(world, agent):
@@ -20,16 +21,7 @@ def survival_conditions(world, agent):
         for dx, dy in DIRS
         if valid(x + dx, y + dy)
     )
-    sheltered = bool(
-        grid[y][x] == "h"
-        or any(
-            tuple(structure.get("pos", [])) == (x, y, z)
-            and structure.get("category") == "habitaculo"
-            and structure.get("shelter_condition") != "insuficiente"
-            for structure in world.get("structures", [])
-        )
-    )
-    return sheltered, adjacent_water
+    return sheltered(world, agent["pos"]), adjacent_water
 
 
 def map_snapshot(world, agent):

@@ -9,6 +9,7 @@ from nilo_runtime.core.identity import new_uuid
 import uuid, unicodedata, re
 from survival import ensure_needs
 from laboratory import measured_physics
+from nilo_runtime.worlds.shelter import sheltered as site_sheltered
 
 
 def canonical(text):
@@ -27,11 +28,8 @@ def topic(text):
 
 
 def sheltered(world,person):
-    x,y,z=person['pos']
-    if str(z) not in world.get('levels',{}):return False
-    if world['levels'][str(z)][y][x]=='h':return True
-    return any(tuple(b.get('pos',[]))==(x,y,z) and b.get('category')=='habitaculo'
-               and b.get('shelter_condition')!='insuficiente' for b in world.get('structures',[]))
+    """Condición de cobertura compartida con el motor del entorno."""
+    return site_sheltered(world,person['pos'])
 
 
 def capture(world,person):

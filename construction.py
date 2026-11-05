@@ -126,8 +126,8 @@ def ensure_object(obj, *, structure=False):
         obj.setdefault('category','prototipo')
         obj.setdefault('revision',1)
         obj.setdefault('revisions',[])
-        if obj.get('category')=='habitaculo':
-            obj.setdefault('shelter_condition', 'cubierto_parcialmente' if len(obj.get('components',[]))>=4 and float(obj.get('resistance',0))>=3 else 'insuficiente')
+        # Las etiquetas históricas se conservan, pero no generan cobertura
+        # nueva en saves sin mediciones de cubierta.
         if not obj['revisions']:
             obj['revisions'].append(_version(obj, 'Inventario inicial', 'Registro de geometría aproximada; no se observaron subdivisiones internas.'))
     else:
@@ -150,8 +150,8 @@ def initialize_object(obj, *, structure=False, layout=None):
     obj['components']=_components(_materials(obj))
     obj['space']=dimensions(_materials(obj),layout)
     obj['revision']=1
-    if structure and obj.get('category')=='habitaculo':
-        obj['shelter_condition']='cubierto_parcialmente' if len(obj['components'])>=4 and float(obj.get('resistance',0))>=3 else 'insuficiente'
+    # Un nombre de habitáculo no constituye una cubierta verificable.
+    # La evaluación física de resguardo reside en worlds.shelter.
     obj['revisions']=[_version(obj,'Construcción inicial','Geometría estimada a partir de recursos reales.')]
     return obj
 
@@ -184,8 +184,8 @@ def recompute(obj,person):
         obj['hardness']=max((float(person.get('materials',{}).get(m,{}).get('dureza',2)) for m in mats),default=0.0)
         obj['weight']=round(sum(float(person.get('materials',{}).get(m,{}).get('peso',2)) for m in mats),2)
     obj['space']=dimensions(mats,obj.get('space'))
-    if obj.get('category') == 'habitaculo':
-        obj['shelter_condition']='cubierto_parcialmente' if len(mats)>=4 and strength>=3 else 'insuficiente'
+    # No actualizar shelter_condition por categoría textual: el campo
+    # heredado conserva su historia visual, sin habilitar protección física.
     if obj.get('portable'):
         from physics import body_physics
         from nilo_runtime.worlds.objects import item_effects
