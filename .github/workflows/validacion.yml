@@ -53,6 +53,10 @@ jobs:
         run: python tools/auditar_deliberacion_15.py
       - name: Solicitudes, JSON, fallback y chat (etapa 15)
         run: python -m unittest discover -s tests -p 'test_deliberacion_15.py' -v
+      - name: Auditoría memoria, investigaciones y referencias (etapa 16)
+        run: python tools/auditar_memoria_16.py
+      - name: Memoria episódica, hipótesis y evidencia por ID (etapa 16)
+        run: python -m unittest discover -s tests -p 'test_memoria_16.py' -v
       - name: Mundo isla_v1 contra snapshots 0.6.4 y seis semillas
         run: python -m unittest discover -s tests -p 'test_mundo_08.py' -v
       - name: Motor headless y adaptadores (regresión focalizada)
