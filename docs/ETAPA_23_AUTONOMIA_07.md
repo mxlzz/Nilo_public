@@ -14,12 +14,13 @@ Los límites reales de esta observación son:
 - Los diagnósticos de acciones no contienen todas las tareas documentales (write, design, propose). Las estadísticas de comportamiento tampoco abarcan retroactivamente todo el historial.
 - Una repetición de acciones o planes puede ser razonable si cambian las condiciones físicas; sus recuentos son señales para estudiar episodios por ID, no juicios automáticos sobre la inteligencia del agente.
 - Una semilla común no fija las respuestas de un servicio LLM. Las comparaciones son descriptivas, nunca causalidad atribuida sin control adicional.
+- **Identidad previa al release:** mientras refactor/0.7 conserva el archivo VERSION con etiqueta 0.6.4, el informe identifica también el **commit de sesión**. Las versiones declaradas no permiten por sí solas distinguir el motor reestructurado de la release estable. Comparar commits, no únicamente esa etiqueta.
 - El gateway usa temperatura 0,85 para deliberación Gemini y 0,8 para Groq. No se ajustan las leyes ni el prompt con fines de la evaluación.
 
 ## 2. Implementaciones de este paso
 
 - **tools/ejecutar_autonomia_23.py:** corre una Simulation nueva con Gemini/Groq real, sin demo, fallback ni chat. Requiere una clave de entorno, semillas explícitas, límite de respuestas exitosas, intervalo mínimo de 15 s y límite temporal. Una carpeta de salida ya existente se rechaza; ninguna partida personal se modifica. Emite SQLite local y manifiesto sin secretos.
-- **tools/evaluar_autonomia_23.py:** lectura SQLite mode=ro/query_only, mediciones, decisiones y modelos realmente registrados, procedencia de acciones, planes idénticos, fallos sucesivos, descubrimientos y proyectos. Los informes omiten cuaderno, conversación, motivos, planes completos, prompts y credenciales. El argumento --reports permite comparar JSON anonimizados sin circular bases personales.
+- **tools/evaluar_autonomia_23.py:** lectura SQLite mode=ro/query_only, mediciones, decisiones y modelos realmente registrados, procedencia de acciones, planes idénticos, fallos sucesivos, descubrimientos y proyectos. Los informes omiten cuaderno, conversación, motivos, planes completos, prompts y credenciales. Los episodios con repetición sostenida incluyen solo IDs de primer/último registro y huella anonimizada para su inspección local. El argumento --reports permite comparar JSON anonimizados sin circular bases personales.
 - **tests/test_autonomia_23.py:** cobertura del reporte, neutralidad frente a texto narrativo, preflight con claves simuladas (sin llamadas reales), límites, repetición y no divulgación.
 - **.github/workflows/validacion.yml:** pruebas offline normales y opción manual de corrida real al activar corrida_real=true en la rama refactor/0.7. Ningún push o pull request usa claves. Solo se suben tres reportes agregados como artifact; nunca la base SQLite.
 
@@ -47,4 +48,4 @@ La revisión de cada caso debe estudiar: secuencia de planes y resultados físic
 
 ## 5. Puerta de salida
 
-**Pendiente:** cuatro corridas reales documentadas, comparación reproducible, inspección de anomalías con IDs de acciones/mediciones y corrección exclusivamente de defectos atribuibles al motor si aparecen. La validación CI de instrumental no constituye cierre conductual. Hasta entonces, la etapa 24 y el release 0.7.0 permanecen bloqueados.
+**Pendiente:** cuatro corridas reales documentadas, comparación reproducible, inspección de anomalías con IDs de acciones/mediciones y corrección exclusivamente de defectos atribuibles al motor si aparecen. La validación CI de instrumental no constituye cierre conductual. [CI integral del instrumental inicial #42100801500](https://github.com/mxlzz/Nilo_public/actions/runs/42100801500) finalizó **success** con nueve pruebas focalizadas, suite sin credenciales, replay y paquete portable. Los ajustes posteriores de identidad por commit y referencias de episodios tienen ejecución de CI propia; no atribuirles retrospectivamente aquel éxito. Hasta entonces, la etapa 24 y el release 0.7.0 permanecen bloqueados.
