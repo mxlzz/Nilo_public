@@ -40,11 +40,21 @@ MODULES=(
 )
 SUITES=(
     "test_qa_22.py",
-    "test_api_19.py",
-    "test_persistencia_18.py",
+    "test_estado_07.py",
+    "test_operaciones_07.py",
+    "test_tiempo_07.py",
+    "test_mundo_08.py",
     "test_navegacion_09.py",
+    "test_recursos_10.py",
+    "test_objetos_11.py",
+    "test_interacciones_12.py",
     "test_fisiologia_13.py",
+    "test_observacion_14.py",
+    "test_deliberacion_15.py",
     "test_memoria_16.py",
+    "test_autonomia_17.py",
+    "test_persistencia_18.py",
+    "test_api_19.py",
     "test_laboratorio_21.py",
 )
 PATHS={str(ROOT/p):p for p in MODULES}
