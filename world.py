@@ -27,14 +27,11 @@ from nilo_runtime.worlds.navigation import (
     resolve_go, move, exploration_frontier, actual_travel_direction,
     advance_navigation, choose_frontier,
 )
-
-
-def gather_material(target):
-    name=" ".join(str(target or "").casefold().split())
-    return name if name in GATHER_SOURCES else GATHER_ALIASES.get(name)
-
-
-
+from nilo_runtime.worlds.resources import (
+    ResourceBalanceError, StockTransfer, stock_units, transfer_units,
+    gather_material, nearest_known, forage_source, forage_action,
+    harvest_at, cut_wood,
+)
 
 
 # Objetos portátiles y estructuras ancladas tienen ciclos de vida diferentes.
@@ -134,44 +131,6 @@ def world_view(w, person):
                 near.append({"pos":[xx,yy],"tipo":TERRAINS.get(ch,ch),"simbolo":ch,"distancia":abs(xx-x)+abs(yy-y)})
     near.sort(key=lambda v:v['distancia'])
     return near[:18]
-
-
-def nearest_known(w,person,chars):
-    """Localiza recursos accesibles incluso si el bloque de mineral es sólido.
-    Devuelve lugar del recurso y posición de trabajo alcanzable.
-    """
-    x,y,z=person['pos']; opts=[]
-    routes=NavigationIndex(w,(x,y,z),known_only=True)
-    for k in w['revealed']:
-        tx,ty,tz=map(int,k.split(','))
-        if tz!=z or tile(w,tx,ty,z) not in chars:continue
-        if w['deposits'].get(k,0)<=0:continue
-        candidates=[(tx,ty)] if passable(w,tx,ty,z) else []
-        candidates += [(tx+dx,ty+dy) for dx,dy in DIRS if passable(w,tx+dx,ty+dy,z)]
-        for cx,cy in candidates:
-            distance=routes.distance((cx,cy))
-            if distance is not None:opts.append((distance,tx,ty,cx,cy))
-    if not opts:return None
-    _,tx,ty,cx,cy=min(opts)
-    return tx,ty,cx,cy
-
-
-
-def forage_source(w,person):
-    """Fuente de forage en orden efectivo, leída sin alterar el mundo."""
-    x,y,z=person['pos']
-    spots=[(x+dx,y+dy) for dx,dy in [(0,0)]+DIRS if valid(x+dx,y+dy)
-           and tile(w,x+dx,y+dy,z) in ('T',',')]
-    growth=w.get('forage_growth',{})
-    deposits=w.get('forage_deposits',{})
-    clock=person.get('clock_minutes',0)
-    for sx,sy in spots:
-        key=tile_key(sx,sy,z)
-        last=growth.get(key,clock)
-        cycles=int(max(0,clock-last)//2880)
-        amount=min(3,deposits.get(key,3)+cycles) if cycles else deposits.get(key,3)
-        if amount>0:return sx,sy
-    return None
 
 
 def prepare_navigation(w,p,step,rng):
@@ -437,30 +396,7 @@ def execute_action(w,p,step,rng):
         success,result=create_assembly(p,step)
         return 70,[result],success,True
     if op=='forage':
-        if inv.get('alimento',0)>=12:
-            return 3,[f"Tengo {inv['alimento']} porciones guardadas; no necesito recolectar más ahora. "
-                      "Puedo consumir reservas o dedicarme a otra actividad."],False,False
-        # Recolección limitada por depósitos del mapa; no aparece comida por narración.
-        spots=[(x+dx,y+dy) for dx,dy in [(0,0)]+DIRS if valid(x+dx,y+dy)
-               and tile(w,x+dx,y+dy,z) in ('T',',')]
-        # Rebrote natural lento: una porción cada 48 h simuladas, máximo tres.
-        growth=w.setdefault('forage_growth',{})
-        deposits=w.setdefault('forage_deposits',{})
-        for sx,sy in spots:
-            key=tile_key(sx,sy,z)
-            last=growth.get(key,p.get('clock_minutes',0))
-            cycles=int(max(0,p.get('clock_minutes',0)-last)//2880)
-            if cycles:
-                deposits[key]=min(3,deposits.get(key,3)+cycles)
-                growth[key]=last+cycles*2880
-        source=forage_source(w,p)
-        if source is None:
-            return 8,['No encontré frutos o vegetación comestible disponible en las casillas cercanas.'],False,False
-        sx,sy=source;key=tile_key(sx,sy,z)
-        w['forage_deposits'][key]=w['forage_deposits'].get(key,3)-1
-        w.setdefault('forage_growth',{}).setdefault(key,p.get('clock_minutes',0))
-        inv['alimento']=inv.get('alimento',0)+1
-        return 18,[f'Recolecté una porción experimental de alimento vegetal en ({sx},{sy}); tengo {inv["alimento"]}.'],True,True
+        return forage_action(w,p)
     if op=='drink':
         if step.get('item') or step.get('source'):
             from capabilities import dispatch
@@ -529,7 +465,26 @@ def execute_action(w,p,step,rng):
             return 5,[f"No reconozco '{target}' como material o fuente de recolección. "
                       "Puedo solicitar piedra (roca), madera (arboleda), mineral oscuro "
                       "(afloramiento mineral), arcilla, fibra, cristal u hongo luminoso."],False,False
-        nearest=nearest_known(w,p,GATHER_SOURCES[requested])
+        # El motor puede fijar el depósito al comenzar el viaje. Un pin solo
+        # permite una fuente revelada, compatible y físicamente adyacente.
+        pin=step.get('_resource_at')
+        if pin is not None:
+            if not isinstance(pin,(list,tuple)) or len(pin)!=3:
+                return 5,["La referencia del depósito de trabajo es inválida."],False,False
+            try:
+                tx,ty,tz=(int(v) if type(v) is int else None for v in pin)
+            except (ValueError,TypeError):
+                return 5,["La referencia del depósito de trabajo es inválida."],False,False
+            if None in (tx,ty,tz):
+                return 5,["La referencia del depósito de trabajo es inválida."],False,False
+            if tz!=z or not valid(tx,ty) or abs(tx-x)+abs(ty-y)>1:
+                return 5,["No estoy junto al depósito reservado; no extraje materiales."],False,False
+            nearest=(tx,ty,x,y)
+        else:
+            try:
+                nearest=nearest_known(w,p,GATHER_SOURCES[requested])
+            except ResourceBalanceError:
+                return 5,["Hay un depósito con reserva inválida; no extraje materiales."],False,False
         if nearest is None:
             return 5,[f"No tengo localizada una fuente accesible y con recursos de {requested}."],False,False
         tx,ty,wx,wy=nearest
@@ -539,27 +494,14 @@ def execute_action(w,p,step,rng):
             facts.append(f"Me acerqué {travel} tramos a la fuente de {requested} en ({tx},{ty}).")
             other=describe_findings(w,discovered)
             if other:facts.append('En el trayecto vi: '+', '.join(other)+'.');notable=True
-            # Viajar no equivale a extraer. Si la distancia excede el recorrido
-            # máximo, esta acción sigue inconclusa y debe plantearse otra.
             if tuple(p['pos'][:2])!=(wx,wy):
                 facts.append(f"Todavía no llegué al depósito de {requested} y no recogí material.")
                 return max(5,travel*3),facts,False,notable
-        kind=tile(w,tx,ty,z)
-        mat=YIELDS[kind][0]
-        if requested=='hongo luminoso' and kind=='v':mat='hongo luminoso'
-        if mat!=requested:
-            return 5,[f"El depósito indicado no produce {requested}; no extraje nada."],False,False
-        key=tile_key(tx,ty,z)
-        amount=w['deposits'].get(key,0)
-        if amount<=0:
-            return 8,[f"La fuente de {requested} en ({tx},{ty}) está agotada."],False,False
-        qty=min(2,amount)
-        inv[mat]=inv.get(mat,0)+qty;w['deposits'][key]=amount-qty
-        facts.append(f"Recogí {qty} {'unidad' if qty==1 else 'unidades'} de {mat} del "
-                     f"{TERRAINS[kind]} en ({tx},{ty}). Ahora tengo {inv[mat]}.")
-        if amount-qty==0:
-            facts.append('Agoté el recurso de este lugar.');notable=True
-        duration=max(0,travel*3)+12+qty*5
+        elapsed,result,worked,interesting=harvest_at(w,p,requested,(tx,ty,z))
+        facts.extend(result)
+        if not worked:return elapsed,facts,False,notable
+        notable=notable or interesting
+        duration=max(0,travel*3)+elapsed
     elif op=='experiment':
         mat=next((m for m in inv if inv.get(m,0)>0 and m in target),None)
         if not mat:return 4,[f"No tengo una muestra de {target or 'ese material'} para experimentar."],False,False
@@ -760,9 +702,7 @@ def execute_action(w,p,step,rng):
             if not spots:return 5,['No hay vegetación leñosa adyacente que pueda cortar.'],False,False
             success=power>=3.5
             if success:
-                tx,ty=spots[0];k=tile_key(tx,ty,z);amount=w['deposits'].get(k,0)
-                if amount:
-                    w['deposits'][k]-=1;inv['madera']=inv.get('madera',0)+1
+                tx,ty=spots[0];amount=1 if cut_wood(w,p,tx,ty,z) else 0
             result=(f"Corté madera con '{tool['name']}' y recuperé una unidad." if success and amount else
                     f"Probé el filo de '{tool['name']}' contra un tronco, pero no conseguí extraer madera.")
             success=bool(success and amount)
