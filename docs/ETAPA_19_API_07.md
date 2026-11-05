@@ -56,6 +56,12 @@ La proyección pública evita compartir el health_key vinculado a credenciales. 
 
 ## 6. Resultado y trabajo pendiente
 
-**Etapa 19:** implementación y tests específicos integrados. El cierre se registra con el resultado final del pipeline de validación. La comprobación de la interfaz y sus assets queda en la etapa 20. El laboratorio y sus controles de backup se tratarán en la etapa 21.
+**Etapa 19 completada.** La [validación integral #42075062956](https://github.com/mxlzz/Nilo_public/actions/runs/42075062956) terminó **success** sobre [commit 5f97cecb986a](https://github.com/mxlzz/Nilo_public/commit/5f97cecb986a6a86260023ffe4ae51f29053e125): **954 pruebas ejecutadas (1 omitida)**, con **22 pruebas HTTP focalizadas**, auditoría de API aprobada, escenarios físicos, ZIP portable y replay determinista entre procesos con fingerprint idéntico `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`.
+
+[Compatibilidad histórica #42074567787](https://github.com/mxlzz/Nilo_public/actions/runs/42074567787): **success**, seis partidas SQLite sintéticas importadas sobre copias con su historial intacto. El run histórico comprobó el mismo código de servidor/API; los commits posteriores agregaron tests y documentación, sin modificar la lógica de persistencia.
+
+Una prueba anterior buscaba literalmente la ruta `/api/measurement` dentro del archivo HTTP; al reubicar la ruta a `web/api.py`, la prueba fue corregida para verificar el registro de endpoints. La prueba de integración de mediciones permanece activa. Las 17 rutas HTTP consumidas por la interfaz actual coinciden con rutas registradas en la API.
+
+La comprobación de navegación, assets y HTML/JS queda para **etapa 20**. La integración de controles de backup en el laboratorio queda para **etapa 21**.
 
 No se fusiona PR #77 ni se publica 0.7.0 antes de finalizar las etapas restantes, incluida la evaluación real de autonomía.
