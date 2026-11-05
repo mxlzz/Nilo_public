@@ -8,7 +8,7 @@
 
 Se revisó el servidor local previo en nilo_runtime/web/http.py, las interfaces públicas de application/records.py, decisions.py y clockwork.py, la selección de fuentes del observador en observer.py, las preferencias de interface_prefs.py, la proyección de proveedores en providers.py, el adaptador histórico nilo.py y los contratos consumidos por interfaz.html.
 
-Se verificaron los 8 endpoints de consulta y las 13 rutas de mutación/operaciones existentes, además de la nueva ruta informativa de versión. Se mantuvo la compatibilidad de rutas y del import histórico nilo.Handler.
+Se verificaron las 7 rutas GET históricas, las 13 rutas POST existentes y la nueva ruta GET /api/version: 8 consultas y 13 operaciones en total. Se mantuvo la compatibilidad de rutas y del import histórico nilo.Handler.
 
 ### Problemas identificados
 
@@ -36,7 +36,7 @@ Se verificaron los 8 endpoints de consulta y las 13 rutas de mutación/operacion
 
 La ruta nueva GET /api/version responde con api_version (1), schema_version (5) y engine_version, evitando confundir el número de la API con la versión comercial 0.6.4/0.7 o con el formato del save.
 
-Se mantienen respuestas 202 al aceptar chat, 409 cuando retry-llm no procede, 503 ante fallo de disponibilidad del proveedor, 404 para rutas/archivos inexistentes, y 400 para entrada inválida. El límite de entrada normal es 3.000 bytes; la selección del observador y revisiones permite hasta 65.000 bytes, como antes. Los errores internos no revelan rutas locales, credenciales ni detalles de Python.
+Se mantienen respuestas 202 al aceptar chat, 409 cuando retry-llm no procede, 503 ante fallo de disponibilidad del proveedor y 404 para rutas/archivos inexistentes. Las validaciones dan 400, origen ajeno 403, cuerpo excesivo 413 y Content-Type inválido 415. El límite de entrada normal es 3.000 bytes; la selección del observador y revisiones permite hasta 65.000 bytes, como antes. Los errores internos no revelan rutas locales, credenciales ni detalles de Python.
 
 El observador continúa diferenciando los registros archivados de decisiones/hypótesis del agente y no marca entradas como leídas por consultarlas o generar una síntesis. La confirmación de lectura requiere los comandos existentes. No se asignan objetivos a Nilo desde la API.
 
@@ -58,4 +58,4 @@ La proyección pública evita compartir el health_key vinculado a credenciales. 
 
 **Etapa 19:** implementación y tests específicos integrados. El cierre se registra con el resultado final del pipeline de validación. La comprobación de la interfaz y sus assets queda en la etapa 20. El laboratorio y sus controles de backup se tratarán en la etapa 21.
 
-No se fusiona PR #77 ni se publica 0.7.0 antes de finalizar las etapas 19–24 y la evaluación real de autonomía.
+No se fusiona PR #77 ni se publica 0.7.0 antes de finalizar las etapas restantes, incluida la evaluación real de autonomía.
