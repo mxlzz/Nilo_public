@@ -30,18 +30,18 @@ Para un objeto **legado**, `infer_form(name, form)` continúa resolviendo los no
 
 **`nilo_runtime/worlds/components.py`** contiene `normalize_parts`, `normalize_joints` y `connected_parts` sin efectos. Se exige forma del catálogo, material conocido, extremos de unión válidos y grafo conexo; no se considera un ensamblaje funcional solo por sus etiquetas. `mechanics.py` utiliza esas funciones tanto para construir como para verificar el aparato, manteniendo las reglas de consumo existentes bajo control de etapa 12.
 
-**`physics.py`** conserva la API y los valores base de `MATERIAL_PHYSICS` cuando no hay mediciones nuevas. Un material nuevo o medido utiliza `density`/`permeability` del estado, si son finitas y dentro de límites físicos existentes; de lo contrario conserva el catálogo/fallback. No hay nueva ley térmica, CFD ni dinámica 3D.
+**`nilo_runtime/physics/materials.py`** es el propietario de la física; **`physics.py`** queda como fachada sin fórmulas duplicadas. Conserva la API y los valores base de `MATERIAL_PHYSICS` cuando no hay mediciones nuevas. Un material nuevo o medido utiliza `density`/`permeability` del estado, si son finitas y dentro de límites físicos existentes; de lo contrario conserva el catálogo/fallback. No hay nueva ley térmica, CFD ni dinámica 3D.
 
 **`construction.py`** mantiene la representación 2.5D y la historia de revisiones. `ensure_object` solo crea componentes si realmente faltan, sin consumir identidades en lecturas repetidas de un objeto ya equipado. `component_summary` ofrece una proyección **no mutante**, incluso para objetos con listas antiguas de materiales. `recompute` utiliza al propietario de capacidades en vez del dispatcher de acciones.
 
 ## 3. Pruebas y evidencia
 
-- **18 tests focalizados** en `tests/test_objetos_11.py`: fuentes únicas, forma vs. etiquetas, propiedades medidas vs. catálogos, recipientes huecos/macizos, vacío material, control de NaN/Inf, identidad estable e idempotencia de migración, JSON inválido, uniones válidas e inválidas, inventario sin gasto ante ensamblaje desconectado y fabricación real.
-- `tools/auditar_objetos_11.py`: valida AST de propietarios, ausencia de duplicación/ciclos, no consumo eager de IDs y dependencia de `craft` respecto de `physical_item`.
-- `laboratorio_motor.py` registra y enlaza trazas reales de `objects.py` y `components.py`; prueba de fabricación en `tests/test_laboratorio_motor.py` verifica propietario y URLs.
-- `MANIFIESTO_SHA256.json`, `tools/verificar_paquete_07.py` y `.github/workflows/validacion.yml` incluyen ambos módulos, con prueba de arranque desde ZIP extraído.
-- [CI integral sobre código anterior a la última actualización del laboratorio #42013249799](https://github.com/mxlzz/Nilo_public/actions/runs/42013249799): **success**, 781 tests (1 omitida), ZIP importable, replays idénticos y escenarios físicos. La última CI, que añade prueba del laboratorio, debe verificarse separadamente.
-- [Compatibilidad histórica pública #42012878554](https://github.com/mxlzz/Nilo_public/actions/runs/42012878554): **success** con seis SQLite históricas sintéticas y seis semillas; originales sin modificar. No se emplean partidas personales.
+- **19 tests focalizados** en `tests/test_objetos_11.py`: fuentes únicas, forma vs. etiquetas, propiedades medidas vs. catálogos, recipientes huecos/macizos, vacío material, control de NaN/Inf, identidad estable e idempotencia de migración, JSON inválido, uniones válidas e inválidas, inventario sin gasto ante ensamblaje desconectado y fabricación real.
+- `tools/auditar_objetos_11.py`: valida AST de propietarios, ausencia de duplicación/ciclos, no consumo eager de IDs, física modular única y dependencia de `craft` respecto de `physical_item`.
+- `laboratorio_motor.py` registra y enlaza trazas reales de `objects.py`, `components.py` y `materials.py`; prueba de fabricación en `tests/test_laboratorio_motor.py` verifica propietario y URLs.
+- `MANIFIESTO_SHA256.json`, `tools/verificar_paquete_07.py` y `.github/workflows/validacion.yml` incluyen los tres módulos del dominio, con prueba de arranque desde ZIP extraído.
+- [CI integral #42013939102](https://github.com/mxlzz/Nilo_public/actions/runs/42013939102): **success**, 782 tests (1 omitida), ZIP importable y replay idéntico tras la actualización del laboratorio. La CI final con física modular se registra al concluir.
+- [Compatibilidad histórica pública #42014677489](https://github.com/mxlzz/Nilo_public/actions/runs/42014677489): **success** con seis SQLite históricas sintéticas y seis semillas; originales sin modificar. No se emplean partidas personales.
 
 ### Cambios intencionales
 
