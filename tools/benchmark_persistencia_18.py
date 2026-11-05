@@ -12,6 +12,11 @@ from pathlib import Path
 import sqlite3
 import tempfile
 import time
+import sys
+
+ROOT=Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0,str(ROOT))
 
 from archive import History
 from nilo_runtime.storage.backups import backup_to_new_path,restore_as_copy
