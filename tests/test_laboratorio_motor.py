@@ -53,6 +53,18 @@ class MotorLabTests(unittest.TestCase):
         self.assertIn(("action_results.py", "result_from_execution"), names)
         self.assertTrue(self.lab.world["structures"][-1]["ensayos_de_carga"])
 
+    def test_craft_trace_resolves_physical_object_module(self):
+        result=self.lab.act({"op":"craft","name":"hacha ficticia",
+                             "materials":["madera"],"form":"punta"})
+        self.assertTrue(result["last"]["result"]["success"])
+        rows=result["last"]["trace"]
+        functions={(row["file"],row["function"]) for row in rows}
+        self.assertIn(("objects.py","physical_item"),functions)
+        self.assertIn(("objects.py","item_effects"),functions)
+        for row in rows:
+            if row["file"]=="objects.py":
+                self.assertIn("/nilo_runtime/worlds/objects.py#L",row["url"])
+
     def test_rest_duration_respects_user_choice(self):
         first = self.lab.person["clock_minutes"]
         result = self.lab.act({"op": "rest", "minutes": 60})

@@ -49,6 +49,13 @@ TRACE_TEXT = {
     "resources.py:harvest_at": "Verifica depósito, distancia, balance y extracción",
     "resources.py:transfer_units": "Transfiere unidades sin saldos negativos",
     "resources.py:forage_action": "Gestiona reservas vegetales y recolección",
+    "objects.py:physical_item": "Crea una pieza transportable con forma física declarada",
+    "objects.py:make_item": "Asigna identidad y propiedades a un objeto físico",
+    "objects.py:item_effects": "Calcula capacidades desde forma y resistencia",
+    "components.py:normalize_parts": "Valida materiales y formas de piezas",
+    "components.py:normalize_joints": "Comprueba tipos y referencias de uniones",
+    "components.py:connected_parts": "Verifica continuidad del ensamblaje",
+    "construction.py:ensure_object": "Migra objeto legado sin consumir IDs innecesarios",
     "world.py:inspect_target": "Comprueba visibilidad y examina el objetivo",
     "world.py:dig_with_tool": "Contrasta herramienta y resistencia de roca",
     "world.py:adjacent_rock": "Selecciona roca físicamente adyacente",
@@ -140,6 +147,8 @@ class ExecutionTrace:
                 "navigation.py": "nilo_runtime/worlds/navigation.py",
                 "island.py": "nilo_runtime/worlds/island.py",
                 "resources.py": "nilo_runtime/worlds/resources.py",
+                "objects.py": "nilo_runtime/worlds/objects.py",
+                "components.py": "nilo_runtime/worlds/components.py",
             }.get(row["file"], row["file"])
             row["url"] = ("https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/"
                           + source_path + "#L" + str(row["first"])
