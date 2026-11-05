@@ -127,6 +127,7 @@
     "nilo_runtime/web/__init__.py": "sha256-calculated-during-packaging",
     "nilo_runtime/web/api.py": "sha256-calculated-during-packaging",
     "nilo_runtime/web/http.py": "sha256-calculated-during-packaging",
+    "nilo_runtime/web/projections.py": "sha256-calculated-during-packaging",
     "nilo_runtime/web/security.py": "sha256-calculated-during-packaging",
     "nilo_runtime/worlds/__init__.py": "sha256-calculated-during-packaging",
     "nilo_runtime/worlds/components.py": "sha256-calculated-during-packaging",

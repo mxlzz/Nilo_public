@@ -10,7 +10,7 @@ WEB=ROOT/"nilo_runtime"/"web"
 
 def audit():
     errors=[]
-    for name in ("http.py","api.py","security.py"):
+    for name in ("http.py","api.py","security.py","projections.py"):
         file=WEB/name
         if not file.is_file():
             errors.append("Falta "+str(file))
@@ -21,6 +21,7 @@ def audit():
     http=(WEB/"http.py").read_text("utf-8")
     api=(WEB/"api.py").read_text("utf-8")
     security=(WEB/"security.py").read_text("utf-8")
+    projections=(WEB/"projections.py").read_text("utf-8")
     import sys
     if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
     from nilo_runtime.web.api import GET_PATHS,POST_PATHS,API_VERSION
@@ -48,10 +49,18 @@ def audit():
                 n for n in ast.parse(api).body
                 if isinstance(n,ast.FunctionDef) and n.name=="_get")):
             errors.append("GET muta la simulación: "+key)
+    if "observer_state(sim.public_state())" not in api:
+        errors.append("La API expone el estado interno sin proyección pública")
+    if "health_key" not in projections or "result=dict(raw)" not in projections:
+        errors.append("Proyección pública sin aislamiento de credenciales")
     if "GEMINI_API_KEY" in api or "GROQ_API_KEY" in api:
         errors.append("El contrato API conoce claves de proveedor")
     if "nilo_runtime.web" in (ROOT/"nilo_runtime/application/engine.py").read_text("utf-8"):
         errors.append("Dependencia inversa de UI en motor")
+    provider=(ROOT/"providers.py").read_text("utf-8")
+    tail=provider.split("def public_info(",1)[-1]
+    if "_health(state,health_key)" in tail or "state.setdefault(" in tail:
+        errors.append("La consulta de proveedores sigue mutando el estado del agente")
     if not (ROOT/"tests/test_api_19.py").is_file():
         errors.append("Faltan pruebas de integración HTTP")
     return errors
