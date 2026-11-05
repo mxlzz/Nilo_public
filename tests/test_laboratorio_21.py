@@ -14,6 +14,7 @@ import unittest
 from unittest.mock import patch
 
 from nilo import Simulation
+from nilo_runtime.application.engine import Simulation as CoreSimulation
 from laboratorio_motor import MotorLab, create_lab_server
 from nilo_runtime.core.lab_settings import (
     validate, baseline, config_overlay, OPTIONAL_CONTEXT,
@@ -91,6 +92,7 @@ class ProfileContracts21(unittest.TestCase):
     def test_restore_has_undo_checkpoint(self):
         first=variant("uno")
         second=variant("dos")
+        second["limits"]["MAX_CHAT_CALLS_PER_DAY"]=55
         self.store.apply(first)
         result=self.store.apply(second)
         undo=self.store.restore(result["checkpoint"])["checkpoint_undo"]
@@ -101,10 +103,12 @@ class ProfileContracts21(unittest.TestCase):
     def test_failed_apply_keeps_previous_file_and_profile(self):
         self.store.apply(variant("base-ajustada"))
         original=self.store.active.read_bytes()
+        altered=variant("fallo")
+        altered["limits"]["MAX_CHAT_CALLS_PER_DAY"]=55
         with patch("nilo_runtime.labs.profiles._atomic",
                    side_effect=OSError("simulación de falla de disco")):
             with self.assertRaises(OSError):
-                self.store.apply(variant("fallo"))
+                self.store.apply(altered)
         self.assertEqual(self.store.active.read_bytes(),original)
         self.assertEqual(self.store.current()["name"],"base-ajustada")
 
@@ -204,7 +208,7 @@ class Sandbox21(unittest.TestCase):
     def test_motor_lab_runs_real_simulation_and_not_duplicate_execute(self):
         lab=MotorLab()
         try:
-            self.assertIsInstance(lab.sim,Simulation)
+            self.assertIsInstance(lab.sim,CoreSimulation)
             self.assertFalse(hasattr(lab,"_execute"))
             before=lab.person["clock_minutes"]
             state=lab.act({"op":"rest","minutes":30})
