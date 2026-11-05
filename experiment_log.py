@@ -152,7 +152,9 @@ def observational_conclusion(person,step,stamp):
     samples=measured_records(person,evidence_ids,minimum=1,maximum=6,
                              allow_derived=False)
     if samples is None:
-        return False,'Los IDs deben identificar ensayos físicos disponibles, distintos y no derivados. No atribuyo pruebas inexistentes.',None
+        return False,('Los IDs deben identificar ensayos físicos disponibles y distintos. '
+                      'No se usan conclusiones, comparaciones ni registros derivados como pruebas, '
+                      'ni se atribuyen ensayos inexistentes.'),None
     parts=[]
     for m in samples:
         recorded_facts=m.get('verified_facts',[])

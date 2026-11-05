@@ -233,6 +233,16 @@ class Evidence16(unittest.TestCase):
 
 
 class Context16(unittest.TestCase):
+    def test_mislabeled_knowledge_is_not_sent_as_verified(self):
+        from cognitive_projection import project_context
+        raw={"experimentos_comprobados":["No pude cortar con la herramienta"],
+             "conocimiento_con_procedencia":[{"resultado":"No pude cortar",
+                     "estado":"fallo_observado","accion_id":"act-uno"}]}
+        view=project_context(raw)
+        self.assertNotIn("experimentos_comprobados",view)
+        self.assertEqual(view["conocimiento_con_procedencia"][0]["estado"],
+                         "fallo_observado")
+
     def test_active_research_is_not_lost_in_provider_budget(self):
         s=initial_state(world_seed=7321)
         p=s["person"]

@@ -47,7 +47,13 @@ def recall_relevant(person, world, limit=6):
     cave=(world.get('sites') or {}).get('cueva',{})
     known_cave=(isinstance(cave,dict) and all(isinstance(cave.get(k),int) for k in ('x','y'))
                 and f"{cave.get('x')},{cave.get('y')},0" in revealed)
-    remembered_alternative=bool(stalled and known_cave and len(here)>=3 and here[2]==0)
+    # Una experiencia remota no debe imponerse por estancamiento si Nilo
+    # está lejos y concentrado en otro lugar o material.
+    interest_in_cave=bool('cueva' in keywords)
+    near_known_cave=(len(here)>=3 and
+        abs(cave['x']-here[0])+abs(cave['y']-here[1])<=6) if known_cave else False
+    remembered_alternative=bool(stalled and known_cave and len(here)>=3
+        and here[2]==0 and (near_known_cave or interest_in_cave))
     if isinstance(here, (list, tuple)) and len(here) >= 3:
         for name, point in (world.get('sites') or {}).items():
             if not isinstance(point, dict):

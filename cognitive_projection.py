@@ -68,6 +68,9 @@ def project_context(context):
     from nilo_runtime.agent.budget import _cognitive_needs_context
     view=deepcopy(_cognitive_needs_context(context))
     if not isinstance(view,dict):return view
+    # Alias histórico engañoso: knowledge incluye ensayos FALLIDOS y
+    # observaciones sin ID. La vista nueva explicita estado y procedencia.
+    view.pop('experimentos_comprobados',None)
     precedent=_antecedente(view)
     if precedent:view['antecedente_relevante']=precedent
     if 'proyecto_actual' in view:view['proyecto_actual']=_proyecto(view['proyecto_actual'])
