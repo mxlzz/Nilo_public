@@ -69,10 +69,12 @@ La nueva suite tests/test_interfaz_20.py y tools/auditar_interfaz_20.py verifica
 - GET de recursos sin mutación del estado del mundo, del RNG o de SQLite.
 - Smoke de ZIP portable y regresión de tests históricos de HTML/JS adaptados al fixture exacto.
 
-**El cierre formal se registra al concluir la validación integral de CI y el chequeo del ZIP.**
+**Etapa 20 cerrada.** La [CI integral #42080090727](https://github.com/mxlzz/Nilo_public/actions/runs/42080090727) terminó **success** sobre el [commit de código y pruebas 93d7b351df9d](https://github.com/mxlzz/Nilo_public/commit/93d7b351df9db86be8ee6beebfde51a005583eb1): **971 pruebas ejecutadas (una omitida)**, con **17 pruebas específicas de etapa 20**, auditoría de assets, esquema de rutas, paridad Git de HTML, Node --check, lectura HTTP pura, escenarios físicos, replay y ZIP portable, con todos sus cinco assets incluidos.
+
+La huella de replay entre procesos sigue siendo `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`. La [compatibilidad histórica #42078863601](https://github.com/mxlzz/Nilo_public/actions/runs/42078863601) terminó **success** sobre el primer commit de extracción: seis partidas SQLite sintéticas anteriores reabiertas en copias. Desde ese commit, los cambios posteriores fueron en tests, manifiesto y documentación, no en el código de simulación o la capa de transporte.
 
 ## 6. Límites y próximas etapas
 
 Esta etapa preserva la pantalla existente por equivalencia de código y tests. No demuestra por sí sola una inspección visual manual en Windows, Tizen, BOOX y navegadores móviles. La separación de scripts usa variables globales heredadas y no constituye todavía una migración a módulos ES independientes; hacerlo implicaría gestionar dependencias y ámbitos con una nueva ronda de regresión.
 
-Quedan para etapa 21 el laboratorio, controles de respaldo y perfilado del motor; etapa 22 consolidará pruebas de navegador, QA y rendimiento de partidas largas. La autonomía real con Gemini/Groq se evalúa en etapa 23. main y VERSION continúan en 0.6.4; el PR #77 no se fusiona antes del cierre integral de 0.7.
+Quedan para etapa 21 el laboratorio, controles de respaldo y perfilado del motor; etapa 22 consolidará pruebas de navegador, QA y rendimiento de partidas largas. La autonomía real con Gemini/Groq se evalúa en etapa 23. main y VERSION continúan en 0.6.4; el PR #77 permanece en borrador, sin fusionar. **Próxima: etapa 21 — Laboratorio unificado y centro de ajustes.**
