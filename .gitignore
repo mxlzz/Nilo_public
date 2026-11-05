@@ -27,3 +27,4 @@ lab_profiles/
 qa_22_inventory.json
 qa_22_benchmark.json
 qa_22_coverage.json
+qa_22_stress.json

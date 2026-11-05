@@ -82,6 +82,7 @@ def inventory():
         "python validar_escenarios.py --seed 7321",
         "python tools/verificar_paquete_07.py",
         "python tools/benchmark_qa_22.py",
+        "qa_22_stress.json",
         "python tools/cobertura_qa_22.py",
         "python tools/auditar_qa_22.py",
         "test_qa_22.py",
