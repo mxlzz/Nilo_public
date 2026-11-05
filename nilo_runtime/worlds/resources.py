@@ -68,6 +68,17 @@ def transfer_units(source: MutableMapping, source_key: str,
                          after_source, before_destination, after_destination)
 
 
+def consume_units(inventory: MutableMapping, material: str, quantity: int) -> int:
+    """Consumo físico de unidades enteras: sin débito parcial ni saldo negativo."""
+    if type(quantity) is not int or quantity <= 0:
+        raise ResourceBalanceError("Consumo no entero o no positivo.")
+    before=stock_units(inventory,material)
+    if before < quantity:
+        raise ResourceBalanceError("No hay reservas suficientes para consumir.")
+    inventory[material] = before-quantity
+    return before-quantity
+
+
 def gather_material(target):
     name = " ".join(str(target or "").casefold().split())
     return name if name in GATHER_SOURCES else GATHER_ALIASES.get(name)

@@ -30,7 +30,7 @@ from nilo_runtime.worlds.navigation import (
 from nilo_runtime.worlds.resources import (
     ResourceBalanceError, StockTransfer, stock_units, transfer_units,
     gather_material, nearest_known, forage_source, forage_action,
-    harvest_at, cut_wood, gather_action,
+    harvest_at, cut_wood, gather_action, consume_units,
 )
 
 
@@ -411,8 +411,10 @@ def execute_action(w,p,step,rng):
         return 8,['Bebí de una fuente de agua cercana. Su potabilidad todavía no está comprobada.'],True,True
     if op=='eat':
         from survival import ensure_needs
-        if inv.get('alimento',0)<1:return 5,['No tengo alimentos almacenados.'],False,False
-        inv['alimento']-=1
+        try:
+            consume_units(inv,'alimento',1)
+        except ResourceBalanceError:
+            return 5,['No tengo alimentos almacenados.'],False,False
         needs=ensure_needs(p);needs['nutricion']=min(100,needs['nutricion']+35)
         return 12,['Comí una porción de alimento vegetal previamente recolectado.'],True,False
     if op=='explore':
