@@ -80,6 +80,15 @@ def compact_context(context, char_budget=6800):
             if isinstance(value,list) and count is not None:
                 # Memorias: ranking descendente; demás registros: cronología.
                 value=value[:count] if key=='memorias_relevantes' else value[-count:]
+            if key=='investigaciones_activas' and isinstance(value,list):
+                # Conservar la pregunta, la hipótesis y la procedencia; acotar
+                # solo el historial *en el payload*, no en la partida.
+                value=[{k:(v[k][-3:] if k=='hypothesis_history'
+                             and isinstance(v[k],list) else v[k])
+                        for k in ('id','question','hypothesis','state',
+                                  'naturaleza','hypothesis_history',
+                                  'evidence_ids','fuentes_de_evidencia')
+                        if k in v} for v in value if isinstance(v,dict)]
             if key=='proyecto_actual' and isinstance(value,dict):
                 value={k:value[k] for k in ('id','title','reason','state','status','last_action','last_result','reconsideration_required','antecedente_pausado','hitos_fisicos_registrados','resultados_fisicos_registrados') if k in value}
             selected[key]=value

@@ -93,6 +93,7 @@
     "nilo_runtime/cognition/memory.py": "sha256-calculated-during-packaging",
     "nilo_runtime/cognition/predictions.py": "sha256-calculated-during-packaging",
     "nilo_runtime/cognition/research.py": "sha256-calculated-during-packaging",
+    "nilo_runtime/cognition/topics.py": "sha256-calculated-during-packaging",
     "nilo_runtime/core/__init__.py": "sha256-calculated-during-packaging",
     "nilo_runtime/core/clock.py": "sha256-calculated-during-packaging",
     "nilo_runtime/core/identity.py": "sha256-calculated-during-packaging",

@@ -11,21 +11,7 @@ from survival import ensure_needs
 from laboratory import measured_physics
 from nilo_runtime.worlds.shelter import sheltered as site_sheltered
 from nilo_runtime.cognition.evidence import measured_records, DERIVED_OPERATIONS
-
-
-def canonical(text):
-    s = ''.join(c for c in unicodedata.normalize('NFKD', str(text).lower()) if not unicodedata.combining(c))
-    return ' '.join(re.findall(r'[a-z0-9]+', s))
-
-
-def topic(text):
-    s=canonical(text)
-    # No confundir refugio como construcción con un estudio de recuperación.
-    if any(k in s for k in ('descans', 'recuper', 'repos', 'dorm', 'energia', 'fatiga')) and any(
-        k in s for k in ('refugio', 'intemperie', 'aire libre', 'arboleda', 'arenal', 'entorno', 'sue')
-    ):
-        return 'recuperacion_energia'
-    return ''
+from nilo_runtime.cognition.topics import canonical, topic
 
 
 def sheltered(world,person):

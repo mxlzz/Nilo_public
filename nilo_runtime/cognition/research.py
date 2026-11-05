@@ -4,7 +4,7 @@ No genera hechos. Reúne preguntas relacionadas sin borrar su historial.
 from __future__ import annotations
 import re, difflib, unicodedata
 from copy import deepcopy
-from experiment_log import topic as experimental_topic
+from nilo_runtime.cognition.topics import topic as experimental_topic
 
 STOP={'el','la','los','las','un','una','de','del','a','al','en','con','sin','por','para','si','que','cual','como',
       'puedo','podria','puede','podra','es','ser','hacer','usando','utilizar','uso','sobre','se','mas','menos','y','o',
