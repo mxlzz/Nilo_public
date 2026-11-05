@@ -70,7 +70,7 @@ button{padding:10px 13px;border:1px solid #506261;background:#263332;color:var(-
  </div>
 </section>
 </main>
-<div class="footer">Alcance: ejecuta reglas físicas del entorno, navegación, resultados, mediciones y preparación de contexto. El tiempo se aplica por operación, sin reproducir todos los ticks, la agenda ni las deliberaciones autónomas. Los archivos de la partida original nunca se escriben desde este laboratorio.</div>
+<div class="footer">Alcance: ejecuta reglas físicas del entorno, navegación, resultados, mediciones y preparación de contexto. Las operaciones recorren Simulation.plan_ready y los ticks reales del motor, sin llamadas a los proveedores. La agenda autónoma no se inventa. Los archivos de la partida original nunca se escriben desde este laboratorio.</div>
 <script>
 (function(){
 "use strict";

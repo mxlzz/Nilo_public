@@ -18,6 +18,8 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
+from nilo_runtime.web.security import authorize, parse_body, RequestError
+from nilo_runtime.labs.hub import LabHub
 
 from action_contracts import ACTION_GUIDE, SUPPORTED_OPERATIONS, before as contract_before, classify
 from action_results import ActionResult
@@ -236,6 +238,11 @@ class HistorySource:
 
 class Handler(BaseHTTPRequestHandler):
     lab = None
+    history = None
+    hub = None
+
+    def _authorized(self):
+        authorize(self.headers,self.server.server_address[1])
 
     def log_message(self, *_):
         pass
@@ -251,9 +258,13 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
+        try:self._authorized()
+        except RequestError as exc:
+            return self.json({"error":str(exc)},exc.status)
         path = urlsplit(self.path).path
-        if path in ("/", "/index.html","/sandbox","/historico"):
-            source = (HTML_FILE if path=="/sandbox" else
+        if path in ("/", "/index.html","/sandbox","/historico","/ajustes"):
+            source = (HERE/"laboratorio_ajustes.html" if path=="/ajustes" else
+                      HTML_FILE if path=="/sandbox" else
                       HISTORY_HTML_FILE if path=="/historico" else SCENARIO_HTML_FILE)
             contents = source.read_bytes()
             self.send_response(200)
@@ -264,6 +275,10 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(contents)))
             self.end_headers()
             self.wfile.write(contents)
+        elif path == "/api/lab/profile/list":
+            try:self.json(self.hub.list())
+            except (ValueError,TypeError,OSError) as exc:
+                self.json({"error":str(exc)[:350]},400)
         elif path == "/api/catalog":
             from laboratorio_casos import catalog
             self.json(catalog())
@@ -304,7 +319,48 @@ class Handler(BaseHTTPRequestHandler):
             self.json({"error": "No encontrado"}, 404)
 
     def do_POST(self):
+        try:self._authorized()
+        except RequestError as exc:
+            return self.json({"error":str(exc)},exc.status)
         path = urlsplit(self.path).path
+        if path.startswith("/api/lab/profile/"):
+            names={
+                "/api/lab/profile/save","/api/lab/profile/apply",
+                "/api/lab/profile/restore","/api/lab/profile/preview",
+                "/api/lab/profile/compare","/api/lab/profile/backup-world",
+                "/api/lab/profile/restore-world",
+            }
+            if path not in names:
+                return self.json({"error":"No encontrado"},404)
+            try:
+                body=parse_body(self.headers,self.rfile,maximum=65000)
+                if path=="/api/lab/profile/save":
+                    result=self.hub.save(body.get("profile"))
+                elif path=="/api/lab/profile/apply":
+                    result=self.hub.apply(body.get("profile"),body.get("confirm"))
+                elif path=="/api/lab/profile/restore":
+                    result=self.hub.restore(body.get("checkpoint"),body.get("confirm"))
+                elif path=="/api/lab/profile/preview":
+                    result=self.hub.preview(body.get("profile"),
+                        provider=body.get("provider","gemini"),
+                        seed=body.get("seed",7321))
+                elif path=="/api/lab/profile/compare":
+                    result=self.hub.compare(body.get("profile"),
+                        provider=body.get("provider","gemini"),
+                        seed=body.get("seed",7321),
+                        scenario=body.get("scenario"))
+                elif path=="/api/lab/profile/backup-world":
+                    result=self.hub.backup_world(body.get("confirm"))
+                else:
+                    result=self.hub.restore_world_copy(
+                        body.get("name"),body.get("confirm"))
+                return self.json(result)
+            except RequestError as exc:
+                return self.json({"error":str(exc)},exc.status)
+            except (ValueError,KeyError,TypeError,OSError,sqlite3.Error) as exc:
+                return self.json({"error":str(exc)[:350]},400)
+            except Exception:
+                return self.json({"error":"Error interno del laboratorio"},500)
         if path == "/api/history/upload":
             try:
                 size = int(self.headers.get("Content-Length", "0"))
@@ -348,11 +404,19 @@ class Handler(BaseHTTPRequestHandler):
             self.json({"error": "Error del motor: " + type(exc).__name__}, 500)
 
 
+def create_lab_server(port=8766,*,lab=None,history=None,hub=None):
+    """Cada servicio tiene su propio sandbox y archivo histórico."""
+    class BoundHandler(Handler):
+        pass
+    BoundHandler.lab=lab if lab is not None else MotorLab()
+    BoundHandler.history=history if history is not None else HistorySource()
+    BoundHandler.hub=hub if hub is not None else LabHub(HERE,DB)
+    return ThreadingHTTPServer(("127.0.0.1",port),BoundHandler)
+
+
 def main():
     port = int(os.environ.get("NILO_LAB_PORT", "8766"))
-    Handler.lab = MotorLab()
-    Handler.history = HistorySource()
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server = create_lab_server(port)
     address = "http://127.0.0.1:" + str(port)
     print("\nLABORATORIO DEL MOTOR · Nilo\n" + address)
     print("Estado aislado en RAM. Sin llamadas LLM ni cambios en la partida original.")
@@ -363,6 +427,7 @@ def main():
         pass
     finally:
         server.server_close()
+        server.RequestHandlerClass.lab.close()
 
 
 if __name__ == "__main__":
