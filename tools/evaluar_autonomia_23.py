@@ -243,14 +243,26 @@ def report_text(reports, comparison=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("sqlite", nargs="+", type=Path)
+    parser.add_argument("sqlite", nargs="*", type=Path)
+    parser.add_argument("--reports", nargs="+", type=Path,
+                        help="Comparar JSON anonimizado de corridas anteriores, sin necesitar SQLite")
     parser.add_argument("--json", dest="out_json", type=Path)
     parser.add_argument("--markdown", dest="out_md", type=Path)
     args = parser.parse_args(argv)
     try:
-        if len(args.sqlite) > 8:
-            raise EvaluationError("Máximo ocho partidas.")
-        reports = [analyze_autonomy(path) for path in args.sqlite]
+        if args.reports and args.sqlite:
+            raise EvaluationError("Elegir archivos SQLite o --reports, no ambos.")
+        if args.reports:
+            reports = []
+            for path in args.reports:
+                item = json.loads(path.read_text(encoding="utf-8"))
+                if not isinstance(item, dict) or item.get("format") != FORMAT or "verified_real_llm" not in item:
+                    raise EvaluationError("Informe de etapa 23 incorrecto: " + path.name)
+                reports.append(item)
+        else:
+            reports = [analyze_autonomy(path) for path in args.sqlite]
+        if not reports or len(reports) > 8:
+            raise EvaluationError("Se necesitan de una a ocho partidas.")
         comparison = compare_autonomy(reports) if len(reports) > 1 else None
         output = {"format": FORMAT, "runs": reports, "comparison": comparison}
         if args.out_json:
