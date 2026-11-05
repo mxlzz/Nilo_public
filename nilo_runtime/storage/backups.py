@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from contextlib import closing
 import os
 from pathlib import Path
 import sqlite3
@@ -30,7 +31,7 @@ def inspect_backup(path):
     path=Path(path)
     if not path.is_file():
         raise BackupError("No existe el archivo de partida.")
-    with _readonly(path) as conn:
+    with closing(_readonly(path)) as conn:
         errors=conn.execute("PRAGMA quick_check").fetchall()
         if errors != [("ok",)]:
             raise BackupError("SQLite falló quick_check: no se puede restaurar.")
@@ -94,8 +95,9 @@ def backup_to_new_path(source_conn, destination):
     os.close(handle)
     tmp=Path(temp)
     try:
-        with sqlite3.connect(tmp) as destination_conn:
+        with closing(sqlite3.connect(tmp)) as destination_conn:
             source_conn.backup(destination_conn)
+            destination_conn.commit()
         manifest=inspect_backup(tmp)
         # No usar os.replace: reemplazaría un save existente en POSIX.
         os.link(tmp,target)
@@ -110,7 +112,7 @@ def restore_as_copy(source, destination):
     if source==Path(destination).resolve():
         raise BackupError("El backup y su restauración no pueden ser el mismo archivo.")
     before=inspect_backup(source)
-    with _readonly(source) as conn:
+    with closing(_readonly(source)) as conn:
         after=backup_to_new_path(conn,destination)
     if after!=before:
         # No exponer como restauración correcta una copia parcial.
@@ -118,3 +120,18 @@ def restore_as_copy(source, destination):
         Path(destination).unlink(missing_ok=True)
         raise BackupError("La copia no coincide con el backup de origen.")
     return after
+
+
+def backup_file(source, destination):
+    """Backup online de una partida SQLite en WAL, incluso con Nilo abierto.
+
+    Se usa una conexión nueva en modo lectura. No exigimos igualdad temporal
+    con un SELECT previo: la simulación puede confirmar otro estado mientras
+    se ejecuta el backup. La copia resultante sí se valida internamente.
+    """
+    source=Path(source).resolve()
+    inspect_backup(source)
+    if source==Path(destination).resolve():
+        raise BackupError("Origen y destino no pueden coincidir.")
+    with closing(_readonly(source)) as conn:
+        return backup_to_new_path(conn,destination)
