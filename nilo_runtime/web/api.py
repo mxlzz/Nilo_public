@@ -10,6 +10,7 @@ from pathlib import Path
 from urllib.parse import parse_qs
 
 from interface_prefs import load as load_interface_prefs, save as save_interface_prefs
+from nilo_runtime.web.projections import observer_state
 from nilo_runtime.application.deps import HERE, SUPPORTED_SPEEDS, ProvidersUnavailable
 
 API_VERSION=1
@@ -59,7 +60,7 @@ def _get(sim,path,query,root):
         return {"api_version":API_VERSION,"schema_version":5,
                 "engine_version":sim.sessions.identity.get("engine_version","no_registrada")}
     if path=="/api/state":
-        return sim.public_state()
+        return observer_state(sim.public_state())
     if path=="/api/summary-history":
         return {"summaries":sim.observer_summary_history()}
     if path=="/api/unread":
