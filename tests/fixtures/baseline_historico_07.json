@@ -1,0 +1,40 @@
+{
+  "format": "nilo-public-historical-fixtures-v1",
+  "synthetic": true,
+  "sourceArtifact": 13357489405,
+  "sourceArtifactSha256": "3237b38f90bc0d7e553a810396473337af950c763ec2cf8b4958fbf1a034c3d5",
+  "worldSeed": 7321,
+  "rngSeed": 9821,
+  "files": [
+    {
+      "path": "v0.5.9.4.2/partida_initial.sqlite3",
+      "sha256": "1532cab21a3b713c8f10c8e464890d8dda49b6e508ca0371eea9a264a3306876",
+      "bytes": 126976
+    },
+    {
+      "path": "v0.5.9.4.2/partida_progressed.sqlite3",
+      "sha256": "36d47d16a491fa1de6b7cc90669c5077aa86486575c4e9b55a354f127ddcc9b5",
+      "bytes": 131072
+    },
+    {
+      "path": "v0.6.0/partida_initial.sqlite3",
+      "sha256": "1dfad6d5454a618ec56686da2e4004f60db2a0045a5c5061b0a7800cb533a044",
+      "bytes": 118784
+    },
+    {
+      "path": "v0.6.0/partida_progressed.sqlite3",
+      "sha256": "81c90e6c62efd3c33b22ed204c550a2d5ecb5932c525854f19c9c097be8923bc",
+      "bytes": 131072
+    },
+    {
+      "path": "v0.6.4/partida_initial.sqlite3",
+      "sha256": "b95c98ecb0c2e7156311e43734f425978f2ae8474027982e1764ba289a509c44",
+      "bytes": 131072
+    },
+    {
+      "path": "v0.6.4/partida_progressed.sqlite3",
+      "sha256": "877c1305739dca0b70108e4be25e7c9fa357d1657d6c3fb7cc3a1f52abf04db9",
+      "bytes": 167936
+    }
+  ]
+}
