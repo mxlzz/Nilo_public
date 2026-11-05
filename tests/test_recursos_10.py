@@ -13,7 +13,7 @@ from nilo_runtime.worlds.island import tile_key, set_tile
 from nilo_runtime.worlds.resources import (
     ResourceBalanceError, StockTransfer, stock_units, transfer_units,
     gather_material, nearest_known, forage_source, forage_action,
-    harvest_at, cut_wood,
+    harvest_at, cut_wood, consume_units,
 )
 
 
@@ -60,6 +60,29 @@ class ResourceInvariants10(unittest.TestCase):
         self.assertEqual([a,b],[{"s":5},{"d":2}])
         with self.assertRaises(ResourceBalanceError):
             transfer_units(a,"s",a,"s",1)
+
+    def test_consumption_debits_once_and_rejects_invalid_quantities(self):
+        inv={"alimento":2}
+        self.assertEqual(consume_units(inv,"alimento",1),1)
+        self.assertEqual(inv["alimento"],1)
+        for amount in (2,0,-1,True,1.5, "1"):
+            before=deepcopy(inv)
+            with self.subTest(amount=amount):
+                with self.assertRaises(ResourceBalanceError):
+                    consume_units(inv,"alimento",amount)
+                self.assertEqual(inv,before)
+
+    def test_eat_spends_one_unit_and_no_phantom_food(self):
+        from nilo import initial_state
+        state=initial_state(7321)
+        w,p=state["world"],state["person"]
+        p["inventory"]["alimento"]=1
+        first=world.execute_action(w,p,{"op":"eat"},random.Random(7))
+        self.assertTrue(first[2],first)
+        self.assertEqual(p["inventory"]["alimento"],0)
+        second=world.execute_action(w,p,{"op":"eat"},random.Random(7))
+        self.assertFalse(second[2],second)
+        self.assertEqual(p["inventory"]["alimento"],0)
 
     def test_corrupt_stock_does_not_get_clamped_or_generate_material(self):
         a={"s":-1};b={"d":0}

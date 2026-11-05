@@ -4,7 +4,7 @@ import ast
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 OWNED={"gather_material","nearest_known","forage_source","forage_action",
-       "harvest_at","cut_wood","transfer_units","gather_action"}
+       "harvest_at","cut_wood","transfer_units","gather_action","consume_units"}
 FORBIDDEN={"world","brain","island_planning","environments","nilo",
            "nilo_runtime.application","nilo_runtime.web","providers"}
 
@@ -25,7 +25,12 @@ def inspect():
     legacy=ast.parse((ROOT/"world.py").read_text(encoding="utf-8"))
     duplicates=OWNED & {n.name for n in legacy.body if isinstance(n,ast.FunctionDef)}
     if duplicates:failures.append("Definiciones dobles en world.py: "+str(sorted(duplicates)))
-    direct_names={"deposits","forage_deposits"}
+    world_source=(ROOT/"world.py").read_text(encoding="utf-8")
+    if "inv['alimento']-=1" in world_source:
+        failures.append("El consumo de alimento elude el balance central")
+    loads_source=(ROOT/"structural_loads.py").read_text(encoding="utf-8")
+    if "inventory[material] -= quantity" in loads_source:
+        failures.append("Las cargas estructurales eluden transfer_units")
     if not (ROOT/"tests/test_recursos_10.py").is_file():
         failures.append("Faltan tests de conservación y extracción")
     return failures
