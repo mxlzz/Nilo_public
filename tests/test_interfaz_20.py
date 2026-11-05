@@ -135,8 +135,9 @@ class StaticUI20(unittest.TestCase):
     def test_help_dialogs_and_filters_preserved(self):
         scanner=Scanner();scanner.feed(HTML)
         for name in ("research-filter","status-filter",
-                     "section-help-popover","indicator-inline"):
+                     "indicator-inline"):
             self.assertIn(name,scanner.ids)
+        self.assertIn("section-help-popover",JS)
         for func in ("closeSectionHelp","openSectionHelp","selectedStatusView",
                      "matchesResearchView","updateReadActions","drawFeed"):
             self.assertIn("function "+func+"(",JS)
@@ -147,7 +148,8 @@ class StaticUI20(unittest.TestCase):
         for uid in ("theme-select","map-toggle","map-content",
                     "map-references","layerselect","zoomin","zoomout"):
             self.assertIn(uid,scanner.ids)
-        for theme in ("bosque","grafito","terracota",
+        self.assertIn(":root{",CSS)  # «bosque» es el tema por defecto.
+        for theme in ("grafito","terracota",
                       "grises-oscuros","grises-claros"):
             self.assertIn('[data-theme="'+theme+'"]',CSS)
         self.assertIn("function setMapDisplay(mode)",JS)
