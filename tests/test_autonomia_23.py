@@ -80,6 +80,8 @@ class Autonomia23(unittest.TestCase):
         self.assertEqual(report["llm"]["repeated_plan_signatures"]["repeated_transitions"], 1)
         self.assertEqual(report["behavior"]["consecutive_identical_failed_actions"]["longest_identical_streak"], 3)
         self.assertEqual(report["behavior"]["physically_measured_actions"], 1)
+        self.assertEqual(report["behavior"]["review_cases_failed_actions"][0]["first_record_id"], "d0")
+        self.assertEqual(report["behavior"]["review_cases_failed_actions"][0]["last_record_id"], "d2")
         self.assertEqual(report["behavior"]["new_tiles_since_instrumentation"], 3)
 
     def test_missing_usage_not_claimed_real(self):
