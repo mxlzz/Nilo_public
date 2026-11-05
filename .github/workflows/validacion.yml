@@ -71,6 +71,10 @@ jobs:
         run: python tools/auditar_api_19.py
       - name: Contratos HTTP, lectura pura y seguridad local (etapa 19)
         run: python -m unittest discover -s tests -p 'test_api_19.py' -v
+      - name: Auditoría de assets, navegación y paridad UI (etapa 20)
+        run: python tools/auditar_interfaz_20.py
+      - name: CSS/JS externos, DOM, HTTP y ZIP de interfaz (etapa 20)
+        run: python -m unittest discover -s tests -p 'test_interfaz_20.py' -v
       - name: Mundo isla_v1 contra snapshots 0.6.4 y seis semillas
         run: python -m unittest discover -s tests -p 'test_mundo_08.py' -v
       - name: Motor headless y adaptadores (regresión focalizada)
