@@ -24,6 +24,8 @@ class AgendaTests(unittest.TestCase):
         return {'titulo':'Prueba programada','motivo':'Comparar con evidencia',
                 'cuando':cuando or {'tipo':'ahora'},'pasos':pasos}
     def test_saved_task_waits_until_condition(self):
+        # Una tarea de un proyecto solo se activa si ese proyecto sigue vivo.
+        self.p['project']={'id':'proj','status':'activo'}
         set_agenda(self.p,[self.new_task([{'op':'inspect','target':''}],
             {'tipo':'despues_de_minutos','minutos':60})],0,'proj')
         self.assertIsNone(choose_agenda_step(self.w,self.p))
