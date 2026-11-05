@@ -15,6 +15,8 @@ import hashlib
 
 DIRECTIONS = {'N', 'S', 'E', 'O'}
 from catalogo import RECOVERABILITY
+from nilo_runtime.worlds.resources import exchange_units
+from nilo_runtime.worlds.intervention import execute_prepared
 
 
 def number(value, default, minimum, maximum):
@@ -217,11 +219,11 @@ def salvage(components,person,*, complete=False):
             if roll<remaining:recovered+=1
         if recovered>0:
             counts[m]=recovered
-            person['inventory'][m]=person['inventory'].get(m,0)+recovered
+    exchange_units(person['inventory'],credits=dict(counts))
     return dict(counts)
 
 
-def apply_intervention(world,person,step):
+def _apply_intervention_mutating(world,person,step):
     """Modificar/reparar/desarmar objetos identificables y accesibles.
 
     No modifica el mundo si falla la validación. Ejecuta la operación sobre
@@ -293,7 +295,7 @@ def apply_intervention(world,person,step):
     elif mode=='repair':
         if chosen.get('condition',1)>=.95:
             return 5,['Esa pieza no presenta desgaste que justifique repararla.'],False,False
-    for m,n in cost.items():inv[m]-=n
+    exchange_units(inv,cost)
     recovered=salvage(removed,person) if removed else {}
     if mode in ('add','replace'):existing.extend(_components(mats))
     if mode=='repair':chosen['condition']=min(1., chosen['condition']+.25*len(mats))
@@ -361,3 +363,12 @@ def apply_intervention(world,person,step):
             obj['space']=normalized
             obj['revisions'][-1]=_version(obj,mode,'Reorganización propuesta; espacios no evaluados funcionalmente.')
     return 30,[f"Intervine '{obj['name']}' (v{obj['revision']}, {mode}). Materiales empleados: {mats or 'ninguno'}; recuperados: {recovered or 'ningún lote completo'}. Conservé su historial y esquema."],True,True
+
+
+
+def apply_intervention(world,person,step):
+    """Valida, ejecuta en copia y confirma una intervención física completa."""
+    from vessels import preflight_intervention as check_contents
+    from structural_loads import preflight_intervention as check_loads
+    return execute_prepared(world,person,step,find_object,_materials,
+                            _apply_intervention_mutating,check_contents,check_loads)

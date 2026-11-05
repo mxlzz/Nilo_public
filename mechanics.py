@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from nilo_runtime.core.identity import new_uuid
 from collections import Counter
+from nilo_runtime.worlds.resources import ResourceBalanceError, check_materials, exchange_units
 import uuid
 
 from catalogo import JOINTS, SHAPES
@@ -19,7 +20,7 @@ def create_assembly(person, step):
     if error:return False,error
     required=Counter(p['material'] for p in clean)
     inv=person.get('inventory',{})
-    if any(inv.get(m,0)<n for m,n in required.items()):
+    if not check_materials(inv,dict(required)):
         return False,'No tengo suficientes materiales para ensamblar todas las piezas.'
     design_id=str(step.get('design_id') or '').strip()
     if design_id:
@@ -31,7 +32,6 @@ def create_assembly(person, step):
     if not connected_parts(len(clean),connections):
         return False,'El conjunto tiene piezas sin conectar.'
     # Consumo atómico: no modificar inventario antes de pasar validación completa.
-    for m,n in required.items():inv[m]-=n
     materials=[p['material'] for p in clean]
     properties=[person['materials'][m] for m in materials]
     resistance=min(float(q.get('resistencia',3)) for q in properties)
@@ -48,6 +48,7 @@ def create_assembly(person, step):
         item['design_version']=design['versions'][-1]['version']
     from construction import initialize_object
     initialize_object(item,structure=False)
+    exchange_units(inv,dict(required))
     person.setdefault('items',[]).append(item)
     if design_id:step['_built_object_id']=item['id']
     return True,f"Construí '{item['name']}' con {len(clean)} piezas y {len(connections)} uniones; todavía debo probarlo."
