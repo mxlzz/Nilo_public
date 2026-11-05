@@ -75,6 +75,10 @@ jobs:
         run: python tools/auditar_interfaz_20.py
       - name: CSS/JS externos, DOM, HTTP y ZIP de interfaz (etapa 20)
         run: python -m unittest discover -s tests -p 'test_interfaz_20.py' -v
+      - name: Auditoría de laboratorio, perfiles y recuperación (etapa 21)
+        run: python tools/auditar_laboratorio_21.py
+      - name: Laboratorio unificado y ajustes reversibles (etapa 21)
+        run: python -m unittest discover -s tests -p 'test_laboratorio_21.py' -v
       - name: Mundo isla_v1 contra snapshots 0.6.4 y seis semillas
         run: python -m unittest discover -s tests -p 'test_mundo_08.py' -v
       - name: Motor headless y adaptadores (regresión focalizada)
