@@ -2,7 +2,7 @@
 
 **Fecha:** 5 de noviembre de 2026.  
 **Rama de implementación:** `refactor/0.7`.  
-**Estado:** implementación completa; pendiente de cierre documental según CI definitiva.  
+**Estado:** **COMPLETADA**, con CI integral pública verde, benchmark medido y partidas sintéticas compatibles.  
 **Seguimiento:** [#74](https://github.com/mxlzz/Nilo_public/issues/74) y [PR #77](https://github.com/mxlzz/Nilo_public/pull/77).  
 **Referencia:** Nilo 0.6.4, sin modificar `main`, `VERSION` ni bases de datos personales.
 
@@ -64,7 +64,7 @@ Se incorporaron **10 pruebas focalizadas** en `tests/test_navegacion_09.py`, com
 
 La integración CI incluye el auditor, los tests focalizados, el comparador de rendimiento `tools/benchmark_navegacion_09.py`, la suite completa sin claves LLM, escenarios físicos, replay entre procesos y verificación de ZIP portable. `nilo_runtime/worlds/navigation.py` figura en el manifiesto y debe existir en el ZIP extraído.
 
-**Comparación de complejidad:** antes, para F fronteras, el algoritmo repetía hasta F búsquedas BFS y comprobaciones lineales de membresía sobre R casillas reveladas; ahora se construye una vez un grafo de hasta V casillas y E aristas y se resuelven F consultas a distancias. Se espera reducir el costo de búsqueda de fronteras; la medición real está automatizada en el workflow y no se confunde con una mejora conductual autónoma.
+**Comparación de complejidad:** antes, para F fronteras, el algoritmo repetía hasta F búsquedas BFS y comprobaciones lineales de membresía sobre R casillas reveladas; ahora se construye una vez un grafo de hasta V casillas y E aristas y se resuelven F consultas a distancias. El [workflow público #41966671990](https://github.com/mxlzz/Nilo_public/actions/runs/41966671990) midió, sobre **180 casillas reveladas y cuatro selecciones independientes**, **52,897 ms** para la implementación anterior y **2,195 ms** para la indexada: **24,1 veces más rápida en ese ensayo**. Las fronteras elegidas y el estado RNG fueron idénticos. Es una medición de microbenchmark en el runner, no una estimación de aceleración global de Nilo ni prueba de mejor autonomía.
 
 ## 5. Pruebas históricas y límites de inferencia
 
@@ -72,4 +72,4 @@ La [validación pública histórica #41965941042](https://github.com/mxlzz/Nilo_
 
 **Pendientes fuera de alcance:** nueva física de excavación o recursos (10–12), nuevo sistema de percepción (14), eliminación integral de coordinadores legados (10–12/24), reducción de bucles cognitivos y evaluación de runs Gemini/Groq (17/23). No se introducen objetivos externos ni accesos privilegiados a mapa.
 
-**Puerta de cierre:** CI verde del último código, benchmark medido, escenarios/replay/ZIP correctos y actualización del tablero de etapas. Hasta verificarla, esta etapa se mantiene formalmente en validación.
+**Puerta de cierre superada.** CI de la implementación definitiva [#41966671990](https://github.com/mxlzz/Nilo_public/actions/runs/41966671990): **success, 745 tests (1 omitida)**; auditorías estructurales, 10 pruebas focalizadas de etapa 09, benchmarks comparativos, seis semillas de topología, motor headless, escenarios físicos, continuidad RNG/IDs, replay histórico y ZIP portable extraído. Fingerprint histórico idéntico entre dos procesos: `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`. La compatibilidad pública de seis partidas sintéticas se confirmó en [#41965941042](https://github.com/mxlzz/Nilo_public/actions/runs/41965941042). **Etapa 09 cerrada; habilitada la 10 · Recursos e inventario**, sin iniciar. No se modificaron `main`, `VERSION` ni partidas privadas.

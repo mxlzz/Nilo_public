@@ -1,7 +1,7 @@
 # Nilo 0.7 — Plan de reestructuración integral por etapas
 
-**Estado vigente al 5/11/2026:** etapas 00–08 completadas en `refactor/0.7`;
-etapa 09 pendiente. El seguimiento actual está en
+**Estado vigente al 5/11/2026:** etapas **00–09 completadas** en `refactor/0.7`;
+etapa **10 · Recursos e inventario** pendiente. El seguimiento actual está en
 [ESTADO_REESTRUCTURACION_07.md](ESTADO_REESTRUCTURACION_07.md) y el cierre de la
 migración pública en [MIGRACION_PUBLICA_ETAPA_03.md](MIGRACION_PUBLICA_ETAPA_03.md).
 La descripción de propuesta que sigue se conserva como registro del plan original.
