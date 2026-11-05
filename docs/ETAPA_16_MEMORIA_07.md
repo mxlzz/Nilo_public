@@ -45,7 +45,7 @@ Se preservan el esquema SQLite vigente, las reglas del mundo, la física del des
 
 - Auditor estático tools/auditar_memoria_16.py: propietarios únicos y fachadas sin duplicación, contratos tipados, inclusión de investigaciones abiertas en el prompt, laboratorio de conclusiones por IDs y filtrado de sitios no revelados.
 - tests/test_memoria_16.py: casos focalizados de memoria oculta/descubierta, acciones con textos iguales pero IDs distintos, referencias no resueltas, recuperación pura, actualización de hipótesis, integración con procedencia, límites entre observaciones y comprobación, historial de mediciones, conocimiento fallido y payloads LLM.
-- Se mantienen las pruebas preexistentes sobre memoria episódica, cierres de proyectos, planes, investigación, laboratorio y replay. Dos fixtures históricos fueron adaptados a la regla de información observada y a mensajes de diagnóstico más precisos.
+- Se mantienen las pruebas preexistentes sobre memoria episódica, cierres de proyectos, planes, investigación, laboratorio y replay. Se ajustó un fixture de memoria histórico para indicar expresamente que la cueva había sido descubierta; los mensajes de diagnóstico conservan su alcance cuando se solicitan IDs no físicos.
 - El seguimiento de CI integral y compatibilidad histórica se registra en el tablero cuando finaliza cada ejecución. Una prueba sintética aprobada no demuestra ausencia de bucles con proveedores reales: esa evaluación queda en la etapa 23.
 
 ## 5. Límites y trabajo posterior
@@ -53,3 +53,7 @@ Se preservan el esquema SQLite vigente, las reglas del mundo, la física del des
 La recuperación de recuerdos continúa siendo determinista y usa el historial biográfico completo. El costo de índices y el rendimiento en partidas de gran duración quedan para la evaluación de performance de etapa 22. Resolver una medición archivada en SQLite pero fuera de la ventana activa requerirá revisar el acceso persistente en etapa 18/21, sin modificar retrospectivamente su veracidad.
 
 Próxima etapa: 17, proyectos y hábitos. Las pruebas de comportamiento autónomo Gemini/Groq corresponden a la etapa 23. Este trabajo no autoriza fusionar el PR ni publicar 0.7.0 antes de completar las 25 etapas.
+
+## 6. Verificación final y cierre
+
+**Etapa 16 completada.** [Validación integral #42054953205](https://github.com/mxlzz/Nilo_public/actions/runs/42054953205): **success**, 884 pruebas ejecutadas (1 omitida), 20 pruebas focalizadas propias y auditoría estática de cognición aprobada. Pasaron escenarios físicos, replay, importación desde ZIP portable, y comparación entre dos procesos con fingerprint idéntico `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`. Código comprobado: [commit e320aed](https://github.com/mxlzz/Nilo_public/commit/e320aedac553f914501850777ccda3d8bee7e312). [Compatibilidad histórica #42054953165](https://github.com/mxlzz/Nilo_public/actions/runs/42054953165): **success**, seis partidas sintéticas SQLite de versiones anteriores reabiertas sobre copias, originales intactos. Los siguientes commits documentales usan [skip ci] y no modifican Python. La rama main sigue estable en 0.6.4; el PR #77 permanece en borrador. Próxima etapa: **17 · Proyectos y hábitos**.
