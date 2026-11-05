@@ -68,8 +68,11 @@ class MotorLabTests(unittest.TestCase):
     def test_rest_duration_respects_user_choice(self):
         first = self.lab.person["clock_minutes"]
         result = self.lab.act({"op": "rest", "minutes": 60})
-        self.assertEqual(result["last"]["result"]["duration_minutes"], 60)
-        self.assertEqual(self.lab.person["clock_minutes"]-first, 60)
+        # Etapa 21: el sandbox ejecuta Simulation.tick; la duración del
+        # handler puede ser estimada, la medición real manda.
+        self.assertAlmostEqual(
+            self.lab.person["measurements"][-1]["duration_minutes"],60,places=3)
+        self.assertAlmostEqual(self.lab.person["clock_minutes"]-first,60,places=3)
 
     def test_context_preview_does_not_call_a_provider(self):
         for name in ("gemini", "groq"):
