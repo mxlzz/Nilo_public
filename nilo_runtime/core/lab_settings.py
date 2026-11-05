@@ -3,6 +3,7 @@
 Las capas agent y labs comparten este contrato sin dependencia invertida.
 """
 from __future__ import annotations
+import hashlib
 import json
 from pathlib import Path
 import re

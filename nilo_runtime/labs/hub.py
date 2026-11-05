@@ -67,7 +67,16 @@ class LabHub:
         self.world=Path(world_path).resolve() if world_path is not None else None
 
     def list(self):
-        return self.store.entries()
+        data=self.store.entries()
+        root=self.store.dir/"world_backups"
+        data["world_backups"]=sorted(
+            [p.name for p in root.glob("*.sqlite3") if len(p.stem)==32
+             and all(ch in "0123456789abcdef" for ch in p.stem)],
+            reverse=True)[:100] if root.is_dir() else []
+        return data
+
+    def load(self,name):
+        return self.store.load(name)
 
     def _context(self,seed):
         from laboratorio_contexto import contexto_de_deliberacion

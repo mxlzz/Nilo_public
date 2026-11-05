@@ -275,8 +275,13 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(contents)))
             self.end_headers()
             self.wfile.write(contents)
-        elif path == "/api/lab/profile/list":
-            try:self.json(self.hub.list())
+        elif path in ("/api/lab/profile/list","/api/lab/profile/load"):
+            try:
+                if path.endswith("/list"):
+                    self.json(self.hub.list())
+                else:
+                    name=(parse_qs(urlsplit(self.path).query).get("name") or [""])[0]
+                    self.json(self.hub.load(name))
             except (ValueError,TypeError,OSError) as exc:
                 self.json({"error":str(exc)[:350]},400)
         elif path == "/api/catalog":

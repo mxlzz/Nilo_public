@@ -1,5 +1,6 @@
 """Checkpoint, aplicación y restauración del perfil sin editar código Python."""
 from __future__ import annotations
+import json
 import os
 from pathlib import Path
 import tempfile
