@@ -99,7 +99,15 @@ TRACE_TEXT = {
     "inventions.py:submit_debug_report": "Registra una posible anomalía",
     "inventions.py:record_action_outcome": "Documenta la acción y sus resultados",
     "laboratory.py:compare": "Compara mediciones registradas",
-    "survival.py:update_needs": "Actualiza necesidades durante el tiempo simulado",
+    "survival.py:update_needs": "Conserva el contrato histórico de evolución corporal",
+    "needs.py:update_needs": "Evolución física de energía, hambre y sed",
+    "needs.py:perceived_needs": "Proyecta sensaciones sin barras numéricas",
+    "policy.py:rest_minutes": "Valida descanso voluntario",
+    "policy.py:wait_minutes": "Valida espera sin recuperación",
+    "policy.py:should_collapse": "Decide pérdida de conciencia por energía",
+    "policy.py:can_wake": "Decide recuperación de conciencia",
+    "shelter.py:shelter_properties": "Evalúa resguardo físico sin interpretar nombres",
+    "island_views.py:survival_conditions": "Consulta resguardo y fuentes de agua de la posición",
     "brain.py:context_for": "Prepara la percepción y memorias del contexto",
     "brain.py:compact_context": "Acota campos del contexto",
     "brain.py:build_deliberation_request": "Arma el mensaje final sin enviarlo",
@@ -160,6 +168,9 @@ class ExecutionTrace:
                 "objects.py": "nilo_runtime/worlds/objects.py",
                 "components.py": "nilo_runtime/worlds/components.py",
                 "materials.py": "nilo_runtime/physics/materials.py",
+                "needs.py": "nilo_runtime/physiology/needs.py",
+                "policy.py": "nilo_runtime/physiology/policy.py",
+                "shelter.py": "nilo_runtime/worlds/shelter.py",
             }.get(row["file"], row["file"])
             row["url"] = ("https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/"
                           + source_path + "#L" + str(row["first"])
