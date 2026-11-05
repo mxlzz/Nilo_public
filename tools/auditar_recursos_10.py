@@ -4,7 +4,7 @@ import ast
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 OWNED={"gather_material","nearest_known","forage_source","forage_action",
-       "harvest_at","cut_wood","transfer_units"}
+       "harvest_at","cut_wood","transfer_units","gather_action"}
 FORBIDDEN={"world","brain","island_planning","environments","nilo",
            "nilo_runtime.application","nilo_runtime.web","providers"}
 

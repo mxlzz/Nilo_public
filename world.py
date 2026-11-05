@@ -30,7 +30,7 @@ from nilo_runtime.worlds.navigation import (
 from nilo_runtime.worlds.resources import (
     ResourceBalanceError, StockTransfer, stock_units, transfer_units,
     gather_material, nearest_known, forage_source, forage_action,
-    harvest_at, cut_wood,
+    harvest_at, cut_wood, gather_action,
 )
 
 
@@ -460,48 +460,7 @@ def execute_action(w,p,step,rng):
         success,facts=inspect_target(w,p,step)
         notable=False;duration=6
     elif op=='gather':
-        requested=gather_material(target)
-        if requested is None:
-            return 5,[f"No reconozco '{target}' como material o fuente de recolección. "
-                      "Puedo solicitar piedra (roca), madera (arboleda), mineral oscuro "
-                      "(afloramiento mineral), arcilla, fibra, cristal u hongo luminoso."],False,False
-        # El motor puede fijar el depósito al comenzar el viaje. Un pin solo
-        # permite una fuente revelada, compatible y físicamente adyacente.
-        pin=step.get('_resource_at')
-        if pin is not None:
-            if not isinstance(pin,(list,tuple)) or len(pin)!=3:
-                return 5,["La referencia del depósito de trabajo es inválida."],False,False
-            try:
-                tx,ty,tz=(int(v) if type(v) is int else None for v in pin)
-            except (ValueError,TypeError):
-                return 5,["La referencia del depósito de trabajo es inválida."],False,False
-            if None in (tx,ty,tz):
-                return 5,["La referencia del depósito de trabajo es inválida."],False,False
-            if tz!=z or not valid(tx,ty) or abs(tx-x)+abs(ty-y)>1:
-                return 5,["No estoy junto al depósito reservado; no extraje materiales."],False,False
-            nearest=(tx,ty,x,y)
-        else:
-            try:
-                nearest=nearest_known(w,p,GATHER_SOURCES[requested])
-            except ResourceBalanceError:
-                return 5,["Hay un depósito con reserva inválida; no extraje materiales."],False,False
-        if nearest is None:
-            return 5,[f"No tengo localizada una fuente accesible y con recursos de {requested}."],False,False
-        tx,ty,wx,wy=nearest
-        travel=0
-        if (x,y)!=(wx,wy) and abs(tx-x)+abs(ty-y)>1:
-            travel,discovered=move(w,p,(wx,wy),10)
-            facts.append(f"Me acerqué {travel} tramos a la fuente de {requested} en ({tx},{ty}).")
-            other=describe_findings(w,discovered)
-            if other:facts.append('En el trayecto vi: '+', '.join(other)+'.');notable=True
-            if tuple(p['pos'][:2])!=(wx,wy):
-                facts.append(f"Todavía no llegué al depósito de {requested} y no recogí material.")
-                return max(5,travel*3),facts,False,notable
-        elapsed,result,worked,interesting=harvest_at(w,p,requested,(tx,ty,z))
-        facts.extend(result)
-        if not worked:return elapsed,facts,False,notable
-        notable=notable or interesting
-        duration=max(0,travel*3)+elapsed
+        return gather_action(w,p,step,describe_findings)
     elif op=='experiment':
         mat=next((m for m in inv if inv.get(m,0)>0 and m in target),None)
         if not mat:return 4,[f"No tengo una muestra de {target or 'ese material'} para experimentar."],False,False
