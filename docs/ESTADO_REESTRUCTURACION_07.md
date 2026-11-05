@@ -1,6 +1,6 @@
 # Seguimiento de la reestructuración de Nilo 0.7
 
-**Migración pública verificada (5/11/2026):** **00–22 completadas**; próxima 23 · Evaluación autónoma real.
+**Migración pública verificada (5/11/2026):** **00–22 completadas**; **23 · Evaluación autónoma real, en curso** (instrumental implementado; corridas reales pendientes).
 Seguimiento vigente: [issue público 74](https://github.com/mxlzz/Nilo_public/issues/74).
 [Validación pública y correspondencia de issues](MIGRACION_PUBLICA_ETAPA_03.md).
 Las referencias textuales a CI y commits privados que siguen son históricas;
@@ -35,10 +35,12 @@ Cada etapa se registra aquí cuando inicia y cuando termina, con links a informe
 | 20 · Interfaz | **Completada**: HTML de 175 KB a 12 KB, CSS y cuatro JS separados, paridad exacta de HTML histórico, UI/API y ZIP portable | [Informe 20](ETAPA_20_INTERFAZ_07.md) · [CI success #42080090727](https://github.com/mxlzz/Nilo_public/actions/runs/42080090727): 971 tests (1 omitida), 17 focalizados, replay/ZIP · [6 saves históricos success #42078863601](https://github.com/mxlzz/Nilo_public/actions/runs/42078863601) |
 | 21 · Laboratorio | **Completada**: motor único, centro de ajustes con perfiles validados, checkpoints y backups/restauración en copias nuevas; escenarios y replay conservados | [Informe 21](ETAPA_21_LABORATORIO_07.md) · [CI success #42089707797](https://github.com/mxlzz/Nilo_public/actions/runs/42089707797): 991 tests (1 omitida), 20 focalizados, replay/ZIP · [6 saves históricos success #42089279086](https://github.com/mxlzz/Nilo_public/actions/runs/42089279086) |
 | 22 · QA y rendimiento | **Completada**: 17 metamorfismos transversales, QA de 8 días sin LLM, inventario/cobertura de líneas y matriz de paridad contra baseline | [Informe 22](ETAPA_22_QA_07.md) · [CI success #42097007735](https://github.com/mxlzz/Nilo_public/actions/runs/42097007735): 1.008 tests (1 omitida), 298 tests instrumentados/65,85 % en 16 módulos seleccionados, 8.100 registros + 48 mundos y ZIP/replay · [6 saves históricos success #42095227815](https://github.com/mxlzz/Nilo_public/actions/runs/42095227815) |
-| 23 · Corridas LLM | Pendiente | — |
+| 23 · Corridas LLM | **En curso, no cerrada**: instrumental y ejecución opt-in; faltan evidencias conductuales reales | [Informe y protocolo de la etapa 23](ETAPA_23_AUTONOMIA_07.md) · pruebas sin proveedor incorporadas a CI · matriz real Gemini/Groq pendiente |
 | 24 · Limpieza y release | Pendiente | — |
 
 ## Registro cronológico
+
+- **2026-11-05 — Etapa 23 iniciada, puerta de salida pendiente:** auditoría de historia y origen LLM, nueva herramienta de corrida real limitada y sin fallback (tools/ejecutar_autonomia_23.py), observatorio de planes/acciones y comparación de reportes anonimizados (tools/evaluar_autonomia_23.py), nueve pruebas focalizadas y ejecución manual opt-in desde Validación Nilo. El script exige clave de proveedor, guarda nueva SQLite aislada y no expone prompts, chat, diarios ni credenciales en artefactos. [Informe de etapa 23](ETAPA_23_AUTONOMIA_07.md). La CI solo verifica la instrumentación; no demuestra autonomía de Nilo. **Faltan al menos cuatro corridas reales comparables con Gemini/Groq y revisión de anomalías; no habilitar etapa 24 ni release.**
 
 - **2026-11-04 — Apertura:** rama de refactor creada desde `main`, cuyo único cambio desde la referencia 0.6.4 son tres commits de documentación. Inicia el paso 01, con revisión de los 63 módulos Python y sus dependencias. No se alteraron leyes, prompts ni partidas. Paso 00 permanece incompleto hasta hacer respaldo y fixtures reproducibles.
 
