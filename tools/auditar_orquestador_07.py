@@ -11,7 +11,7 @@ APP=ROOT/"nilo_runtime"/"application"
 STORAGE=ROOT/"nilo_runtime"/"storage"
 WEB=ROOT/"nilo_runtime"/"web"
 MIXINS={
-    "session.py":{"__init__","migrate","write","domain_snapshot","stamp"},
+    "session.py":{"__init__","_initialize_storage","migrate","write","domain_snapshot","stamp"},
     "records.py":{"event","review_rule","diagnostic_package","measurement_record",
         "mark_read","mark_one_read","mark_all_read","mark_summarized_read",
         "catchup","bootstrap_reviews","mark_tab_reviewed","observer_summary",
