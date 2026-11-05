@@ -204,6 +204,17 @@ class HttpApi19(unittest.TestCase):
             self.assertEqual(status,400)
             self.assertIn("error",data)
 
+    def test_nonstandard_json_nan_and_infinity_rejected_without_write(self):
+        previous=self.sim.s["paused"]
+        for invalid in (b'{"paused": NaN}',b'{"paused": Infinity}',
+                        b'{"paused": -Infinity}'):
+            status,data,_=self.request(
+                "POST","/api/settings",invalid,
+                {"Content-Type":"application/json"},raw=True)
+            self.assertEqual(status,400)
+            self.assertIn("error",data)
+        self.assertEqual(self.sim.s["paused"],previous)
+
     def test_requires_json_content_type(self):
         for ct in ("text/plain","application/x-www-form-urlencoded",""):
             status,data,_=self.request("POST","/api/settings",b'{"paused":true}',

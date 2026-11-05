@@ -67,13 +67,17 @@ def parse_body(headers,stream,maximum=3000):
              if hasattr(headers,"get_all") else [headers.get("Content-Length","")])
     if len(lengths)!=1 or not lengths[0].isascii() or not lengths[0].isdecimal():
         raise RequestError("Content-Length inválido")
+    if len(lengths[0])>12:
+        raise RequestError("Solicitud demasiado grande o vacía",413)
     size=int(lengths[0])
     if size<1 or size>maximum:
         raise RequestError("Solicitud demasiado grande o vacía",413)
     try:
         raw=stream.read(size)
         if len(raw)!=size:raise RequestError("Cuerpo incompleto")
-        data=json.loads(raw.decode("utf-8"))
+        data=json.loads(raw.decode("utf-8"),
+                        parse_constant=lambda v: (_ for _ in ()).throw(
+                            ValueError("Número no finito en JSON")))
     except (UnicodeError,ValueError) as exc:
         if isinstance(exc,RequestError):raise
         raise RequestError("JSON inválido") from exc
