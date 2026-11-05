@@ -55,7 +55,7 @@ def compact_context(context, char_budget=6800):
             ('navegacion_a_lugares',6),('diagnosticos_operativos_recientes',5),
             ('fenomenos_no_evaluables_recientes',3),('orillas_agua_conocidas_alcanzables',3),
             ('percepción_local',6),('herramientas_que_llevo',4),
-            ('construcciones_fijas',4),('proyecto_actual',None),('memorias_relevantes',5),('revision_de_estrategia',None),('repeticion_operativa_informativa',None),
+            ('construcciones_fijas',4),('proyecto_actual',None),('investigaciones_activas',3),('memorias_relevantes',5),('revision_de_estrategia',None),('repeticion_operativa_informativa',None),
             ('evidencia_de_progreso_ultima_accion',None),('revision_de_intentos_verificados',5),
             ('comparaciones_validas',4),('fenomenos_pendientes_de_modelo',3),
             ('conclusiones_verificadas',3),('mediciones_reales_recientes',4),('resultados_de_acciones',3),
@@ -128,7 +128,7 @@ def _size(value):
 # El estado operativo y las delegaciones vigentes se preservan íntegros.
 # No se consideran instrucciones automáticas de autocuidado.
 _CORE=('momento','posición','necesidades','inventario_materiales',
-       'proyecto_actual','ultimo_cierre_rechazado','proyectos_reanudables',
+       'proyecto_actual','investigaciones_activas','ultimo_cierre_rechazado','proyectos_reanudables',
        'antecedente_relevante','preferencias_en_espera','regla')
 _REDUCE_FIRST=('estrategias_que_ya_no_funcionaron','diagnosticos_operativos_recientes',
                'resultados_de_acciones','mediciones_reales_recientes','construcciones_fijas',

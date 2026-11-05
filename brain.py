@@ -3,7 +3,8 @@ from __future__ import annotations
 import json, os, urllib.request, urllib.error, re, random
 from pathlib import Path
 from behavior import behavior_summary
-from episodic_memory import recall_relevant
+from nilo_runtime.cognition.memory import recall_relevant
+from nilo_runtime.cognition.evidence import projected_conclusions, projected_research
 from world import world_view, tile, tile_key, valid, DIRS, item_effects, pathfind, reachable_shores
 from providers import configured, error_from_http
 from physics import human_knowledge
@@ -195,7 +196,7 @@ def context_for(w,p,recent,now,scenario=None):
                   "energia_final":m['end']['needs']['energia'],"energia_por_hora":m.get('energy_per_hour'),
                   "comparable":m.get('rest_comparable',False),
                   "fisica":m.get("physical"),"resultado":m.get("verified_facts",[])[:2]} for m in p.get('measurements',[])[-15:]],
-            "conclusiones_verificadas":p.get('conclusions',[])[-15:],
+            "conclusiones_verificadas":projected_conclusions(p,limit=15),
             
             "estrategias_que_ya_no_funcionaron":p.get('strategy_feedback',[])[-10:],
             "ultimo_cierre_rechazado":p.get('last_closure_rejection'),
@@ -207,8 +208,8 @@ def context_for(w,p,recent,now,scenario=None):
             "antecedentes_relacionados":related_projects,
             "investigaciones_pausadas_relacionadas":related_research,
             "proyecto_actual":current_context,
-            "investigaciones_activas":[{k:v for k,v in r.items() if k not in ("evidence",)}
-                for r in p['research'] if r.get("state")=="abierta"][-7:],
+            "investigaciones_activas":[r for r in projected_research(p,limit=25)
+                if r.get("state")=="abierta"][-7:],
             "habilidades_verificadas":[{"id":k,"accion":v.get("op"),"objetivo":v.get("target"),"ensayos":v.get("count"),"hecho":v.get("last_fact")} for k,v in list(p.get("skills",{}).items())[-15:] if v.get("verified")],
             "preferencias_en_espera":p.get("waiting_preferences",[]),
             "agenda_diferida":[{k:v for k,v in t.items() if k not in ("resultados",)} for t in p.get("agenda",[]) if t.get("estado") in ("pendiente","en_curso","pospuesta")][-10:],
@@ -266,7 +267,7 @@ def context_for(w,p,recent,now,scenario=None):
         recent_rests=[m for m in p.get('measurements',[])[-40:] if m.get('op')=='rest']
         context["condiciones_de_ensayo_descanso"]={
             "descansos_no_comparables_recientes":sum(not m.get('rest_comparable') for m in recent_rests),
-            "aclaracion":"El descanso y la espera pueden recuperar energía; para comparar su efecto hacen falta ensayos no saturados y medidos en condiciones comparables.",
+            "aclaracion":"Solo el descanso voluntario recupera energía por descanso; wait deja pasar tiempo con metabolismo, sin recuperación de sueño. Para comparar descansos hacen falta ensayos no saturados en condiciones comparables.",
             "distincion":"Podés descansar por voluntad propia sin investigar. Los resultados experimentales se consultan por evidencia, no por conocer directamente las reservas."}
     # La telemetría del motor mide cada acción, pero Nilo solo conoce
     # cifras corporales de pruebas pasadas si está estudiando esa variable.
