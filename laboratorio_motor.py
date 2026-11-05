@@ -35,14 +35,14 @@ HTML_FILE = HERE / "laboratorio_motor.html"
 SCENARIO_HTML_FILE = HERE / "laboratorio_escenarios.html"
 HISTORY_HTML_FILE = HERE / "laboratorio_historico.html"
 TRACE_TEXT = {
-    "world.py:resolve_go": "Comprueba destino y accesibilidad conocida",
-    "world.py:reachable_shores": "Busca orillas alcanzables",
-    "world.py:pathfind": "Calcula ruta entre casillas conocidas",
-    "world.py:choose_frontier": "Selecciona una frontera explorable",
-    "world.py:exploration_frontier": "Filtra fronteras y sectores posibles",
+    "navigation.py:resolve_go": "Comprueba destino y accesibilidad conocida",
+    "navigation.py:reachable_shores": "Busca orillas alcanzables",
+    "navigation.py:pathfind": "Calcula ruta entre casillas conocidas",
+    "navigation.py:choose_frontier": "Selecciona una frontera explorable",
+    "navigation.py:exploration_frontier": "Filtra fronteras y sectores posibles",
     "world.py:prepare_navigation": "Prepara el recorrido sin mover",
-    "world.py:advance_navigation": "Avanza por casillas y revela terreno",
-    "world.py:reveal": "Incorpora casillas observadas",
+    "navigation.py:advance_navigation": "Avanza por casillas y revela terreno",
+    "island.py:reveal": "Incorpora casillas observadas",
     "world.py:navigation_result": "Resume desplazamiento y hallazgos",
     "world.py:execute_action": "Aplica las reglas físicas de la acción",
     "world.py:nearest_known": "Localiza una fuente conocida y alcanzable",
@@ -132,8 +132,13 @@ class ExecutionTrace:
             row["first"] = lines[0]
             row["last"] = lines[-1]
             row["line_count"] = len(lines)
-            row["url"] = ("https://github.com/mxlzz/Nilo/blob/v0.6.1/"
-                          + row["file"] + "#L" + str(row["first"])
+            # Las trazas corresponden al código realmente ejecutado de 0.7.
+            source_path = {
+                "navigation.py": "nilo_runtime/worlds/navigation.py",
+                "island.py": "nilo_runtime/worlds/island.py",
+            }.get(row["file"], row["file"])
+            row["url"] = ("https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/"
+                          + source_path + "#L" + str(row["first"])
                           + "-L" + str(row["last"]))
             rows.append(row)
         return rows
