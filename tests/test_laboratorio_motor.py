@@ -72,7 +72,10 @@ class MotorLabTests(unittest.TestCase):
         # handler puede ser estimada, la medición real manda.
         self.assertAlmostEqual(
             self.lab.person["measurements"][-1]["duration_minutes"],60,places=3)
-        self.assertAlmostEqual(self.lab.person["clock_minutes"]-first,60,places=3)
+        # plan_ready registra además la entrada de cuaderno; ese tiempo
+        # transcurre en el motor real y no forma parte del descanso medido.
+        self.assertGreaterEqual(self.lab.person["clock_minutes"]-first,60)
+        self.assertLess(self.lab.person["clock_minutes"]-first,62)
 
     def test_context_preview_does_not_call_a_provider(self):
         for name in ("gemini", "groq"):
