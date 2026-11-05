@@ -53,7 +53,9 @@ class ContextualNavigation(unittest.TestCase):
         self.assertEqual(history.get('measurement','med-a1b2')['op'],'use')
         self.assertIsNone(history.get('measurement','med-nada'))
         self.assertIsNone(history.get('journal','med-a1b2'))
-        self.assertIn("path=='/api/measurement'",(ROOT/'nilo_runtime/web/http.py').read_text(encoding='utf-8'))
+        # Etapa 19: la ruta pertenece al contrato API, no al transporte HTTP.
+        from nilo_runtime.web.api import GET_PATHS
+        self.assertIn('/api/measurement', GET_PATHS)
         db.close()
 
     def test_rendered_reference_and_archive_navigation(self):
