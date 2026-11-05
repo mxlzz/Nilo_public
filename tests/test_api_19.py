@@ -86,6 +86,23 @@ class HttpApi19(unittest.TestCase):
         self.assertEqual(json.dumps(self.sim.s,sort_keys=True,default=str),before)
         self.assertEqual(self.sim.conn.total_changes,total)
 
+    def test_state_projection_does_not_return_credential_fingerprints(self):
+        raw={"version":5,"name":"Nilo","ai":{
+            "provider":"gemini","model":"modelo",
+            "routing":{"last_provider":"gemini","providers":[
+                {"name":"gemini","health_key":"gemini:secreto-derivado",
+                 "model":"modelo","status":"disponible",
+                 "attempts":0,"successes":0,"failures":0}]}}}
+        with patch.object(self.sim,"public_state",return_value=raw):
+            status,body,_=self.request("GET","/api/state")
+        self.assertEqual(status,200)
+        self.assertEqual(body["name"],"Nilo")
+        self.assertEqual(body["ai"]["routing"]["providers"][0]["name"],"gemini")
+        self.assertNotIn("health_key",body["ai"]["routing"]["providers"][0])
+        self.assertNotIn("secreto-derivado",json.dumps(body))
+        # La proyección no modifica el objeto retornado por el motor.
+        self.assertIn("health_key",raw["ai"]["routing"]["providers"][0])
+
     def test_html_root_is_served_with_legacy_inline_compat(self):
         status,body,headers=self.request("GET","/")
         self.assertEqual(status,200)
