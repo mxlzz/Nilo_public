@@ -78,10 +78,10 @@ TRACE_TEXT = {
     "construction.py:apply_intervention": "Modifica piezas y revisiones del objeto",
     "construction.py:initialize_object": "Registra piezas de la construcción",
     "construction.py:recompute": "Recalcula atributos tras la modificación",
-    "physics.py:geometry_from_step": "Interpreta geometría declarada",
-    "physics.py:body_physics": "Calcula atributos físicos de materiales",
-    "physics.py:evaluate_containment": "Evalúa retención de contenido",
-    "physics.py:evaluate_buoyancy": "Evalúa flotación",
+    "materials.py:geometry_from_step": "Interpreta geometría declarada",
+    "materials.py:body_physics": "Calcula atributos físicos de materiales",
+    "materials.py:evaluate_containment": "Evalúa retención de contenido",
+    "materials.py:evaluate_buoyancy": "Evalúa flotación",
     "mechanics.py:create_assembly": "Ensambla piezas y uniones reales",
     "mechanics.py:test_assembly": "Contrasta comportamiento del mecanismo",
     "experiment_log.py:capture": "Fotografía el estado medible",
@@ -149,6 +149,7 @@ class ExecutionTrace:
                 "resources.py": "nilo_runtime/worlds/resources.py",
                 "objects.py": "nilo_runtime/worlds/objects.py",
                 "components.py": "nilo_runtime/worlds/components.py",
+                "materials.py": "nilo_runtime/physics/materials.py",
             }.get(row["file"], row["file"])
             row["url"] = ("https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/"
                           + source_path + "#L" + str(row["first"])

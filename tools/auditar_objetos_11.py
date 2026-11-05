@@ -38,6 +38,18 @@ def inspect():
         errors.append("Migración eager consume IDs cuando ya existen piezas")
     if "from world import item_effects" in s:
         errors.append("Dependencia circular construction -> world para poderes")
+    phys=ROOT/"nilo_runtime/physics/materials.py"
+    if not phys.exists():
+        errors.append("Falta propietario único de física")
+    else:
+        physical_functions,_=funcs(phys)
+        required={"properties","geometry_from_step","body_physics",
+                  "evaluate_buoyancy","evaluate_containment"}
+        if not required <= physical_functions:
+            errors.append("Física modular incompleta")
+        shim=(ROOT/"physics.py").read_text(encoding="utf-8")
+        if "def body_physics(" in shim or "def evaluate_buoyancy(" in shim:
+            errors.append("Física duplicada en módulo heredado")
     world=(ROOT/"world.py").read_text(encoding="utf-8")
     if "physical_item(name,purpose" not in world:
         errors.append("El craft aún usa inferencia de forma por nombre")

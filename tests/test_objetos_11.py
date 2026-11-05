@@ -79,6 +79,12 @@ class ObjectMaterial11(unittest.TestCase):
         item["geometry"]={"shape":"hueco","size":1}
         self.assertIn("contener",objects.item_effects(item))
 
+    def test_physics_facade_reexports_unique_implementation(self):
+        from nilo_runtime.physics import materials
+        for name in ("properties","geometry_from_step","body_physics",
+                     "evaluate_buoyancy","evaluate_containment"):
+            self.assertIs(getattr(physics,name),getattr(materials,name))
+
     def test_empty_materials_cannot_displace_float_or_store_water(self):
         item={"form":"recipiente","materials":[],
               "geometry":{"shape":"hueco","size":9}}

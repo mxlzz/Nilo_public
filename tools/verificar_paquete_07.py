@@ -35,6 +35,8 @@ REQUIRED = (
     "nilo_runtime/worlds/navigation.py",
     "nilo_runtime/worlds/resources.py",
     "nilo_runtime/worlds/objects.py",
+    "nilo_runtime/physics/__init__.py",
+    "nilo_runtime/physics/materials.py",
     "nilo_runtime/worlds/components.py",
     "nilo_runtime/application/__init__.py",
     "nilo_runtime/application/bootstrap.py",

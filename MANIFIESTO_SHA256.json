@@ -98,6 +98,8 @@
     "nilo_runtime/worlds/navigation.py": "sha256-calculated-during-packaging",
     "nilo_runtime/worlds/resources.py": "sha256-calculated-during-packaging",
     "nilo_runtime/worlds/objects.py": "sha256-calculated-during-packaging",
+    "nilo_runtime/physics/__init__.py": "sha256-calculated-during-packaging",
+    "nilo_runtime/physics/materials.py": "sha256-calculated-during-packaging",
     "nilo_runtime/worlds/components.py": "sha256-calculated-during-packaging",
     "nilo.py": "sha256-calculated-during-packaging",
     "observer.py": "a08ffdd558eb73755eb74090f7dc2be706d0fbff425046bd3074c3b4f346aed7",
