@@ -5,6 +5,7 @@ mantienen sus pasos, efectos y contratos originales.
 """
 from __future__ import annotations
 from .deps import *
+from nilo_runtime.perception.island import visible_structures
 
 class RecordsUseCases:
     @entropy_scoped
@@ -328,6 +329,7 @@ class RecordsUseCases:
         with self.lock:
             s=self.s;p=s['person'];w=s['world']
             world_projection=self.environment.render_map(w,p)
+            seen_structures=visible_structures(w)
             cfg=self.services.config();key_ok=self.services.available(cfg);pending=p.get('pending');routing=public_info(cfg,s)
             remaining_world=None;remaining_real=None;remaining_write_base=None
             if pending:
@@ -372,7 +374,7 @@ class RecordsUseCases:
               ('conclusion',p.get('conclusions',[])[-40:]),
               ('proposal',p.get('proposals',[])[-100:]),
               ('design',p.get('designs',[])[-100:]),
-              ('construction',w.get('structures',[])[-30:]+w.get('retired_structures',[])[-30:]),
+              ('construction',seen_structures[-30:]+w.get('retired_structures',[])[-30:]),
               ('tool',p.get('items',[])[-30:]),
               ('event',s.get('events',[])[-90:])
             )
@@ -431,7 +433,7 @@ class RecordsUseCases:
                      'review_initialized':self.review.initialized(),
                      'review_seen':self.review.seen(),
                      'knowledge':list(p['knowledge'].items())[-20:][::-1],
-                    'structures':w['structures'][-30:][::-1],
+                    'structures':seen_structures[-30:][::-1],
                     'retired_structures':w.get('retired_structures',[])[-30:][::-1],'projects':p['projects'][-50:][::-1],
                     'chat':s['chat'][-50:],'chatting':s['chatting'],'chat_error':s['chat_error'],
                     'summary_markable':bool(s.get('last_catchup_covered')), 

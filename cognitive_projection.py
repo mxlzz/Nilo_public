@@ -6,18 +6,7 @@ No concede capacidades ni convierte el modelo esquemático en prueba física.
 """
 from __future__ import annotations
 from copy import deepcopy
-
-
-def _desgaste(value):
-    """Descripción orientativa, no una medición exacta conocida por introspección."""
-    if not isinstance(value,(int,float)) or isinstance(value,bool):
-        return 'estado de desgaste desconocido'
-    if value<=0:return 'inutilizable'
-    if value<35:return 'muy desgastado'
-    if value<70:return 'desgaste apreciable'
-    if value<95:return 'desgaste leve'
-    return 'sin desgaste apreciable'
-
+from nilo_runtime.perception.objects import desgaste_observable as _desgaste
 
 def _piezas(rows):
     result=[]

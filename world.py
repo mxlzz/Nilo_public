@@ -38,6 +38,8 @@ from nilo_runtime.worlds.objects import (
 )
 from nilo_runtime.worlds.fabrication import combine_action, fabricate_action
 from nilo_runtime.worlds.tool_use import adjacent_rock, dig_with_tool, use_action
+from nilo_runtime.perception.island import world_view, visible_structures
+from nilo_runtime.perception.objects import desgaste_observable
 
 
 # Objetos portátiles y estructuras ancladas tienen ciclos de vida diferentes.
@@ -71,18 +73,6 @@ def record_experience(p,action,subject,success,result,reading=None):
 # tile_key/valid/tile/set_tile/new_world/reveal se reexportan desde
 # nilo_runtime.worlds.island. Reglas físicas y navegación siguen aquí
 # hasta sus propias etapas (09–12); no existen generadores paralelos.
-
-def world_view(w, person):
-    x,y,z=person['pos']; known=set(w['revealed']); near=[]
-    for yy in range(max(0,y-4), min(H,y+5)):
-        for xx in range(max(0,x-4), min(W,x+5)):
-            k=tile_key(xx,yy,z)
-            ch=tile(w,xx,yy,z)
-            if k in known and ch in 'Tocersv^~':
-                near.append({"pos":[xx,yy],"tipo":TERRAINS.get(ch,ch),"simbolo":ch,"distancia":abs(xx-x)+abs(yy-y)})
-    near.sort(key=lambda v:v['distancia'])
-    return near[:18]
-
 
 def prepare_navigation(w,p,step,rng):
     """Prepara una ruta sin mover a Nilo ni revelar destino anticipadamente."""
@@ -188,14 +178,14 @@ def inspect_target(w,p,step):
         if not match:match=re.fullmatch(r'[ ]*([0-9]{1,2})[ ]*[,;][ ]*([0-9]{1,2})[ ]*',normalized)
         if match:coords=(int(match.group(1)),int(match.group(2)))
     carried=p.get('items',[])
-    structures=w.get('structures',[])
+    structures=visible_structures(w)
     if name:
         held=next((obj for obj in carried if name==str(obj.get('id','')).casefold()
             or name==str(obj.get('name','')).casefold()),None)
         if held:
             return True,[f"Inspeccioné la herramienta que llevo: {held.get('name')} (ID {held.get('id')}). "
                  f"Forma: {held.get('form','sin registrar')}. Materiales: {', '.join(held.get('materials',[]))}. "
-                 f"Durabilidad: {held.get('durability','desconocida')}%. "
+                 f"Desgaste observable: {desgaste_observable(held.get('durability'))}. "
                  f"Pruebas registradas: {len(held.get('tests',[]))}. Su función depende de las pruebas, no del nombre."]
         named=[obj for obj in structures if (name==str(obj.get('id','')).casefold()
             or name==str(obj.get('name','')).casefold()

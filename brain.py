@@ -7,6 +7,7 @@ from episodic_memory import recall_relevant
 from world import world_view, tile, valid, DIRS, item_effects, pathfind, reachable_shores
 from providers import configured, error_from_http
 from physics import human_knowledge
+from nilo_runtime.perception.island import adjacent_terrain, visible_structures
 from habits import ensure_habits
 from construction import ensure_object
 from experiment_log import closure_status
@@ -339,13 +340,12 @@ def context_for(w,p,recent,now,scenario=None):
         for pr in p.get('projects',[]) if pr.get('status')=='pausado'
         and pr.get('id') in ready_ids][-4:]
     px,py,pz=p['pos']
-    adjacent=[{"x":px+dx,"y":py+dy,"tipo":tile(w,px+dx,py+dy,pz)}
-              for dx,dy in DIRS if valid(px+dx,py+dy)]
+    adjacent=adjacent_terrain(w,p)
     ready=[{"id":t.get('id'),"nombre":t.get('name'),"potencia_excavar":item_effects(t).get('excavar',0)}
            for t in p.get('items',[]) if t.get('durability',0)>0 and item_effects(t).get('excavar',0)>0]
     ex=cave_exit(w)
     exit_route=known_exit_route(w,p) if p['pos'][2]==-1 else None
-    context={"salida_conocida":({"posicion_subsuelo":[*ex,-1],"ruta_conocida_en_tramos":len(exit_route) if exit_route is not None else None,"accion":"ascend"} if p['pos'][2]==-1 else None),
+    context={"salida_conocida":({"posicion_subsuelo":[*ex,-1],"ruta_conocida_en_tramos":len(exit_route) if exit_route is not None else None,"accion":"ascend"} if p['pos'][2]==-1 and tile_key(ex[0],ex[1],-1) in w.get('revealed',[]) else None),
             "fenomenos_no_evaluables_recientes":p.get('unmodeled_attempts',[])[-5:],
             "conocimiento_inicial":human_knowledge(p.get('knowledge_profile','contemporaneo')),
             "coordenadas_cardinales":{"norte":"Y decrece","sur":"Y crece","este":"X crece","oeste":"X decrece"},
@@ -392,7 +392,7 @@ def context_for(w,p,recent,now,scenario=None):
                 "ensayos_de_carga":[{"revision":t.get("revision"),"material":t.get("material"),
                     "quantity":t.get("quantity"),"supported":t.get("supported"),
                     "limit":t.get("limit"),"load":t.get("load")}
-                    for t in v.get("ensayos_de_carga",[])[-2:]]} for v in w["structures"][-12:]],
+                    for t in v.get("ensayos_de_carga",[])[-2:]]} for v in visible_structures(w)[-12:]],
             "experimentos_comprobados":list(p['knowledge'].values())[-18:],
             "ensayos_recientes":p.get('observations',[])[-12:],
             "mediciones_reales_recientes":[{"id":m['id'],"op":m['op'],"duracion_min":m['duration_minutes'],
