@@ -26,3 +26,4 @@ lab_profiles/
 # Evidencias efímeras de la etapa 22; se publican como artifacts de CI
 qa_22_inventory.json
 qa_22_benchmark.json
+qa_22_coverage.json

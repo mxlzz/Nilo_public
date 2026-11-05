@@ -85,6 +85,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_qa_22.py' -v
       - name: Benchmark transversal de mundos, SQLite y HTTP (etapa 22)
         run: python tools/benchmark_qa_22.py --seeds 24 --history 3000 --ticks 100 --http 36 --output qa_22_benchmark.json
+      - name: Cobertura selectiva real por líneas ejecutadas (etapa 22)
+        run: python tools/cobertura_qa_22.py --output qa_22_coverage.json
       - name: Evidencia reproducible de QA (etapa 22)
         uses: actions/upload-artifact@v4
         with:
@@ -92,6 +94,7 @@ jobs:
           path: |
             qa_22_inventory.json
             qa_22_benchmark.json
+            qa_22_coverage.json
           if-no-files-found: error
       - name: Mundo isla_v1 contra snapshots 0.6.4 y seis semillas
         run: python -m unittest discover -s tests -p 'test_mundo_08.py' -v

@@ -281,6 +281,7 @@
     "tools/backup_partida_18.py": "sha256-calculated-during-packaging",
     "tools/benchmark_persistencia_18.py": "sha256-calculated-during-packaging",
     "tools/benchmark_qa_22.py": "sha256-calculated-during-packaging",
+    "tools/cobertura_qa_22.py": "sha256-calculated-during-packaging",
     "validar_escenarios.py": "efa729399264ce08f3ccb2cbc185874291556057003411e89d70506df07da107",
     "VERSION": "sha256-calculated-during-packaging",
     "vessels.py": "sha256-calculated-during-packaging",

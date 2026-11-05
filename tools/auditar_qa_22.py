@@ -40,6 +40,7 @@ GATES=(
     "tools/benchmark_navegacion_09.py",
     "tools/benchmark_persistencia_18.py",
     "tools/benchmark_qa_22.py",
+    "tools/cobertura_qa_22.py",
     "tests/fixtures/baseline_historico_07.zip",
     "tests/fixtures/replay_basico.json",
     "tools/verificar_paquete_07.py",
@@ -81,6 +82,7 @@ def inventory():
         "python validar_escenarios.py --seed 7321",
         "python tools/verificar_paquete_07.py",
         "python tools/benchmark_qa_22.py",
+        "python tools/cobertura_qa_22.py",
         "python tools/auditar_qa_22.py",
         "test_qa_22.py",
         "Comparar huellas entre procesos independientes",
@@ -98,7 +100,7 @@ def inventory():
     packages=(ROOT/"MANIFIESTO_SHA256.json").read_text("utf-8")
     manifest=json.loads(packages).get("files",{})
     for item in ("tests/test_qa_22.py","tools/benchmark_qa_22.py",
-                 "tools/auditar_qa_22.py"):
+                 "tools/auditar_qa_22.py","tools/cobertura_qa_22.py"):
         if item not in manifest:errors.append("Falta en manifiesto: "+item)
     return {
         "schema":"nilo_qa_inventory_v1",
