@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.2.8: navegación contextual, referencias legibles y mapa atenuado."""
 import sqlite3
 import shutil
@@ -9,7 +10,7 @@ from pathlib import Path
 from archive import History
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/'interfaz.html').read_text(encoding='utf-8')
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 JS=HTML.split('<script>',1)[1].split('</script>',1)[0]
 CSS=HTML.split('<style>',1)[1].split('</style>',1)[0]
 
@@ -88,7 +89,7 @@ ctx.openMeasurement('med-b3b051dd68ab').then(()=>{
 """;
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'test.js';p.write_text(runner,encoding='utf-8')
-            result=subprocess.run(['node',str(p),str(ROOT/'interfaz.html')],
+            result=subprocess.run(['node',str(p),str(legacy_html_path(ROOT))],
                                   capture_output=True,text=True,timeout=15)
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertIn('referencias y navegación archivada OK',result.stdout)

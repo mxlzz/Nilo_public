@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.2.5 — importación de preferencias y lectura visual por registro."""
 import json
 import shutil
@@ -9,7 +10,7 @@ from pathlib import Path
 from interface_prefs import FILENAME, import_settings, load, save, validate
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/"interfaz.html").read_text(encoding="utf-8")
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 JS=HTML.split("<script>",1)[1].split("</script>",1)[0]
 CSS=HTML.split("<style>",1)[1].split("</style>",1)[0]
 
@@ -135,7 +136,7 @@ assert.equal(measurement.dataset.reviewEntryKey,'m1');
 assert(measurement.classes.has('new-record'));
 console.log('per-record highlights OK');
 """
-        result=subprocess.run(["node","-e",runner,str(ROOT/"interfaz.html")],
+        result=subprocess.run(["node","-e",runner,str(legacy_html_path(ROOT))],
                               capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertIn("per-record highlights OK",result.stdout)

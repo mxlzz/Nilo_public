@@ -1,5 +1,6 @@
 """Regresiones de historial de sesiones: no inventar versiones del pasado."""
 from __future__ import annotations
+from ui_fixture import legacy_markup, legacy_html_path
 
 import json
 import re
@@ -145,7 +146,7 @@ class SimulationSessionIntegration(unittest.TestCase):
                 other.conn.close()
 
     def test_ui_exposes_versions_and_does_not_allow_editing_sessions(self):
-        ui = (Path(__file__).resolve().parent.parent / "interfaz.html").read_text("utf-8")
+        ui = legacy_markup(Path(__file__).resolve().parents[1])
         self.assertIn('data-setting-tab="versions"', ui)
         self.assertIn("function renderVersions()", ui)
         self.assertIn("engine_sessions", ui)

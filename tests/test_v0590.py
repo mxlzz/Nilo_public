@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """Pruebas del circuito supervisado de autodiagnóstico 0.5.9."""
 import json
 import tempfile
@@ -139,7 +140,7 @@ class SimulationAndUi(unittest.TestCase):
                 sim.conn.close()
 
     def test_interface_exposes_export_without_modify_endpoint(self):
-        markup=(Path(__file__).resolve().parent.parent/"interfaz.html").read_text("utf-8")
+        markup=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertIn('data-diagnostic=',markup)
         self.assertIn("/api/diagnostic?id=",markup)
         self.assertIn("application/json",markup)

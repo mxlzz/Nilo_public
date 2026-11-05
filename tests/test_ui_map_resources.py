@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """Regresiones de la interfaz compacta y preferencias visuales."""
 import tempfile
 import unittest
@@ -22,7 +23,7 @@ class NodeScanner(HTMLParser):
 class InterfaceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.html = (ROOT / "interfaz.html").read_text(encoding="utf-8")
+        cls.html = legacy_markup(Path(__file__).resolve().parents[1])
         cls.scan = NodeScanner()
         cls.scan.feed(cls.html)
 

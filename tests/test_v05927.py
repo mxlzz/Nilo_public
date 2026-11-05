@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.2.7 — lectura directa, indicador contextual, mapa y resultados vinculados."""
 import shutil
 import subprocess
@@ -6,7 +7,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-HTML = (ROOT / "interfaz.html").read_text(encoding="utf-8")
+HTML = legacy_markup(Path(__file__).resolve().parents[1])
 JS = HTML.split("<script>", 1)[1].split("</script>", 1)[0]
 CSS = HTML.split("<style>", 1)[1].split("</style>", 1)[0]
 
@@ -74,7 +75,7 @@ console.log('investigación y lectura directa OK');
         with tempfile.TemporaryDirectory() as tmp:
             path=Path(tmp)/'check.js'
             path.write_text(runner,encoding='utf-8')
-            proc=subprocess.run(['node',str(path),str(ROOT/'interfaz.html')],capture_output=True,text=True,timeout=15)
+            proc=subprocess.run(['node',str(path),str(legacy_html_path(ROOT))],capture_output=True,text=True,timeout=15)
         self.assertEqual(proc.returncode,0,proc.stderr)
         self.assertIn('investigación y lectura directa OK',proc.stdout)
 

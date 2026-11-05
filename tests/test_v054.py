@@ -1,5 +1,6 @@
 """Nilo 05.4: auditoría de posibles inconsistencias y lectura automática."""
 from __future__ import annotations
+from ui_fixture import legacy_markup, legacy_html_path
 import json, sqlite3, tempfile, unittest
 from pathlib import Path
 import nilo
@@ -149,7 +150,7 @@ class DebugProposalTests(unittest.TestCase):
                 sim.conn.close()
             finally:nilo.DB=old
     def test_browser_auto_read_is_wired_to_card_click(self):
-        html=(ROOT/'interfaz.html').read_text(encoding='utf-8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertIn("el('feed').addEventListener('click',async ev=>",html)
         self.assertIn("if(tab==='notes'||(tab==='activity'&&card.dataset.entryId)",html)
         self.assertIn("markRead(tab==='notes'?'journal':'news',id,true)",html)

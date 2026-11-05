@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.2.6 — títulos legibles basados en evidencias y agenda sin atribuciones falsas."""
 from pathlib import Path
 import shutil
@@ -6,7 +7,7 @@ import tempfile
 import unittest
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/"interfaz.html").read_text(encoding="utf-8")
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 
 
 class LegibilityTests(unittest.TestCase):
@@ -78,7 +79,7 @@ console.log('evidence-aware presentation OK');
 """
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/"check.js";p.write_text(runner,encoding="utf-8")
-            result=subprocess.run(["node",str(p),str(ROOT/"interfaz.html")],
+            result=subprocess.run(["node",str(p),str(legacy_html_path(ROOT))],
                                   capture_output=True,text=True,timeout=20)
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertIn("evidence-aware presentation OK",result.stdout)
