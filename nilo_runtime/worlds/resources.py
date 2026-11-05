@@ -79,6 +79,45 @@ def consume_units(inventory: MutableMapping, material: str, quantity: int) -> in
     return before-quantity
 
 
+
+def material_counts(materials):
+    from collections import Counter
+    if not isinstance(materials,(list,tuple)):
+        raise ResourceBalanceError("Composición inválida.")
+    if any(not isinstance(m,str) or not m.strip() or m!=m.strip() for m in materials):
+        raise ResourceBalanceError("Material inválido.")
+    return dict(Counter(materials))
+
+
+def check_materials(inventory, costs):
+    if not isinstance(costs,dict):
+        raise ResourceBalanceError("Presupuesto inválido.")
+    for name,qty in costs.items():
+        if not isinstance(name,str) or not name.strip() or type(qty) is not int or qty<=0:
+            raise ResourceBalanceError("Material o cantidad inválidos.")
+        if stock_units(inventory,name)<qty:
+            return False
+    return True
+
+
+def exchange_units(inventory, costs=None, credits=None):
+    """Valida todas las reservas antes de modificar ninguna unidad."""
+    costs={} if costs is None else dict(costs)
+    credits={} if credits is None else dict(credits)
+    for batch in (costs,credits):
+        for key,qty in batch.items():
+            if not isinstance(key,str) or not key.strip() or type(qty) is not int or qty<=0:
+                raise ResourceBalanceError("Lote inválido.")
+    keys=set(costs)|set(credits)
+    before={key:stock_units(inventory,key) for key in keys}
+    if any(before[key]<qty for key,qty in costs.items()):
+        raise ResourceBalanceError("Material insuficiente.")
+    after={key:before[key]-costs.get(key,0)+credits.get(key,0) for key in keys}
+    for key in keys:
+        inventory[key]=after[key]
+    return {"spent":costs,"obtained":credits,"before":before,"after":after}
+
+
 def gather_material(target):
     name = " ".join(str(target or "").casefold().split())
     return name if name in GATHER_SOURCES else GATHER_ALIASES.get(name)
