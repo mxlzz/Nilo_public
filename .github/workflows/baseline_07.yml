@@ -15,6 +15,11 @@ on:
       - "catalogo.py"
       - "catalog/**"
       - "island_views.py"
+      - "survival.py"
+      - "bodily_policy.py"
+      - "experiment_log.py"
+      - "construction.py"
+      - "inventions.py"
   workflow_dispatch:
 
 permissions:
