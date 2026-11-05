@@ -50,10 +50,13 @@ def inspect():
         errors.append("La política corporal está duplicada en bodily_policy")
     if "if legacy_autocare:" not in survival or "from motivation import record_maintenance" not in survival:
         errors.append("La compatibilidad histórica de autocuidado se perdió")
-    view=(ROOT/"island_views.py").read_text("utf-8")
+    view=(ROOT/"nilo_runtime/perception/island.py").read_text("utf-8")
+    facade=(ROOT/"island_views.py").read_text("utf-8")
     measurements=(ROOT/"experiment_log.py").read_text("utf-8")
     if "from nilo_runtime.worlds.shelter import sheltered" not in view:
         errors.append("El entorno no usa el propietario único de refugio")
+    if "from nilo_runtime.perception.island import map_snapshot, survival_conditions" not in facade:
+        errors.append("island_views dejó de delegar en la proyección de isla")
     if "site_sheltered(world,person['pos'])" not in measurements:
         errors.append("Las mediciones usan clasificación de refugio distinta del motor")
     if "shelter_condition" in view:
