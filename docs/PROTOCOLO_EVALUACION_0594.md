@@ -45,4 +45,4 @@ Los informes se escriben a las rutas solicitadas; las bases solo se abren con SQ
 - Una comparación emite **condiciones individuales de correspondencia** y declara explícitamente que no hay prueba causal automática.
 - Los runs antiguos, incluso si atraviesan versiones, no reciben etiquetas retrospectivas ni estadísticas fraudulentas por sesión.
 
-**Próxima etapa:** recopilar y contrastar corridas reales con Nilo 0.5.9.4 y, con esa referencia, empezar 0.6 por capacidades físicas modulares e identificación progresiva. Relacionado con [#15](https://github.com/mxlzz/Nilo/issues/15), [#14](https://github.com/mxlzz/Nilo/issues/14), [#94](https://github.com/mxlzz/Nilo/issues/94).
+**Próxima etapa:** recopilar y contrastar corridas reales con Nilo 0.5.9.4 y, con esa referencia, empezar 0.6 por capacidades físicas modulares e identificación progresiva. Relacionado con [#3](https://github.com/mxlzz/Nilo_public/issues/3), [#2](https://github.com/mxlzz/Nilo_public/issues/2), [#50](https://github.com/mxlzz/Nilo_public/issues/50).

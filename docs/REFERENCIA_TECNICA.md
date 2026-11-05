@@ -8,29 +8,29 @@
 
 ## Índice de lectura
 
-1. [Qué es Nilo y qué hace cada capa](#1-qué-es-nilo-y-qué-hace-cada-capa)
-2. [Arquitectura completa y flujo causal](#2-arquitectura-completa-y-flujo-causal)
-3. [Arranque, estado y ciclo de vida](#3-arranque-estado-y-ciclo-de-vida)
-4. [Diccionario de datos de la simulación](#4-diccionario-de-datos-de-la-simulación)
-5. [Tiempo, aceleraciones y ejecución de tareas](#5-tiempo-aceleraciones-y-ejecución-de-tareas)
-6. [Cerebro, deliberación, planes y proveedores LLM](#6-cerebro-deliberación-planes-y-proveedores-llm)
-7. [Objetivos, investigaciones, hipótesis y proyectos](#7-objetivos-investigaciones-hipótesis-y-proyectos)
-8. [Agenda, hábitos, necesidades y autonomía entre deliberaciones](#8-agenda-hábitos-necesidades-y-autonomía-entre-deliberaciones)
-9. [Mundo, percepción y navegación](#9-mundo-percepción-y-navegación)
-10. [Catálogo de operaciones y sus resultados](#10-catálogo-de-operaciones-y-sus-resultados)
-11. [Materiales, compuestos y física abstracta](#11-materiales-compuestos-y-física-abstracta)
-12. [Diseños, objetos, construcciones y modificaciones](#12-diseños-objetos-construcciones-y-modificaciones)
-13. [Pruebas, mediciones, conclusiones y evidencia](#13-pruebas-mediciones-conclusiones-y-evidencia)
-14. [Memoria, experiencia y conocimiento](#14-memoria-experiencia-y-conocimiento)
-15. [SQLite, archivo histórico y trazabilidad](#15-sqlite-archivo-histórico-y-trazabilidad)
-16. [Interfaz, observador y comunicación humana](#16-interfaz-observador-y-comunicación-humana)
-17. [Servidor HTTP y endpoints](#17-servidor-http-y-endpoints)
-18. [Parámetros, constantes y límites](#18-parámetros-constantes-y-límites)
-19. [Inventario de todos los archivos y relaciones](#19-inventario-de-todos-los-archivos-y-relaciones)
-20. [Instalación, backups, migraciones, pruebas y empaquetado](#20-instalación-backups-migraciones-pruebas-y-empaquetado)
-21. [Recorridos explicados de punta a punta](#21-recorridos-explicados-de-punta-a-punta)
-22. [Límites reales, deuda técnica e inconsistencias documentales](#22-límites-reales-deuda-técnica-e-inconsistencias-documentales)
-23. [Glosario y guía para mantener este documento](#23-glosario-y-guía-para-mantener-este-documento)
+1. [Qué es Nilo y qué hace cada capa](`referencia privada #1`-qué-es-nilo-y-qué-hace-cada-capa)
+2. [Arquitectura completa y flujo causal](#1-arquitectura-completa-y-flujo-causal)
+3. [Arranque, estado y ciclo de vida](`referencia privada #3`-arranque-estado-y-ciclo-de-vida)
+4. [Diccionario de datos de la simulación](`referencia privada #4`-diccionario-de-datos-de-la-simulación)
+5. [Tiempo, aceleraciones y ejecución de tareas](`referencia privada #5`-tiempo-aceleraciones-y-ejecución-de-tareas)
+6. [Cerebro, deliberación, planes y proveedores LLM](`referencia privada #6`-cerebro-deliberación-planes-y-proveedores-llm)
+7. [Objetivos, investigaciones, hipótesis y proyectos](`referencia privada #7`-objetivos-investigaciones-hipótesis-y-proyectos)
+8. [Agenda, hábitos, necesidades y autonomía entre deliberaciones](`referencia privada #8`-agenda-hábitos-necesidades-y-autonomía-entre-deliberaciones)
+9. [Mundo, percepción y navegación](`referencia privada #9`-mundo-percepción-y-navegación)
+10. [Catálogo de operaciones y sus resultados](`referencia privada #10`-catálogo-de-operaciones-y-sus-resultados)
+11. [Materiales, compuestos y física abstracta](`referencia privada #11`-materiales-compuestos-y-física-abstracta)
+12. [Diseños, objetos, construcciones y modificaciones](`referencia privada #12`-diseños-objetos-construcciones-y-modificaciones)
+13. [Pruebas, mediciones, conclusiones y evidencia](`referencia privada #13`-pruebas-mediciones-conclusiones-y-evidencia)
+14. [Memoria, experiencia y conocimiento](#2-memoria-experiencia-y-conocimiento)
+15. [SQLite, archivo histórico y trazabilidad](#3-sqlite-archivo-histórico-y-trazabilidad)
+16. [Interfaz, observador y comunicación humana](#4-interfaz-observador-y-comunicación-humana)
+17. [Servidor HTTP y endpoints](#5-servidor-http-y-endpoints)
+18. [Parámetros, constantes y límites](#6-parámetros-constantes-y-límites)
+19. [Inventario de todos los archivos y relaciones](#7-inventario-de-todos-los-archivos-y-relaciones)
+20. [Instalación, backups, migraciones, pruebas y empaquetado](`referencia privada #20`-instalación-backups-migraciones-pruebas-y-empaquetado)
+21. [Recorridos explicados de punta a punta](#8-recorridos-explicados-de-punta-a-punta)
+22. [Límites reales, deuda técnica e inconsistencias documentales](#9-límites-reales-deuda-técnica-e-inconsistencias-documentales)
+23. [Glosario y guía para mantener este documento](#10-glosario-y-guía-para-mantener-este-documento)
 
 ---
 
@@ -776,7 +776,7 @@ El sistema evita fabricar duplicados portátiles equivalentes cuando tienen mism
 
 Es cierto que muchas propiedades surgen de materiales y geometría, pero **la física no es aún totalmente independiente del nombre**. El ejemplo más claro es refugio: `island_views.survival_conditions` marca protegido cuando la casilla es `h` o hay, en la misma posición, una estructura `habitaculo` cuyo `shelter_condition` no sea `insuficiente`. `construction.py` considera parcialmente cubierto un habitáculo con **al menos cuatro componentes y resistencia ≥3**.
 
-Eso **no calcula techo, muros, ventilación, cerramientos, impermeabilización, orientación climática ni esfuerzos estructurales reales**. Renombrar una obra puede alterar su clasificación al crearla, aunque la geometría sea equivalente. Esta es una deuda reconocida en la [issue #21](https://github.com/mxlzz/Nilo/issues/21), no una capacidad resuelta.
+Eso **no calcula techo, muros, ventilación, cerramientos, impermeabilización, orientación climática ni esfuerzos estructurales reales**. Renombrar una obra puede alterar su clasificación al crearla, aunque la geometría sea equivalente. Esta es una deuda reconocida en la [issue #8](https://github.com/mxlzz/Nilo_public/issues/8), no una capacidad resuelta.
 
 ### 12.4 Dimensiones de obras y planos
 
@@ -1347,7 +1347,7 @@ Estos ejemplos explican **lo que se codifica**, no atribuyen al agente decisione
 9. Si agrega una pared o cambia piezas, esa **intención** solo se representa como cambio de componentes y quizá dimensiones; el motor no calcula aún un cerramiento completo ni respuesta al viento.
 10. El historial conserva versiones y ensayos sin «reconocer automáticamente» que una variante mejoró su habitabilidad.
 
-**Punto a examinar:** esta familia de acciones sigue siendo parcialmente categorial; la [issue #21](https://github.com/mxlzz/Nilo/issues/21) establece la dirección de física general e independencia del nombre como objetivo futuro.
+**Punto a examinar:** esta familia de acciones sigue siendo parcialmente categorial; la [issue #8](https://github.com/mxlzz/Nilo_public/issues/8) establece la dirección de física general e independencia del nombre como objetivo futuro.
 
 ### 21.3 Caso C — Explora una cueva y regresa
 
@@ -1409,7 +1409,7 @@ Estos ejemplos explican **lo que se codifica**, no atribuyen al agente decisione
 ### 22.2 Deuda arquitectónica principal
 
 1. **Separación parcial de agente y entorno.** El contrato existe, pero la mayor parte de leyes y algunas rutinas aún asumen `isla_v1`. Referencias: [arquitectura histórica](ARQUITECTURA_0581.md) y cuestiones de modularidad.
-2. **Física composicional limitada.** Algunos fenómenos usan propiedades generales; otros dependen de nombres/categorías o pocos umbrales. La libertad constructiva completa permanece como propósito, no funcionamiento real: [issue #21](https://github.com/mxlzz/Nilo/issues/21).
+2. **Física composicional limitada.** Algunos fenómenos usan propiedades generales; otros dependen de nombres/categorías o pocos umbrales. La libertad constructiva completa permanece como propósito, no funcionamiento real: [issue #8](https://github.com/mxlzz/Nilo_public/issues/8).
 3. **Resultados heredados.** `ActionResult` tipa parte del flujo, pero algunas operaciones siguen devolviendo tuplas/frases y se adaptan. Hay que ampliar la evidencia estructurada sin romper historial.
 4. **Éxito semántico limitado.** El cierre de proyectos ahora es conservador y exige pruebas específicas, pero las metas no cubiertas por `goal_evidence` no se resuelven automáticamente.
 5. **Estancamiento cognitivo.** Las métricas y límites previenen algunos bucles, pero un LLM aún puede agotar intereses, repetir estrategias o perder contexto importante.

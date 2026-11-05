@@ -46,13 +46,13 @@ Mismo mapa, mismos materiales y misma semilla del RNG explícito producen obras 
 
 En la partida LLM hubo 369 exploraciones, 90 exitosas y 279 fallidas; desde el día 5 ninguna produjo éxito. El contador no_progress_steps no cuenta sistemáticamente explore fallido. La cueva conocida no fue descendida en el run real, pero la prueba física desde su entrada dio éxito al bajar y subir.
 
-**Corregir:** representar el agotamiento territorial como hecho condicional al mapa realmente conocido y a capacidades observadas; revisar el contador y el registro de intentos por sector/resultado. Evitar avisos espontáneos de «se actualizó el mundo» o recomendaciones obligatorias de explorar cueva; respetar las decisiones de diseño sobre autonomía y memoria (#14, #16, #47, #130).
+**Corregir:** representar el agotamiento territorial como hecho condicional al mapa realmente conocido y a capacidades observadas; revisar el contador y el registro de intentos por sector/resultado. Evitar avisos espontáneos de «se actualizó el mundo» o recomendaciones obligatorias de explorar cueva; respetar las decisiones de diseño sobre autonomía y memoria (#2, #4, #20, #63).
 
 ### 5. Precondiciones difíciles de interpretar en interact — prioridad media-alta
 
 33 de 71 interacciones reales terminaron en precondition_failed. En barrido, métodos de carga fallaron correctamente por distancia; al colocar a Nilo junto a la obra, probar, depositar y recuperar fueron exitosos.
 
-**Corregir:** exponer IDs únicos, alcance, método instalado, precondiciones observables y alternativas de localización sin eliminar validación física. Relación con go por nombres (#133) y catálogo operativo (#135).
+**Corregir:** exponer IDs únicos, alcance, método instalado, precondiciones observables y alternativas de localización sin eliminar validación física. Relación con go por nombres (#64) y catálogo operativo (#66).
 
 ### 6. Cobertura desigual de diagnósticos — prioridad media
 

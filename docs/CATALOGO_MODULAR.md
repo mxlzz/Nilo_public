@@ -1,6 +1,6 @@
 # Catálogo modular de Nilo · primera etapa (0.5.9.3.16)
 
-Esta es una **extracción conservadora de datos** del entorno `isla_v1`, no un sistema de extensiones dinámicas. Los valores originales y las reglas del motor se conservan para no alterar las corridas ni los replays. No equivale todavía a la arquitectura integral 0.6 (#62).
+Esta es una **extracción conservadora de datos** del entorno `isla_v1`, no un sistema de extensiones dinámicas. Los valores originales y las reglas del motor se conservan para no alterar las corridas ni los replays. No equivale todavía a la arquitectura integral 0.6 (#30).
 
 ## Archivos
 
@@ -20,7 +20,7 @@ Esta es una **extracción conservadora de datos** del entorno `isla_v1`, no un s
 5. **No cargar catálogos incompatibles silenciosamente:** el cargador rechaza campos físicos ausentes, números no finitos, IDs de material no existentes, símbolos inválidos, entradas duplicadas y esquemas distintos a `schema:1`.
 6. **Compatibilidad conservada:** replays y pruebas de escenario validan que el mismo estado y secuencia de decisiones resulten iguales. Las partidas anteriores mantienen sus materiales históricos; no se reconstruyen desde los nuevos JSON.
 
-## Qué queda para 0.6 (#62, #21, #17)
+## Qué queda para 0.6 (#30, #8, #5)
 
 - Un **registro de capacidades** con `validate → prepare → execute → verify → ActionResult` sin modificar varios archivos centrales por operación.
 - Manifiestos con versiones, dependencias, compatibilidad y activación por partida, más migraciones no destructivas.
@@ -33,4 +33,4 @@ Esta es una **extracción conservadora de datos** del entorno `isla_v1`, no un s
 
 Para incorporar un nuevo material **no alcanza con sumar un nombre al JSON**: deben existir referencias consistentes, reglas de aparición, descubrimiento, fuentes de recolección y ensayos que puedan medir su comportamiento. No es un procedimiento disponible directamente para Nilo. Los cambios son revisión de desarrollo y se comparan en una **copia aislada de una partida**.
 
-El alcance se seguirá en [issue #62](https://github.com/mxlzz/Nilo/issues/62). El ciclo de propuestas de Nilo se desarrolla aparte en [PR #72](https://github.com/mxlzz/Nilo/pull/72) y no se integra sin su propia evaluación.
+El alcance se seguirá en [issue #30](https://github.com/mxlzz/Nilo_public/issues/30). El ciclo de propuestas de Nilo se desarrolla aparte en PR `referencia privada #72` (`referencia-historica-privada-pull-72`) y no se integra sin su propia evaluación.
