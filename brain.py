@@ -4,7 +4,7 @@ import json, os, urllib.request, urllib.error, re, random
 from pathlib import Path
 from behavior import behavior_summary
 from episodic_memory import recall_relevant
-from world import world_view, tile, valid, DIRS, item_effects, pathfind, reachable_shores
+from world import world_view, tile, tile_key, valid, DIRS, item_effects, pathfind, reachable_shores
 from providers import configured, error_from_http
 from physics import human_knowledge
 from nilo_runtime.perception.island import adjacent_terrain, visible_structures

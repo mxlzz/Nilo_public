@@ -46,6 +46,9 @@ class ManualAndInspection(unittest.TestCase):
 
     def test_remote_building_is_known_but_out_of_range(self):
         self.world['structures'][0]['pos']=[30,15,0]
+        # Etapa 14: una obra remota solo puede identificarse si esa celda
+        # es realmente conocida; la mera existencia interna no informa a Nilo.
+        self.world['revealed'].append("30,15,0")
         _,facts,success,_=execute_action(self.world,self.person,
                       {'op':'inspect','target':'obra-ref-1'},random.Random(1))
         self.assertFalse(success)
@@ -57,7 +60,8 @@ class ManualAndInspection(unittest.TestCase):
         _,facts,success,_=execute_action(self.world,self.person,
                     {'op':'inspect','target':'tool-1'},random.Random(1))
         self.assertTrue(success)
-        self.assertIn('Durabilidad: 85',facts[0])
+        self.assertIn('Desgaste observable: desgaste leve',facts[0])
+        self.assertNotIn('85%',facts[0])
 
     def test_food_stock_cap_is_non_destructive(self):
         before=dict(self.person['inventory'])
