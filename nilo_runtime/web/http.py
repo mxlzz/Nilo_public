@@ -15,6 +15,7 @@ from nilo_runtime.application.deps import HERE, config, available
 from nilo_runtime.application.engine import Simulation
 from nilo_runtime.web.api import dispatch, POST_PATHS, LARGE_REQUESTS
 from nilo_runtime.web.security import authorize, parse_body, RequestError
+from nilo_runtime.web.assets import ASSETS, read_asset
 
 HTML_FILE=HERE/"interfaz.html"
 
@@ -57,9 +58,21 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_header("X-Frame-Options","DENY")
                 self.send_header("Referrer-Policy","no-referrer")
                 self.send_header("Content-Security-Policy",
-                    "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+                    "default-src 'self'; script-src 'self'; object-src 'none'; "
                     "style-src 'self' 'unsafe-inline'")
                 self.send_header("Content-Length",str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            if route.path in ASSETS:
+                content_type,body=read_asset(route.path)
+                self.send_response(200)
+                self.send_header("Content-Type",content_type)
+                self.send_header("Cache-Control","no-store")
+                self.send_header("Content-Length",str(len(body)))
+                self.send_header("X-Content-Type-Options","nosniff")
+                self.send_header("X-Frame-Options","DENY")
+                self.send_header("Referrer-Policy","no-referrer")
                 self.end_headers()
                 self.wfile.write(body)
                 return

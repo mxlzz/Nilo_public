@@ -59,6 +59,12 @@ REQUIRED = (
     "world.py",
     "agent.py",
     "interfaz.html",
+    "nilo_runtime/web/assets.py",
+    "assets/nilo.css",
+    "assets/state.js",
+    "assets/records.js",
+    "assets/feed.js",
+    "assets/actions.js",
 )
 
 
