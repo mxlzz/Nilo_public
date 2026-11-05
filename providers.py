@@ -131,7 +131,7 @@ def candidate_configs(cfg):
     # anterior, pero nunca elimina cuotas reales de Gemini.
     groq_key=hashlib.sha256(cfg.get('GROQ_API_KEY','').encode('utf-8')).hexdigest()[:12]
     groq_model=cfg.get('GROQ_MODEL') or 'openai/gpt-oss-20b'
-    groq_health_key=f'groq:{groq_model}:{groq_key}:compact-v1'
+    groq_health_key=f'groq:{groq_model}:{groq_key}:compact-v2'
     if primary == 'groq' and cfg.get('GROQ_API_KEY'):
         result.append(('groq',dict(cfg,PROVIDER='groq',MODEL=groq_model,_health_key=groq_health_key)))
     backup=cfg.get('BACKUP_PROVIDER','groq').lower()
