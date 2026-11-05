@@ -310,6 +310,14 @@ class Backups18(unittest.TestCase):
         self.assertNotEqual(denied.returncode,0)
         self.assertIn("No se modificó",denied.stderr)
 
+    def test_unicode_and_space_path_uses_portable_sqlite_uri(self):
+        backup=self.root/"Mi partida de Nilo — año 2026.sqlite3"
+        result=backup_file(self.db,backup)
+        self.assertTrue(backup.exists())
+        self.assertEqual(inspect_backup(backup),result)
+        other=self.root/"Partida restaurada ñ.sqlite3"
+        self.assertEqual(restore_as_copy(backup,other),result)
+
     def test_corrupt_snapshot_detected_before_restore(self):
         copy=self.root/"corrupt.sqlite3"
         backup_to_new_path(self.sim.conn,copy)

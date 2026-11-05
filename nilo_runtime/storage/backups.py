@@ -13,7 +13,6 @@ import os
 from pathlib import Path
 import sqlite3
 import tempfile
-from urllib.parse import quote
 
 from nilo_runtime.core.state import validate_loaded_envelope
 
@@ -22,7 +21,8 @@ class BackupError(RuntimeError):
 
 
 def _readonly(path):
-    uri="file:"+quote(str(Path(path).resolve()),safe="/")+ "?mode=ro"
+    # Path.as_uri() evita rutas inválidas con espacios, acentos y Windows C:\.
+    uri=Path(path).resolve().as_uri()+"?mode=ro"
     return sqlite3.connect(uri,uri=True,timeout=15)
 
 
