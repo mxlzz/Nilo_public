@@ -37,7 +37,9 @@ def reference_index(person):
         for row in _records(person,source):
             if not isinstance(row,dict):continue
             rid=row.get("id")
-            if not isinstance(rid,str) or not rid or (prefix and not rid.startswith(prefix)):
+            # Saves legados admiten IDs sin prefijo (p. ej. "m1").
+            # La procedencia procede de la colección tipada, no del nombre.
+            if not isinstance(rid,str) or not rid:
                 continue
             if rid in index:
                 # El primer registro de la fuente de mayor autoridad permanece.
@@ -77,7 +79,7 @@ def measured_records(person, ids, *, minimum=1, maximum=6,
         return None
     indexed={r.get("id"):r for r in _records(person,"measurements")
              if isinstance(r,dict) and isinstance(r.get("id"),str)
-             and r.get("id","").startswith("med-")}
+             and r.get("id")}
     trials=[indexed.get(rid) for rid in ids]
     if any(row is None for row in trials):
         return None

@@ -196,6 +196,16 @@ def bounded_context(context,byte_budget=4600):
     value=copy.deepcopy(context)
     if _size(value)<=byte_budget:
         return value
+    # La API histórica de bounded_context recibe también contextos CRUDOS,
+    # no solo la versión precompactada. Esos historiales de 100 preguntas
+    # no deben bloquear el presupuesto ni eliminar toda investigación viva.
+    active=value.get('investigaciones_activas')
+    if isinstance(active,list) and len(active)>2:
+        value['investigaciones_activas']=[
+            {k:row[k] for k in ('id','question','hypothesis','state',
+                                'naturaleza','evidence_ids','fuentes_de_evidencia')
+             if k in row}
+            for row in active[-2:] if isinstance(row,dict)]
     focus=context_focus(context)
     protects={
         'navegacion':('navegacion_a_lugares','percepción_local'),
@@ -235,6 +245,11 @@ def bounded_context(context,byte_budget=4600):
         for key in (*protects,'memorias_relevantes'):
             if _size(value)<=byte_budget:break
             if key in value:del value[key]
+    if _size(value)>byte_budget and isinstance(value.get('investigaciones_activas'),list):
+        # Conservar el último interrogante completo; nunca cortar un ID,
+        # hipótesis o cita a mitad de un JSON.
+        while len(value['investigaciones_activas'])>1 and _size(value)>byte_budget:
+            value['investigaciones_activas'].pop(0)
     if _size(value)>byte_budget:
         raise ValueError('El contexto mínimo supera el presupuesto permitido.')
     value['contexto_reducido']='Vista acotada; la evidencia histórica sigue en SQLite.'
