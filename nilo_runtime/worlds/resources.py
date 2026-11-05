@@ -293,3 +293,4 @@ def gather_action(w,p,step,describe_findings):
     if not worked:return elapsed,facts,False,notable
     notable=notable or interesting
     duration=max(0,travel*3)+elapsed
+    return duration,facts,True,notable
