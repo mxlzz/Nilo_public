@@ -1,7 +1,7 @@
 # Nilo 0.7 · Etapa 11 — Materiales, objetos y componentes
 
 **Fecha:** 5 de noviembre de 2026. **Rama:** `refactor/0.7`.  
-**Estado:** implementación y pruebas específicas completadas; cierre documental sujeto a CI del último commit.  
+**Estado:** **COMPLETADA**. [CI integral #42014677593](https://github.com/mxlzz/Nilo_public/actions/runs/42014677593): **success**, 783 pruebas (una omitida); [compatibilidad histórica #42014677489](https://github.com/mxlzz/Nilo_public/actions/runs/42014677489): **success** con seis partidas sintéticas.  
 **Base:** `0.6.4` conservada en `main`, sin cambiar `VERSION`, partidas privadas ni esquema SQLite v5.
 
 ## 1. Reauditoría y hallazgos
@@ -40,7 +40,7 @@ Para un objeto **legado**, `infer_form(name, form)` continúa resolviendo los no
 - `tools/auditar_objetos_11.py`: valida AST de propietarios, ausencia de duplicación/ciclos, no consumo eager de IDs, física modular única y dependencia de `craft` respecto de `physical_item`.
 - `laboratorio_motor.py` registra y enlaza trazas reales de `objects.py`, `components.py` y `materials.py`; prueba de fabricación en `tests/test_laboratorio_motor.py` verifica propietario y URLs.
 - `MANIFIESTO_SHA256.json`, `tools/verificar_paquete_07.py` y `.github/workflows/validacion.yml` incluyen los tres módulos del dominio, con prueba de arranque desde ZIP extraído.
-- [CI integral #42013939102](https://github.com/mxlzz/Nilo_public/actions/runs/42013939102): **success**, 782 tests (1 omitida), ZIP importable y replay idéntico tras la actualización del laboratorio. La CI final con física modular se registra al concluir.
+- [CI integral del código físico modular #42014677593](https://github.com/mxlzz/Nilo_public/actions/runs/42014677593): **success**, **783 pruebas ejecutadas (una omitida), 19 específicas de etapa 11**, auditoría de archivos y dependencias, escenarios físicos, ZIP portable extraído e importado y replay idéntico entre procesos con `PYTHONHASHSEED` diferente. Huella de replay: `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`.
 - [Compatibilidad histórica pública #42014677489](https://github.com/mxlzz/Nilo_public/actions/runs/42014677489): **success** con seis SQLite históricas sintéticas y seis semillas; originales sin modificar. No se emplean partidas personales.
 
 ### Cambios intencionales
@@ -55,4 +55,4 @@ Los valores de masa/permeabilidad proceden de datos de materiales, y una geometr
 - Los consumos de `combine`/`craft`/`assemble`/`build` y `construction.apply_intervention`, las recuperaciones `salvage`, las reformas y los efectos antes de terminar validaciones siguen sujetos a **etapa 12 · Fabricación e interacciones físicas**. Esta etapa 11 no los declara transaccionales ni elimina la deuda existente.
 - La evolución de ley térmica y procesos físico-químicos complejos sigue fuera de 0.7. El objetivo aquí es coherencia del contrato y fuentes de verdad, no inventar física faltante.
 
-**Condición de cierre:** CI final verde tras trazas del laboratorio, pruebas focalizadas y generales, seis saves sintéticos históricos compatibles, escenario y ZIP importable, replay RNG exacto, registro del issue #74/PR #77 y ningún merge a `main`. La etapa 12 se habilitará al cerrar esta condición.
+**Condición de cierre superada.** Código en commit `54788980981454c0c2a4f742356c3f28af4bb008`, CI integral y seis saves sintéticos históricamente compatibles. Sin cambios en `main`, `VERSION`, esquema SQLite ni partidas personales. **Etapa 12 · Interacciones y construcción habilitada, todavía no iniciada.** El PR de reestructuración permanece en borrador hasta terminar la etapa 24.
