@@ -132,6 +132,8 @@ def analyze_autonomy(path):
         warnings.append("No hay evidencia suficiente de deliberaciones reales archivadas y contabilizadas.")
     if len(base["identity"]["versions"]) != 1:
         warnings.append("Partida con versión ausente o mixta; no atribuir al código 0.7.")
+    if not any(row.get("commit") for row in sessions):
+        warnings.append("El campo VERSION es etiqueta de release; sin commit de sesión no se acredita la revisión exacta del motor.")
     if len(sessions) != 1:
         warnings.append("Múltiples sesiones o ninguna: el archivo acumula tramos no aislables.")
     if chats:
@@ -145,7 +147,10 @@ def analyze_autonomy(path):
         "source": {"file": path.name, "read_only": True,
                    "scope": "acumulado_de_partida; sin atribución causal"},
         "verified_real_llm": real_verified,
-        "identity": base["identity"],
+        "identity": {**base["identity"],
+                     "session_code_commits": sorted({str(row["commit"]) for row in sessions if row.get("commit")}),
+                     "session_manifest_hashes": sorted({str(row["manifest_sha256"]) for row in sessions if row.get("manifest_sha256")}),
+                     "version_field_is_release_label": True},
         "providers_observed": [
             {"provider": provider, "model": model, "archived_decisions": n}
             for (provider, model), n in sorted(real_models.items())
@@ -199,6 +204,8 @@ def compare_autonomy(reports):
         "same_initial_snapshot": all(i["first_session_state_sha256"] for i in identities)
         and len({i["first_session_state_sha256"] for i in identities}) == 1,
         "same_simulated_duration": len({i["simulated_minutes"] for i in identities}) == 1,
+        "same_code_commit": all(i.get("session_code_commits") for i in identities)
+        and len({tuple(i["session_code_commits"]) for i in identities}) == 1,
         "same_llm_call_count": len({r["llm"]["decisions_archived"] for r in reports}) == 1,
         "single_session_each": all(r["coverage"]["sessions"] == 1 for r in reports),
         "no_archived_chat": all(r["coverage"]["recorded_chat_entries"] == 0 for r in reports),
