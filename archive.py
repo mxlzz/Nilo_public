@@ -49,7 +49,7 @@ class History:
             self.db.execute("INSERT INTO record_link_meta(key) VALUES('indexed_v2_full')")
         for category in ('journal', 'news'):
             self.db.execute('INSERT OR IGNORE INTO reading_positions(category, through_seq) VALUES(?,0)',(category,))
-        self.db.commit()
+        # La conexión del llamador decide cuándo confirmar migración y tablas.
         # Carga una sola vez el índice de entradas inmutables para no reconstruir
         # miles de historiales cada cinco segundos de simulación.
         self._sync_seen_static=set(
@@ -57,6 +57,20 @@ class History:
                 "SELECT category,item_id FROM history WHERE category NOT IN "
                 "('research','project','design','proposal','construction','tool','prediction')"))
         self._sync_digest={}
+        self._static_cursors={}
+        # Primera apertura: conocer la última versión ya archivada evita
+        # volver a indizar todas las estructuras sin modificaciones.
+        mutable={'research','project','design','proposal','construction','tool','prediction'}
+        for category,item_id,payload in self.db.execute(
+            "SELECT category,item_id,payload FROM history_revisions ORDER BY revision DESC"):
+            key=(category,item_id)
+            if category not in mutable or key in self._sync_digest:continue
+            try:
+                canonical=json.dumps(json.loads(payload),sort_keys=True,
+                          ensure_ascii=False,separators=(',',':'),default=str)
+            except (ValueError,TypeError):
+                continue
+            self._sync_digest[key]=hashlib.sha256(canonical.encode('utf-8')).hexdigest()
 
     def add(self, category, item, fallback=None):
         if category not in CATEGORIES:raise ValueError('Categoría inválida')
@@ -215,7 +229,23 @@ class History:
                 'tool':person.get('items',[])+person.get('retired_items',[])}
         mutable={'research','project','design','proposal','construction','tool','prediction'}
         for category,records in groups.items():
-            for item in records:
+            # Ventana append-only para listas inmutables: O(nuevo), no O(toda
+            # la biografía). Si cambió la identidad de la lista, se acotó una
+            # ventana o hubo sustitución, se recorre la lista y se deduplica
+            # por ID en SQLite, jamás se adivinan desplazamientos del cursor.
+            pending=records
+            if category not in mutable and isinstance(records,list):
+                last=self._static_cursors.get(category)
+                if last and last[0]==id(records) and len(records)>=last[1]:
+                    size=last[1]
+                    first=records[0].get('id') if records and isinstance(records[0],dict) else None
+                    prev=records[size-1].get('id') if size and isinstance(records[size-1],dict) else None
+                    if first==last[2] and prev==last[3]:
+                        pending=records[size:]
+                first=records[0].get('id') if records and isinstance(records[0],dict) else None
+                last_id=records[-1].get('id') if records and isinstance(records[-1],dict) else None
+                self._static_cursors[category]=(id(records),len(records),first,last_id)
+            for item in pending:
                 if not isinstance(item,dict):continue
                 rid=item.get('id')
                 if not isinstance(rid,str) or not rid:

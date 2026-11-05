@@ -14,7 +14,20 @@ class SessionLifecycle:
         self.services=services if services is not None else RuntimeServices()
         self.lock=threading.RLock();self.conn=sqlite3.connect(db_path if db_path is not None else DB,check_same_thread=False,timeout=15)
         self.conn.execute('PRAGMA journal_mode=WAL')
+        # Una migración inválida no deja tablas parcialmente confirmadas.
+        # Abrir primero una unidad de trabajo, incluso para las DDL legadas.
+        try:
+            self.conn.execute('BEGIN IMMEDIATE')
+            self._initialize_storage(world_seed,rng_seed,scenario_id)
+        except BaseException:
+            self.conn.rollback()
+            self.conn.close()
+            raise
+
+    def _initialize_storage(self,world_seed,rng_seed,scenario_id):
         self.conn.execute('CREATE TABLE IF NOT EXISTS snapshot (id INTEGER PRIMARY KEY CHECK(id=1), payload TEXT NOT NULL)')
+        from nilo_runtime.storage.repository import SnapshotRepository
+        self.repository=SnapshotRepository(self.conn)
         self.archive=History(self.conn)
         self.review=ReviewStore(self.conn)
         self.sessions=RunHistory(self.conn,HERE)
@@ -22,7 +35,8 @@ class SessionLifecycle:
         self.timeline=TimelineStore(self.conn)
         self.timeline_capture_enabled=True
         self.timeline_version=(HERE / 'VERSION').read_text(encoding='utf-8').strip()
-        row=self.conn.execute('SELECT payload FROM snapshot WHERE id=1').fetchone()
+        payload=self.repository.current_payload()
+        row=(payload,) if payload is not None else None
         if row:
             # Un save corrupto no es una partida nueva: reintentarlo como nuevo
             # destruiría el snapshot en la próxima escritura.
@@ -228,12 +242,10 @@ class SessionLifecycle:
 
     @entropy_scoped
     def write(self):
-        # Estado coherente en una transacción SQLite. La clave API nunca se persiste.
+        """Snapshot, archivo, sesión y entropía comparten commit o rollback."""
         validate_current_state(self.s)
         current_seed=self.s['world'].get('seed',self.entropy.world_seed)
         if current_seed != self.entropy.world_seed:
-            # Sólo admitir cambiar la semilla durante la preparación de un
-            # mundo vacío, antes de generar objetos, historia o tiempo físico.
             p=self.s['person']
             if (p.get('clock_minutes') or p.get('items') or p.get('measurements')
                     or p.get('research') or p.get('projects') or p.get('project')
@@ -245,17 +257,10 @@ class SessionLifecycle:
             self.entropy=EntropySession(int(current_seed),self.rng_seed)
             self.rng=self.entropy.agent_rng
             self.entropy_origin="empty_world_seed_replaced"
-        self.s['updated']=time.time()
-        self.sessions.touch(self.s['person']['clock_minutes'])
-        # Puede haberse sustituido el mundo vacío: vincular el nuevo
-        # generador antes de producir IDs al sincronizar el archivo.
-        with self.entropy.bind():
-            self.archive.sync(self.s)
-        # Guardar ambos estados RNG en la misma transacción que el snapshot.
-        payload=json.dumps(self.s,ensure_ascii=False)
-        persist_entropy(self.conn,self.entropy,self.rng,snapshot_payload=payload)
-        self.conn.execute('INSERT INTO snapshot (id,payload) VALUES (1,?) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload',(payload,))
-        self.conn.commit();self.last_persist=time.monotonic()
+        self.repository.persist(
+            self.s,entropy=self.entropy,rng=self.rng,
+            archive=self.archive,sessions=self.sessions)
+        self.last_persist=time.monotonic()
 
 
     def domain_snapshot(self):

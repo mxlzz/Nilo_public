@@ -85,7 +85,7 @@ class RunHistory:
                                 ("world_seed","INTEGER")):
             if name not in columns:
                 self.db.execute(f"ALTER TABLE engine_sessions ADD COLUMN {name} {definition}")
-        self.db.commit()
+        # La creación/alteración de tablas se confirma con el primer snapshot.
 
     def start(self, state, scenario_id, environment_id, configured_provider=None,
               configured_model=None, rng_seed=None):

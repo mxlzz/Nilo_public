@@ -119,6 +119,7 @@
     "nilo_runtime/physiology/policy.py": "sha256-calculated-during-packaging",
     "nilo_runtime/storage/__init__.py": "sha256-calculated-during-packaging",
     "nilo_runtime/storage/entropy.py": "sha256-calculated-during-packaging",
+    "nilo_runtime/storage/repository.py": "sha256-calculated-during-packaging",
     "nilo_runtime/storage/timeline.py": "sha256-calculated-during-packaging",
     "nilo_runtime/web/__init__.py": "sha256-calculated-during-packaging",
     "nilo_runtime/web/http.py": "sha256-calculated-during-packaging",
