@@ -87,6 +87,48 @@ def measured_records(person, ids, *, minimum=1, maximum=6,
         return None
     return trials
 
+def projected_knowledge(person, *, limit=12):
+    """Proyectar conocimiento registrado con una fuente exacta o marca legacy.
+
+    Un texto igual no demuestra una ley universal: acredita a lo sumo el
+    resultado de UNA acción. No se empareja por semejanza semántica.
+    """
+    stored=person.get("knowledge",{}) if isinstance(person,dict) else {}
+    if not isinstance(stored,dict):
+        return []
+    actions=[row for row in _records(person,"action_outcomes")
+             if isinstance(row,dict)]
+    result=[]
+    for key,statement in list(stored.items())[-max(0,int(limit)):]:
+        text=str(statement).strip()
+        if not text:continue
+        source_op=("use" if str(key).startswith(("uso|","interaccion|","flotacion|","ensamblaje|"))
+                   else "experiment" if "|" in str(key) else None)
+        candidate=next((row for row in reversed(actions)
+            if row.get("op")==source_op
+            and text in [str(v).strip() for v in row.get("facts",[])
+                         if isinstance(v,str)]),None) if source_op else None
+        entry={"clave":str(key),"resultado":text[:240],
+               "naturaleza":"resultado_registrado_no_ley_universal"}
+        if candidate:
+            action_id=candidate.get("id")
+            if isinstance(action_id,str):
+                entry["accion_id"]=action_id
+            status=candidate.get("evaluation_status")
+            entry["estado"]=("limite_sin_modelo" if status=="no_evaluable"
+                else "ensayo_realizado" if candidate.get("success")
+                else "fallo_observado")
+            mid=(candidate.get("physical_result") or {}).get("measurement_id")
+            if isinstance(mid,str):
+                entry["fuente_medicion"]=reference(person,mid,expected="medicion")
+            entry["trazabilidad"]="accion_registrada"
+        else:
+            entry["estado"]="sin_verificacion_por_id"
+            entry["trazabilidad"]="conocimiento_historico_sin_id"
+        result.append(entry)
+    return result
+
+
 def projected_conclusions(person, *, limit=15):
     """La etiqueta 'comprobada' histórica no oculta referencias ausentes."""
     result=[]

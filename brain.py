@@ -4,7 +4,7 @@ import json, os, urllib.request, urllib.error, re, random
 from pathlib import Path
 from behavior import behavior_summary
 from nilo_runtime.cognition.memory import recall_relevant
-from nilo_runtime.cognition.evidence import projected_conclusions, projected_research
+from nilo_runtime.cognition.evidence import projected_conclusions, projected_research, projected_knowledge
 from world import world_view, tile, tile_key, valid, DIRS, item_effects, pathfind, reachable_shores
 from providers import configured, error_from_http
 from physics import human_knowledge
@@ -189,7 +189,10 @@ def context_for(w,p,recent,now,scenario=None):
                     "quantity":t.get("quantity"),"supported":t.get("supported"),
                     "limit":t.get("limit"),"load":t.get("load")}
                     for t in v.get("ensayos_de_carga",[])[-2:]]} for v in visible_structures(w)[-12:]],
+            # Lectura histórica: las entradas knowledge también pueden documentar
+            # fallos; su procedencia se expone por separado sin acreditarlas.
             "experimentos_comprobados":list(p['knowledge'].values())[-18:],
+            "conocimiento_con_procedencia":projected_knowledge(p,limit=12),
             "ensayos_recientes":p.get('observations',[])[-12:],
             "mediciones_reales_recientes":[{"id":m['id'],"op":m['op'],"duracion_min":m['duration_minutes'],
                   "condicion":m['condition'],"energia_inicial":m['start']['needs']['energia'],

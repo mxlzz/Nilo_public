@@ -197,6 +197,31 @@ class Evidence16(unittest.TestCase):
         projected=evidence.projected_conclusions(p)
         self.assertEqual(projected[-1]["naturaleza"],"limite_del_modelo")
 
+    def test_knowledge_failure_is_not_labeled_proven_and_uses_exact_action(self):
+        p={"knowledge":{"uso|herr-1|cortar|madera":"No logré cortar la madera.",
+                         "madera|golpear":"Al golpear madera, su dureza es 2/10."},
+           "action_outcomes":[
+               {"id":"act-fail","op":"use","success":False,
+                "evaluation_status":"precondition_failed",
+                "facts":["No logré cortar la madera."]},
+               {"id":"act-ok","op":"experiment","success":True,
+                "evaluation_status":"verified_success",
+                "facts":["Al golpear madera, su dureza es 2/10."]}],
+           "measurements":[]}
+        rows=evidence.projected_knowledge(p)
+        self.assertEqual(rows[0]["estado"],"fallo_observado")
+        self.assertEqual(rows[0]["accion_id"],"act-fail")
+        self.assertEqual(rows[1]["estado"],"ensayo_realizado")
+        self.assertEqual(rows[1]["accion_id"],"act-ok")
+        self.assertNotIn("ley_verificada",str(rows))
+
+    def test_unlinked_legacy_knowledge_is_not_assigned_a_fake_id(self):
+        p={"knowledge":{"piedra|golpear":"La muestra me pareció dura."},
+           "action_outcomes":[]}
+        row=evidence.projected_knowledge(p)[0]
+        self.assertEqual(row["trazabilidad"],"conocimiento_historico_sin_id")
+        self.assertNotIn("accion_id",row)
+
     def test_observation_rejects_wrong_id_and_derived_records(self):
         p={"measurements":[measurement("med-uno","design")],"conclusions":[]}
         for ids in (["med-uno"],["med-inventado"],[{"id":"med-uno"}]):

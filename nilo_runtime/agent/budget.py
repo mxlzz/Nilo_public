@@ -58,7 +58,7 @@ def compact_context(context, char_budget=6800):
             ('construcciones_fijas',4),('proyecto_actual',None),('investigaciones_activas',3),('memorias_relevantes',5),('revision_de_estrategia',None),('repeticion_operativa_informativa',None),
             ('evidencia_de_progreso_ultima_accion',None),('revision_de_intentos_verificados',5),
             ('comparaciones_validas',4),('fenomenos_pendientes_de_modelo',3),
-            ('conclusiones_verificadas',3),('mediciones_reales_recientes',4),('resultados_de_acciones',3),
+            ('conclusiones_verificadas',3),('conocimiento_con_procedencia',6),('mediciones_reales_recientes',4),('resultados_de_acciones',3),
             ('propuestas_pendientes',3),('evaluaciones_externas_recientes',3),('inconsistencias_recoleccion_previas',4),('predicciones_contrastadas',3),('estrategias_que_ya_no_funcionaron',3),
             ('habilidades_verificadas',5),('comportamiento_medido',None),('preferencias_en_espera',5),
             ('agenda_diferida',3),('recordatorios_listos',5),('recordatorios_pendientes',5),('estrategia_bloqueada',None),('pistas_cierre_proyecto',None),
@@ -143,6 +143,7 @@ _REDUCE_FIRST=('estrategias_que_ya_no_funcionaron','diagnosticos_operativos_reci
                'resultados_de_acciones','mediciones_reales_recientes','construcciones_fijas',
                'herramientas_que_llevo','percepción_local','navegacion_a_lugares',
                'comparaciones_validas','memorias_relevantes','conclusiones_verificadas',
+               'conocimiento_con_procedencia',
                'propuestas_pendientes','recordatorios_pendientes','recordatorios_listos')
 _REMOVE_FIRST=('comportamiento_medido','agenda_diferida',
                'fenomenos_pendientes_de_modelo','revision_de_intentos_verificados',
