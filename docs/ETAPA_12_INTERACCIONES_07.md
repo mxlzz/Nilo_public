@@ -1,7 +1,7 @@
 # Nilo 0.7 · Etapa 12 — Interacciones y construcción
 
 **Fecha:** 5 de noviembre de 2026. **Rama:** `refactor/0.7`.  
-**Estado:** código y pruebas focalizadas implementados; pendiente verificación final del último commit en CI.  
+**Estado: COMPLETADA.** [CI integral #42020647740](https://github.com/mxlzz/Nilo_public/actions/runs/42020647740): **success, 815 pruebas (una omitida)**; [compatibilidad histórica #42020647714](https://github.com/mxlzz/Nilo_public/actions/runs/42020647714): **success, seis SQLite sintéticas**.  
 **Referencia:** `main` / 0.6.4, esquema SQLite v5 y partidas personales sin cambios. [Plan](PLAN_REESTRUCTURACION_NILO_07.md) · [Seguimiento](ESTADO_REESTRUCTURACION_07.md) · [PR #77](https://github.com/mxlzz/Nilo_public/pull/77) · [Issue #74](https://github.com/mxlzz/Nilo_public/issues/74).
 
 ## 1. Reauditoría real del alcance
@@ -54,7 +54,7 @@ El registro cerrado de `capabilities.py` sigue separando `verified_success`, `pr
 
 `tools/auditar_interacciones_12.py` inspecciona propietarios por AST, evita volver a introducir cálculos en `world.py`, controla la dependencia por callback, la delegación de reformas y la vigencia del rollback de identidades. `.github/workflows/validacion.yml` ejecuta la auditoría y pruebas específicas antes de la suite completa, escenarios físicos, replays, ZIP portable y pruebas de identidad entre procesos. `MANIFIESTO_SHA256.json` y `tools/verificar_paquete_07.py` incluyen `fabrication.py`, `intervention.py` y `tool_use.py`; las trazas del laboratorio apuntan a los propietarios actuales.
 
-**CI pendiente de consolidar:** [Validación del último código](https://github.com/mxlzz/Nilo_public/actions/runs/42020647740) y [compatibilidad histórica](https://github.com/mxlzz/Nilo_public/actions/runs/42020647714). La validación integral anterior a `staged_identity` [#42019495709](https://github.com/mxlzz/Nilo_public/actions/runs/42019495709) ya había terminado **success**. No se informa el cierre hasta verificar el último commit.
+**CI del código final [#42020647740](https://github.com/mxlzz/Nilo_public/actions/runs/42020647740): SUCCESS**, **815 pruebas ejecutadas, una omitida, cero fallas**, 32 casos específicos de etapa 12. Pasaron auditoría estructural, escenarios físicos, validación de identidad/RNG, comparación de eventos, reproducción entre procesos, ZIP portátil extraído e importado y ausencia de claves sensibles. La huella del replay se mantuvo idéntica entre procesos con semillas de hash distintas: `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`. El código probado corresponde al commit `e307d0ee44ff4c37ed277034dce62104e3a36fe2` (commits posteriores solo documentales con `[skip ci]`). **Histórico [#42020647714](https://github.com/mxlzz/Nilo_public/actions/runs/42020647714): success**, seis SQLite sintéticas de generaciones anteriores importadas en copias; originales intactos. No se utilizaron saves personales.
 
 ## 4. Alcance deliberadamente pospuesto
 
@@ -64,4 +64,4 @@ El registro cerrado de `capabilities.py` sigue separando `verified_success`, `pr
 - **Etapa 23 · Evaluación conductual:** estos tests físicos sintéticos no prueban mejores decisiones autónomas con Gemini/Groq ni eliminación de bucles de investigación.
 - **Física avanzada 0.8:** termodinámica, potabilización, evaporación, maquinaria compleja y efectos de escala real requieren modelos y mediciones que no se inventan en 0.7.
 
-**Criterio de salida:** suite completa y específica, seis saves sintéticos históricos, escenarios, replay y ZIP portables en verde; cerrar PR #77 solo al terminar etapa 24. La siguiente etapa será la **13 · Necesidades corporales y descanso**.
+**Puerta de salida superada:** suite completa y específica, seis saves históricos sintéticos, escenarios, replay y ZIP portables confirmados en verde; seguimiento e informe cerrados en #74/PR #77. No fusionar el PR ni publicar 0.7.0 hasta completar la etapa 24. **Próxima etapa 13 · Necesidades corporales y descanso.**
