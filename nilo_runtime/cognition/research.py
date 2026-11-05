@@ -82,13 +82,15 @@ def consolidate_research(person):
             anchor['related_questions']=anchor['related_questions'][-15:]
         seen={(v.get('when'),str(v.get('facts'))) for v in anchor.get('evidence',[]) if isinstance(v,dict)}
         for e in entry.get('evidence',[]):
-            if isinstance(e,dict) and (e.get('when'),str(e.get('facts'))) not in seen:
+            fingerprint=(e.get('when'),str(e.get('facts'))) if isinstance(e,dict) else None
+            if fingerprint and fingerprint not in seen:
                 # La fusión temática preserva la fuente; no acredita un ensayo
                 # por el parecido de palabras entre dos preguntas.
                 merged=deepcopy(e)
                 merged.setdefault('source_research_id',entry.get('id'))
                 merged.setdefault('evidence_kind','registro_legacy_no_verificado')
                 anchor.setdefault('evidence',[]).append(merged)
+                seen.add(fingerprint)
         anchor['evidence']=anchor.get('evidence',[])[-30:]
         merged+=1
     person['research_consolidated_v032']=True

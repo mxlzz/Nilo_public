@@ -8,6 +8,7 @@ from __future__ import annotations
 from nilo_runtime.core.identity import new_uuid
 import uuid
 from physics import evaluate_containment, evaluate_buoyancy
+from nilo_runtime.cognition.evidence import measured_records
 
 METRIC_LABELS={
     'dureza':'Dureza estimada (0–10)',
@@ -88,10 +89,10 @@ def compare(person,step,stamp):
     ids=step.get('evidence_ids',[])
     if not isinstance(ids,list) or not 2<=len(ids)<=6 or len(set(map(str,ids)))!=len(ids):
         return False,'Necesito entre 2 y 6 identificadores distintos de ensayos medidos.',None
-    found={m['id']:m for m in person.get('measurements',[])}
-    if any(not isinstance(x,str) or x not in found for x in ids):
-        return False,'Hay identificadores de ensayos inexistentes o fuera de la memoria de trabajo.',None
-    trials=[found[x] for x in ids]
+    trials=measured_records(person,ids,minimum=2,maximum=6,
+                             allow_derived=False)
+    if trials is None:
+        return False,'Hay identificadores inexistentes, duplicados o de registros derivados; se requieren ensayos físicos.',None
     # Descansos ya medidos: la tasa de recuperación es una variable numérica
     # verificable y no está dentro del bloque `physical` de laboratorio.
     if all(t.get('op')=='rest' for t in trials):

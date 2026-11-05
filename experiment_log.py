@@ -10,6 +10,7 @@ import uuid, unicodedata, re
 from survival import ensure_needs
 from laboratory import measured_physics
 from nilo_runtime.worlds.shelter import sheltered as site_sheltered
+from nilo_runtime.cognition.evidence import measured_records, DERIVED_OPERATIONS
 
 
 def canonical(text):
@@ -160,26 +161,28 @@ def observational_conclusion(person,step,stamp):
         return False,'Indicar un tema y entre uno y seis identificadores de ensayos comprobados.',None
     if topic(label)=='recuperacion_energia':
         return False,'La comparación del descanso necesita muestras válidas en ambas condiciones y una conclusión del motor.',None
-    found={e['id']:e for e in person.get('measurements',[])}
-    if len(set(evidence_ids))!=len(evidence_ids) or any(ref not in found for ref in evidence_ids):
-        return False,'Los IDs proporcionados no corresponden a mediciones disponibles. No atribuyo pruebas inexistentes.',None
-    samples=[found[ref] for ref in evidence_ids]
-    # Las mediciones de síntesis administrativas registran tiempo transcurrido,
-    # pero no constituyen nuevas observaciones físicas.
-    derived={'conclude','compare','manual','write','design','propose','report_issue'}
-    if any(m.get('op') in derived for m in samples):
-        return False,'No puedo usar conclusiones ni registros derivados como si fueran ensayos físicos independientes.',None
+    # Resolver por ID exacto. Una coincidencia temática entre relatos no
+    # genera una medición, y un registro administrativo no es ensayo físico.
+    samples=measured_records(person,evidence_ids,minimum=1,maximum=6,
+                             allow_derived=False)
+    if samples is None:
+        return False,'Los IDs deben identificar ensayos físicos disponibles, distintos y no derivados. No atribuyo pruebas inexistentes.',None
     parts=[]
     for m in samples:
-        recorded='; '.join(m['verified_facts'][:2]).strip()
+        recorded_facts=m.get('verified_facts',[])
+        recorded='; '.join(str(fact) for fact in recorded_facts[:2]).strip() if isinstance(recorded_facts,list) else ''
         if not recorded:return False,'Algún ensayo no posee un resultado verificable.',None
-        parts.append(f"{m['op']} ({m['id']}; {'éxito' if m['success'] else 'fallo'}): {recorded}")
+        parts.append(f"{m.get('op','accion')} ({m['id']}; {'éxito' if m.get('success') else 'fallo'}): {recorded}")
     content='En los ensayos registrados observé: '+' / '.join(parts)
     key='observacion:'+canonical(label)[:90]
     if any(c.get('topic')==key and set(c.get('evidence_ids',[]))==set(evidence_ids) for c in person.get('conclusions',[])):
         return False,'Ya registré esa misma observación con las mismas evidencias.',None
-    entry={'id':'con-'+new_uuid().hex[:12],'when':stamp,'topic':key,'status':'observacion_comprobada',
+    no_model=any(m.get('evaluation_status')=='no_evaluable' for m in samples)
+    entry={'id':'con-'+new_uuid().hex[:12],'when':stamp,'topic':key,
+           'status':('observacion_no_evaluable' if no_model else 'observacion_comprobada'),
            'text':content[:1100], 'label':label,'evidence_ids':list(evidence_ids),
-           'scope':'Resultados observados en esas acciones; no demuestra una regla física universal.'}
+           'scope':('Resultado documentado sin física evaluable para al menos un ensayo; '
+                    'no constituye verificación de la hipótesis.' if no_model else
+                    'Resultados observados en esas acciones; no demuestra una regla física universal.')}
     person.setdefault('conclusions',[]).append(entry)
     return True,'Registré una conclusión descriptiva apoyada en pruebas reales: '+content[:420],entry

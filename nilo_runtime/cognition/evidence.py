@@ -128,8 +128,13 @@ def projected_research(person, *, limit=7):
                 reference(person,rid,expected="medicion") for rid in refs]
         item["naturaleza"]="hipotesis_en_investigacion"
         if row.get("state")=="concluida":
-            item["naturaleza"]="investigacion_cerrada_con_evidencia"
-            if not item.get("fuentes_de_evidencia"):
+            sources=item.get("fuentes_de_evidencia") or []
+            if not sources:
                 item["naturaleza"]="investigacion_cerrada_sin_ids"
+            elif all(r.get("trazabilidad")=="registro_disponible"
+                     and r.get("ensayo_fisico") for r in sources):
+                item["naturaleza"]="investigacion_cerrada_con_ensayos_disponibles"
+            else:
+                item["naturaleza"]="investigacion_cerrada_con_referencias_historicas"
         result.append(item)
     return result
