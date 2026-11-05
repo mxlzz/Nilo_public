@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
 import math
@@ -116,6 +117,18 @@ class Observacion14(unittest.TestCase):
             survival_conditions(self.w,self.p)
             brain.context_for(self.w,self.p,[],"Día 1")
         self.assertEqual(before,digest({"world": self.w,"person": self.p}))
+
+    def test_parallel_and_repeated_reading_leaves_exact_state(self):
+        before = digest({"world": self.w, "person": self.p})
+        def read(_):
+            m = map_snapshot(self.w, self.p)
+            nearby = adjacent_terrain(self.w, self.p)
+            return digest({"map":m, "adjacent":nearby,
+                           "survival":survival_conditions(self.w, self.p)})
+        with ThreadPoolExecutor(max_workers=6) as pool:
+            hashes = list(pool.map(read, range(40)))
+        self.assertEqual(len(set(hashes)), 1)
+        self.assertEqual(before, digest({"world": self.w, "person": self.p}))
 
     def test_public_endpoint_does_not_emit_hidden_structures(self):
         with tempfile.TemporaryDirectory() as directory:

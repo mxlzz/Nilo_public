@@ -216,6 +216,7 @@
     "tests/test_v05942.py": "91e22c600a8cf3db51d87e2dbee967564f0917ccac87fbbf166e903c71f6265c",
     "tests/test_v060_alpha1.py": "sha256-calculated-during-packaging",
     "timing.py": "3f9da74acc9e5f2fcb4000ccd2bdb726a58fd1224d13b323bed2762376b49c33",
+    "tools/auditar_observacion_14.py": "sha256-calculated-during-packaging",
     "validar_escenarios.py": "efa729399264ce08f3ccb2cbc185874291556057003411e89d70506df07da107",
     "VERSION": "sha256-calculated-during-packaging",
     "vessels.py": "sha256-calculated-during-packaging",
