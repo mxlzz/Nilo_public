@@ -238,7 +238,7 @@ def report_text(reports, comparison=None):
     out.append("")
     for row in reports:
         out += ["## " + row["source"]["file"], "",
-                "Commit(s) de motor registrados: " + (", ".join(row["identity"]["session_code_commits"]) or "no disponible") + ".",
+                "Commit(s) de motor registrados: " + (", ".join(row["identity"].get("session_code_commits", [])) or "no disponible") + ".",
                 "Proveedores observados: " + json.dumps(row["providers_observed"], ensure_ascii=False) + ".",
                 "Indicadores observacionales: " + json.dumps(row["behavior"], ensure_ascii=False, sort_keys=True) + ".",
                 "Advertencias: " + ("; ".join(row["warnings"]) or "ninguna") + ".", ""]
