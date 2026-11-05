@@ -39,7 +39,14 @@ def item_effects(item):
     if form=='punta':return {'excavar':round(min(10,hard*.7+q*.3),1),'golpear':round(hard*.4,1)}
     if form=='filo':return {'cortar':round(min(10,hard*.75+q*.25),1)}
     if form=='palanca':return {'mover':round(min(10,q*.8+hard*.2),1)}
-    if form=='recipiente':return {'contener':round(min(10,q*.5),1)}
+    if form=='recipiente':
+        # Si hay geometría medida, un sólido no gana la capacidad de contener
+        # por llamarse cuenco, vaso o recipiente. Los legados sin geometría
+        # conservan el resultado previo hasta que se evalúe su forma.
+        geometry=item.get('geometry')
+        if isinstance(geometry,dict) and geometry and geometry.get('shape')!='hueco':
+            return {}
+        return {'contener':round(min(10,q*.5),1)}
     return {}
 
 def make_item(name,purpose,materials,props,clock,source=None,rng=None,*,strict_form=False):

@@ -488,6 +488,7 @@ def execute_action(w,p,step,rng):
                   'peso':sum(q.get('peso',0) for q in props_list)}
             item=physical_item(name,purpose,mats,prop,p.get('clock_minutes',0),step.get('form'),rng=rng)
             item['geometry']=geometry_from_step(step,mats,item['form'])
+            item['possible_uses']=item_effects(item)
             item['physics']=body_physics(mats,item['geometry'],p.get('materials',{}))
             item['contents']={}
             initialize_object(item,structure=False)

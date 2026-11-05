@@ -118,8 +118,9 @@ def _validated_objects(raw):
     forms = raw.get("forms")
     if not isinstance(forms, dict) or not forms:
         raise ValueError("No hay formas registradas.")
-    forms = {name: tuple(_text_list(words, name)) for name, words in forms.items()
-             if isinstance(name, str) and name}
+    if any(not isinstance(name,str) or not name.strip() for name in forms):
+        raise ValueError("Nombre de forma inválido en catálogo de objetos.")
+    forms = {name: tuple(_text_list(words, name)) for name, words in forms.items()}
     shapes = set(_text_list(raw.get("shapes"), "shapes"))
     joints = set(_text_list(raw.get("joints"), "joints"))
     return tuple(portable), forms, shapes, joints

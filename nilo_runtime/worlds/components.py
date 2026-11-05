@@ -36,6 +36,12 @@ def normalize_joints(raw, part_count):
                 return None,'Conexión inválida.'
             if any(type(edge[k]) is bool for k in ('a','b')):
                 return None,'Conexión inválida.'
+            numeric=[edge['a'],edge['b']]
+            for raw in numeric:
+                if isinstance(raw,float) and not raw.is_integer():
+                    return None,'Conexión inválida.'
+                if isinstance(raw,str) and not raw.isdecimal():
+                    return None,'Conexión inválida.'
             a,b=int(edge['a']),int(edge['b'])
             kind=str(edge['type']).lower()
         except (KeyError,TypeError,ValueError,OverflowError):

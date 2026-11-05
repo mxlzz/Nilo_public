@@ -26,11 +26,21 @@ def _number(value, default, minimum, maximum):
 
 
 def properties(material: str, known: dict | None = None):
-    if material in MATERIAL_PHYSICS:
-        return dict(MATERIAL_PHYSICS[material])
+    catalogued = MATERIAL_PHYSICS.get(material)
     item = (known or {}).get(material, {})
+    if not isinstance(item,dict):item={}
+    # Las mediciones físicas explícitas del estado prevalecen sobre el
+    # catálogo inicial. La ausencia de ellas conserva el baseline exacto.
+    if catalogued is not None:
+        return {
+            'density': _number(item.get('density'),
+                               catalogued['density'], .05, 15),
+            'permeability': _number(item.get('permeability'),
+                                    catalogued['permeability'], 0, 1),
+        }
     return {
-        'density': _number(item.get('density', item.get('peso', 5) / 3), 1.7, .05, 15),
+        'density': _number(item.get('density', _number(item.get('peso'), 5, 0, 100) / 3),
+                           1.7, .05, 15),
         'permeability': _number(item.get('permeability', .35), .35, 0, 1),
     }
 
@@ -57,6 +67,11 @@ def body_physics(materials: list[str], geometry: dict, known: dict | None = None
     permeability = (sum(properties(m, known)['permeability'] * n for m,n in counts.items())
                     / max(1, len(materials)))
     shape = geometry.get('shape', 'macizo')
+    # Una descripción de objeto sin unidades físicas no desplaza agua,
+    # ni habilita un recipiente hueco con capacidad positiva.
+    if not materials:
+        return {'mass':0.0,'displacement':0.0,'raw_displacement':0.0,
+                'capacity':0.0,'permeability':0.0,'shape':shape}
     size = _number(geometry.get('size'), len(materials), .5, max(1.0, len(materials)*1.8))
     if shape == 'hueco':
         displacement = size * 1.55
@@ -87,7 +102,9 @@ def evaluate_buoyancy(item: dict, passenger=False, known: dict | None = None):
     if contents.get('material') == 'agua':
         mass += _number(contents.get('quantity'), 0.0, 0.0, 100.0)
     buoyancy = physical['displacement'] * WATER_DENSITY
-    return {'floats': buoyancy >= mass, 'supports_person': buoyancy >= mass if passenger else None,
+    exists=bool(item.get('materials', []))
+    return {'floats': exists and buoyancy >= mass,
+            'supports_person': (exists and buoyancy >= mass) if passenger else None,
             'load': round(mass, 2), 'buoyant_capacity': round(buoyancy, 2), **physical}
 
 
