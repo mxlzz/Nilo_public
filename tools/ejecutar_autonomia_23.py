@@ -17,6 +17,10 @@ import sys
 import threading
 import time
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 
 def preflight(provider, model, max_calls, duration, world_seed, rng_seed, environ=None):
     env = os.environ if environ is None else environ
