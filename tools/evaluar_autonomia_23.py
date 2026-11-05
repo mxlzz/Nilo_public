@@ -83,6 +83,27 @@ def _runs(values):
             "longest_identical_streak": max(streaks, default=0)}
 
 
+def _streak_cases(rows, signatures, minimum=3):
+    """Referencias por ID para revisar episodios; no exporta planes ni narrativas."""
+    cases = []
+    previous = None
+    first = 0
+    for index in range(len(signatures) + 1):
+        signature = signatures[index] if index < len(signatures) else None
+        if signature is None or signature != previous:
+            if previous is not None and index - first >= minimum:
+                start_row, end_row = rows[first], rows[index - 1]
+                cases.append({
+                    "signature_sha256_prefix": previous,
+                    "attempts": index - first,
+                    "first_record_id": str(start_row.get("id") or ""),
+                    "last_record_id": str(end_row.get("id") or ""),
+                })
+            previous = signature
+            first = index
+    return cases[:30]
+
+
 def analyze_autonomy(path):
     """Solo evidencia observacional; decisiones archivadas no garantizan progreso."""
     path = Path(path)
@@ -162,13 +183,15 @@ def analyze_autonomy(path):
         "llm": {"decisions_archived": archived,
                 "successful_deliberations_counted": counted,
                 "contexts_hashed": sum(bool(row.get("context_sha256")) for row in decisions),
-                "repeated_plan_signatures": _runs(decision_signatures)},
+                "repeated_plan_signatures": _runs(decision_signatures),
+                "review_cases_repeated_plan": _streak_cases(decisions, decision_signatures)},
         "behavior": {
             "actions_archived": len(outcomes),
             "actions_from_llm": sum(row.get("origin") == "llm" for row in outcomes),
             "unattributed_actions": sum(not row.get("origin") for row in outcomes),
             "failed_actions": len(failed),
             "consecutive_identical_failed_actions": _runs(consecutive_failures),
+            "review_cases_failed_actions": _streak_cases(outcomes, consecutive_failures),
             "physically_measured_actions": linked,
             "novelty_actions_since_instrumentation": novelty,
             "new_tiles_since_instrumentation": new_tiles,
