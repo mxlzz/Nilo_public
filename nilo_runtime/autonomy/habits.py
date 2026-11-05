@@ -105,9 +105,9 @@ def _safe_preference(raw):
     if op=='gather' and target not in MATERIAL_CHARS:return None
     if op=='craft' and not target:return None
     try:qty=int(raw.get('hasta',DEFAULT_STOCK.get(target,3)))
-    except (ValueError,TypeError):qty=3
+    except (ValueError,TypeError,OverflowError):qty=3
     try:radius=int(raw.get('radio',4))
-    except (ValueError,TypeError):radius=4
+    except (ValueError,TypeError,OverflowError):radius=4
     choice={'op':op,'target':target,'hasta':max(1,min(8,qty)),
             'radio':max(0,min(5,radius)), 'motivo':str(raw.get('motivo',''))[:160]}
     if op=='rest':
@@ -119,7 +119,7 @@ def _safe_preference(raw):
         # Las delegaciones corporales son finitas; solo Nilo puede pedir
         # explícitamente varias ejecuciones, con un máximo verificable.
         try:times=int(raw.get('veces',1))
-        except (TypeError,ValueError):times=1
+        except (TypeError,ValueError,OverflowError):times=1
         choice['veces']=max(1,min(8,times))
         if raw.get('menor_que') is not None:
             try:threshold=float(raw['menor_que'])
@@ -143,6 +143,8 @@ def set_wait_preferences(person, raw, stamp):
     # Solo una deliberación válida reautoriza el plan delegado. Replays
     # históricos usan una ruta distinta; partidas existentes empiezan en 0.
     person['waiting_preference_usage']={}
+    # Una nueva deliberación reautoriza explícitamente el procedimiento.
+    person.pop('waiting_failure_counts',None)
     return True
 
 
@@ -293,6 +295,9 @@ def choose_wait_action(w, p, legacy_wait_policy=False):
         maximum=req.get('hasta',2)
         radius=req.get('radio',2)
         if not _delegation_available(p,req,index):continue
+        key=op+':'+str(target)
+        if p.get('waiting_failure_counts',{}).get(key,0)>=3:
+            continue  # No insistir sin nueva autorización del personaje.
         if op=='rest':
             from bodily_policy import rest_minutes
             minutes=rest_minutes(req)
@@ -316,7 +321,7 @@ def choose_wait_action(w, p, legacy_wait_policy=False):
             return {'op':'craft',**recipe},req.get('motivo') or 'Fabricación delegada.'
     return None
 
-def record_wait_result(person, step, success, facts, stamp):
+def record_wait_result(person, step, success, facts, stamp, *, legacy=False):
     ensure_habits(person)
     entry={'when':stamp,'origin':step.get('_origin','espera'),'op':step.get('op'),'target':step.get('target'),
            'success':bool(success),'reason':step.get('_reason',''),
@@ -325,5 +330,15 @@ def record_wait_result(person, step, success, facts, stamp):
     # El historial íntegro no se trunca; la interfaz y el LLM reciben ventanas.
     person['waiting_state']={'kind':'resultado','last':entry}
     if not success:
-        person['waiting_last_failure'][step.get('op','')+':'+str(step.get('target',''))]=person.get('clock_minutes',0)
+        key=step.get('op','')+':'+str(step.get('target',''))
+        person['waiting_last_failure'][key]=person.get('clock_minutes',0)
+        if not legacy:
+            counts=person.setdefault('waiting_failure_counts',{})
+            counts[key]=min(3,int(counts.get(key,0))+1)
+    elif not legacy:
+        key=step.get('op','')+':'+str(step.get('target',''))
+        counts=person.get('waiting_failure_counts')
+        if isinstance(counts,dict):
+            counts.pop(key,None)
+            if not counts:person.pop('waiting_failure_counts',None)
     return entry

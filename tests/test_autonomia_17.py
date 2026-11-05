@@ -226,6 +226,41 @@ class Habits17(unittest.TestCase):
         self.assertEqual(route.call_count,1)
         self.assertTrue(route.call_args.kwargs["known_only"])
 
+    def test_failed_delegate_does_not_loop_without_new_decision(self):
+        from habits import record_wait_result
+        owner=person()
+        owner["inventory"]["alimento"]=0
+        owner["skills"]={"forage":{"verified":True}}
+        set_wait_preferences(owner,[{"op":"forage","hasta":3}],"Día 1")
+        for _ in range(3):
+            record_wait_result(owner,{"op":"forage","_origin":"rutina"},
+                               False,["No hubo material"],"Día 2")
+        self.assertEqual(owner["waiting_failure_counts"]["forage:"],3)
+        with patch.object(habits_core,"_forage_access",return_value=True):
+            self.assertIsNone(choose_wait_action({},owner))
+            set_wait_preferences(owner,[{"op":"forage","hasta":3}],"Día 3")
+            self.assertIsNotNone(choose_wait_action({},owner))
+
+    def test_legacy_wait_results_do_not_gain_modern_failure_state(self):
+        from habits import record_wait_result
+        owner=person()
+        record_wait_result(owner,{"op":"forage","_origin":"rutina"},
+                           False,["Falló"],"Día 2",legacy=True)
+        self.assertNotIn("waiting_failure_counts",owner)
+
+    def test_non_finite_wait_preferences_do_not_crash(self):
+        from habits import _safe_preference
+        for field in ("hasta","radio","veces"):
+            with self.subTest(field=field):
+                self.assertIsNotNone(_safe_preference(
+                    {"op":"rest","minutes":30,field:float("inf")}))
+
+    def test_invalid_coordinates_do_not_crash_agenda(self):
+        for x,y in ((float("inf"),10),(True,2),(2,False)):
+            with self.subTest(x=x,y=y):
+                self.assertIsNone(normalize_task({
+                    "titulo":"Moverse","pasos":[{"op":"go","x":x,"y":y}]},0))
+
     def test_finite_delegated_rest_does_not_repeat_forever(self):
         owner=person()
         set_wait_preferences(owner,[{"op":"rest","minutes":45,

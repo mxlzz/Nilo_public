@@ -49,8 +49,11 @@ def normalize_task(raw, now, project_id=None):
                 # La búsqueda se resuelve físicamente por orillas conocidas.
                 s={'op':'go','target':'agua'}
             else:
-                try:s={'op':'go','x':int(s['x']),'y':int(s['y'])}
-                except (ValueError,TypeError,KeyError):return None
+                try:
+                    if isinstance(s.get('x'),bool) or isinstance(s.get('y'),bool):
+                        return None
+                    s={'op':'go','x':int(s['x']),'y':int(s['y'])}
+                except (ValueError,TypeError,KeyError,OverflowError):return None
         out.append(s)
     condition=raw.get('cuando',{})
     if not isinstance(condition,dict):condition={}

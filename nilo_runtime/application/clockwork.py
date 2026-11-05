@@ -384,7 +384,9 @@ class ClockUseCases:
                                 action_result=skill_result,measurement=measurement)
                             if not success:p['plan']=[s for s in p['plan'] if s.get('_agenda_id')!=step.get('_agenda_id')]
                         elif autonomous:
-                            record_wait_result(p,step,success,facts,self.stamp())
+                            record_wait_result(p,step,success,facts,self.stamp(),
+                                legacy=(getattr(self,'legacy_replay_rules',False)
+                                    or getattr(self,'historical_replay',False)))
                         else:
                             record_skill(p,step,success,facts,self.stamp(),old_inventory,
                                 action_result=skill_result,measurement=measurement)
