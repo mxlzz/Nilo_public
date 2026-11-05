@@ -65,7 +65,7 @@ def _antecedente(context):
 
 def project_context(context):
     """Devuelve COPIA cognitiva: nunca contamina snapshots, UI ni SQLite."""
-    from brain import _cognitive_needs_context
+    from nilo_runtime.agent.budget import _cognitive_needs_context
     view=deepcopy(_cognitive_needs_context(context))
     if not isinstance(view,dict):return view
     precedent=_antecedente(view)

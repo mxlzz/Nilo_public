@@ -47,7 +47,7 @@ ACTION_GUIDE['interact'] += (' Capacidad cargas_estructurales v1: '
 # Espera elegida por Nilo: transcurre tiempo, sin efecto de descanso/sueño.
 ACTION_GUIDE['wait'] = ('{"op":"wait","minutes":30} espera voluntariamente entre 1 y 1440 '
     'minutos simulados (30 por defecto), sin acción física ni ensayo de descanso. '
-    'Continúan el metabolismo y la recuperación pasiva normal de la inactividad; '
+    'Continúa el metabolismo, pero wait no recupera energía como descanso; '
     'NO fuerza una disminución de energía, ni equivale a dormir. '
     'Las tareas diferidas pueden activarse por el tiempo transcurrido.')
 SUPPORTED_OPERATIONS = frozenset(ACTION_GUIDE)
