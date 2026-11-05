@@ -263,14 +263,22 @@ def public_info(cfg,state):
     names=[n for n,_ in providers]
     summary=[]
     now=time.time()
+    # La lectura del observatorio NO crea ni reinicia contadores del motor.
+    # Solo route() es dueña de actualizar la salud y su cambio diario.
+    saved=state.get('provider_health',{})
+    if not isinstance(saved,dict):saved={}
+    today=datetime.now().strftime('%Y-%m-%d')
     for name,pcfg in providers:
         health_key=pcfg.get('_health_key',name)
-        h=_health(state,health_key)
+        h=saved.get(health_key,{})
+        if not isinstance(h,dict):h={}
+        daily=(h if h.get('today')==today else {})
         left=max(0,round(h.get('cooldown_until',0)-now))
         summary.append({'name':name,'health_key':health_key,'model':pcfg.get('MODEL',''),
                         'status':'en espera' if left else 'disponible',
-                        'retry_seconds':left,'attempts':h['attempts_today'],
-                        'successes':h['success_today'],'failures':h['failures_today'],
+                        'retry_seconds':left,'attempts':daily.get('attempts_today',0),
+                        'successes':daily.get('success_today',0),
+                        'failures':daily.get('failures_today',0),
                         'last_error':h.get('last_error','')})
     active=state.get('last_provider','')
     return {'last_provider':active,'last_model':state.get('last_provider_model',''),
