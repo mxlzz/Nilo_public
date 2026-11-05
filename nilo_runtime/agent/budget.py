@@ -27,8 +27,8 @@ def _short_description(spec):
     except (ValueError,TypeError):
         sample = json.dumps({"op":spec.name},separators=(",",":"))
         note = description
-    if len(note)>115:
-        note=note[:110].rsplit(" ",1)[0].rstrip(" ,;:") + "…"
+    if len(note)>94:
+        note=note[:89].rsplit(" ",1)[0].rstrip(" ,;:") + "…"
     return sample + ((" "+note) if note else "") + " [síntesis]"
 
 SHORT_OPERATIONS = MappingProxyType({

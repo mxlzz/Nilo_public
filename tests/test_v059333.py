@@ -90,7 +90,7 @@ class PromptBudget(unittest.TestCase):
         configs=candidate_configs(cfg)
         groq=[v for name,v in configs if name=='groq']
         self.assertEqual(len(groq),1)
-        self.assertIn('compact-v1',groq[0]['_health_key'])
+        self.assertIn('compact-v2',groq[0]['_health_key'])
         self.assertNotEqual(groq[0]['_health_key'],'groq')
 
     def test_invalid_decision_reason_without_echoing_model_text(self):
