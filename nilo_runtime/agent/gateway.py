@@ -80,7 +80,7 @@ def build_deliberation_request(cfg,context):
     from cognitive_projection import project_context
     context=project_context(context)
     # El perfil cambia únicamente el payload; nunca la memoria del mundo.
-    from nilo_runtime.labs.profiles import OPTIONAL_CONTEXT
+    from nilo_runtime.core.lab_settings import OPTIONAL_CONTEXT
     omission=cfg.get("_LAB_OMIT_CONTEXT") or ()
     if any(x not in OPTIONAL_CONTEXT for x in omission):
         raise ValueError("No se puede omitir contexto obligatorio")

@@ -34,6 +34,8 @@ LAYER_IMPORTS = {
     "web": {"core", "application", "web"},
     "lab": {"core", "worlds", "physics", "physiology", "agent", "cognition", "storage",
             "audit", "autonomy", "application", "lab"},
+    "labs": {"core", "worlds", "physics", "physiology", "agent", "cognition", "storage",
+             "audit", "autonomy", "application", "labs"},
 }
 
 
