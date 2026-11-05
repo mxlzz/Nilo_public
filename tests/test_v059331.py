@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """Regresiones 0.5.9.3.31: nombres legibles con referencias físicas intactas."""
 import tempfile
 import unittest
@@ -37,7 +38,7 @@ class ActivityLabels(unittest.TestCase):
                          'Probar herramienta hacha de piedra · cortar')
 
     def test_interface_uses_exact_id_for_rendering_queued_actions(self):
-        ui=(Path(__file__).resolve().parents[1]/'interfaz.html').read_text('utf-8')
+        ui=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertIn('(data?.items||[]).find(tool=>tool.id===rawSubject)',ui)
         self.assertIn('known?.name||rawSubject',ui)
 

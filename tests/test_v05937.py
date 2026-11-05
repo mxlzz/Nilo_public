@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.7 — aceleración, pausas, escritura y marcas visuales."""
 import tempfile
 import time
@@ -109,7 +110,7 @@ class SimulationClock(unittest.TestCase):
 
 class Interface(unittest.TestCase):
     def test_buttons_and_unread_skill_highlight(self):
-        html=(ROOT/'interfaz.html').read_text('utf-8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         for speed in (1,10,60,80):
             self.assertIn(f'data-speed="{speed}"',html)
         self.assertNotIn('data-speed="300"',html)
