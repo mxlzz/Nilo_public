@@ -33,6 +33,10 @@ jobs:
         run: python tools/auditar_recursos_10.py
       - name: Conservación, extracción y almacenamiento (etapa 10)
         run: python -m unittest discover -s tests -p 'test_recursos_10.py' -v
+      - name: Auditoría materiales, objetos y componentes (etapa 11)
+        run: python tools/auditar_objetos_11.py
+      - name: Formas, etiquetas, propiedades y uniones (etapa 11)
+        run: python -m unittest discover -s tests -p 'test_objetos_11.py' -v
       - name: Mundo isla_v1 contra snapshots 0.6.4 y seis semillas
         run: python -m unittest discover -s tests -p 'test_mundo_08.py' -v
       - name: Motor headless y adaptadores (regresión focalizada)
