@@ -345,5 +345,43 @@ class Stage12(unittest.TestCase):
             self.assertEqual(item,snapshot)
 
 
+
+    def test_legacy_fill_does_not_erase_solid_contents(self):
+        self.assertTrue(self.action("craft",name="cuenco",
+                                    materials=["piedra"],form="recipiente",
+                                    geometry={"shape":"hueco","size":1})[2])
+        tool=self.p["items"][-1]
+        tool["contents"]={"material":"madera","quantity":1}
+        set_tile(self.w,16,10,0,"~")
+        state=deepcopy([tool,self.p["inventory"]])
+        result=self.action("use",item=tool["id"],method="llenar")
+        self.assertFalse(result[2],result)
+        self.assertEqual([tool,self.p["inventory"]],state)
+
+    def test_duplicate_exact_tool_labels_require_id_for_use(self):
+        for _ in range(2):
+            self.assertTrue(self.action("craft",name="golpeador",
+                                        materials=["madera"],form="golpe")[2])
+        before=deepcopy([self.p["items"],self.p["inventory"]])
+        result=self.action("use",item="golpeador",method="golpear",target="madera")
+        self.assertFalse(result[2],result)
+        self.assertEqual([self.p["items"],self.p["inventory"]],before)
+        actual=self.action("use",item=self.p["items"][0]["id"],
+                           method="golpear",target="madera")
+        self.assertTrue(actual[2],actual)
+
+    def test_broken_assembly_cannot_be_tested_as_working(self):
+        self.assertTrue(self.action("assemble",parts=[
+            {"name":"rueda","material":"madera","shape":"rueda"},
+            {"name":"eje","material":"madera","shape":"eje"}],
+            joints=[{"a":0,"b":1,"type":"articulada"}])[2])
+        item=self.p["items"][-1]
+        item["durability"]=0
+        previous=deepcopy(item)
+        r=self.action("use",item=item["id"],method="transmision",input_energy=10)
+        self.assertFalse(r[2],r)
+        self.assertEqual(item,previous)
+
+
 if __name__=="__main__":
     unittest.main()

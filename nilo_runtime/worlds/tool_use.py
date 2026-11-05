@@ -5,6 +5,8 @@ El cuaderno se pasa por callback; el dominio no depende del dispatcher ni LLM.
 """
 from __future__ import annotations
 
+import math
+
 from catalogo import MATERIALS, TERRAINS
 from nilo_runtime.worlds.island import DIRS, valid, tile, tile_key, set_tile
 from nilo_runtime.worlds.objects import item_effects
@@ -67,14 +69,17 @@ def use_action(w,p,step,record_experience,test_assembly):
     facts=[];notable=False;success=True;duration=8
     held=p.get('items',[])
     item_name=str(step.get('item') or step.get('target') or '').strip().lower()
-    tool=next((t for t in held if t['name'].lower()==item_name or t['id']==item_name),None)
-    if not tool and item_name:
-        candidates=[t for t in held if item_name in t['name'].lower()]
-        if len(candidates)>1:
-            return 5,["Varias herramientas coinciden; necesito un ID inequívoco."],False,False
-        tool=candidates[0] if candidates else None
+    tool=next((t for t in held if item_name and t.get('id')==item_name),None)
+    if tool is None and item_name:
+        exact=[t for t in held if str(t.get('name','')).lower()==item_name]
+        choices=exact or [t for t in held if item_name in str(t.get('name','')).lower()]
+        if len(choices)>1:
+            return 5,["Varias herramientas coinciden; necesito el ID único."],False,False
+        tool=choices[0] if choices else None
     if not tool:return 5,[f"No llevo conmigo la herramienta '{item_name}'."],False,False
     desired=str(step.get('method') or step.get('action') or '').lower().strip()
+    if tool.get('durability',100)<=0:
+        return 5,[f"'{tool['name']}' está inutilizable por desgaste."],False,False
     if tool.get('form')=='ensamblaje':
         ok,msg=test_assembly(p,tool,desired,step)
         tool.setdefault('tests',[]).append({'method':desired,'target':'mecanismo',
@@ -100,8 +105,19 @@ def use_action(w,p,step,record_experience,test_assembly):
             msg=f"La geometría de '{tool['name']}' no permite retener agua."
             record_experience(p,'use',tool['name'],False,msg)
             return 10,[msg],False,True
-        if tool.get('contents',{}).get('material')=='agua' and tool['contents'].get('quantity',0)>0:
-            return 3,[f"'{tool['name']}' ya contiene agua; llenarlo otra vez no aporta información nueva."],True,False
+        contents=tool.get('contents') or {}
+        if not isinstance(contents,dict):
+            return 5,["El contenido registrado del objeto es inválido; no lo sobrescribí."],False,False
+        try:
+            held_amount=float(contents.get('quantity',0))
+        except (TypeError,ValueError,OverflowError):
+            return 5,["El contenido registrado no es medible; no lo sobrescribí."],False,False
+        if not math.isfinite(held_amount) or held_amount<0:
+            return 5,["La reserva del recipiente tiene un saldo inválido."],False,False
+        if held_amount>0:
+            if contents.get('material')=='agua':
+                return 3,[f"'{tool['name']}' ya contiene agua; llenarlo otra vez no aporta información nueva."],True,False
+            return 5,["El recipiente contiene otro material; debo retirarlo antes de llenarlo con agua."],False,False
         tool['contents']={'material':'agua','quantity':result['quantity']}
         msg=(f"Llené '{tool['name']}' con {result['quantity']} unidades de agua. "
              f"Capacidad útil estimada: {result['quantity']} unidades. "
