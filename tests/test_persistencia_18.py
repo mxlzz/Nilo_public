@@ -11,12 +11,15 @@ from pathlib import Path
 import sqlite3
 import tempfile
 import unittest
+import subprocess
+import sys
 from unittest.mock import patch
 
 from nilo import Simulation
 from nilo_runtime.core.state import StateSchemaError, SAVE_SCHEMA_VERSION
 from nilo_runtime.storage.backups import (
     BackupError, inspect_backup, backup_to_new_path, restore_as_copy,
+    backup_file,
 )
 from nilo_runtime.storage.migrations import migration_path
 
@@ -237,6 +240,38 @@ class Backups18(unittest.TestCase):
         with self.assertRaises(FileExistsError):
             restore_as_copy(backup,existing)
         self.assertEqual(existing.read_bytes(),b"KEEP")
+
+    def test_online_backup_from_readonly_wal_connection(self):
+        self.sim.s["person"]["clock_minutes"]=49
+        self.sim.write()
+        target=self.root/"respaldo-online.sqlite3"
+        report=backup_file(self.db,target)
+        self.assertEqual(report["simulated_minutes"],49)
+        self.assertEqual(inspect_backup(target),report)
+        self.assertFalse(self.sim.conn.in_transaction)
+
+    def test_console_backup_and_restore_are_safe(self):
+        tool=Path(__file__).resolve().parent.parent/"tools/backup_partida_18.py"
+        backup=self.root/"desde-cli.sqlite3"
+        restored=self.root/"desde-cli-restaurado.sqlite3"
+        for action,args in (
+            ("respaldar",[str(self.db),str(backup)]),
+            ("inspeccionar",[str(backup)]),
+            ("restaurar",[str(backup),str(restored)]),
+        ):
+            with self.subTest(action=action):
+                p=subprocess.run([sys.executable,str(tool),action,*args],
+                                 capture_output=True,text=True,timeout=25)
+                self.assertEqual(p.returncode,0,p.stderr)
+                result=json.loads(p.stdout)
+                self.assertEqual(result["operacion"],action)
+                self.assertEqual(result["resultado"]["schema_version"],5)
+        self.assertEqual(inspect_backup(backup),inspect_backup(restored))
+        denied=subprocess.run(
+            [sys.executable,str(tool),"restaurar",str(backup),str(restored)],
+            capture_output=True,text=True,timeout=25)
+        self.assertNotEqual(denied.returncode,0)
+        self.assertIn("No se modificó",denied.stderr)
 
     def test_corrupt_snapshot_detected_before_restore(self):
         copy=self.root/"corrupt.sqlite3"
