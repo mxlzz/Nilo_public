@@ -15,12 +15,21 @@ from nilo_runtime.core.operations import registered_operations
 def _short_description(spec):
     """Primera cláusula del contrato oficial, sin inventar una operación."""
     description = spec.description.strip()
-    # Una descripción larga se abrevia por palabras y se señala como síntesis;
-    # precondiciones y consecuencias efectivas siguen en el motor.
-    if len(description) <= 220:
-        return description
-    head = description[:215].rsplit(" ", 1)[0]
-    return head + "… [síntesis; el motor verifica las condiciones completas]"
+    # Extraer el PRIMER ejemplo JSON sin recortar sus llaves o comillas.
+    # La nota abreviada sale del mismo texto de OperationSpec, no de otro
+    # diccionario de operaciones editado a mano.
+    try:
+        example, end = json.JSONDecoder().raw_decode(description)
+        if not isinstance(example,dict) or example.get("op") != spec.name:
+            raise ValueError("Ejemplo ajeno a la operación")
+        sample = json.dumps(example,ensure_ascii=False,separators=(",",":"))
+        note = description[end:].strip()
+    except (ValueError,TypeError):
+        sample = json.dumps({"op":spec.name},separators=(",",":"))
+        note = description
+    if len(note)>115:
+        note=note[:110].rsplit(" ",1)[0].rstrip(" ,;:") + "…"
+    return sample + ((" "+note) if note else "") + " [síntesis]"
 
 SHORT_OPERATIONS = MappingProxyType({
     op: _short_description(spec) for op, spec in registered_operations().items()

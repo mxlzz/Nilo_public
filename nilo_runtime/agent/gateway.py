@@ -17,8 +17,8 @@ from nilo_runtime.agent.responses import parse_json
 from providers import error_from_http, ProviderFailure
 from action_contracts import instructions as action_instructions
 
-def _post(url, payload, headers):
-    """Único límite de red: los encabezados nunca forman parte del JSON."""
+def _post(url, payload, headers, provider):
+    """Único límite de red; la identificación del proveedor nunca depende de URL."""
     request = urllib.request.Request(
         url, data=json.dumps(payload,ensure_ascii=False).encode("utf-8"),
         headers=headers, method="POST")
@@ -26,8 +26,7 @@ def _post(url, payload, headers):
         with urllib.request.urlopen(request,timeout=40) as reply:
             return json.load(reply)
     except urllib.error.HTTPError as exc:
-        raise error_from_http(exc, "gemini" if "generativelanguage.googleapis.com" in url else
-                              "groq" if "api.groq.com" in url else "openai_compatible") from None
+        raise error_from_http(exc,provider) from None
 
 def _response(result, provider, *, chat=False):
     """Decodificar una sola respuesta, sin interpolar texto ni deducir éxito."""
@@ -97,25 +96,19 @@ def build_deliberation_request(cfg,context):
         system=SYSTEM+'\n'+action_instructions()
     data=json.dumps(selected,ensure_ascii=False,separators=(',',':'))
     if provider=='gemini':
-        url=f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+        url=_endpoint(cfg)
         payload={"systemInstruction":{"parts":[{"text":SYSTEM}]},
                  "contents":[{"role":"user","parts":[{"text":action_instructions()+'\nSITUACIÓN REAL: '+data}]}],
                  "generationConfig":{"temperature":0.85,"maxOutputTokens":2300,"responseMimeType":"application/json"}}
-        headers={"x-goog-api-key":cfg['GEMINI_API_KEY'],"Content-Type":"application/json"}
+        headers=_headers(cfg)
     elif provider in ('openai_compatible','groq'):
-        base=('https://api.groq.com/openai/v1' if provider=='groq' else
-              cfg.get('OPENAI_BASE_URL','https://api.openai.com/v1')).rstrip('/')
-        if not base.startswith('https://') and not base.startswith('http://127.0.0.1') and not base.startswith('http://localhost'):
-            raise ValueError('La API debe usar HTTPS, salvo el servidor local.')
-        url=base+'/chat/completions'
+        url=_endpoint(cfg)
         payload={"model":model,"messages":[{"role":"system","content":system},
                  {"role":"user","content":data}],"temperature":0.8,
                  "max_completion_tokens":1550 if provider=='groq' else 2500,
                  "response_format":{"type":"json_object"}}
         if provider=='groq':payload['reasoning_effort']='low'
-        headers={"Authorization":"Bearer "+(cfg['GROQ_API_KEY'] if provider=='groq' else cfg['OPENAI_API_KEY']),
-                 "Content-Type":"application/json"}
-        if provider=='groq':headers['User-Agent']='Mozilla/5.0 (compatible; Nilo/0.3; API client)'
+        headers=_headers(cfg)
     else:raise ValueError('Proveedor desconocido')
     if provider=='groq':
         for budget in (4100,3000,2200,1600):
@@ -138,13 +131,14 @@ def request_llm(cfg, context):
     else:
         sent=json.loads(payload["messages"][1]["content"])
     stats=context_stats(context,sent,provider,payload)
-    raw=_post(url,payload,headers)
+    raw=_post(url,payload,headers,provider)
     text,tokens=_response(raw,provider)
     tokens["contexto"]=stats
     return parse_json(text),tokens
 
 
-def request_chat(cfg,context,messages,system_instruction=None):
+def build_chat_request(cfg,context,messages,system_instruction=None):
+    """Mismo payload que el chat real, comprobable sin llamar a la red."""
     from cognitive_projection import project_context
     context=project_context(context)
     system_instruction=system_instruction or CHAT_SYSTEM
@@ -163,7 +157,7 @@ def request_chat(cfg,context,messages,system_instruction=None):
         history=[dict(m,text=m['text'][:550]) for m in history]
     grounded='CONTEXTO COMPROBADO (no lo contradigas): '+json.dumps(context,ensure_ascii=False,default=str)
     if provider=='gemini':
-        url=f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent'
+        url=_endpoint(cfg)
         while history and history[0]['role']!='user':history.pop(0)
         contents=[]
         for i,m in enumerate(history):
@@ -174,18 +168,20 @@ def request_chat(cfg,context,messages,system_instruction=None):
             else:
                 contents.append({'role':role,'parts':[{'text':msg}]})
         payload={'systemInstruction':{'parts':[{'text':system_instruction}]},'contents':contents,'generationConfig':{'temperature':0.75,'maxOutputTokens':450}}
-        headers={'x-goog-api-key':cfg['GEMINI_API_KEY'],'Content-Type':'application/json'}
+        headers=_headers(cfg)
     elif provider in ('openai_compatible','groq'):
-        base=('https://api.groq.com/openai/v1' if provider=='groq' else cfg.get('OPENAI_BASE_URL','https://api.openai.com/v1')).rstrip('/')
-        if not base.startswith('https://') and not base.startswith('http://127.0.0.1') and not base.startswith('http://localhost'):
-            raise ValueError('La API debe usar HTTPS, salvo el servidor local.')
-        url=base+'/chat/completions'
+        url=_endpoint(cfg)
         msgs=[{'role':'system','content':system_instruction+'\n'+grounded}]+[{'role':h['role'],'content':h['text']} for h in history]
         payload={'model':model,'messages':msgs,'temperature':.75,'max_completion_tokens':450 if provider=='groq' else 650}
         if provider=='groq':payload['reasoning_effort']='low'
-        headers={'Authorization':'Bearer '+(cfg['GROQ_API_KEY'] if provider=='groq' else cfg['OPENAI_API_KEY']),'Content-Type':'application/json'}
-        if provider=='groq':headers['User-Agent']='Mozilla/5.0 (compatible; Nilo/0.3; API client)'
+        headers=_headers(cfg)
     else:raise ValueError('Proveedor desconocido')
-    result=_post(url,payload,headers)
+    return url,payload,headers
+
+
+def request_chat(cfg,context,messages,system_instruction=None):
+    url,payload,headers=build_chat_request(cfg,context,messages,system_instruction)
+    provider=cfg.get('PROVIDER','gemini')
+    result=_post(url,payload,headers,provider)
     reply,tokens=_response(result,provider,chat=True)
     return reply,tokens
