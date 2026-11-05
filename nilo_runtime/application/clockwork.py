@@ -173,7 +173,17 @@ class ClockUseCases:
                                 arrived=(success and
                                          tuple(p['pos'][:2])==tuple(nav['destination']))
                                 if arrived:
-                                    harvested=self.environment.perform_result(w,p,step,self.rng)
+                                    # La fuente elegida al iniciar el trayecto se conserva
+                                    # tras navegar. No cambiar silenciosamente de depósito
+                                    # después de completar la fase de trabajo.
+                                    extraction_step=step
+                                    if (not getattr(self,'historical_replay',False)
+                                            and not getattr(self,'legacy_replay_rules',False)
+                                            and nav.get('resource_at') is not None):
+                                        extraction_step=dict(step,_resource_at=[
+                                            *nav['resource_at'],nav['level']])
+                                    harvested=self.environment.perform_result(
+                                        w,p,extraction_step,self.rng)
                                     facts.extend(harvested.facts)
                                     success=harvested.success
                                     notable=notable or harvested.notable

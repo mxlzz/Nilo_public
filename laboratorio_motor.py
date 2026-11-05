@@ -45,7 +45,10 @@ TRACE_TEXT = {
     "island.py:reveal": "Incorpora casillas observadas",
     "world.py:navigation_result": "Resume desplazamiento y hallazgos",
     "world.py:execute_action": "Aplica las reglas físicas de la acción",
-    "world.py:nearest_known": "Localiza una fuente conocida y alcanzable",
+    "resources.py:nearest_known": "Localiza una fuente conocida y alcanzable",
+    "resources.py:harvest_at": "Verifica depósito, distancia, balance y extracción",
+    "resources.py:transfer_units": "Transfiere unidades sin saldos negativos",
+    "resources.py:forage_action": "Gestiona reservas vegetales y recolección",
     "world.py:inspect_target": "Comprueba visibilidad y examina el objetivo",
     "world.py:dig_with_tool": "Contrasta herramienta y resistencia de roca",
     "world.py:adjacent_rock": "Selecciona roca físicamente adyacente",
@@ -136,6 +139,7 @@ class ExecutionTrace:
             source_path = {
                 "navigation.py": "nilo_runtime/worlds/navigation.py",
                 "island.py": "nilo_runtime/worlds/island.py",
+                "resources.py": "nilo_runtime/worlds/resources.py",
             }.get(row["file"], row["file"])
             row["url"] = ("https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/"
                           + source_path + "#L" + str(row["first"])
