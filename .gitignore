@@ -19,3 +19,6 @@ venv/
 # Preferencias propias de cada instalación (importadas con consentimiento)
 preferencias_interfaz.json
 preferencias_interfaz.json.tmp
+
+# Perfil activo, checkpoints y backups del laboratorio: datos privados locales.
+lab_profiles/
