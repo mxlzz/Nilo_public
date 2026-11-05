@@ -59,7 +59,11 @@ def _plan_signature(decision):
 def _action_signature(row):
     if not isinstance(row, dict):
         return None
-    return _signature({k: row[k] for k in SIGNATURE_FIELDS if k in row})
+    parts = {k: row[k] for k in SIGNATURE_FIELDS if k in row}
+    # El mismo intento desde otra casilla no es un fallo idéntico.
+    if isinstance(row.get("pos"), list):
+        parts["position"] = row["pos"]
+    return _signature(parts)
 
 
 def _runs(values):
