@@ -73,12 +73,15 @@ class ClockUseCases:
             for routine in update_needs(p,self.s['world'],delta,shelter,near_water,active=bool(pending and pending.get('step',{}).get('op') not in ('rest','wait')),
                                         resting=bool((pending and pending.get('step',{}).get('op')=='rest') or p.get('unconscious')),
                                         legacy_energy_cap=getattr(self,'legacy_replay_rules',False),
-                                        legacy_autocare=(getattr(self,'legacy_replay_rules',False) or getattr(self,'legacy_autocare_rules',False))):
+                                        legacy_autocare=(getattr(self,'legacy_replay_rules',False) or getattr(self,'legacy_autocare_rules',False)),
+                                        waiting=(bool(pending and pending.get('step',{}).get('op')=='wait')
+                                                 and not getattr(self,'legacy_replay_rules',False)
+                                                 and not getattr(self,'legacy_autocare_rules',False))):
                 self.event([routine],'autocuidado',False)
             # El colapso es fisiológico. No se interpreta como una decisión de descansar.
             if not (getattr(self,'legacy_replay_rules',False) or getattr(self,'legacy_autocare_rules',False)):
                 energy=ensure_needs(p)['energia']
-                if not p.get('unconscious') and energy<=5:
+                if not p.get('unconscious') and should_collapse(energy):
                     interrupted=p.get('pending')
                     p['unconscious']=True
                     p['collapsed_at']=self.stamp()
@@ -113,7 +116,7 @@ class ClockUseCases:
                     p['plan']=[]
                     self.s['auto_wait_frozen']=False
                     self.event(['Perdí el conocimiento por agotamiento extremo; la actividad quedó interrumpida.'],'estado',True)
-                elif p.get('unconscious') and energy>=40:
+                elif p.get('unconscious') and can_wake(energy):
                     p['unconscious']=False
                     p['recovered_at']=self.stamp()
                     self.event(['Recuperé el conocimiento y puedo decidir nuevamente.'],'estado',True)
@@ -544,12 +547,15 @@ class ClockUseCases:
                 step=p['plan'].pop(0)
                 op=step['op'];minutes=get_spec(op).planned_minutes
                 if op in ('rest','wait'):
-                    if op=='rest' and getattr(self,'legacy_replay_rules',False) or getattr(self,'legacy_autocare_rules',False):
+                    # Conservar los 20 minutos de la rutina histórica incluso
+                    # cuando la acción de aquella versión se llamaba wait.
+                    if ((op=='rest' and getattr(self,'legacy_replay_rules',False))
+                            or getattr(self,'legacy_autocare_rules',False)):
                         minutes=20
                     else:
                         # Los planes modernos se validan al recibirlos; no confiar
                         # en que una partida importada contenga solo pasos nuevos.
-                        minutes=rest_minutes(step) or 30
+                        minutes=(rest_minutes(step) if op=='rest' else wait_minutes(step)) or 30
                 # Mismo factor de fatiga para esfuerzo estacionario y por tramo.
                 n=ensure_needs(p)
                 physical=op in ('go','explore','gather','forage','build','craft','assemble','excavate','modify','dismantle','interact')

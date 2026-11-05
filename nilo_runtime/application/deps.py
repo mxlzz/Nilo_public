@@ -50,7 +50,7 @@ from diagnostics import inspect_invariants, record_invariant_issue, record_contr
 from action_contracts import before as contract_before, classify as classify_contract
 from research_cycle import begin_prediction, finish_prediction
 from project_lifecycle import completion_evidence, project_needs_review, retire_project, closure_diagnostic
-from bodily_policy import rest_minutes, fatigue_multiplier
+from bodily_policy import rest_minutes, wait_minutes, fatigue_multiplier, should_collapse, can_wake
 from intervention import active_intervention
 
 HERE=Path(__file__).resolve().parents[2]
