@@ -79,27 +79,38 @@ def build_deliberation_request(cfg,context):
     """Preparar la solicitud sin red, aplicando presupuesto al payload completo."""
     from cognitive_projection import project_context
     context=project_context(context)
+    # El perfil cambia únicamente el payload; nunca la memoria del mundo.
+    from nilo_runtime.labs.profiles import OPTIONAL_CONTEXT
+    omission=cfg.get("_LAB_OMIT_CONTEXT") or ()
+    if any(x not in OPTIONAL_CONTEXT for x in omission):
+        raise ValueError("No se puede omitir contexto obligatorio")
+    if omission:
+        context={k:v for k,v in context.items() if k not in omission}
+    note=cfg.get("_LAB_PROMPT_NOTE") or ""
+    if not isinstance(note,str) or len(note)>700 or "\r" in note or "\x00" in note:
+        raise ValueError("Nota de sistema del laboratorio inválida")
+    extra=("\nNOTA ADICIONAL DEL PERFIL DE LABORATORIO: "+note) if note else ""
 
     provider=cfg.get('PROVIDER','gemini')
     model=cfg.get('MODEL','gemini-3.1-flash-lite')
     if provider=='groq':
         selected=bounded_context(compact_context(context,char_budget=18000),4100)
-        system=GROQ_SYSTEM+'\n'+brief_actions()
+        system=GROQ_SYSTEM+'\n'+brief_actions()+extra
     elif provider=='gemini':
         selected=bounded_context(compact_context(context,char_budget=25000),9100)
-        system=SYSTEM+'\n'+action_instructions()
+        system=SYSTEM+'\n'+action_instructions()+extra
     elif cfg.get('_compact_context'):
         selected=bounded_context(compact_context(context,char_budget=23000),6900)
-        system=SYSTEM+'\n'+action_instructions()
+        system=SYSTEM+'\n'+action_instructions()+extra
     else:
         # El proveedor OpenAI-compatible conserva el mismo límite de percepción;
         # jamás recibe puntajes internos por omitir el contexto compacto.
         selected=bounded_context(compact_context(context,char_budget=25000),9100)
-        system=SYSTEM+'\n'+action_instructions()
+        system=SYSTEM+'\n'+action_instructions()+extra
     data=json.dumps(selected,ensure_ascii=False,separators=(',',':'))
     if provider=='gemini':
         url=_endpoint(cfg)
-        payload={"systemInstruction":{"parts":[{"text":SYSTEM}]},
+        payload={"systemInstruction":{"parts":[{"text":SYSTEM+extra}]},
                  "contents":[{"role":"user","parts":[{"text":action_instructions()+'\nSITUACIÓN REAL: '+data}]}],
                  "generationConfig":{"temperature":0.85,"maxOutputTokens":2300,"responseMimeType":"application/json"}}
         headers=_headers(cfg)

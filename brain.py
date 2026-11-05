@@ -34,6 +34,8 @@ def config():
             line=line.strip()
             if not line or line.startswith('#') or '=' not in line:continue
             k,v=line.split('=',1);vals[k.strip()]=v.strip().strip('"').strip("'")
+    from nilo_runtime.labs.profiles import config_overlay
+    vals.update(config_overlay(ROOT))
     vals.update({key:value for key,value in os.environ.items() if key in {"PROVIDER","MODEL","GEMINI_API_KEY","GEMINI_FALLBACK_MODELS","OPENAI_API_KEY","OPENAI_BASE_URL","GROQ_API_KEY","GROQ_MODEL","BACKUP_PROVIDER","MAX_LLM_CALLS_PER_DAY","MAX_CHAT_CALLS_PER_DAY","MIN_REAL_SECONDS_BETWEEN_CALLS","PORT"}})
     return vals
 
