@@ -1,7 +1,7 @@
 # Nilo 0.7 · Etapa 13 — Necesidades corporales y descanso
 
 **Fecha:** 5 de noviembre de 2026. **Rama:** `refactor/0.7`.  
-**Estado:** implementación y pruebas focalizadas verificadas; suite integral final pendiente.  
+**Estado: COMPLETADA.** [Validación integral #42025565724](https://github.com/mxlzz/Nilo_public/actions/runs/42025565724): **success**, 844 pruebas ejecutadas (1 omitida). [Compatibilidad histórica #42025565421](https://github.com/mxlzz/Nilo_public/actions/runs/42025565421): **success**, seis partidas sintéticas.  
 **Base protegida:** `main` y `VERSION` conservan 0.6.4. No se modificó esquema SQLite v5, ni partidas personales.
 
 ## 1. Alcance auditado y hallazgos
@@ -52,7 +52,7 @@ Por falta de ley física de cubierta, la ventaja de descanso de **obras construi
 
 `MANIFIESTO_SHA256.json`, `tools/verificar_paquete_07.py` y la traza real de `laboratorio_motor.py` incorporan `physiology/__init__.py`, `physiology/needs.py`, `physiology/policy.py` y `worlds/shelter.py`. La workflow de validación ejecuta auditoría y tests antes de la suite integral, replay, escenarios físicos y smoke test del ZIP.
 
-**CI por confirmar**: el código final fue probado en [Validación Nilo](https://github.com/mxlzz/Nilo_public/actions/runs/42024714949). La compatibilidad histórica sobre la nueva fisiología pasó en [workflow #42023223852](https://github.com/mxlzz/Nilo_public/actions/runs/42023223852), antes de las correcciones de documentación/inventos.
+**CI final confirmada:** [Validación Nilo #42025565724](https://github.com/mxlzz/Nilo_public/actions/runs/42025565724) **success**, 844 pruebas (843 aprobadas y 1 omitida), 29 focalizadas, auditorías físicas y de arquitectura, escenarios, replay determinista y arranque del ZIP extraído. Huella de replay idéntica entre dos procesos: `9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24`. [Compatibilidad histórica pública #42025565421](https://github.com/mxlzz/Nilo_public/actions/runs/42025565421) **success**, seis partidas sintéticas importadas sobre copias. Ambos workflows verificaron el commit `38b325c40d3a0bacd84eb39fec4dcf9444fe594d`. Los cambios de cierre son exclusivamente documentales (`[skip ci]`).
 
 ## 4. Límites explícitos y siguientes etapas
 
@@ -62,4 +62,4 @@ Por falta de ley física de cubierta, la ventaja de descanso de **obras construi
 - **Etapa 23 — Conducta:** probar con proveedores LLM si los estados cualitativos y el descanso voluntario producen mejores decisiones autónomas. Las pruebas físicas **no** demuestran ausencia de bucles.
 - **Futuras leyes físicas:** cobertura, aislamiento y ambientes representables requieren un modelo explícito y pruebas de estructuras, sin cambiar resultados retroactivamente por denominación.
 
-**Cierre previsto:** auditoría completa, tests, replay entre procesos, ZIP y seis partidas sintéticas históricas en verde; actualizar master #74, issue #75, PR #77, tablero y plan. No publicar ni fusionar 0.7.0 antes de concluir etapa 24.
+**Condición de salida superada:** auditoría integral, pruebas, replay entre procesos, ZIP y seis partidas sintéticas en verde; seguimiento actualizado en master #74, issue #75 y PR #77. **La etapa 13 queda cerrada; etapa 14 · Observación del entorno habilitada.** No publicar ni fusionar 0.7.0 hasta finalizar etapa 24.
