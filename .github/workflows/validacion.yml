@@ -27,6 +27,8 @@ jobs:
         run: python tools/auditar_navegacion_09.py
       - name: Rutas, fronteras y transiciones (etapa 09)
         run: python -m unittest discover -s tests -p 'test_navegacion_09.py' -v
+      - name: Benchmark comparativo de fronteras (etapa 09)
+        run: python tools/benchmark_navegacion_09.py
       - name: Mundo isla_v1 contra snapshots 0.6.4 y seis semillas
         run: python -m unittest discover -s tests -p 'test_mundo_08.py' -v
       - name: Motor headless y adaptadores (regresión focalizada)
