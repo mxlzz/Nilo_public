@@ -155,6 +155,26 @@ class ResourceInvariants10(unittest.TestCase):
         self.assertEqual(w,old)
         self.assertEqual(p["inventory"]["alimento"],12)
 
+    def test_corrupt_forage_stock_rejects_without_partial_regrowth(self):
+        w,p,key=work_site(3)
+        other=tile_key(16,10,0)
+        set_tile(w,16,10,0,"T")
+        w["forage_deposits"]={key:0,other:-1}
+        w["forage_growth"]={key:0,other:0}
+        p["clock_minutes"]=2880
+        before=deepcopy([w,p])
+        _,_,ok,_=forage_action(w,p)
+        self.assertFalse(ok)
+        self.assertEqual([w,p],before)
+
+    def test_negative_food_stock_rejected_without_regrowth(self):
+        w,p,key=work_site(3)
+        p["inventory"]["alimento"]=-1
+        before=deepcopy([w,p])
+        _,_,ok,_=forage_action(w,p)
+        self.assertFalse(ok)
+        self.assertEqual([w,p],before)
+
     def test_cutting_wood_conserves_deposit_stock(self):
         w,p,key=work_site(1)
         self.assertTrue(cut_wood(w,p,15,10,0))

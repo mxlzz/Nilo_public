@@ -128,26 +128,41 @@ def _mature_forage(w, person):
     x, y, z = person["pos"]
     spots = [(x + dx, y + dy) for dx, dy in [(0, 0)] + DIRS
              if valid(x + dx, y + dy) and tile(w, x + dx, y + dy, z) in ("T", ",")]
-    growth = w.setdefault("forage_growth", {})
-    deposits = w.setdefault("forage_deposits", {})
+    # Validar todas las fuentes ANTES de acreditar cualquier rebrote:
+    # una reserva histórica corrupta no puede dejar rebrote parcial.
+    growth = w.get("forage_growth", {})
+    deposits = w.get("forage_deposits", {})
+    updates = []
     for sx, sy in spots:
         key = tile_key(sx, sy, z)
         current = stock_units(deposits, key) if key in deposits else 3
         last = growth.get(key, person.get("clock_minutes", 0))
         cycles = int(max(0, person.get("clock_minutes", 0) - last) // 2880)
         if cycles:
-            deposits[key] = min(3, current + cycles)
-            growth[key] = last + cycles * 2880
+            updates.append((key,min(3,current+cycles),last+cycles*2880))
+    if updates:
+        dst_growth = w.setdefault("forage_growth", {})
+        dst_deposits = w.setdefault("forage_deposits", {})
+        for key, new_amount, new_stamp in updates:
+            dst_deposits[key] = new_amount
+            dst_growth[key] = new_stamp
 
 
 def forage_action(w, person):
     """Una porción obtenida del stock vegetal, sin inventario negativo."""
     inv = person["inventory"]
-    if stock_units(inv, "alimento") >= 12:
+    try:
+        held = stock_units(inv, "alimento")
+    except ResourceBalanceError:
+        return 5, ["La reserva de alimentos es inválida; no se acredita ningún recurso."], False, False
+    if held >= 12:
         return 3, [f"Tengo {inv['alimento']} porciones guardadas; no necesito recolectar más ahora. "
                    "Puedo consumir reservas o dedicarme a otra actividad."], False, False
-    _mature_forage(w, person)
-    source = forage_source(w, person)
+    try:
+        _mature_forage(w, person)
+        source = forage_source(w, person)
+    except ResourceBalanceError:
+        return 5, ["La reserva vegetal contiene un saldo inválido; no se acredita ningún recurso."], False, False
     if source is None:
         return 8, ["No encontré frutos o vegetación comestible disponible en las casillas cercanas."], False, False
     sx, sy = source
