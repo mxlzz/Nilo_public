@@ -1,7 +1,7 @@
 # Nilo 0.7 · Etapa 15 — Deliberación y proveedores LLM
 
 Fecha: 5 de noviembre de 2026. Rama: refactor/0.7. 
-Estado técnico: implementación integrada; cierre pendiente de confirmación del CI final.
+**Estado: COMPLETADA.** [CI integral #42048782962](https://github.com/mxlzz/Nilo_public/actions/runs/42048782962): success, 864 pruebas (1 omitida), diez de etapa 15, auditorías, escenarios, ZIP y replay exacto. [Compatibilidad histórica #42048782972](https://github.com/mxlzz/Nilo_public/actions/runs/42048782972): success, seis partidas sintéticas anteriores reabiertas en copias.
 Referencia: main / 0.6.4, save SQLite v5 y partidas personales sin modificaciones.
 
 Referencias: [plan](PLAN_REESTRUCTURACION_NILO_07.md), [seguimiento](ESTADO_REESTRUCTURACION_07.md), [PR #77](https://github.com/mxlzz/Nilo_public/pull/77), [issue #74](https://github.com/mxlzz/Nilo_public/issues/74).
@@ -53,3 +53,7 @@ La equivalencia semántica y las pruebas de estructura no garantizan equivalenci
 ## 5. Próximo alcance
 
 Etapa 16: memoria, investigación y evidencias; procedencia de recuerdos y conclusiones verificadas. Permanecen previstas las revisiones de persistencia (18), laboratorio (21), QA (22) y evaluación autónoma con proveedores reales (23). No fusionar PR #77 ni publicar 0.7.0 antes de la etapa 24.
+
+## 6. Puerta de salida superada
+
+La CI integral [#42048782962](https://github.com/mxlzz/Nilo_public/actions/runs/42048782962) comprobó el commit de código 3bd36229824b8266f30b0b9bc628f5836ed52d26: **success**, 864 pruebas (1 omitida), diez focalizadas, auditoría estática, 68 escenarios, reproducibilidad de RNG, arranque desde ZIP portable y replay entre procesos con fingerprint idéntico **9c4d43a5815fb042e06e32789b7dc6606023c3eb0634fe08dd7ad90616dc5c24**. La compatibilidad histórica [#42048782972](https://github.com/mxlzz/Nilo_public/actions/runs/42048782972) terminó **success**, seis partidas SQLite sintéticas importadas sobre copias. La documentación posterior usa [skip ci] y no altera Python. `main`, `VERSION` 0.6.4 y partidas personales intactos. PR #77 sigue draft. **Etapa 16 habilitada y pendiente.**
