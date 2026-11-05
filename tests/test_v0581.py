@@ -27,7 +27,8 @@ class SpatialBoundary(unittest.TestCase):
         })
         self.assertEqual(survival_conditions(world, person), (False, True))
         world["structures"][0]["shelter_condition"] = "apto"
-        self.assertEqual(survival_conditions(world, person), (True, True))
+        # Una categoría/etiqueta heredada ya no produce protección física.
+        self.assertEqual(survival_conditions(world, person), (False, True))
         person["pos"] = [15, 11, -1]
         self.assertFalse(survival_conditions(world, person)[1])
 

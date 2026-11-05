@@ -21,15 +21,16 @@ LEGACY_CYCLES = (
 LAYER_IMPORTS = {
     "core": {"core"},
     "physics": {"core", "physics"},
+    "physiology": {"core", "physiology"},
     "worlds": {"core", "worlds", "physics"},
     "agent": {"core", "agent"},
     "cognition": {"core", "agent", "cognition"},
     "storage": {"core", "agent", "worlds", "physics", "storage"},
     "audit": {"core", "agent", "worlds", "physics", "audit"},
-    "application": {"core", "worlds", "physics", "agent", "cognition",
+    "application": {"core", "worlds", "physics", "physiology", "agent", "cognition",
                     "storage", "audit", "application"},
     "web": {"core", "application", "web"},
-    "lab": {"core", "worlds", "physics", "agent", "cognition", "storage",
+    "lab": {"core", "worlds", "physics", "physiology", "agent", "cognition", "storage",
             "audit", "application", "lab"},
 }
 

@@ -131,10 +131,18 @@ def record_design_test(person,step,success,results,stamp,measurement_id=None,
     object_id=_str(step.get('_built_object_id') or step.get('_used_tool_id'),90)
     objects=list(person.get('items',[]))+(list((world or {}).get('structures',[])))
     if op=='rest' and measurement and measurement.get('condition')=='refugio':
+        # La tasa energética en el refugio inicial (terreno h) no demuestra
+        # que una obra nueva le aporte cubierta: exigir evidencia física propia
+        # de la estructura, no nombres, categorías o cifras autodeclaradas.
+        from nilo_runtime.worlds.shelter import shelter_properties
         position=(measurement.get('start') or {}).get('position')
+        assessment=shelter_properties(world or {},position)
+        if (not assessment['sheltered'] or assessment['source']!='structures'
+                or assessment['status']!='verified'):
+            return None
+        ids=set(assessment.get('structure_ids',[]))
         structure=next((b for b in (world or {}).get('structures',[])
-                        if b.get('pos')==position and b.get('category')=='habitaculo'
-                        and b.get('shelter_condition')!='insuficiente' and b.get('design_id')),None)
+                        if b.get('id') in ids and b.get('design_id')),None)
         if not structure:return None
         material_id=structure['design_id']
         object_id=structure['id']
