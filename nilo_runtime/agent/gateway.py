@@ -89,12 +89,12 @@ def build_deliberation_request(cfg,context):
         system=SYSTEM+'\n'+action_instructions()
     elif cfg.get('_compact_context'):
         selected=bounded_context(compact_context(context,char_budget=23000),6900)
-        system=SYSTEM+'\n'+ACTIONS
+        system=SYSTEM+'\n'+action_instructions()
     else:
         # El proveedor OpenAI-compatible conserva el mismo límite de percepción;
         # jamás recibe puntajes internos por omitir el contexto compacto.
         selected=bounded_context(compact_context(context,char_budget=25000),9100)
-        system=SYSTEM+'\n'+ACTIONS
+        system=SYSTEM+'\n'+action_instructions()
     data=json.dumps(selected,ensure_ascii=False,separators=(',',':'))
     if provider=='gemini':
         url=f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
