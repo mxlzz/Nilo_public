@@ -23,6 +23,10 @@ jobs:
         run: python tools/auditar_orquestador_07.py
       - name: Auditoría de topología y generación del mundo (Nilo 0.7)
         run: python tools/auditar_mundo_08.py
+      - name: Auditoría de navegación y único BFS (etapa 09)
+        run: python tools/auditar_navegacion_09.py
+      - name: Rutas, fronteras y transiciones (etapa 09)
+        run: python -m unittest discover -s tests -p 'test_navegacion_09.py' -v
       - name: Mundo isla_v1 contra snapshots 0.6.4 y seis semillas
         run: python -m unittest discover -s tests -p 'test_mundo_08.py' -v
       - name: Motor headless y adaptadores (regresión focalizada)
