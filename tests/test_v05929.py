@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.2.9 — organización del archivo y resumen veraz de pendientes."""
 import shutil
 import subprocess
@@ -6,7 +7,7 @@ import unittest
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/'interfaz.html').read_text(encoding='utf-8')
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 JS=HTML.split('<script>',1)[1].split('</script>',1)[0]
 
 
@@ -132,7 +133,7 @@ console.log('secciones y pendientes reales OK');
         with tempfile.TemporaryDirectory() as tmp:
             test=Path(tmp)/'test.js'
             test.write_text(runner,encoding='utf-8')
-            result=subprocess.run(['node',str(test),str(ROOT/'interfaz.html')],
+            result=subprocess.run(['node',str(test),str(legacy_html_path(ROOT))],
                                   capture_output=True,text=True,timeout=15)
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertIn('secciones y pendientes reales OK',result.stdout)

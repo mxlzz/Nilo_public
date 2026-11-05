@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.24: contorno de intervención solo en objetivos físicos verificables."""
 import json
 import re
@@ -11,7 +12,7 @@ from intervention import active_intervention, _inspection_site
 from nilo import initial_state
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/'interfaz.html').read_text(encoding='utf-8')
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 
 
 class PhysicalTileTests(unittest.TestCase):

@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.27: espera voluntaria, capacidad útil y vistas compactas de proyectos."""
 import json
 import math
@@ -17,7 +18,7 @@ from physics import evaluate_containment
 from nilo import Simulation
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/'interfaz.html').read_text('utf-8')
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 
 
 class WaitOperation(unittest.TestCase):

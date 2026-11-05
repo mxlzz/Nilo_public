@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.1 — lectura compartida, síntesis de pendientes y accesos rápidos."""
 import json
 import sqlite3
@@ -94,7 +95,7 @@ class SimulationSummaryTests(unittest.TestCase):
 
 class InterfaceSummaryTests(unittest.TestCase):
     def test_shortcuts_and_history_and_navigation(self):
-        html=(ROOT/'interfaz.html').read_text('utf-8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertNotIn('Archivo y pensamiento</span>',html)
         self.assertIn('Conocimientos registrados',html)
         self.assertIn('data-tool-jump=',html)

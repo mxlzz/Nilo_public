@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.2 — contrato de inspección, proyectos, pruebas y diagnóstico."""
 import json
 import random
@@ -143,7 +144,7 @@ class DiagnosticAndHistory(unittest.TestCase):
         finally:db.close()
 
     def test_proposals_have_internal_filters_without_new_tab(self):
-        html=(ROOT/'interfaz.html').read_text('utf-8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertIn('data-proposal-filter=',html)
         self.assertIn("proposalFilter==='debug'",html)
         self.assertIn("issue_kind==='limitacion'",html)
