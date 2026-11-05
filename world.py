@@ -32,42 +32,14 @@ from nilo_runtime.worlds.resources import (
     gather_material, nearest_known, forage_source, forage_action,
     harvest_at, cut_wood, gather_action, consume_units,
 )
+from nilo_runtime.worlds.objects import (
+    infer_form, is_portable, item_effects, make_item, physical_item,
+    classify_structure, structure_symbol, enrich_structure,
+)
 
 
 # Objetos portátiles y estructuras ancladas tienen ciclos de vida diferentes.
 # Las propiedades derivan de la forma y de los materiales existentes, no del relato del LLM.
-def infer_form(name,form=''):
-    form=str(form).lower().strip()
-    if form in FORMS:return form
-    name=str(name).lower()
-    for kind,words in FORMS.items():
-        if any(word in name for word in words):return kind
-    return 'golpe' if 'herramienta' in name else 'simple'
-
-def is_portable(name,form='',purpose=''):
-    if str(form).lower().strip() in FORMS:return True
-    name=str(name).lower()
-    return any(word in name for word in PORTABLE_WORDS)
-
-def item_effects(item):
-    # Capacidades verificables limitadas por geometría y resistencia estructural.
-    form=item.get('form','simple');q=float(item.get('resistance',0));hard=float(item.get('hardness',0))
-    if form=='golpe':return {'golpear':round(min(10,(q+hard)/2),1)}
-    if form=='punta':return {'excavar':round(min(10,hard*.7+q*.3),1),'golpear':round(hard*.4,1)}
-    if form=='filo':return {'cortar':round(min(10,hard*.75+q*.25),1)}
-    if form=='palanca':return {'mover':round(min(10,q*.8+hard*.2),1)}
-    if form=='recipiente':return {'contener':round(min(10,q*.5),1)}
-    return {}
-
-def make_item(name,purpose,materials,props,clock,source=None,rng=None):
-    form=infer_form(name,source or '')
-    item={'id':'obj-'+str(physical_suffix(52,rng=rng)), 'name':name,'purpose':purpose,
-          'form':form,'materials':list(materials),'resistance':round(props['resistencia'],1),
-          'hardness':round(props['dureza'],1),'weight':round(props['peso'],1),
-          'durability':100,'tests':[],'created_at_minutes':round(clock,1),'portable':True}
-    item['possible_uses']=item_effects(item)
-    return item
-
 def migrate_portable_structures(w,p):
     p.setdefault('items',[]);p.setdefault('observations',[])
     kept=[];moved=[]
@@ -93,29 +65,6 @@ def record_experience(p,action,subject,success,result,reading=None):
     observations.append(entry)
     del observations[:-100]
     return entry
-
-def classify_structure(name,purpose):
-    """Clasificación solo visual: no atribuye funciones demostradas."""
-    t=(name+' '+purpose).lower()
-    if any(k in t for k in ('palanca','polea','contrapeso','mecanismo','rueda','engranaje','torno','herramienta','dispositivo')):return 'mecanismo'
-    if any(k in t for k in ('refugio','habitación','habitáculo','casa','cabaña','taller','almacén','cobertizo')):return 'habitaculo'
-    if any(k in t for k in ('soporte','puente','plataforma','escalera','muro','mesa','banco','andamio','estructura')):return 'estructura'
-    return 'prototipo'
-
-
-def structure_symbol(s):
-    return {'mecanismo':'M','estructura':'E','habitaculo':'H','prototipo':'?'}.get(s.get('category','prototipo'),'?')
-
-
-def enrich_structure(s):
-    """Compatibilidad de construcciones previas: descripción basada en datos existentes."""
-    s.setdefault('category',classify_structure(str(s.get('name','')),str(s.get('purpose',''))))
-    s.setdefault('status','Prototipo sin funcionamiento verificado')
-    mats=s.get('materials',[])
-    strength=s.get('resistance',0)
-    s.setdefault('description',f"{s.get('category','Prototipo').capitalize()} hecho con {', '.join(mats) if mats else 'materiales sin registrar'}. Resistencia estructural estimada: {strength}/10. La función que imaginé aún no está probada.")
-    return s
-
 
 # tile_key/valid/tile/set_tile/new_world/reveal se reexportan desde
 # nilo_runtime.worlds.island. Reglas físicas y navegación siguen aquí
@@ -515,7 +464,9 @@ def execute_action(w,p,step,rng):
         counts=collections.Counter(mats)
         name=str(step.get('name') or ('herramienta experimental' if op=='craft' else 'estructura experimental')).strip()[:75]
         purpose=str(step.get('purpose') or 'explorar una posibilidad física').strip()[:110]
-        portable=op=='craft' or is_portable(name,step.get('form',''),purpose)
+        # El nombre o el propósito del artefacto no concede portabilidad:
+        # craft produce un elemento transportable; build exige forma explícita.
+        portable=op=='craft' or str(step.get('form','')).casefold().strip() in FORMS
         if not portable:
             category=classify_structure(name,purpose)
             same_site=next((s for s in w.get('structures',[]) if s.get('pos')==p['pos'] and s.get('category')==category and (category=='habitaculo' or s.get('name','').casefold()==name.casefold())),None)
@@ -535,7 +486,7 @@ def execute_action(w,p,step,rng):
         if portable:
             prop={'resistencia':score,'dureza':max(q.get('dureza',0) for q in props_list),
                   'peso':sum(q.get('peso',0) for q in props_list)}
-            item=make_item(name,purpose,mats,prop,p.get('clock_minutes',0),step.get('form'),rng=rng)
+            item=physical_item(name,purpose,mats,prop,p.get('clock_minutes',0),step.get('form'),rng=rng)
             item['geometry']=geometry_from_step(step,mats,item['form'])
             item['physics']=body_physics(mats,item['geometry'],p.get('materials',{}))
             item['contents']={}

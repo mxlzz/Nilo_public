@@ -114,7 +114,10 @@ def _components(materials):
 
 def ensure_object(obj, *, structure=False):
     """Migra obras/herramientas anteriores sin fingir detalles desconocidos."""
-    obj.setdefault('components',_components(_materials(obj)))
+    # setdefault evalúa su argumento aun cuando la clave ya existe:
+    # eso consumía IDs y desviaba el replay en consultas de objetos legados.
+    if 'components' not in obj:
+        obj['components']=_components(_materials(obj))
     if not isinstance(obj.get('space'),dict):
         obj['space']=dimensions(_materials(obj),obj.get('layout'))
     if structure:
@@ -183,7 +186,7 @@ def recompute(obj,person):
         obj['shelter_condition']='cubierto_parcialmente' if len(mats)>=4 and strength>=3 else 'insuficiente'
     if obj.get('portable'):
         from physics import body_physics
-        from world import item_effects
+        from nilo_runtime.worlds.objects import item_effects
         obj['durability']=max(0,min(100,round(100*sum(c['condition'] for c in obj['components'])/max(1,len(mats)))))
         obj['physics']=body_physics(mats,obj.get('geometry',{}),person.get('materials',{}))
         obj['possible_uses']=item_effects(obj)
