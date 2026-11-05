@@ -20,13 +20,17 @@ class MotorLabTests(unittest.TestCase):
         result = self.lab.act({"op": "explore"})
         self.assertIn("status", result["last"]["result"])
         self.assertTrue(result["last"]["trace"])
-        self.assertTrue(any(r["file"] == "world.py" and
+        self.assertTrue(any(r["file"] == "navigation.py" and
                             r["function"] == "exploration_frontier"
                             for r in result["last"]["trace"]))
         for row in result["last"]["trace"]:
             self.assertGreaterEqual(row["first"], 1)
             self.assertGreaterEqual(row["last"], row["first"])
             self.assertIn("#L", row["url"])
+            self.assertIn("github.com/mxlzz/Nilo_public/blob/refactor/0.7/",
+                          row["url"])
+            if row["file"] == "navigation.py":
+                self.assertIn("/nilo_runtime/worlds/navigation.py#L", row["url"])
 
     def test_fabricate_and_test_load_with_real_capability(self):
         before = self.lab.person["inventory"]["madera"]
