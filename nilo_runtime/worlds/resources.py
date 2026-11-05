@@ -86,7 +86,11 @@ def nearest_known(w, person, chars):
         tx, ty, tz = map(int, key.split(","))
         if tz != z or tile(w, tx, ty, z) not in chars:
             continue
-        if stock_units(w["deposits"], key) <= 0:
+        try:
+            available=stock_units(w["deposits"], key)
+        except ResourceBalanceError:
+            continue  # Stock histórico inválido: jamás habilita recolección.
+        if available <= 0:
             continue
         candidates = [(tx, ty)] if passable(w, tx, ty, z) else []
         candidates += [(tx + dx, ty + dy) for dx, dy in DIRS

@@ -126,6 +126,10 @@ class ResourceInvariants10(unittest.TestCase):
 
     def test_forage_with_consumption_and_regrowth(self):
         w,p,key=work_site(3)
+        # Aislar la única vegetación para no recolectar otra fuente cercana.
+        for dx,dy in world.DIRS:
+            if world.valid(15+dx,10+dy):
+                set_tile(w,15+dx,10+dy,0,"#")
         w["forage_deposits"]={key:1}
         self.assertEqual(forage_source(w,p),(15,10))
         before=deepcopy(w)

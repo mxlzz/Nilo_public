@@ -119,7 +119,9 @@ def interact(world,person,step,rng=None):
         if dest_old>0 and material!=dest_mat:return _fail("El destino tiene contenido incompatible.")
         limit=capacity(dest,person,material)
         free=round(max(0,limit-dest_old),2)
-        q=_quantity(step.get("quantity"),min(old,free),integer=material!="agua")
+        suggested=(min(old,free) if material=="agua" else
+                   int(math.floor(min(old,free))))
+        q=_quantity(step.get("quantity"),suggested,integer=material!="agua")
         if q is None or q>old or q>free:return _fail(f"No se puede transferir esa cantidad: origen {old}, espacio disponible {free}.")
         # El agua conserva la precisión decimal que ya tenía. Las transferencias
         # de sólidos usan el mismo balance entero del inventario/depósitos.
@@ -197,7 +199,9 @@ def interact(world,person,step,rng=None):
         material,old=_contents(source)
         if not material or material=="agua" or old<=0:
             return _fail("Para agua usá transferir o descargar; retirar devuelve sólidos al inventario.")
-        q=_quantity(step.get("quantity"),old,integer=True)
+        q=_quantity(step.get("quantity"),
+                    int(old) if float(old).is_integer() else None,
+                    integer=True)
         if q is None or q>old:return _fail("La cantidad solicitada no está almacenada.")
         inv=person.setdefault("inventory",{})
         before=inv.get(material,0)
