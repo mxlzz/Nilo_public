@@ -4,6 +4,8 @@ El LLM propone intenciones; este módulo define las consecuencias físicas.
 Sin dependencias externas.
 """
 from __future__ import annotations
+
+from nilo_runtime.core.identity import physical_suffix
 import math, random, collections, re
 from physics import geometry_from_step, body_physics, evaluate_containment, evaluate_buoyancy, properties as material_physics
 from mechanics import create_assembly, test_assembly
@@ -11,18 +13,20 @@ from construction import (initialize_object, ensure_object, apply_intervention)
 from phenomena import missing_physics, record_unmodeled, no_model_message
 
 from catalogo import (MATERIALS, TERRAINS, YIELDS, GATHER_SOURCES,
-                     GATHER_ALIASES, INSPECT_ALIASES, PASSABLE,
+                     GATHER_ALIASES, INSPECT_ALIASES,
                      PORTABLE_WORDS, FORMS)
+# Fachada estable del mundo: los niveles y el RNG de creación tienen dueño
+# exclusivo en worlds/island, sin importar agente ni dispatcher de acciones.
+from nilo_runtime.worlds.island import (
+    W, H, PASSABLE, DIRS, tile_key, valid, tile, set_tile, new_world, reveal,
+)
 
-W, H = 37, 21
 
 def gather_material(target):
     name=" ".join(str(target or "").casefold().split())
     return name if name in GATHER_SOURCES else GATHER_ALIASES.get(name)
 
 
-PASSABLE = set(".,Tocrs=h:vse")
-DIRS = [(0,-1),(1,0),(0,1),(-1,0)]
 
 
 
@@ -51,9 +55,9 @@ def item_effects(item):
     if form=='recipiente':return {'contener':round(min(10,q*.5),1)}
     return {}
 
-def make_item(name,purpose,materials,props,clock,source=None):
+def make_item(name,purpose,materials,props,clock,source=None,rng=None):
     form=infer_form(name,source or '')
-    item={'id':'obj-'+str(random.getrandbits(52)), 'name':name,'purpose':purpose,
+    item={'id':'obj-'+str(physical_suffix(52,rng=rng)), 'name':name,'purpose':purpose,
           'form':form,'materials':list(materials),'resistance':round(props['resistencia'],1),
           'hardness':round(props['dureza'],1),'weight':round(props['peso'],1),
           'durability':100,'tests':[],'created_at_minutes':round(clock,1),'portable':True}
@@ -109,69 +113,9 @@ def enrich_structure(s):
     return s
 
 
-def tile_key(x,y,z): return f"{x},{y},{z}"
-
-def valid(x,y): return 0 <= x < W and 0 <= y < H
-
-def tile(world,x,y,z=0):
-    if not valid(x,y): return "#"
-    return world["levels"][str(z)][y][x]
-
-def set_tile(world,x,y,z,ch):
-    line=list(world["levels"][str(z)][y]); line[x]=ch
-    world["levels"][str(z)][y]=''.join(line)
-
-
-def new_world(seed=7321):
-    rng=random.Random(seed)
-    surface=[]; underground=[]
-    for y in range(H):
-        sr=[]; cr=[]
-        for x in range(W):
-            noise = math.sin(x*.27)+ math.cos(y*.47) + math.sin((x+y)*.22)
-            if x in (0,W-1) or y in (0,H-1): sr.append('~' if y in (0,H-1) else '^'); cr.append('#');continue
-            if x>30 and y<7: ch='~' if noise<1.1 else 's'
-            elif x<6 and y<6: ch='^' if rng.random()<.75 else '.'
-            elif x>25 and y>13: ch='^' if rng.random()<.5 else 's'
-            else: ch=rng.choices(['.',',','T','s','^'],[39,25,20,10,6])[0]
-            sr.append(ch)
-            cr.append('#' if rng.random()<.72 else ':')
-        surface.append(''.join(sr)); underground.append(''.join(cr))
-    w={"seed":seed,"levels":{"0":surface,"-1":underground},"visited":{},"revealed":[],"deposits":{},"structures":[],"excavation":{},"sites":{},"findings":[],"trail":[]}
-    for (x,y,ch) in [(15,10,'h'),(15,11,'='),(16,11,'='),(17,11,'='),(23,7,'c'),(12,7,'r'),(28,10,'o'),(7,15,'o'),(30,17,'v')]:
-        set_tile(w,x,y,0,ch)
-    # Pasillo accesible hacia la entrada a la cueva.
-    for x in range(17,24):
-        set_tile(w,x,10,0,'=')
-    for y in range(7,11): set_tile(w,23,y,0, 'c' if y==7 else '=')
-    set_tile(w,23,7,-1,'e')
-    for y in range(7,15):
-        for x in range(17,31):
-            if rng.random()>.25 or x in range(21,26): set_tile(w,x,y,-1,':')
-    set_tile(w,23,7,-1,'e')  # Aplicar tras excavar las galerías, para no sobrescribir la salida.
-    for (x,y,ch) in [(20,11,'o'),(27,9,'v'),(29,13,'r'),(18,8,'o'),(25,13,'v')]: set_tile(w,x,y,-1,ch)
-    for z, rows in w['levels'].items():
-        for y,row in enumerate(rows):
-            for x,ch in enumerate(row):
-                if ch in YIELDS: w['deposits'][tile_key(x,y,int(z))]=rng.randint(2,6)
-    w['sites']={"refugio":{"x":15,"y":10,"z":0},"cueva":{"x":23,"y":7,"z":0},"ruinas":{"x":12,"y":7,"z":0}}
-    reveal(w,15,10,0,3)
-    return w
-
-
-def reveal(w,x,y,z,r=2):
-    known=set(w['revealed']); newly=[]
-    for yy in range(max(0,y-r),min(H,y+r+1)):
-        for xx in range(max(0,x-r),min(W,x+r+1)):
-            if (xx-x)**2+(yy-y)**2 <= (r+.5)**2:
-                k=tile_key(xx,yy,z)
-                if k not in known:
-                    known.add(k);newly.append((xx,yy,tile(w,xx,yy,z)))
-    # Preservar la secuencia de descubrimiento. list(set(...)) usa un orden
-    # variable entre procesos y alteraba decisiones aleatorias posteriores.
-    w['revealed'].extend(tile_key(xx,yy,z) for xx,yy,_ in newly)
-    return newly
-
+# tile_key/valid/tile/set_tile/new_world/reveal se reexportan desde
+# nilo_runtime.worlds.island. Reglas físicas y navegación siguen aquí
+# hasta sus propias etapas (09–12); no existen generadores paralelos.
 
 def cave_exit(w):
     """Portal real y su posición en el subsuelo; los mapas heredados se migran."""
@@ -946,7 +890,7 @@ def execute_action(w,p,step,rng):
         if portable:
             prop={'resistencia':score,'dureza':max(q.get('dureza',0) for q in props_list),
                   'peso':sum(q.get('peso',0) for q in props_list)}
-            item=make_item(name,purpose,mats,prop,p.get('clock_minutes',0),step.get('form'))
+            item=make_item(name,purpose,mats,prop,p.get('clock_minutes',0),step.get('form'),rng=rng)
             item['geometry']=geometry_from_step(step,mats,item['form'])
             item['physics']=body_physics(mats,item['geometry'],p.get('materials',{}))
             item['contents']={}
@@ -966,7 +910,7 @@ def execute_action(w,p,step,rng):
                 facts.append(f"Es el ejemplar adicional n.º {equivalent_count+1} de esta forma y composición; mantiene ID, revisión y desgaste independientes.")
             record_experience(p,'craft',name,True,facts[0])
         else:
-            structure={'id':f"obra-{len(w['structures'])+1}-{random.getrandbits(16)}",'name':name,'purpose':purpose,'materials':mats,
+            structure={'id':f"obra-{len(w['structures'])+1}-{physical_suffix(16,rng=rng)}",'name':name,'purpose':purpose,'materials':mats,
                        'resistance':score,'pos':p['pos'][:],'created_by':'nilo',
                        'category':classify_structure(name,purpose),'status':'Prototipo sin funcionamiento verificado',
                        'made_at_minutes':round(p.get('clock_minutes',0),1)}

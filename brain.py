@@ -13,6 +13,7 @@ from experiment_log import closure_status
 from world import cave_exit, known_exit_route, gather_material
 from research_cycle import normalize_prediction, recent_predictions
 from action_contracts import instructions as action_instructions, summary as contract_summary, SUPPORTED_OPERATIONS
+from nilo_runtime.core.operations import registered_operations, validate_operation
 from diagnostic_support import human_review_feedback
 
 ROOT=Path(__file__).resolve().parent
@@ -556,10 +557,15 @@ def gather_outcome_discrepancies(person,limit=6):
 
 def normalize_decision(raw,legacy_rest=False):
     if not isinstance(raw,dict):raise ValueError('La respuesta no es un objeto JSON.')
-    ops=set(SUPPORTED_OPERATIONS)
+    ops=set(registered_operations())
     plan=[]
     for s in raw.get('plan',[])[:12]:
         if isinstance(s,dict) and str(s.get('op','')).lower() in ops:
+            # La lectura de saves/replays antiguos conserva sus propios
+            # contratos; los planes nuevos pasan por la misma verificación
+            # de forma que usa el planificador y el despacho físico.
+            if not legacy_rest and not validate_operation(s).valid:
+                continue
             s=dict(s);s['op']=s['op'].lower()
             if s['op']=='explore':
                 # Normalizar alias, sin reemplazar dirección inválida por explore

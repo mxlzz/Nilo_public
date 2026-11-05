@@ -3,6 +3,7 @@
 No da agua ni concede efectos por el nombre de una herramienta.
 """
 import unicodedata
+from nilo_runtime.core.identity import new_uuid
 import uuid
 
 
@@ -46,7 +47,7 @@ def missing_physics(step):
 
 def record_unmodeled(person,step,missing,stamp):
     entries=person.setdefault('unmodeled_attempts',[])
-    entry={'id':'no-modelo-'+uuid.uuid4().hex[:10], 'when':stamp,
+    entry={'id':'no-modelo-'+new_uuid().hex[:10], 'when':stamp,
            'op':str(step.get('op',''))[:30],
            'target':str(step.get('item') or step.get('target') or '')[:120],
            'method':str(step.get('method') or step.get('action') or '')[:95],

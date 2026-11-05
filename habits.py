@@ -55,11 +55,16 @@ def _material_from_result(facts):
     return None
 
 
-def record_skill(person, step, success, facts, stamp, old_inventory=None):
-    """Registrar exclusivamente resultados materiales, sin inferir pruebas narradas."""
+def record_skill(person, step, success, facts, stamp, old_inventory=None,
+                 *, action_result=None, measurement=None):
+    """Aprender del resultado estructurado; textos sólo en migraciones antiguas."""
     ensure_habits(person)
     if not success:return None
     op=step.get('op')
+    if action_result is not None and (
+            action_result.op != op or action_result.status != 'verified_success'
+            or not action_result.success):
+        return None
     if op=='forage' and person.get('inventory',{}).get('alimento',0)> (old_inventory or {}).get('alimento',0):
         key='forage';data={'op':'forage','target':'alimento'}
     elif op=='gather':
@@ -70,9 +75,13 @@ def record_skill(person, step, success, facts, stamp, old_inventory=None):
                 or person.get('inventory',{}).get(material,0)<=old_inventory.get(material,0)):
             return None
         key='gather:'+material;data={'op':'gather','target':material}
-    elif op=='drink' and any('bebí' in str(f).lower() for f in facts):
+    elif op=='drink' and (action_result is not None or
+                            any('bebí' in str(f).lower() for f in facts)):
         key='drink';data={'op':'drink','target':'agua'}
-    elif op=='craft' and any('fabriqu' in str(f).lower() for f in facts):
+    elif op=='craft' and (
+            (action_result is not None and isinstance(measurement,dict)
+             and measurement.get('object_delta',0)>0)
+            or (action_result is None and any('fabriqu' in str(f).lower() for f in facts))):
         # Fabricar algo demuestra el procedimiento constructivo, no su función.
         recipe={k:step[k] for k in ('materials','name','form','purpose','geometry') if k in step}
         if not recipe.get('materials') or not recipe.get('name'):return None

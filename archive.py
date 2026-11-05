@@ -4,6 +4,8 @@ Se conserva el snapshot rápido para la simulación; el archivo no tiene políti
 retención automática. INSERT OR IGNORE aporta idempotencia durante las migraciones.
 """
 from __future__ import annotations
+
+from nilo_runtime.core.identity import new_uuid
 import json, time, uuid, hashlib
 from record_links import explicit_links, record_title
 
@@ -58,7 +60,7 @@ class History:
 
     def add(self, category, item, fallback=None):
         if category not in CATEGORIES:raise ValueError('Categoría inválida')
-        key = str(item.get('id') or fallback or uuid.uuid4().hex)
+        key = str(item.get('id') or fallback or new_uuid().hex)
         item['id'] = key  # Estabiliza importaciones antiguas y evita duplicados
         payload=json.dumps(item,ensure_ascii=False,separators=(',',':'),default=str)
         # No ejecutar INSERT OR IGNORE sobre una clave ya presente: la secuencia

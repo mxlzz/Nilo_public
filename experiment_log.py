@@ -4,6 +4,8 @@ El modelo puede escoger ensayos; sólo el motor mide los resultados. No se extra
 un resultado de una condición a otras ni se confunden tareas rutinarias con ensayos.
 """
 from __future__ import annotations
+
+from nilo_runtime.core.identity import new_uuid
 import uuid, unicodedata, re
 from survival import ensure_needs
 from laboratory import measured_physics
@@ -56,7 +58,7 @@ def measure(person,step,start,end,facts,success,stamp,action_result=None):
     good_rest=(op=='rest' and success and duration>=15
                and start['position']==end['position'] and start['sheltered']==end['sheltered']
                and start['needs']['energia']<=60 and end['needs']['energia']<74.9)
-    sample={'id':'med-'+uuid.uuid4().hex[:12],'when':stamp,'op':op,
+    sample={'id':'med-'+new_uuid().hex[:12],'when':stamp,'op':op,
             'target':str(step.get('target') or step.get('item') or '')[:80],
             'method':str(step.get('method',''))[:60], 'duration_minutes':duration,
             'start':start,'end':end,'needs_delta':changes,'inventory_delta':inv_change,
@@ -101,7 +103,7 @@ def compare_rest(person,stamp):
         conclusion=f'En los descansos medidos, recuperé {diff:.2f} puntos de energía por hora más dentro del refugio que a la intemperie.'
     else:
         conclusion=f'En los descansos medidos, recuperé {abs(diff):.2f} puntos de energía por hora más a la intemperie que en el refugio.'
-    entry={'id':'con-'+uuid.uuid4().hex[:12], 'when':stamp,'topic':'recuperacion_energia',
+    entry={'id':'con-'+new_uuid().hex[:12], 'when':stamp,'topic':'recuperacion_energia',
            'status':'comprobada','text':conclusion,
            'evidence_ids':[a['id'],b['id']],
            'rates':{'refugio':a['energy_per_hour'],'intemperie':b['energy_per_hour']},
@@ -178,7 +180,7 @@ def observational_conclusion(person,step,stamp):
     key='observacion:'+canonical(label)[:90]
     if any(c.get('topic')==key and set(c.get('evidence_ids',[]))==set(evidence_ids) for c in person.get('conclusions',[])):
         return False,'Ya registré esa misma observación con las mismas evidencias.',None
-    entry={'id':'con-'+uuid.uuid4().hex[:12],'when':stamp,'topic':key,'status':'observacion_comprobada',
+    entry={'id':'con-'+new_uuid().hex[:12],'when':stamp,'topic':key,'status':'observacion_comprobada',
            'text':content[:1100], 'label':label,'evidence_ids':list(evidence_ids),
            'scope':'Resultados observados en esas acciones; no demuestra una regla física universal.'}
     person.setdefault('conclusions',[]).append(entry)

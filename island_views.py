@@ -6,6 +6,8 @@ No cambia reglas físicas ni el orden de revelación.
 """
 from __future__ import annotations
 
+from copy import deepcopy
+
 from world import DIRS, H, TERRAINS, W, enrich_structure, structure_symbol, tile_key, valid
 
 
@@ -33,8 +35,8 @@ def survival_conditions(world, agent):
 def map_snapshot(world, agent):
     """Proyección del mundo para la interfaz, no acceso a la verdad oculta.
 
-    Conserva la salida JSON y el comportamiento de enriquecimiento de obras
-    de la versión 0.5.8. La UI consulta capas sin desplazar al personaje.
+    Conserva la salida JSON y la apariencia de obras antiguas, pero su
+    enriquecimiento opera sobre COPIAS: consultar el mapa no altera el mundo.
     """
     x, y, z = agent["pos"]
     known = set(world["revealed"])
@@ -45,9 +47,11 @@ def map_snapshot(world, agent):
         by_pos = {}
         for structure in world.get("structures", []):
             if len(structure.get("pos", [])) == 3 and structure["pos"][2] == level:
-                enrich_structure(structure)
+                # Una proyección de lectura no completa campos sobre el mundo real.
+                # La compatibilidad visual vive en la copia que recibe la UI.
+                projected = enrich_structure(deepcopy(structure))
                 key = f"{structure['pos'][0]},{structure['pos'][1]}"
-                by_pos.setdefault(key, []).append(structure)
+                by_pos.setdefault(key, []).append(projected)
         layer = []
         for yy in range(H):
             chars = []

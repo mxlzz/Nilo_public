@@ -4,6 +4,8 @@ No crea conocimientos ni recursos; cada paso pasa por el mismo motor físico. La
 condiciones y rutas se vuelven a comprobar inmediatamente antes de ejecutar.
 """
 from __future__ import annotations
+
+from nilo_runtime.core.identity import new_uuid
 import uuid
 from world import tile_key, pathfind, known_exit_route, valid
 
@@ -69,7 +71,7 @@ def normalize_task(raw, now, project_id=None):
         try:limit=float(condition.get('menor_que',50))
         except (ValueError,TypeError):return None
         clean.update(necesidad=need,menor_que=max(1,min(90,limit)))
-    return {'id':'tar-'+uuid.uuid4().hex[:10], 'modo':mode, 'titulo':title,
+    return {'id':'tar-'+new_uuid().hex[:10], 'modo':mode, 'titulo':title,
             'motivo':str(raw.get('motivo','')).strip()[:200],
             'proyecto_id':project_id,'cuando':clean,'creada_minuto':float(now),
             'pasos':out,'indice':0,'estado':'pendiente','resultados':[],

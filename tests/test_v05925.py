@@ -66,7 +66,7 @@ class VisualPreferences(unittest.TestCase):
 
 class VisualEntries(unittest.TestCase):
     def test_notes_use_real_individual_read_status_and_no_long_button(self):
-        self.assertIn("item['read']=", (ROOT/"nilo.py").read_text(encoding="utf-8"))
+        self.assertIn("item['read']=", (ROOT/"nilo_runtime/application/records.py").read_text(encoding="utf-8"))
         self.assertNotIn("data-read-note=",HTML)
         self.assertIn("markRead(tab==='notes'?'journal':'news',id,true)",JS)
         self.assertNotIn("Leído hasta aquí",HTML)
@@ -100,7 +100,7 @@ class VisualEntries(unittest.TestCase):
     def test_import_uses_installer_and_browser_sync_without_llm(self):
         self.assertIn("from interface_prefs import import_settings",(ROOT/"primer_inicio.py").read_text())
         self.assertIn("import_settings(source, HERE)",(ROOT/"migrar.py").read_text())
-        self.assertIn("/api/ui-preferences",(ROOT/"nilo.py").read_text())
+        self.assertIn("/api/ui-preferences",(ROOT/"nilo_runtime/web/http.py").read_text())
         self.assertIn("bootstrapUIPrefs().finally(()=>refresh())",JS)
         self.assertIn("nilo.mapZoom.v2",JS)
         self.assertIn("nilo.tabIndicators.v1",JS)

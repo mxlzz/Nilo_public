@@ -4,6 +4,8 @@ Aprobar un fenómeno es autorización editorial, no una implementación física:
 solo el código verificado del motor puede producir cambios en el mundo.
 """
 from __future__ import annotations
+
+from nilo_runtime.core.identity import new_uuid
 import uuid
 from action_contracts import SUPPORTED_OPERATIONS
 from diagnostic_support import select_physics_evidence, select_debug_evidence
@@ -47,7 +49,7 @@ def register_design(person, step, stamp):
     if prior:
         version=prior['versions'][-1]['version']+1
     else:
-        prior={'id':'inv-'+uuid.uuid4().hex[:10],'name':name,'created':stamp,'versions':[],
+        prior={'id':'inv-'+new_uuid().hex[:10],'name':name,'created':stamp,'versions':[],
                'tests':[],'status':'hipotesis','verified':False}
         person['designs'].append(prior);version=1
     prior['name']=name;prior['updated']=stamp
@@ -242,7 +244,7 @@ def submit_proposal(person,step,stamp,available_physics):
     # modelo. Una palabra compartida o un ID inventado no justifican el vínculo.
     linked,association=select_physics_evidence(step,person.get('unmodeled_attempts',[]))
     proposal={'evidence_quality':'respaldada_por_no_evaluable' if linked else 'hipotesis_sin_prueba_de_fisica',
-              'id':'sol-'+uuid.uuid4().hex[:10],'when':stamp,'phenomenon':phenomenon,
+              'id':'sol-'+new_uuid().hex[:10],'when':stamp,'phenomenon':phenomenon,
               'type':'physics','rationale':rationale,'experiment':question,'missing_capability':gap,
               'context':_str(step.get('context'),400),'evidence_ids':[a['id'] for a in linked],
               'evidence':linked,'evidence_relation':association,
@@ -258,7 +260,7 @@ def submit_proposal(person,step,stamp,available_physics):
 def record_action_outcome(person, step, success, facts, stamp, position):
     """Registro comprobable de un intento, independiente de la explicación del LLM."""
     ensure_records(person)
-    entry={'id':'act-'+uuid.uuid4().hex[:12], 'when':stamp,
+    entry={'id':'act-'+new_uuid().hex[:12], 'when':stamp,
            'op':_str(step.get('op'),32),
            'target':_str(step.get('target') or step.get('item') or step.get('name') or
                         (f"({step.get('x')},{step.get('y')})" if 'x' in step else ''),130),
@@ -314,7 +316,7 @@ def submit_debug_report(person, step, stamp):
                 else pending_revision.get('evidence_relation',association)),
             'status':'pendiente','review':None})
         return True,f"Amplié la propuesta '{title}' y la devolví a evaluación, sin afirmar que existe un bug."
-    report={'id':'bug-'+uuid.uuid4().hex[:10], 'type':'debug','when':stamp,
+    report={'id':'bug-'+new_uuid().hex[:10], 'type':'debug','when':stamp,
             'title':title,'expected':expected,'observed':observed,
             'issue_kind':kind,'manual_reference':manual_reference,
             'rationale':rationale,'related_action':_str(step.get('related_action'),32),

@@ -4,6 +4,8 @@ No interviene en la memoria del personaje. Las marcas por ficha son independient
 del navegador; los registros Cuaderno/Novedades conservan sus marcas del archivo.
 """
 from __future__ import annotations
+
+from nilo_runtime.core.identity import new_uuid
 import json
 import time
 import uuid
@@ -62,7 +64,7 @@ class ReviewStore:
         return True
 
     def new_summary(self,text,entries,model):
-        sid='sum-'+uuid.uuid4().hex[:14]
+        sid='sum-'+new_uuid().hex[:14]
         self.db.execute('INSERT INTO observer_summaries(id,made_at,text,entries,model) VALUES(?,?,?,?,?)',
                         (sid,time.time(),text,json.dumps(entries,ensure_ascii=False),model))
         return sid

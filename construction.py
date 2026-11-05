@@ -5,6 +5,8 @@ objeto. Las plantas usan coordenadas locales, dimensiones limitadas por
 recursos, y un historial inmutable de versiones. No simula dinámica 3D.
 """
 from __future__ import annotations
+
+from nilo_runtime.core.identity import new_uuid
 from collections import Counter
 from copy import deepcopy
 import math
@@ -106,7 +108,7 @@ def _tool_scheme(obj):
 
 
 def _components(materials):
-    return [{'id':'cmp-'+uuid.uuid4().hex[:9],'material':m,'condition':1.0}
+    return [{'id':'cmp-'+new_uuid().hex[:9],'material':m,'condition':1.0}
             for m in materials]
 
 

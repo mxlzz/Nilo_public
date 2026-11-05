@@ -1,6 +1,7 @@
 """Hipótesis de Nilo, contrastadas solo con métricas reales del motor."""
 import math
 import re
+from nilo_runtime.core.identity import new_uuid
 import uuid
 
 OPS = {"experiment", "use", "rest", "craft", "build", "assemble", "modify", "combine", "excavate"}
@@ -58,7 +59,7 @@ def begin_prediction(person,step,stamp):
     if step.get("op") not in OPS:return None
     pred=normalize_prediction(step.get("prediction"))
     if pred is None:return None
-    row={"id":"pred-"+uuid.uuid4().hex[:12],"when":stamp,
+    row={"id":"pred-"+new_uuid().hex[:12],"when":stamp,
          "clock_minutes":float(person.get("clock_minutes",0)),
          "project_id":(person.get("project") or {}).get("id"),
          "operation":step["op"],"target":str(step.get("target") or step.get("item") or step.get("name") or "")[:120],

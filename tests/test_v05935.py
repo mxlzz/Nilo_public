@@ -143,5 +143,5 @@ class InterfaceStructure(unittest.TestCase):
         self.assertIn('renderNextObserverSummary(summaryContinuation,summaryGeneration)',html)
         self.assertIn('Registros destacados (',html)
         self.assertIn('summaryContinuation=packet.continuation||null',html)
-        self.assertIn("'news','journal'",(Path(__file__).resolve().parent.parent/'nilo.py').read_text('utf8'))
+        self.assertIn("'news','journal'",(Path(__file__).resolve().parent.parent/'nilo_runtime/application/records.py').read_text('utf8'))
 if __name__=='__main__':unittest.main()

@@ -4,6 +4,8 @@ Unidades abstractas, deliberadamente no equivalentes a ingeniería real.
 Cada resultado requiere componentes, recursos y condiciones concretas.
 """
 from __future__ import annotations
+
+from nilo_runtime.core.identity import new_uuid
 from collections import Counter
 import uuid
 
@@ -56,7 +58,7 @@ def create_assembly(person, step):
     materials=[p['material'] for p in clean]
     properties=[person['materials'][m] for m in materials]
     resistance=min(float(q.get('resistencia',3)) for q in properties)
-    item={'id':'mec-'+uuid.uuid4().hex[:10], 'name':str(step.get('name','Ensamblaje'))[:85],
+    item={'id':'mec-'+new_uuid().hex[:10], 'name':str(step.get('name','Ensamblaje'))[:85],
           'form':'ensamblaje','purpose':str(step.get('purpose',''))[:220],
           'materials':materials,'parts':clean,'joints':connections,
           'resistance':resistance,'hardness':max(float(q.get('dureza',2)) for q in properties),

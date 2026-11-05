@@ -4,6 +4,8 @@ No revela propiedades internas antes de que Nilo las haya probado. Los resultado
 valores abstractos, no magnitudes de ingeniería real. Comparar no demuestra causalidad.
 """
 from __future__ import annotations
+
+from nilo_runtime.core.identity import new_uuid
 import uuid
 from physics import evaluate_containment, evaluate_buoyancy
 
@@ -111,7 +113,7 @@ def compare(person,step,stamp):
         observation=('Comparé descansos medidos: '+text+
                      '. Las diferencias describen esas condiciones y no prueban '
                      'por sí solas el funcionamiento de una construcción particular.')
-        entry={'id':'con-'+uuid.uuid4().hex[:12],'when':stamp,
+        entry={'id':'con-'+new_uuid().hex[:12],'when':stamp,
                'topic':'comparacion:descanso:energia_por_hora',
                'status':'comparacion_medida','text':observation,
                'metric':'energia_por_hora','values':values,
@@ -144,7 +146,7 @@ def compare(person,step,stamp):
         observation+=' Las condiciones constructivas difieren; los resultados no demuestran por sí solos qué propiedad causó la diferencia.'
     if any(c.get('evidence_ids')==ids and c.get('metric')==metric for c in person.get('conclusions',[])):
         return False,'Esta comparación ya está registrada con esas mismas pruebas.',None
-    entry={'id':'con-'+uuid.uuid4().hex[:12],'when':stamp,
+    entry={'id':'con-'+new_uuid().hex[:12],'when':stamp,
            'topic':'comparacion:'+details[0]['kind']+':'+metric,'status':'comparacion_medida',
            'text':observation,'metric':metric,'values':values,'evidence_ids':ids,
            'scope':'Medición descriptiva de condiciones concretas. No implica causalidad general.'}

@@ -53,7 +53,7 @@ class ContextualNavigation(unittest.TestCase):
         self.assertEqual(history.get('measurement','med-a1b2')['op'],'use')
         self.assertIsNone(history.get('measurement','med-nada'))
         self.assertIsNone(history.get('journal','med-a1b2'))
-        self.assertIn("path=='/api/measurement'",(ROOT/'nilo.py').read_text(encoding='utf-8'))
+        self.assertIn("path=='/api/measurement'",(ROOT/'nilo_runtime/web/http.py').read_text(encoding='utf-8'))
         db.close()
 
     def test_rendered_reference_and_archive_navigation(self):

@@ -6,6 +6,7 @@ registro, sin importar Simulation ni modificar el contexto del LLM.
 """
 from __future__ import annotations
 from collections import Counter
+from nilo_runtime.core.operations import get_spec, validate_operation
 from construction import find_object
 from physics import geometry_from_step
 from phenomena import missing_physics
@@ -35,7 +36,15 @@ class IslandPlanner:
         projected_gather=set();future_forms={};possible_move=False;plan=[];rejected=[]
         returning_to_surface=False
         for raw in steps:
-            step=dict(raw);op=step.get('op')
+            validation=validate_operation(raw)
+            if not validation.valid:
+                rejected.append(f"{validation.operation or 'acción'}: {validation.reason}")
+                continue
+            step=dict(raw);op=validation.operation
+            step['op']=op
+            # La familia y el nombre provienen del catálogo único. Las
+            # condiciones físicas posteriores pertenecen al mundo/entorno.
+            spec=get_spec(op)
             explanation=None
             if op=='go':
                 # Si el plan incluye primero volver a superficie, la orilla solo

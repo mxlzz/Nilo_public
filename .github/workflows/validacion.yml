@@ -1,7 +1,7 @@
 name: Validación Nilo
 on:
   push:
-    branches: [main, "work/**"]
+    branches: [main, "work/**", "refactor/**"]
   pull_request:
 jobs:
   tests:
@@ -12,12 +12,30 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Auditoría de dependencias y ciclos (Nilo 0.7)
+        run: python tools/auditar_arquitectura.py
+      - name: Auditoría de identidad y RNG del dominio (Nilo 0.7)
+        run: python tools/auditar_identidad_07.py
+      - name: Auditoría de catálogo, contratos y dispatch de operaciones (Nilo 0.7)
+        run: python tools/auditar_operaciones_07.py
+      - name: Auditoría del motor headless y fachada HTTP (Nilo 0.7)
+        run: python tools/auditar_orquestador_07.py
+      - name: Auditoría de topología y generación del mundo (Nilo 0.7)
+        run: python tools/auditar_mundo_08.py
+      - name: Mundo isla_v1 contra snapshots 0.6.4 y seis semillas
+        run: python -m unittest discover -s tests -p 'test_mundo_08.py' -v
+      - name: Motor headless y adaptadores (regresión focalizada)
+        run: timeout 90s python -m unittest discover -s tests -p 'test_orquestador_07.py' -v
       - name: Pruebas sin credenciales
         run: python -m unittest discover -s tests -v
+      - name: Continuidad RNG/IDs entre procesos y semillas globales (#143)
+        run: python tools/verificar_identidad_07.py
       - name: Escenarios físicos deterministas
         run: python validar_escenarios.py --seed 7321
       - name: Reproducir decisiones y estados sin proveedor
         run: python reproducir.py tests/fixtures/replay_basico.json
+      - name: Importar runtime desde ZIP portable (sin publicar release)
+        run: python tools/verificar_paquete_07.py
       - name: Comparar huellas entre procesos independientes
         shell: bash
         run: |
