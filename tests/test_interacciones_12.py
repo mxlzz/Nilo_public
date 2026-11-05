@@ -224,5 +224,77 @@ class Stage12(unittest.TestCase):
         self.assertEqual(self.w["deposits"][key],2)
         self.assertEqual(tool["durability"],95)
 
+
+    def test_legacy_world_tool_api_has_one_physical_implementation(self):
+        from nilo_runtime.worlds.tool_use import (
+            use_action, adjacent_rock, dig_with_tool,
+        )
+        self.assertIs(world.use_action,use_action)
+        self.assertIs(world.adjacent_rock,adjacent_rock)
+        self.assertIs(world.dig_with_tool,dig_with_tool)
+
+    def test_ambiguous_partial_tool_name_does_not_select_at_random(self):
+        self.assertTrue(self.action("craft",name="hacha corta",
+                                    form="filo",materials=["madera"])[2])
+        self.assertTrue(self.action("craft",name="hacha larga",
+                                    form="filo",materials=["madera"])[2])
+        before=deepcopy([self.p["inventory"],self.p["items"]])
+        result=self.action("use",item="hacha",method="cortar")
+        self.assertFalse(result[2],result)
+        self.assertEqual([self.p["inventory"],self.p["items"]],before)
+
+    def test_excavation_credits_stone_only_when_rock_opens(self):
+        from nilo_runtime.worlds.island import tile
+        for dx,dy in world.DIRS:
+            set_tile(self.w,15+dx,10+dy,0,".")
+        set_tile(self.w,16,10,0,"^")
+        key=tile_key(16,10,0)
+        self.w["excavation"][key]=0
+        tool={"name":"punta","form":"punta"}
+        before=self.p["inventory"]["piedra"]
+        r1=world.dig_with_tool(self.w,self.p,tool,7,{"x":16,"y":10})
+        self.assertTrue(r1[0],r1)
+        self.assertEqual(self.p["inventory"]["piedra"],before)
+        self.assertEqual(tile(self.w,16,10,0),"^")
+        r2=world.dig_with_tool(self.w,self.p,tool,7,{"x":16,"y":10})
+        self.assertTrue(r2[0],r2)
+        self.assertEqual(self.p["inventory"]["piedra"],before+2)
+        self.assertEqual(tile(self.w,16,10,0),".")
+        r3=world.dig_with_tool(self.w,self.p,tool,7,{"x":16,"y":10})
+        self.assertFalse(r3[0])
+        self.assertEqual(self.p["inventory"]["piedra"],before+2)
+
+    def test_corrupt_stone_inventory_blocks_excavation_without_clearing_tile(self):
+        from nilo_runtime.worlds.island import tile
+        for dx,dy in world.DIRS:
+            set_tile(self.w,15+dx,10+dy,0,".")
+        set_tile(self.w,16,10,0,"^")
+        key=tile_key(16,10,0)
+        self.w["excavation"][key]=2
+        self.p["inventory"]["piedra"]=-1
+        result=world.dig_with_tool(self.w,self.p,{"name":"punta"},8,{"x":16,"y":10})
+        self.assertFalse(result[0])
+        self.assertEqual(self.w["excavation"][key],2)
+        self.assertEqual(tile(self.w,16,10,0),"^")
+        self.assertEqual(self.p["inventory"]["piedra"],-1)
+
+    def test_moving_rock_credits_once_and_no_repeated_extraction(self):
+        from nilo_runtime.worlds.island import tile
+        self.assertTrue(self.action("craft",name="palanca",
+                                    form="palanca",materials=["piedra"])[2])
+        tool=self.p["items"][-1]
+        for dx,dy in world.DIRS:
+            set_tile(self.w,15+dx,10+dy,0,".")
+        set_tile(self.w,16,10,0,"^")
+        before=self.p["inventory"]["piedra"]
+        first=self.action("use",item=tool["id"],method="mover")
+        self.assertTrue(first[2],first)
+        self.assertEqual(self.p["inventory"]["piedra"],before+1)
+        self.assertEqual(tile(self.w,16,10,0),".")
+        second=self.action("use",item=tool["id"],method="mover")
+        self.assertFalse(second[2])
+        self.assertEqual(self.p["inventory"]["piedra"],before+1)
+
+
 if __name__=="__main__":
     unittest.main()

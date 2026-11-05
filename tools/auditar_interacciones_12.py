@@ -16,18 +16,22 @@ def inspect():
     fabrication=ROOT/"nilo_runtime/worlds/fabrication.py"
     intervention=ROOT/"nilo_runtime/worlds/intervention.py"
     resources=ROOT/"nilo_runtime/worlds/resources.py"
-    if not all(p.is_file() for p in (fabrication,intervention,resources)):
+    tooluse=ROOT/"nilo_runtime/worlds/tool_use.py"
+    if not all(p.is_file() for p in (fabrication,intervention,resources,tooluse)):
         return ["Faltan módulos de interacción, intervención o balance"]
     fabs,ft=functions(fabrication)
     ints,it=functions(intervention)
     stocks,rt=functions(resources)
+    uses,ut=functions(tooluse)
+    if not {"use_action","dig_with_tool","adjacent_rock"} <= uses:
+        failures.append("Falta único módulo para uso físico de herramientas")
     if not {"combine_action","fabricate_action"} <= fabs:
         failures.append("Falta dueño único de fabricación y combinación")
     if not {"execute_prepared","_preflight"} <= ints:
         failures.append("Falta preflight y confirmación aislada de reformas")
     if not {"exchange_units","material_counts","check_materials"} <= stocks:
         failures.append("Falta presupuesto material conservativo")
-    for path,tree in ((fabrication,ft),(intervention,it)):
+    for path,tree in ((fabrication,ft),(intervention,it),(tooluse,ut)):
         for n in ast.walk(tree):
             names=([x.name for x in n.names] if isinstance(n,ast.Import)
                    else [n.module or ""] if isinstance(n,ast.ImportFrom) else [])
@@ -40,6 +44,8 @@ def inspect():
         failures.append("Combinación todavía duplicada en dispatcher")
     if "elif op in ('build','craft'):\n        from inventions" not in world:
         failures.append("Fabricación todavía duplicada en dispatcher")
+    if "return use_action(w,p,step" not in world:
+        failures.append("Las pruebas de herramientas siguen duplicadas en world.py")
     construction=(ROOT/"construction.py").read_text(encoding="utf-8")
     if "def _apply_intervention_mutating(" not in construction:
         failures.append("Falta preparación aislada de reformas")
