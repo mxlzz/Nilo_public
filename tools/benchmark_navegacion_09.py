@@ -8,7 +8,10 @@ from collections import deque
 import json
 import random
 import time
+from pathlib import Path
+import sys
 
+sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 from nilo_runtime.worlds.island import DIRS,PASSABLE,valid,tile_key,tile,set_tile,new_world
 from nilo_runtime.worlds.navigation import choose_frontier,passable
 
@@ -52,13 +55,13 @@ def legacy_frontier(w,p,rng):
     return rng.choice(options[:min(6,len(options))])[1]
 
 
-def run(samples=6):
+def run(samples=4):
     world=new_world(7321)
-    for y in range(4,17):
-        for x in range(5,32):
+    for y in range(6,15):
+        for x in range(7,27):
             set_tile(world,x,y,0,'.')
     world['revealed']=[tile_key(x,y,0)
-                       for y in range(4,17) for x in range(5,32)]
+                       for y in range(6,15) for x in range(7,27)]
     person={'pos':[15,10,0],'vehicle_id':None}
     starts=range(samples)
     t0=time.perf_counter()
