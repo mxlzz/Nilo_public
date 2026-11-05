@@ -118,6 +118,16 @@ class SessionLifecycle:
     def write(self):
         """Snapshot, archivo, sesión y entropía comparten commit o rollback."""
         validate_current_state(self.s)
+        old_entropy,old_rng,old_origin=self.entropy,self.rng,self.entropy_origin
+        try:
+            return self._write_atomic(old_entropy,old_rng,old_origin)
+        except BaseException:
+            # Si se cambió la semilla de un mundo todavía vacío y luego
+            # falló el commit, restaurar también el generador en memoria.
+            self.entropy,self.rng,self.entropy_origin=old_entropy,old_rng,old_origin
+            raise
+
+    def _write_atomic(self,old_entropy,old_rng,old_origin):
         current_seed=self.s['world'].get('seed',self.entropy.world_seed)
         if current_seed != self.entropy.world_seed:
             p=self.s['person']

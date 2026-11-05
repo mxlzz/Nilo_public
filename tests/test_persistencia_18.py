@@ -118,6 +118,20 @@ class Storage18(unittest.TestCase):
         self.sim.write()
         self.assertEqual(self.sim.archive.max_seq("journal"),first_count+1)
 
+    def test_static_list_replacement_does_not_skip_new_interior_id(self):
+        notes=self.sim.s["journal"]
+        notes.extend([
+            {"id":"j-a","when":"Día 1","text":"Primera"},
+            {"id":"j-b","when":"Día 1","text":"Segunda"},
+            {"id":"j-c","when":"Día 1","text":"Tercera"},
+        ])
+        self.sim.write()
+        self.sim.s["journal"]=[
+            notes[0],{"id":"j-middle","when":"Día 1","text":"Reemplazo"},notes[2]
+        ]
+        self.sim.write()
+        self.assertIsNotNone(self.sim.archive.get("journal","j-middle"))
+
     def test_archive_references_persist_over_reopens(self):
         p=self.sim.s["person"]
         p["research"].append({"id":"r-owned","question":"¿Qué dureza tiene?",

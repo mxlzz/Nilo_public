@@ -236,7 +236,9 @@ class History:
             pending=records
             if category not in mutable and isinstance(records,list):
                 last=self._static_cursors.get(category)
-                if last and last[0]==id(records) and len(records)>=last[1]:
+                # Mantener referencia fuerte: id(list) puede reciclarse y
+                # confundir una nueva ventana con una lista anterior.
+                if last and last[0] is records and len(records)>=last[1]:
                     size=last[1]
                     first=records[0].get('id') if records and isinstance(records[0],dict) else None
                     prev=records[size-1].get('id') if size and isinstance(records[size-1],dict) else None
@@ -244,7 +246,7 @@ class History:
                         pending=records[size:]
                 first=records[0].get('id') if records and isinstance(records[0],dict) else None
                 last_id=records[-1].get('id') if records and isinstance(records[-1],dict) else None
-                self._static_cursors[category]=(id(records),len(records),first,last_id)
+                self._static_cursors[category]=(records,len(records),first,last_id)
             for item in pending:
                 if not isinstance(item,dict):continue
                 rid=item.get('id')
