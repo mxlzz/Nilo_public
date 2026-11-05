@@ -21,7 +21,10 @@ from world import tile, tile_key, set_tile, reveal, valid, MATERIALS, YIELDS
 
 ROOT = Path(__file__).resolve().parent
 WATCH = {
-    "brain.py": {"normalize_decision", "context_for", "compact_context", "build_deliberation_request"},
+    "brain.py": {"context_for"},
+    "nilo_runtime/agent/responses.py": {"normalize_decision", "parse_json"},
+    "nilo_runtime/agent/gateway.py": {"build_deliberation_request", "request_llm", "build_chat_request", "request_chat"},
+    "nilo_runtime/agent/budget.py": {"compact_context", "bounded_context"},
     # La traza sigue las funciones REALES después de extraer el motor a
     # casos de uso, no las confunde con la fachada nilo.py.
     "nilo_runtime/application/session.py": {"write"},
@@ -48,7 +51,7 @@ WATCH = {
     "goal_evidence.py": {"check_goal"},
     "timing.py": {"effective_speed"},
     "cognitive_projection.py": {"project_context"},
-    "prompt_budget.py": {"bounded_context"},
+    # prompt_budget.py es fachada; los recortes reales viven en agent/budget.py.
     "agenda.py": {"set_agenda", "choose_agenda_step", "record_agenda_result"},
 }
 EXPLAIN = {

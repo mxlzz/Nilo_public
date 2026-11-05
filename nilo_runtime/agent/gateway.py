@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import urllib.request
 import urllib.error
+from urllib.parse import urlsplit
 
 from nilo_runtime.agent.prompts import SYSTEM, GROQ_SYSTEM, CHAT_SYSTEM
 from nilo_runtime.agent.budget import (
@@ -57,8 +58,9 @@ def _endpoint(cfg):
         raise ValueError("Proveedor desconocido")
     base=("https://api.groq.com/openai/v1" if provider=="groq"
           else cfg.get("OPENAI_BASE_URL","https://api.openai.com/v1")).rstrip("/")
-    if not (base.startswith("https://") or
-            base.startswith("http://127.0.0.1") or base.startswith("http://localhost")):
+    parsed=urlsplit(base)
+    local=parsed.scheme=="http" and parsed.hostname in ("127.0.0.1","localhost")
+    if (parsed.scheme!="https" and not local) or not parsed.hostname or parsed.username or parsed.password:
         raise ValueError("La API debe usar HTTPS, salvo el servidor local.")
     return base+"/chat/completions"
 
@@ -167,11 +169,17 @@ def build_chat_request(cfg,context,messages,system_instruction=None):
                 contents[-1]['parts'][0]['text']+='\n'+msg
             else:
                 contents.append({'role':role,'parts':[{'text':msg}]})
+        if not contents:
+            contents=[{'role':'user','parts':[{'text':grounded}]}]
         payload={'systemInstruction':{'parts':[{'text':system_instruction}]},'contents':contents,'generationConfig':{'temperature':0.75,'maxOutputTokens':450}}
         headers=_headers(cfg)
     elif provider in ('openai_compatible','groq'):
         url=_endpoint(cfg)
-        msgs=[{'role':'system','content':system_instruction+'\n'+grounded}]+[{'role':h['role'],'content':h['text']} for h in history]
+        # El estado observado viaja como dato de usuario; ningún cuaderno,
+        # comentario o evento humano se promueve a instrucción de sistema.
+        msgs=[{'role':'system','content':system_instruction},
+              {'role':'user','content':grounded}]+[
+                  {'role':h['role'],'content':h['text']} for h in history]
         payload={'model':model,'messages':msgs,'temperature':.75,'max_completion_tokens':450 if provider=='groq' else 650}
         if provider=='groq':payload['reasoning_effort']='low'
         headers=_headers(cfg)

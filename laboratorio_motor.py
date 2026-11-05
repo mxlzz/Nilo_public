@@ -109,10 +109,12 @@ TRACE_TEXT = {
     "shelter.py:shelter_properties": "Evalúa resguardo físico sin interpretar nombres",
     "island_views.py:survival_conditions": "Consulta resguardo y fuentes de agua de la posición",
     "brain.py:context_for": "Prepara la percepción y memorias del contexto",
-    "brain.py:compact_context": "Acota campos del contexto",
-    "brain.py:build_deliberation_request": "Arma el mensaje final sin enviarlo",
+    "budget.py:compact_context": "Acota campos del contexto",
+    "budget.py:bounded_context": "Ajusta contexto al presupuesto del modelo",
+    "gateway.py:build_deliberation_request": "Arma el mensaje final sin enviarlo",
+    "gateway.py:build_chat_request": "Prepara mensajes de chat sin llamar a la API",
     "cognitive_projection.py:project_context": "Filtra conocimiento no perceptible",
-    "prompt_budget.py:bounded_context": "Ajusta contexto al presupuesto del modelo",
+    "responses.py:normalize_decision": "Valida respuesta JSON y acciones planificadas",
 }
 
 
