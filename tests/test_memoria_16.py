@@ -139,6 +139,19 @@ class Research16(unittest.TestCase):
         self.assertNotIn("source_research_id",newer["evidence"][0])
         self.assertEqual(newer["state"],"integrada")
 
+    def test_consolidation_keeps_distinct_measurements_with_identical_text(self):
+        p={"research":[
+            {"id":"r-original","question":"Estudiar la roca",
+             "state":"abierta","evidence":[]},
+            {"id":"r-nueva","question":"Estudiar la roca",
+             "state":"abierta","evidence":[
+                {"when":"Día 1","facts":["Parece dura"],"measurement_id":"med-1"},
+                {"when":"Día 1","facts":["Parece dura"],"measurement_id":"med-2"}]}]}
+        self.assertEqual(consolidate_research(p),1)
+        links=p["research"][0]["evidence"]
+        self.assertEqual([e["measurement_id"] for e in links],["med-1","med-2"])
+        self.assertTrue(all(e["source_research_id"]=="r-nueva" for e in links))
+
     def test_concept_of_same_research_does_not_prove_experiment(self):
         p={"research":[{"id":"r1","question":"Probar la madera",
                          "hypothesis":"Resiste cargas","state":"concluida",

@@ -51,7 +51,7 @@ def recall_relevant(person, world, limit=6):
     # está lejos y concentrado en otro lugar o material.
     interest_in_cave=bool('cueva' in keywords)
     near_known_cave=(len(here)>=3 and
-        abs(cave['x']-here[0])+abs(cave['y']-here[1])<=6) if known_cave else False
+        abs(cave['x']-here[0])+abs(cave['y']-here[1])<=12) if known_cave else False
     remembered_alternative=bool(stalled and known_cave and len(here)>=3
         and here[2]==0 and (near_known_cave or interest_in_cave))
     if isinstance(here, (list, tuple)) and len(here) >= 3:

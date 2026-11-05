@@ -80,9 +80,20 @@ def consolidate_research(person):
         if q not in anchor['related_questions']:
             anchor['related_questions'].append(q)
             anchor['related_questions']=anchor['related_questions'][-15:]
-        seen={(v.get('when'),str(v.get('facts'))) for v in anchor.get('evidence',[]) if isinstance(v,dict)}
+        def evidence_key(record):
+            if not isinstance(record,dict):
+                return None
+            # Si hay identidad de ensayo, nunca agrupar dos IDs distintos
+            # por haber obtenido la misma observación en el mismo instante.
+            rid=(record.get('measurement_id') or record.get('action_id') or
+                 record.get('id'))
+            if isinstance(rid,str) and rid:
+                return ('id',rid)
+            return ('legacy',record.get('when'),str(record.get('facts')))
+        seen={evidence_key(v) for v in anchor.get('evidence',[])
+              if evidence_key(v) is not None}
         for e in entry.get('evidence',[]):
-            fingerprint=(e.get('when'),str(e.get('facts'))) if isinstance(e,dict) else None
+            fingerprint=evidence_key(e)
             if fingerprint and fingerprint not in seen:
                 # La fusión temática preserva la fuente; no acredita un ensayo
                 # por el parecido de palabras entre dos preguntas.
