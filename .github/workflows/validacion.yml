@@ -1,11 +1,39 @@
 name: Validación Nilo
 on:
   workflow_dispatch:
+    inputs:
+      corrida_real:
+        description: "Ejecutar corrida real 0.7 con clave del repositorio (no automático)"
+        required: true
+        type: boolean
+        default: false
+      provider:
+        description: "Proveedor"
+        required: true
+        type: choice
+        options: [gemini, groq]
+        default: gemini
+      model:
+        description: "Modelo (vacío utiliza el modelo por defecto del proveedor)"
+        required: false
+        type: string
+        default: ""
+      world_seed:
+        description: "Semilla de mundo"
+        required: true
+        type: number
+        default: 7321
+      rng_seed:
+        description: "Semilla de decisiones del agente"
+        required: true
+        type: number
+        default: 1129
   push:
     branches: [main, "work/**", "refactor/**"]
   pull_request:
 jobs:
   tests:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.corrida_real != true }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -79,6 +107,8 @@ jobs:
         run: python tools/auditar_laboratorio_21.py
       - name: Laboratorio unificado y ajustes reversibles (etapa 21)
         run: python -m unittest discover -s tests -p 'test_laboratorio_21.py' -v
+      - name: Evidencia LLM, no divulgación y preflight sin credenciales (etapa 23)
+        run: python -m unittest discover -s tests -p 'test_autonomia_23.py' -v
       - name: Inventario de suites y revisión estática transversal (etapa 22)
         run: python tools/auditar_qa_22.py --output qa_22_inventory.json
       - name: Metamorfismos, integración y rollback multi-semilla (etapa 22)
@@ -130,3 +160,54 @@ jobs:
               if delta: print('DIFERENCIAS',k,delta)
           assert a['fingerprint']==b['fingerprint'], 'Reproducción entre procesos diferente'
           PY
+
+
+  evaluacion_real_23:
+    name: "Autonomía 23 · Gemini/Groq real (solo manual)"
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.corrida_real == true && github.ref == 'refs/heads/refactor/0.7' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    concurrency:
+      group: nilo-real-23-${{ inputs.provider }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Ejecutar Nilo con el modelo real y sin fallback
+        env:
+          PROVIDER_SELECTED: ${{ inputs.provider }}
+          MODEL_SELECTED: ${{ inputs.model }}
+          SEED_SELECTED: ${{ inputs.world_seed }}
+          RNG_SELECTED: ${{ inputs.rng_seed }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "$MODEL_SELECTED" ]; then
+            if [ "$PROVIDER_SELECTED" = "gemini" ]; then
+              MODEL_SELECTED="gemini-3.1-flash-lite"
+            else
+              MODEL_SELECTED="openai/gpt-oss-20b"
+            fi
+          fi
+          python tools/ejecutar_autonomia_23.py \
+            --provider "$PROVIDER_SELECTED" \
+            --model "$MODEL_SELECTED" \
+            --world-seed "$SEED_SELECTED" --rng-seed "$RNG_SELECTED" \
+            --max-calls 8 --max-seconds 420 --speed 60 \
+            --output "autonomia-23-${GITHUB_RUN_ID}"
+      - name: Subir informe anonimizado (sin SQLite ni credenciales)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: nilo-autonomia-23-${{ github.run_id }}
+          path: |
+            autonomia-23-*/manifest.json
+            autonomia-23-*/evaluation.json
+            autonomia-23-*/evaluation.md
+          if-no-files-found: ignore
+          retention-days: 30
