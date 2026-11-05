@@ -86,10 +86,10 @@ def consolidate_research(person):
             if fingerprint and fingerprint not in seen:
                 # La fusión temática preserva la fuente; no acredita un ensayo
                 # por el parecido de palabras entre dos preguntas.
-                merged=deepcopy(e)
-                merged.setdefault('source_research_id',entry.get('id'))
-                merged.setdefault('evidence_kind','registro_legacy_no_verificado')
-                anchor.setdefault('evidence',[]).append(merged)
+                merged_evidence=deepcopy(e)
+                merged_evidence.setdefault('source_research_id',entry.get('id'))
+                merged_evidence.setdefault('evidence_kind','registro_legacy_no_verificado')
+                anchor.setdefault('evidence',[]).append(merged_evidence)
                 seen.add(fingerprint)
         anchor['evidence']=anchor.get('evidence',[])[-30:]
         merged+=1

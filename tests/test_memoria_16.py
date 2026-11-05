@@ -53,7 +53,7 @@ class Memory16(unittest.TestCase):
         self.assertEqual(recall_relevant(p,world(),limit=6),[])
         shown=recall_relevant(p,world(["10,11,0"]),limit=6)
         self.assertEqual(len(shown),1)
-        self.assertIn("lugar_descubierto_cercano",shown[0]["criterios_recuperacion"])
+        self.assertIn("transicion_cercana_registrada",shown[0]["criterios_recuperacion"])
 
     def test_unknown_terrain_does_not_affect_read(self):
         p=person()
