@@ -28,8 +28,9 @@ class ReviewStore:
             id TEXT PRIMARY KEY, made_at REAL NOT NULL,
             text TEXT NOT NULL, entries TEXT NOT NULL, model TEXT NOT NULL,
             acknowledged INTEGER NOT NULL DEFAULT 0)""")
-        db.commit()
-
+        # El dueño de la sesión confirma tablas y lectura junto al snapshot.
+        # No ejecutar commits parciales durante la migración.
+        
     def initialized(self):
         return bool(self.db.execute("SELECT 1 FROM review_meta WHERE key='initialized_v1'").fetchone())
 

@@ -47,6 +47,9 @@ def inspect():
     history=(ROOT/"run_history.py").read_text("utf-8")
     if ".commit()" in history.split("    def start(",1)[0]:
         errors.append("RunHistory confirma tablas antes del snapshot")
+    review=(ROOT/"review_store.py").read_text("utf-8")
+    if ".commit()" in review.split("    def initialized(",1)[0]:
+        errors.append("ReviewStore confirma tablas antes de migración")
     from nilo_runtime.core.state import SAVE_SCHEMA_VERSION
     if SAVE_SCHEMA_VERSION!=5:
         errors.append("Se modificó esquema v5 sin migración contractual")

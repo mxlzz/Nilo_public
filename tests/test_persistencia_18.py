@@ -169,6 +169,29 @@ class Storage18(unittest.TestCase):
         with self.assertRaises(StateSchemaError):
             migration_path(future)
 
+    def test_uncommitted_review_tables_are_rolled_back_on_failed_migration(self):
+        before=self.payload()
+        self.sim.conn.close()
+        # Simular una copia v5 con archivo de lecturas todavía no instalado.
+        with sqlite3.connect(self.file) as db:
+            for name in ("reviewed_entries","review_meta","observer_summaries"):
+                db.execute(f"DROP TABLE {name}")
+        with sqlite3.connect(self.file) as db:
+            tables_before={r[0] for r in db.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'")}
+        with patch("nilo_runtime.storage.migrations.migrate_state",
+                   side_effect=RuntimeError("no migró")):
+            with self.assertRaisesRegex(RuntimeError,"no migró"):
+                Simulation(db_path=self.file)
+        with sqlite3.connect(self.file) as db:
+            tables_after={r[0] for r in db.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'")}
+            payload=db.execute(
+                "SELECT payload FROM snapshot WHERE id=1").fetchone()[0]
+        self.assertEqual(tables_before,tables_after)
+        self.assertEqual(payload,before)
+        self.sim=Simulation(db_path=self.file)
+
     def test_migration_failure_rolls_back_schema_and_snapshot(self):
         before=self.payload()
         with sqlite3.connect(self.file) as db:
