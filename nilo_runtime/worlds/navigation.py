@@ -146,8 +146,14 @@ def resolve_go(w,p,step):
                               'Necesito explorar el terreno conocido o reconsiderar el recorrido.')
         best=shores[0]
         return tuple(best['shore']),tuple(best['water']),''
+    # La frontera del motor también recibe comandos internos (no solo HTTP).
+    # int(float('inf')) lanzaba OverflowError y bool se interpretaba como 0/1.
+    # Rechazar ambos sin modificar el mundo ni intentar una ruta.
+    if type(step.get('x')) is bool or type(step.get('y')) is bool:
+        return None,None,'El destino no tiene coordenadas válidas.'
     try:tx,ty=int(step['x']),int(step['y'])
-    except (ValueError,TypeError,KeyError):return None,None,'El destino no tiene coordenadas válidas.'
+    except (ValueError,TypeError,KeyError,OverflowError):
+        return None,None,'El destino no tiene coordenadas válidas.'
     if not valid(tx,ty):return None,None,'El destino está fuera de los límites del territorio representado.'
     known=tile_key(tx,ty,z) in set(w.get('revealed',[]))
     if not known:
