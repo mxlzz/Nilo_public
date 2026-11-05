@@ -160,7 +160,9 @@ class DecisionUseCases:
                 p['plan']=[]
                 p['review_at_minutes']=p.get('clock_minutes',0)
                 p['local_followups']=0
-                p['active_research']=None
+                if (getattr(self,'legacy_replay_rules',False)
+                        or getattr(self,'historical_replay',False)):
+                    p['active_research']=None
                 if source=='llm':
                     set_wait_preferences(p,[],self.stamp())
                 message=(

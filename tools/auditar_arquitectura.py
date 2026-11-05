@@ -26,13 +26,14 @@ LAYER_IMPORTS = {
     "perception": {"core", "worlds", "physics", "perception"},
     "agent": {"core", "agent"},
     "cognition": {"core", "agent", "cognition"},
+    "autonomy": {"core", "worlds", "physiology", "cognition", "autonomy"},
     "storage": {"core", "agent", "worlds", "physics", "storage"},
     "audit": {"core", "agent", "worlds", "physics", "audit"},
     "application": {"core", "worlds", "perception", "physics", "physiology", "agent", "cognition",
-                    "storage", "audit", "application"},
+                    "storage", "audit", "autonomy", "application"},
     "web": {"core", "application", "web"},
     "lab": {"core", "worlds", "physics", "physiology", "agent", "cognition", "storage",
-            "audit", "application", "lab"},
+            "audit", "autonomy", "application", "lab"},
 }
 
 

@@ -479,6 +479,17 @@ class ClockUseCases:
                             if project['no_progress_steps']>=7:
                                 attempts=p.setdefault('strategy_attempts',[])[-12:]
                                 repetitive=repeated_methods(attempts,project.get('id'))
+                                # En mundos nuevos solo se considera repetición
+                                # concreta de la misma prueba, no tres acciones
+                                # que compartan el nombre pero cambien el objetivo.
+                                if not (getattr(self,'legacy_replay_rules',False)
+                                        or getattr(self,'historical_replay',False)):
+                                    from nilo_runtime.autonomy.strategy import repeated_strategies
+                                    patterns=repeated_strategies(attempts,project.get('id'))
+                                    repetitive=list(dict.fromkeys(
+                                        pattern['operacion'] for pattern in patterns))
+                                else:
+                                    patterns=[]
                                 if repetitive:
                                     project['reconsideration_required']=True
                                     if getattr(self,'legacy_replay_rules',False) or getattr(self,'historical_replay',False):
@@ -490,8 +501,9 @@ class ClockUseCases:
                                     else:
                                         previous=project.get('repeticion_operativa') or {}
                                         project['repeticion_operativa']={
-                                            'operations':repetitive,'when':self.stamp(),
-                                            'reason':'Operaciones repetidas sin progreso medido; no impide ensayar otra condición',
+                                            'operations':repetitive,'patrones':patterns,
+                                            'when':self.stamp(),
+                                            'reason':'Mismo método y objetivo reiterados sin progreso medido; no impide ensayar otra condición',
                                             'not_a_block':True}
                                         if previous.get('operations')!=repetitive:
                                             self.event(['Detecté operaciones reiteradas sin evidencia nueva. El aviso no cancela el plan; puedo decidir cambiar de método.'],'evaluación',True)
@@ -501,9 +513,17 @@ class ClockUseCases:
                                 self.event(['Mis ensayos no están generando resultados nuevos. Necesito reconsiderar la hipótesis o el objetivo.'],'evaluación',True)
                                 # No descartar el resto del bloque: puede contener la prueba
                                 # pertinente. El LLM recibe el diagnóstico al concluir.
-                        p.setdefault('strategy_attempts',[]).append({'project_id':project.get('id') if project else None,
+                        attempt={'project_id':project.get('id') if project else None,
                             'op':step.get('op'),'progress':progress,'pos':list(p['pos']),
-                            'at_minute':p['clock_minutes']})
+                            'at_minute':p['clock_minutes']}
+                        if not (getattr(self,'legacy_replay_rules',False)
+                                or getattr(self,'historical_replay',False)):
+                            attempt.update({k:step[k] for k in
+                                ('method','target','item','direction','region')
+                                if k in step})
+                            if step.get('op')=='go':
+                                attempt['destination']=[step.get('x'),step.get('y')]
+                        p.setdefault('strategy_attempts',[]).append(attempt)
                         p['strategy_attempts']=p['strategy_attempts'][-80:]
                         if p.get('active_research') and (notable or step.get('op') in ('experiment','build','craft','use','excavate','combine')):
                             line=next((r for r in reversed(p['research']) if r['question']==p['active_research']),None)
@@ -605,7 +625,13 @@ class ClockUseCases:
                     self.s['auto_wait_frozen']=False
                     self.event([f'Retomé una tarea diferida: {task["titulo"]}. Motivo: {taskstep.get("_reason","")}'],'agenda')
             if not p['pending'] and not p['plan'] and not self.s.get('planning'):
-                followup=self.followup_without_llm()
+                # Solo replays históricos preservan la vieja continuación
+                # automática: en un mundo vigente probar una herramienta nueva
+                # requiere que Nilo haya seleccionado explícitamente el ensayo.
+                followup=(self.followup_without_llm()
+                          if getattr(self,'historical_replay',False)
+                          or getattr(self,'legacy_replay_rules',False)
+                          else None)
                 if followup:
                     p['plan'].append(dict(followup,_origin='motor',_reason='Verificación local de herramienta sin nuevo LLM'))
                     p['local_followups']=p.get('local_followups',0)+1
