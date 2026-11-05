@@ -19,6 +19,10 @@ from nilo_runtime.core.operations import registered_operations, validate_operati
 from diagnostic_support import human_review_feedback
 
 ROOT=Path(__file__).resolve().parent
+# Los cambios de perfil se activan solo al iniciar el proceso. No modificar
+# quotas/prompts a mitad de una deliberación de Nilo por un guardado externo.
+from nilo_runtime.core.lab_settings import config_overlay
+BOOT_LAB_PROFILE=config_overlay(ROOT)
 ACTIONS=action_instructions()
 
 from nilo_runtime.agent.prompts import SYSTEM, CHAT_SYSTEM
@@ -34,8 +38,7 @@ def config():
             line=line.strip()
             if not line or line.startswith('#') or '=' not in line:continue
             k,v=line.split('=',1);vals[k.strip()]=v.strip().strip('"').strip("'")
-    from nilo_runtime.core.lab_settings import config_overlay
-    vals.update(config_overlay(ROOT))
+    vals.update(BOOT_LAB_PROFILE)
     vals.update({key:value for key,value in os.environ.items() if key in {"PROVIDER","MODEL","GEMINI_API_KEY","GEMINI_FALLBACK_MODELS","OPENAI_API_KEY","OPENAI_BASE_URL","GROQ_API_KEY","GROQ_MODEL","BACKUP_PROVIDER","MAX_LLM_CALLS_PER_DAY","MAX_CHAT_CALLS_PER_DAY","MIN_REAL_SECONDS_BETWEEN_CALLS","PORT"}})
     return vals
 
