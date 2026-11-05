@@ -79,6 +79,20 @@ jobs:
         run: python tools/auditar_laboratorio_21.py
       - name: Laboratorio unificado y ajustes reversibles (etapa 21)
         run: python -m unittest discover -s tests -p 'test_laboratorio_21.py' -v
+      - name: Inventario de suites y revisión estática transversal (etapa 22)
+        run: python tools/auditar_qa_22.py --output qa_22_inventory.json
+      - name: Metamorfismos, integración y rollback multi-semilla (etapa 22)
+        run: python -m unittest discover -s tests -p 'test_qa_22.py' -v
+      - name: Benchmark transversal de mundos, SQLite y HTTP (etapa 22)
+        run: python tools/benchmark_qa_22.py --seeds 24 --history 3000 --ticks 100 --http 36 --output qa_22_benchmark.json
+      - name: Evidencia reproducible de QA (etapa 22)
+        uses: actions/upload-artifact@v4
+        with:
+          name: nilo-qa-22
+          path: |
+            qa_22_inventory.json
+            qa_22_benchmark.json
+          if-no-files-found: error
       - name: Mundo isla_v1 contra snapshots 0.6.4 y seis semillas
         run: python -m unittest discover -s tests -p 'test_mundo_08.py' -v
       - name: Motor headless y adaptadores (regresión focalizada)
