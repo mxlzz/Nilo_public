@@ -7,6 +7,7 @@ en un SQLite TEMPORAL. No se conecta a Gemini/Groq ni escribe el save origen.
 from __future__ import annotations
 
 import copy
+from contextlib import closing
 import json
 from pathlib import Path
 import random
@@ -57,14 +58,17 @@ class SimulationSandbox:
         with self.lock:
             temp=tempfile.TemporaryDirectory(prefix="nilo-lab-simulation-")
             path=Path(temp.name)/"ensayo.sqlite3"
+            sim=None
             try:
                 if mode=="partida":
                     origin=Path(source).resolve() if source is not None else None
                     if origin is None or not origin.is_file():
                         raise ValueError("No existe una partida guardada")
-                    with sqlite3.connect(origin.as_uri()+"?mode=ro",uri=True) as src:
-                        with sqlite3.connect(path) as dst:
+                    with closing(sqlite3.connect(
+                            origin.as_uri()+"?mode=ro",uri=True)) as src:
+                        with closing(sqlite3.connect(path)) as dst:
                             src.backup(dst)
+                            dst.commit()
                     label="Copia independiente en SQLite del último estado guardado"
                 else:
                     label="Mundo nuevo, semilla "+str(seed)
@@ -87,6 +91,7 @@ class SimulationSandbox:
                     label+=" · materiales de prueba añadidos"
                 sim.write()
             except BaseException:
+                if sim is not None:sim.conn.close()
                 temp.cleanup()
                 raise
             old_sim,old_temp=self.sim,self._temp
