@@ -37,6 +37,10 @@ jobs:
         run: python tools/auditar_objetos_11.py
       - name: Formas, etiquetas, propiedades y uniones (etapa 11)
         run: python -m unittest discover -s tests -p 'test_objetos_11.py' -v
+      - name: Auditoría de interacciones y construcción (etapa 12)
+        run: python tools/auditar_interacciones_12.py
+      - name: Operaciones materiales, reformas y ensayos (etapa 12)
+        run: python -m unittest discover -s tests -p 'test_interacciones_12.py' -v
       - name: Mundo isla_v1 contra snapshots 0.6.4 y seis semillas
         run: python -m unittest discover -s tests -p 'test_mundo_08.py' -v
       - name: Motor headless y adaptadores (regresión focalizada)

@@ -51,7 +51,12 @@ def inspect():
         if "def body_physics(" in shim or "def evaluate_buoyancy(" in shim:
             errors.append("Física duplicada en módulo heredado")
     world=(ROOT/"world.py").read_text(encoding="utf-8")
-    if "physical_item(name,purpose" not in world:
+    fabrication=(ROOT/"nilo_runtime/worlds/fabrication.py")
+    if fabrication.is_file():
+        factory=fabrication.read_text(encoding="utf-8")
+        if "physical_item(name,purpose" not in factory or "fabricate_action(" not in world:
+            errors.append("El craft no delega al modelo físico por forma explícita")
+    elif "physical_item(name,purpose" not in world:
         errors.append("El craft aún usa inferencia de forma por nombre")
     return errors
 
