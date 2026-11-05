@@ -296,5 +296,54 @@ class Stage12(unittest.TestCase):
         self.assertEqual(self.p["inventory"]["piedra"],before+1)
 
 
+
+    def test_corrupt_stock_preflight_rejects_craft_and_assembly(self):
+        self.p["inventory"]["madera"]=-1
+        prior=deepcopy([self.p["inventory"],self.p["items"],self.w["structures"]])
+        craft=self.action("craft",name="hacha",form="filo",materials=["madera"])
+        self.assertFalse(craft[2],craft)
+        assembly=self.action("assemble",parts=[
+            {"name":"p1","material":"madera","shape":"macizo"},
+            {"name":"p2","material":"madera","shape":"macizo"}],
+            joints=[{"a":0,"b":1,"type":"fija"}])
+        self.assertFalse(assembly[2],assembly)
+        self.assertEqual([self.p["inventory"],self.p["items"],self.w["structures"]],prior)
+
+    def test_unrecoverable_stock_during_dismantle_does_not_archive(self):
+        obj={"id":"obj-legacy","name":"prueba","materials":["madera","madera"],
+             "portable":True}
+        self.p["items"].append(obj)
+        self.p["inventory"]["madera"]=-1
+        before=deepcopy([obj,self.p["items"],self.p["inventory"]])
+        result=self.action("dismantle",item="obj-legacy")
+        self.assertFalse(result[2],result)
+        self.assertEqual([obj,self.p["items"],self.p["inventory"]],before)
+        self.assertFalse(self.p.get("retired_items"))
+
+    def test_fixed_joint_without_rotating_parts_has_no_transmission(self):
+        self.assertTrue(self.action("assemble",parts=[
+            {"name":"base","material":"madera","shape":"macizo"},
+            {"name":"apoyo","material":"madera","shape":"macizo"}],
+            joints=[{"a":0,"b":1,"type":"fija"}])[2])
+        item=self.p["items"][-1]
+        self.assertFalse(item["possible_uses"]["transmision"])
+        self.assertEqual(item["verified_function_current"] if "verified_function_current" in item else False,False)
+
+    def test_invalid_physics_numbers_do_not_produce_movement(self):
+        from mechanics import test_assembly
+        self.assertTrue(self.action("assemble",parts=[
+            {"name":"rueda","material":"madera","shape":"rueda"},
+            {"name":"eje","material":"madera","shape":"eje"}],
+            joints=[{"a":0,"b":1,"type":"articulada"}])[2])
+        item=self.p["items"][-1]
+        snapshot=deepcopy(item)
+        for method,param in (("transmision",{"input_energy":float("nan")}),
+                             ("transmision",{"input_energy":float("inf")}),
+                             ("carga",{"load":float("nan")})):
+            ok,reason=test_assembly(self.p,item,method,param)
+            self.assertFalse(ok,reason)
+            self.assertEqual(item,snapshot)
+
+
 if __name__=="__main__":
     unittest.main()

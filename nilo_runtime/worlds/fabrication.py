@@ -86,7 +86,11 @@ def fabricate_action(w,p,step,rng,record_experience,initialize_object,check_desi
         same_site=next((s for s in w.get('structures',[]) if s.get('pos')==p['pos'] and s.get('category')==category and (category=='habitaculo' or s.get('name','').casefold()==name.casefold())),None)
         if same_site:
             return 5,[f"Ya existe '{same_site['name']}' ({same_site['id']}) en este lugar. Antes de construir otro habitáculo o estructura equivalente, puedo evaluar una reforma (modify), reparación o desmontaje."],False,False
-    if not mats or not check_materials(inv,counts):
+    try:
+        enough=check_materials(inv,counts)
+    except ResourceBalanceError:
+        enough=False
+    if not mats or not enough:
         return 5,["No pude fabricar: me faltan componentes materiales."],False,False
     if step.get('design_id'):
         mismatch=check_design(p,step['design_id'],mats)

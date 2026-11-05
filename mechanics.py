@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from nilo_runtime.core.identity import new_uuid
 from collections import Counter
+import math
 from nilo_runtime.worlds.resources import ResourceBalanceError, check_materials, exchange_units
 import uuid
 
@@ -20,7 +21,11 @@ def create_assembly(person, step):
     if error:return False,error
     required=Counter(p['material'] for p in clean)
     inv=person.get('inventory',{})
-    if not check_materials(inv,dict(required)):
+    try:
+        sufficient=check_materials(inv,dict(required))
+    except ResourceBalanceError:
+        sufficient=False
+    if not sufficient:
         return False,'No tengo suficientes materiales para ensamblar todas las piezas.'
     design_id=str(step.get('design_id') or '').strip()
     if design_id:
@@ -41,7 +46,12 @@ def create_assembly(person, step):
           'resistance':resistance,'hardness':max(float(q.get('dureza',2)) for q in properties),
           'weight':sum(float(q.get('peso',3)) for q in properties),
           'durability':100,'tests':[],'portable':True,'contents':{},'geometry':{'shape':'macizo','size':len(clean)},
-          'possible_uses':{'carga':True,'transmision':True}}
+          'possible_uses':{
+              'carga':bool(resistance>0),
+              'transmision':(
+                  any(j['type'] in ('articulada','deslizante') for j in connections)
+                  and any(part['shape'] in ('rueda','eje','cilindro') for part in clean))
+          }}
     if design_id:
         design=next(d for d in person['designs'] if d['id']==design_id)
         item['design_id']=design_id
@@ -62,16 +72,28 @@ def test_assembly(person,item,method,step):
     # Las uniones se validan con el mismo grafo que la construcción.
     if not connected_parts(len(parts),joints):
         return False,'El ensamblaje contiene piezas desconectadas: necesito reparar sus uniones.'
-    try:load=max(0.,min(100.,float(step.get('load',3))))
-    except (ValueError,TypeError):load=3
-    limits=max(0.,float(item.get('resistance',0)))*1.5
+    try:
+        load=float(step.get('load',3))
+        resistance=float(item.get('resistance',0))
+    except (ValueError,TypeError,OverflowError):
+        return False,'La carga o resistencia no es un número válido.'
+    if not math.isfinite(load) or not math.isfinite(resistance) or load<0 or resistance<0:
+        return False,'La carga o resistencia no es una medición física válida.'
+    load=min(100.,load)
+    limits=resistance*1.5
     if method in ('carga','resistir_carga'):
         ok=load<=limits
         return ok,f"Ensayo de carga {load:.1f} unidades frente a resistencia {limits:.1f}: {'soporta' if ok else 'cede'}."
     if method in ('transmision','transmitir_movimiento'):
         mobility=any(j['type'] in ('articulada','deslizante') for j in joints)
         has_mobile_shape=any(p['shape'] in ('rueda','eje','cilindro') for p in parts)
-        input_energy=max(0.,min(100.,float(step.get('input_energy',0))))
+        try:
+            input_energy=float(step.get('input_energy',0))
+        except (ValueError,TypeError,OverflowError):
+            return False,'La energía aplicada no tiene un valor numérico válido.'
+        if not math.isfinite(input_energy) or input_energy<0:
+            return False,'La energía aplicada no es una magnitud física válida.'
+        input_energy=min(100.,input_energy)
         result=round(min(limits,input_energy*.65),2) if mobility and has_mobile_shape else 0.
         ok=result>0
         return ok,f"Ensayo de transmisión: energía aplicada {input_energy}, salida {result} (hay movimiento: {ok})."
