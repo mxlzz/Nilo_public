@@ -73,12 +73,16 @@ class GeneratedWorldProperties22(unittest.TestCase):
                 self.assertEqual(a["seed"],seed)
 
     def test_generated_world_does_not_consume_global_rng(self):
-        for seed in (0,1,7,23,7321,100000):
-            with self.subTest(seed=seed):
-                random.seed(98371)
-                before=random.getstate()
-                new_world(seed)
-                self.assertEqual(random.getstate(),before)
+        saved=random.getstate()
+        try:
+            for seed in (0,1,7,23,7321,100000):
+                with self.subTest(seed=seed):
+                    random.seed(98371)
+                    before=random.getstate()
+                    new_world(seed)
+                    self.assertEqual(random.getstate(),before)
+        finally:
+            random.setstate(saved)
 
     def test_known_routes_match_independent_bfs_16_seeds(self):
         for seed in range(16):

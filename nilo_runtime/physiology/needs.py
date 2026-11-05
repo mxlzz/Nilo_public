@@ -37,7 +37,9 @@ def update_needs(person, world, elapsed_minutes, at_shelter=False, near_water=Fa
     No inventar alimento: comer solo si existe inventario; bebida desde orilla
     accesible o recipiente verificado. Auto-descanso solo fuera de acciones.
     """
-    if isinstance(elapsed_minutes,bool):
+    # El reloj del motor utiliza valores numéricos finitos; aceptar "12"
+    # o Decimal por conversión implícita permitiría omitir esa frontera.
+    if type(elapsed_minutes) not in (int,float):
         raise ValueError("Tiempo corporal inválido.")
     duration=float(elapsed_minutes)
     if not math.isfinite(duration):
