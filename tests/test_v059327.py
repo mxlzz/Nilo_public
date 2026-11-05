@@ -66,8 +66,10 @@ class WaitOperation(unittest.TestCase):
                 sim.tick(20);sim.tick(20);sim.tick(20)
                 self.assertIsNone(p['pending'])
                 self.assertAlmostEqual(p['clock_minutes']-before,60,places=1)
-                self.assertGreater(p['needs']['energia'],40)
-                self.assertLess(p['needs']['energia'],42)
+                # En 0.7 wait transcurre sin descanso: solo aplica el
+                # desgaste fisiológico basal, no recupera energía pasivamente.
+                self.assertLess(p['needs']['energia'],40)
+                self.assertAlmostEqual(p['needs']['energia'],39.4,places=1)
                 rows=[m for m in p['measurements'] if m.get('op')=='wait']
                 self.assertEqual(len(rows),1)
                 self.assertFalse(rows[0]['rest_comparable'])
