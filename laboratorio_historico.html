@@ -31,11 +31,17 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
 #resultView{max-height:78vh;overflow:auto}
 @media(max-width:1200px){.layout{grid-template-columns:300px 1fr}.result-panel{grid-column:1/-1}}
 @media(max-width:700px){.layout{grid-template-columns:1fr;padding:8px}.result-panel{grid-column:auto}.timeline-items{max-height:240px}header{padding:12px}}
+nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
 </style></head>
 <body>
 <header>
- <div><h1>Depurador histórico de Nilo</h1><div class="muted">Elegí un momento, examiná la decisión y reproducí el motor desde su estado anterior</div></div>
- <nav class="row"><a href="/">Escenarios</a><a href="/sandbox">Sandbox físico</a><span class="pill">Historial</span><a href="/visor-llm">Visor LLM</a></nav>
+ <div><h1>Historial de partidas</h1><div class="muted">Registros originales de solo lectura · Reproducciones aisladas desde estados preservados</div></div>
+ <nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
+<a href="/visor-llm">Solicitudes LLM</a>
+<a href="/historico" aria-current="page">Historial</a>
+<a href="/">Pruebas</a>
+<a href="/ajustes">Ajustes</a>
+</nav>
 </header>
 <main class="layout">
 <section class="panel">
