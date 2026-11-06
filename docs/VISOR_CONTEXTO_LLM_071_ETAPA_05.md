@@ -16,6 +16,8 @@ Lista paginada de intentos **sin texto del prompt**. Filtros opcionales validado
 - `limit`: 1–100, por defecto 25.
 - `before`: cursor entero positivo de `rowid`, paginación descendente sin offsets de página inestables.
 - `provider`: `gemini`, `groq`, `openai_compatible`.
+- `model`: nombre literal exacto del modelo (hasta 120 caracteres, sin comodines).
+- `call`: ID hexadecimal de la deliberación para agrupar sus reintentos y cambios de proveedor.
 - `purpose`: `deliberacion` o `chat`.
 - `status`: estados realmente persistidos por etapa 02.
 - `date`: fecha UTC en formato `YYYY-MM-DD` sobre `started_utc`.

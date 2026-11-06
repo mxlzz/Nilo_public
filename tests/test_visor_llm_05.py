@@ -90,10 +90,10 @@ class LocalReadContracts(unittest.TestCase):
         self.assertFalse(self.store.path.exists())
 
     def test_list_metadata_filters_cursor_date_and_page(self):
-        a=self.add(call="c1")
-        b=self.add(body=GROQ,provider="groq",call="c2",status="http_error")
+        a=self.add(call="1"*32)
+        b=self.add(body=GROQ,provider="groq",call="2"*32,status="http_error")
         c=self.add(body=CHAT,provider="groq",purpose="chat",
-                   call="c3",source="chat-human-1",session=9)
+                   call="3"*32,source="chat-human-1",session=9)
         previous=self.store.path.read_bytes()
         first=self.reader.list_attempts("limit=1")
         self.assertTrue(first["available"])
@@ -115,6 +115,9 @@ class LocalReadContracts(unittest.TestCase):
         self.assertEqual([x["attempt_id"] for x in self.reader.list_attempts(
             "date="+self.store.recent()[0]["started_utc"][:10])["attempts"]],
             [c,b,a])
+        self.assertEqual([x["attempt_id"] for x in self.reader.list_attempts(
+            "model=synthetic-model&call="+("3"*32))["attempts"]],[c])
+        self.assertEqual(self.reader.list_attempts("model=unknown")["attempts"],[])
         self.assertEqual(self.reader.list_attempts("session=800")["attempts"],[])
         self.assertEqual(self.store.path.read_bytes(),previous)
 
@@ -200,6 +203,7 @@ class LocalReadContracts(unittest.TestCase):
     def test_invalid_parameters_rejected_before_access(self):
         for query in ("limit=0","limit=101","limit=-1",
                       "provider=desconocido","purpose=exploit","status=foo",
+                      "model=evil%40model","call=invalid",
                       "before=abc","before=0","session=foo","date=2026-13-90",
                       "date=ayer","limit=1&limit=2",
                       "path=%2Ftmp%2Fuser.sqlite3","limit=1&unknown=x",

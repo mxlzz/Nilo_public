@@ -43,7 +43,7 @@ def _params(raw, allowed):
         raise ReadError("Parámetro no admitido")
     if any(len(entries) != 1 for entries in values.values()):
         raise ReadError("Parámetro repetido")
-    if any(len(entries[0]) > 64 for entries in values.values()):
+    if any(len(entries[0]) > 128 for entries in values.values()):
         raise ReadError("Parámetro demasiado largo")
     return {key: entries[0] for key, entries in values.items()}
 
@@ -109,8 +109,8 @@ class LocalLLMReadAPI:
                              WHERE type='table' AND name=?""", (name,)).fetchone() is not None
 
     def list_attempts(self, raw_query=""):
-        q = _params(raw_query, ("limit", "before", "provider", "purpose",
-                                "status", "date", "session"))
+        q = _params(raw_query, ("limit", "before", "provider", "model", "purpose",
+                                "status", "date", "session", "call"))
         limit = _positive_int(q.get("limit", str(_DEFAULT_LIMIT)),
                               field="limit", maximum=_MAX_LIMIT)
         before = (_positive_int(q["before"], field="before", maximum=2**63-1)
@@ -119,6 +119,11 @@ class LocalLLMReadAPI:
                               ("purpose", _PURPOSES), ("status", _STATUSES)):
             if name in q and q[name] not in options:
                 raise ReadError("Filtro inválido: " + name)
+        if "model" in q and (
+                not q["model"] or not re.fullmatch(r"[A-Za-z0-9._:/-]{1,120}",q["model"])):
+            raise ReadError("Filtro inválido: model")
+        if "call" in q and not _ATTEMPT.fullmatch(q["call"]):
+            raise ReadError("Identificador de deliberación inválido")
         if "date" in q:
             value = q["date"]
             if len(value) != 10 or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
@@ -134,9 +139,9 @@ class LocalLLMReadAPI:
         if before is not None:
             filters.append("r.rowid < ?")
             args.append(before)
-        for key in ("provider", "purpose", "status"):
+        for key in ("provider", "model", "purpose", "status", "call"):
             if key in q:
-                filters.append("r." + key + " = ?")
+                filters.append("r." + ("call_id" if key == "call" else key) + " = ?")
                 args.append(q[key])
         if "date" in q:
             filters.append("substr(r.started_utc,1,10) = ?")
