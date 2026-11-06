@@ -27,14 +27,16 @@ legend{color:var(--muted);font-size:12px;padding:0 6px}.check-grid{display:grid;
 nav[data-lab-nav="primary"]{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
 </style>
-</head><body>
+<link rel="stylesheet" href="/assets/laboratorio.css">
+</head><body data-lab="ajustes">
 <header><div><div class="meta">Nilo 0.7 · entorno de pruebas</div><h1>Centro de ajustes</h1><small>Configuración del motor · Solicitudes calculadas para comparar · Copias seguras de partidas</small></div>
 <nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
 <a href="/visor-llm">Solicitudes LLM</a>
 <a href="/historico">Historial</a>
 <a href="/">Pruebas</a>
 <a href="/ajustes" aria-current="page">Ajustes</a>
-</nav></header>
+</nav><div class="lab-theme-control"><button id="lab-theme-toggle" type="button" aria-label="Cambiar tema">Tema: sistema</button></div>
+</header>
 <main class="layout">
 <section class="panel editor" aria-label="Perfil experimental">
 <h2>Perfil de ajustes</h2>
@@ -201,4 +203,5 @@ $('world-restore').onclick=()=>busy($('world-restore'),async()=>{
  }catch(e){setStatus(e.message,true);}
 })();
 </script>
+<script src="/assets/laboratorio_ui.js" defer></script>
 </body></html>
