@@ -59,6 +59,43 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 @media(max-width:1000px){.shell{grid-template-columns:1fr}.list{max-height:260px}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){header{padding:14px}.shell{padding:9px}.summary-grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.role-head{align-items:start}}
 
+/* Etapa 04.1: composición específica del visor; tokens desde laboratorio.css. */
+.filters-primary{grid-template-columns:repeat(2,minmax(0,1fr))}
+.filter-advanced{margin-top:11px;border:1px solid var(--lab-border);border-radius:8px}
+.filter-advanced>summary{padding:9px 11px;font-size:12px;color:var(--lab-muted)}
+.filter-advanced[open]>summary{border-bottom:1px solid var(--lab-border)}
+.filter-advanced>.filters{padding:11px}
+.attempt-group{margin:2px 0 11px;padding:7px;border:1px solid var(--lab-border);border-radius:8px;background:var(--lab-surface);min-width:0}
+.attempt-group-title{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:2px 3px 8px;color:var(--lab-text);flex-wrap:wrap}
+.attempt-group-title b{font-size:12px}
+.attempt-group-title small{font:11px/1.45 var(--lab-mono);color:var(--lab-muted)}
+.attempt-group .item+.item{margin-top:5px}
+.attempt-group .item .tag{white-space:normal;text-align:right;max-width:60%}
+.block-index{margin:14px 0;border:1px solid var(--lab-border);border-radius:8px;background:var(--lab-surface)}
+.block-index>summary{padding:10px 12px;font-size:13px;font-weight:650}
+.block-index[open]>summary{border-bottom:1px solid var(--lab-border)}
+.block-index-list{display:grid;gap:10px;padding:12px;max-height:220px;overflow:auto}
+.block-index-group{display:grid;gap:6px}
+.block-index-group>strong{font:600 12px/1.4 var(--lab-font)}
+.block-index-items{display:flex;gap:6px;flex-wrap:wrap}
+.block-index-items button{font:11px/1.35 var(--lab-font);padding:5px 8px}
+.capture-meta{margin:12px 0;border:1px solid var(--lab-border);border-radius:7px}
+.capture-meta>summary{padding:9px 11px;color:var(--lab-muted);font-size:12px}
+.capture-meta[open]>summary{border-bottom:1px solid var(--lab-border)}
+.capture-meta-body{padding:10px;display:grid;gap:9px}
+.capture-meta-body .monospace{font:11px/1.5 var(--lab-mono);overflow-wrap:anywhere}
+#detail .role .block:focus-within{outline:1px solid var(--lab-focus);outline-offset:2px}
+#detail .block summary:focus-visible{outline:2px solid var(--lab-focus);outline-offset:2px}
+@media(max-width:760px){
+ .filters-primary{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .attempt-group .item .tag{max-width:none}
+ .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:440px){
+ .filters-primary{grid-template-columns:1fr}
+ .filters-primary label.wide{grid-column:1}
+ .block-index-list{max-height:200px}
+}
 </style>
 <link rel="stylesheet" href="/assets/laboratorio.css">
 </head>
@@ -76,19 +113,24 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 </header>
 <main class="shell">
 <aside class="panel" aria-label="Seleccionar solicitud">
-<div class="panel-head"><h2>Deliberaciones y conversaciones</h2><button type="button" id="refresh">Actualizar</button></div>
+<div class="panel-head"><div><h2>Consultas y reintentos</h2><p class="muted">Los intentos de una misma consulta se agrupan sin descartar registros.</p></div><button type="button" id="refresh">Actualizar</button></div>
 <div class="panel-body">
 <form id="filters">
-<div class="filters">
+<div class="filters filters-primary">
 <label>Proveedor<select id="provider"><option value="">Todos</option><option value="gemini">Gemini</option><option value="groq">Groq</option><option value="openai_compatible">Compatible</option></select></label>
 <label>Tipo<select id="purpose"><option value="">Todos</option><option value="deliberacion">Deliberación</option><option value="chat">Chat</option></select></label>
-<label>Estado<select id="state"><option value="">Todos</option><option value="accepted">Aceptado</option><option value="rejected">Rechazado</option><option value="http_error">Error HTTP</option><option value="transport_error">Error de red</option><option value="transport_attempted">Intentado</option><option value="response_received">Respondido</option><option value="invalid_http_response">Respuesta inválida</option></select></label>
+<label class="wide">Estado<select id="state"><option value="">Todos</option><option value="accepted">Aceptado por validador</option><option value="rejected">Rechazado por validador</option><option value="http_error">Error HTTP</option><option value="transport_error">Error de transporte</option><option value="transport_attempted">Envío iniciado</option><option value="response_received">Respuesta recibida</option><option value="invalid_http_response">Respuesta inválida</option></select></label>
+</div>
+<details class="filter-advanced">
+<summary>Más filtros · fecha, modelo e identificadores</summary>
+<div class="filters">
 <label>Fecha UTC<input type="date" id="date"></label>
+<label>Registros por página<select id="limit"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
 <label class="wide">Modelo<input id="model" maxlength="120" placeholder="Nombre exacto del modelo"></label>
 <label class="wide">ID de deliberación<input id="call" maxlength="32" placeholder="32 caracteres hexadecimales"></label>
-<label>Sesión<input id="session" type="number" min="1" step="1" placeholder="Todas"></label>
-<label>Registros por página<select id="limit"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
+<label class="wide">Sesión<input id="session" type="number" min="1" step="1" placeholder="Todas"></label>
 </div>
+</details>
 <div class="actions" style="margin-top:12px"><button class="grow" type="submit">Aplicar filtros</button><button type="button" id="clear">Limpiar</button></div>
 </form>
 <p class="status" id="list-status" role="status">Cargando capturas…</p>
@@ -98,7 +140,7 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 </aside>
 <section class="panel" aria-label="Contenido de la solicitud">
 <div class="panel-head">
-<div><h2>Contenido literal</h2><p class="muted">Cada bloque conserva su texto original. Los subtítulos son externos al prompt.</p></div>
+<div><h2>Texto de la solicitud</h2><p class="muted">Roles y campos originales, sin reescritura. Títulos y subtítulos fuera del texto enviado.</p></div>
 <div class="modes" aria-label="Modo de visualización">
 <button type="button" id="simple-mode" class="selected" aria-pressed="true">Simplificada</button>
 <button type="button" id="pro-mode" aria-pressed="false">Profesional</button>
