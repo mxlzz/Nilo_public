@@ -17,17 +17,31 @@ from nilo_runtime.agent.budget import (
 from nilo_runtime.agent.responses import parse_json
 from providers import error_from_http, ProviderFailure
 from action_contracts import instructions as action_instructions
+from nilo_runtime.agent.trace_context import transport_started, transport_finished
 
 def _post(url, payload, headers, provider):
     """Único límite de red; la identificación del proveedor nunca depende de URL."""
+    # Serializar una única vez; la copia técnica es idéntica a Request.data.
+    # No registrar headers: contienen claves API.
+    body = json.dumps(payload,ensure_ascii=False).encode("utf-8")
     request = urllib.request.Request(
-        url, data=json.dumps(payload,ensure_ascii=False).encode("utf-8"),
-        headers=headers, method="POST")
+        url, data=body, headers=headers, method="POST")
+    transport_started(body,provider)
     try:
         with urllib.request.urlopen(request,timeout=40) as reply:
-            return json.load(reply)
+            result = json.load(reply)
     except urllib.error.HTTPError as exc:
+        transport_finished("http_error", code=exc.code)
         raise error_from_http(exc,provider) from None
+    except ValueError:
+        # Recibimos bytes, pero la respuesta no se pudo decodificar como JSON.
+        transport_finished("invalid_http_response")
+        raise
+    except Exception:
+        transport_finished("transport_error")
+        raise
+    transport_finished("response_received")
+    return result
 
 def _response(result, provider, *, chat=False):
     """Decodificar una sola respuesta, sin interpolar texto ni deducir éxito."""

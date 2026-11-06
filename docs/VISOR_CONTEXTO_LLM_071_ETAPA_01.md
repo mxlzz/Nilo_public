@@ -107,3 +107,7 @@ Vista simple: selector de intento, agrupación por rol y bloques del JSON, **tí
 La auditoría identificó los componentes y las diferencias entre **percepción, proyección, selección, payload final y transporte**; determinó el punto de captura y el contrato de fidelidad. Queda disponible un test de referencia del gateway sin red para fijar las formas de Gemini/Groq, sin modificar su conducta.
 
 **Etapa 02:** implementar trazas de solicitudes **por intento real** en la frontera de transporte y su correlación con el router, con redacción de secretos HTTP, migración, retención y tests. Las vistas visuales permanecen pendientes hasta etapa 06. Esta rama es independiente de [PR #78](https://github.com/mxlzz/Nilo_public/pull/78) (corrección de proyectos).
+
+## Evidencia posterior de etapa 01
+
+Los workflows [#42240559090](https://github.com/mxlzz/Nilo_public/actions/runs/42240559090) (PR) y [#42240518998](https://github.com/mxlzz/Nilo_public/actions/runs/42240518998) (push) finalizaron **success**. La etapa 01 queda técnicamente validada y se continúa con la [etapa 02](VISOR_CONTEXTO_LLM_071_ETAPA_02.md). No se atribuye a la auditoría la captura histórica, que recién se implementa en esta nueva etapa.
