@@ -301,16 +301,44 @@ append(body,toolbar,showText(N("div"),block.literal));
 const origin=N("details","extra");append(origin,N("summary","","Procedencia del campo"),fieldSources(block.json_pointer,meta,role));body.appendChild(origin);
 details.appendChild(body);return details
 }
-function renderMessages(data,container){
-const p=N("p","caption","El texto se presenta por roles y campos originales. El contenido no se traduce, resume ni normaliza.");container.appendChild(p);
-for(const message of data.messages||[]){
-const section=N("section","role"),head=N("div","role-head");
-append(head,N("b","",message.role),N("span","path",message.path));
-const body=N("div","role-content");
-for(const block of message.blocks||[])body.appendChild(renderBlock(block,data.provenance,message.role));
-if(!message.blocks||!message.blocks.length)body.appendChild(N("p","muted","Este mensaje no tiene bloques textuales."));
-append(section,head,body);container.appendChild(section);
+function focusBlock(details){
+ details.open=true;
+ if(typeof details.scrollIntoView==="function")details.scrollIntoView({behavior:"auto",block:"start"});
+ const heading=details.querySelector("summary");
+ if(heading&&typeof heading.focus==="function")heading.focus({preventScroll:true});
 }
+function renderMessages(data,container){
+container.appendChild(N("p","caption","Los bloques muestran fragmentos textuales originales, agrupados por rol y por campo. El índice y sus subtítulos no forman parte de la solicitud."));
+const index=N("details","block-index");
+index.open=true;
+const count=(data.messages||[]).reduce((total,msg)=>total+(msg.blocks||[]).length,0);
+append(index,N("summary","","Índice de bloques · "+count+" fragmentos"));
+const links=N("div","block-index-list");
+const messageSections=[];
+for(const message of data.messages||[]){
+ const section=N("section","role"),head=N("div","role-head");
+ append(head,N("b","",message.role),N("span","path",message.path));
+ const body=N("div","role-content"),group=N("div","block-index-group");
+ const entries=message.blocks||[];
+ append(group,N("strong","",message.role+" · "+entries.length+" bloques"));
+ const items=N("div","block-index-items");
+ for(const block of entries){
+  const target=renderBlock(block,data.provenance,message.role);
+  const button=N("button","",block.title||"Contenido");
+  button.type="button";
+  button.addEventListener("click",()=>focusBlock(target));
+  items.appendChild(button);
+  body.appendChild(target);
+ }
+ if(!entries.length)body.appendChild(N("p","muted","Este mensaje no tiene bloques textuales."));
+ group.appendChild(items);
+ links.appendChild(group);
+ append(section,head,body);
+ messageSections.push(section);
+}
+index.appendChild(links);
+container.appendChild(index);
+for(const section of messageSections)container.appendChild(section);
 }
 function renderProfessional(data,container){
 const intro=N("p","caption","Misma captura; incluye texto HTTP íntegro, trazas y referencias. Nunca se reconstruye desde el estado actual. Estado original del intento: "+data.status+". Una respuesta aceptada no acredita ejecución física.");container.appendChild(intro);
@@ -337,13 +365,22 @@ const toolbar=N("div","detail-toolbar");
 append(toolbar,N("h2","",data.purpose==="chat"?"Conversación registrada":"Deliberación registrada"),actionButton("Copiar solicitud",data.body_utf8));
 root.appendChild(toolbar);
 const facts=N("div","summary-grid");
-append(facts,kv("Proveedor",data.provider),kv("Modelo",data.model),kv("Estado del intento",statusLabel(data.status)),
-kv("Momento simulado",data.simulated_at),kv("Intento",data.attempt_ordinal),kv("Inicio UTC",formatDate(data.started_utc)),
-kv("Procedencia",provenanceLabel(data.provenance_status)));
+append(facts,kv("Modelo",data.model),kv("Estado del intento",statusLabel(data.status)),
+ kv("Momento simulado",data.simulated_at),kv("Procedencia",provenanceLabel(data.provenance_status)));
 root.appendChild(facts);
-const meta=N("p","caption","ID de consulta: "+data.call_id+" · ID de intento: "+data.attempt_id+" · SHA-256: "+data.body_sha256);
-root.appendChild(meta);
-if(data.linked_record)root.appendChild(N("p","caption","Registro relacionado por ID: "+data.linked_record.category+" · secuencia "+data.linked_record.seq+". Este vínculo no demuestra que la acción se haya ejecutado."));
+const capture=N("details","capture-meta");
+append(capture,N("summary","","Metadatos originales de la captura"));
+const metadata=N("div","capture-meta-body");
+append(metadata,
+ kv("Proveedor",data.provider),
+ kv("Intento",data.attempt_ordinal),
+ kv("Inicio UTC",formatDate(data.started_utc)),
+ kv("Sesión",data.session_id??"—"),
+ N("p","monospace","ID de consulta: "+data.call_id),
+ N("p","monospace","ID de intento: "+data.attempt_id),
+ N("p","monospace","SHA-256 del cuerpo: "+data.body_sha256));
+if(data.linked_record)append(metadata,N("p","caption","Registro relacionado por ID: "+data.linked_record.category+" · secuencia "+data.linked_record.seq+". Este vínculo no demuestra que la acción se haya ejecutado."));
+capture.appendChild(metadata);root.appendChild(capture);
 const canvas=N("div");root.appendChild(canvas);
 if(mode==="simple")renderMessages(data,canvas);else renderProfessional(data,canvas);
 }
