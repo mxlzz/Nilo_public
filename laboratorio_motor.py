@@ -278,6 +278,21 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(contents)))
             self.end_headers()
             self.wfile.write(contents)
+        elif path in ("/assets/laboratorio.css", "/assets/laboratorio_ui.js"):
+            # Assets fijos del laboratorio: solo estos dos nombres, sin acceso a rutas arbitrarias.
+            static_sources = {
+                "/assets/laboratorio.css": (HERE / "assets/laboratorio.css", "text/css; charset=utf-8"),
+                "/assets/laboratorio_ui.js": (HERE / "assets/laboratorio_ui.js", "text/javascript; charset=utf-8"),
+            }
+            source, mime = static_sources[path]
+            contents = source.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", mime)
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.send_header("Content-Length", str(len(contents)))
+            self.end_headers()
+            self.wfile.write(contents)
         elif path in ("/api/lab/llm/attempts", "/api/lab/llm/attempt"):
             # Solo servidor del laboratorio: no sumar rutas crudas a la UI
             # principal. La base se determina desde la partida del LabHub;
