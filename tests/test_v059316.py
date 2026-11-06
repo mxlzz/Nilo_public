@@ -82,8 +82,12 @@ class CatalogContract(unittest.TestCase):
     def test_catalogue_is_packaged_explicitly(self):
         manifest=json.loads((ROOT/"MANIFIESTO_SHA256.json").read_text("utf8"))
         for name in ("catalogo.py","catalog/materiales.json","catalog/terrenos.json",
-                     "catalog/objetos.json","tests/test_v059316.py"):
+                     "catalog/objetos.json"):
             self.assertIn(name,manifest["files"],name)
+        if manifest.get("version") == "0.7.0":
+            self.assertNotIn("tests/test_v059316.py",manifest["files"])
+        else:
+            self.assertIn("tests/test_v059316.py",manifest["files"])
 
     def test_same_seed_preserves_world_generation(self):
         a=nilo.initial_state(7321)["world"]

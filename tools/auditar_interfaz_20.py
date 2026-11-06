@@ -57,7 +57,15 @@ def audit():
     refs={m.group(2) for m in re.finditer(r"\bel\((['\"])([^'\"]+)\1\)",script)}
     missing=refs-catalog.ids
     if missing:errors.append("Referencias al DOM sin ID: "+repr(sorted(missing)))
-    legacy=legacy_markup(ROOT).encode("utf-8")
+    # Etapa 24 solo actualiza la etiqueta de la versión; la paridad
+    # estructural con el frontend previo a etapa 20 debe mantenerse exacta.
+    legacy=legacy_markup(ROOT)
+    current_version=(ROOT/"VERSION").read_text("utf-8").strip()
+    expected_label="Una vida en curso · Nilo "+current_version
+    if expected_label not in legacy:
+        errors.append("El encabezado visible no coincide con VERSION")
+    legacy=legacy.replace(expected_label,
+                          "Una vida en curso · Nilo 0.6.4").encode("utf-8")
     git_hash=hashlib.sha1(f"blob {len(legacy)}\0".encode()+legacy).hexdigest()
     if git_hash!=OLD_GIT_BLOB:
         errors.append("Perdió paridad byte a byte con interfaz anterior a etapa 20")

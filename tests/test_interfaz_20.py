@@ -57,7 +57,11 @@ class Scanner(HTMLParser):
 class StaticUI20(unittest.TestCase):
     def test_extracted_assets_reassemble_exact_historical_blob(self):
         # SHA1 formato de blob Git sobre interfaz.html anterior a etapa 20.
-        reconstructed=legacy_markup(ROOT).encode("utf-8")
+        reconstructed=legacy_markup(ROOT)
+        version=(ROOT/"VERSION").read_text("utf-8").strip()
+        self.assertIn("Una vida en curso · Nilo "+version,reconstructed)
+        reconstructed=reconstructed.replace("Una vida en curso · Nilo "+version,
+                                            "Una vida en curso · Nilo 0.6.4").encode("utf-8")
         digest=hashlib.sha1(
             f"blob {len(reconstructed)}\0".encode()+reconstructed).hexdigest()
         self.assertEqual(digest,"b2140f365ac0344189096cf615b5cf97d69fa8d2")

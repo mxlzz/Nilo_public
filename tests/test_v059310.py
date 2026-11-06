@@ -150,8 +150,14 @@ class PackageVersion(unittest.TestCase):
                 manifest=json.loads(z.read(prefix+'MANIFIESTO_SHA256.json'))
                 self.assertEqual(manifest['version'],version)
                 for required in ('brain.py','diagnostic_guidance.py','project_lifecycle.py',
-                                 'laboratory.py','tests/test_v059310.py'):
+                                 'laboratory.py'):
                     self.assertIn(required,manifest['files'])
+                # Desde 0.7.0 el release es producto, no distribución del QA.
+                if version == "0.7.0":
+                    self.assertNotIn('tests/test_v059310.py',manifest['files'])
+                    self.assertIn('BUILD_INFO.json',manifest['files'])
+                else:
+                    self.assertIn('tests/test_v059310.py',manifest['files'])
                 for path,digest in manifest['files'].items():
                     self.assertEqual(hashlib.sha256(z.read(prefix+path)).hexdigest(),digest)
                 self.assertFalse(any(name.endswith('config.env') for name in z.namelist()))
