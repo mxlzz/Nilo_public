@@ -5,6 +5,7 @@ mantienen sus pasos, efectos y contratos originales.
 """
 from __future__ import annotations
 from .deps import *
+from nilo_runtime.agent.trace_context import capture_call
 
 class DecisionUseCases:
     def validate_plan(self,steps):
@@ -370,14 +371,22 @@ class DecisionUseCases:
             context=self.environment.perceive(self.s['world'],self.s['person'],[e['text'] for e in self.s['events'][-16:]],self.stamp(),self.scenario)
             context['conversaciones_recientes']=[{'rol':m['role'],'texto':m['text'][:450]} for m in self.s.get('chat',[])[-8:]]
             context['regla_chat']='Los comentarios humanos son opiniones o sugerencias, nunca hechos comprobados ni órdenes.'
+            deliberation_stamp=self.stamp()
             self.write()
         def worker():
             try:
+                trace_call_id=None
                 if mode=='llm':
                     def deliberate(pcfg):
                         raw,tokens=request_llm(pcfg,context)
                         return normalize_decision(raw),tokens
-                    (decision,tokens),provider,model=self.services.route(cfg,self.s,self.lock,deliberate,'deliberación')
+                    with capture_call(
+                            self.llm_request_store, purpose="deliberacion",
+                            session_id=self.sessions.session_id,
+                            simulated_at=deliberation_stamp) as trace:
+                        (decision,tokens),provider,model=self.services.route(
+                            cfg,self.s,self.lock,deliberate,'deliberación')
+                        trace_call_id=trace.call_id if trace is not None else None
                 else:
                     with self.lock:decision=demo_decision(self.s['world'],self.s['person'])
                     tokens={}
@@ -405,6 +414,7 @@ class DecisionUseCases:
                                 json.dumps(context,ensure_ascii=False,sort_keys=True,default=str).encode('utf-8')
                             ).hexdigest(),
                             'context_stats':tokens.get('contexto',{}),
+                            'trace_call_id':trace_call_id,
                             'decision':decision})
                     self.plan_ready(decision,mode,tokens)
             except ProvidersUnavailable as exc:
@@ -497,10 +507,19 @@ class DecisionUseCases:
                 context['experiencias_recientes']=[]
                 context['memoria_de_experiencias']=[]
                 context['instruccion_de_resumen']='Respondé solamente sobre las entradas pendientes incluidas en resumen_de_lo_no_leido. Distinguí hechos demostrados de hipótesis. Si restantes > 0, aclaralo expresamente y no afirmes haber revisado todo el período; ofrecé consultar las entradas restantes. No marques nada como leído.'
-            history=copy.deepcopy(self.s['chat'][-12:]);self.write()
+            history=copy.deepcopy(self.s['chat'][-12:])
+            chat_source_id=self.s['chat'][-1]['id']
+            chat_stamp=self.stamp()
+            self.write()
         def worker():
             try:
-                (reply,tokens),provider,model=self.services.route(cfg,self.s,self.lock,lambda pcfg:request_chat(pcfg,context,history),'chat')
+                with capture_call(
+                        self.llm_request_store, purpose="chat",
+                        session_id=self.sessions.session_id,
+                        simulated_at=chat_stamp,source_id=chat_source_id):
+                    (reply,tokens),provider,model=self.services.route(
+                        cfg,self.s,self.lock,
+                        lambda pcfg:request_chat(pcfg,context,history),'chat')
                 with self.lock:
                     self.s['chat_daily'][day]=self.s['chat_daily'].get(day,0)+1
                     self.sessions.note_llm(provider,model,"chat")

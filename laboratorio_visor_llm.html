@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nilo · Visor literal del contexto LLM</title>
+<style>
+:root{color-scheme:dark;--bg:#111716;--panel:#192220;--raised:#202b28;--line:#364742;--ink:#ebf0ec;--muted:#a4b7af;--accent:#b6d6bf;--subtle:#d3ddd6;--error:#ecc0b0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}button{cursor:pointer;background:var(--raised);color:var(--ink);border:1px solid #54695e;border-radius:6px;padding:7px 11px}button:hover{border-color:var(--accent)}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button:disabled{opacity:.55;cursor:default}
+header{display:flex;justify-content:space-between;align-items:center;padding:17px 22px;border-bottom:1px solid var(--line);gap:12px;flex-wrap:wrap}
+h1,h2,h3,p{margin:0}h1{font-size:20px;letter-spacing:-.025em}h2{font-size:15px}h3{font-size:13px}
+.eyebrow{font:11px var(--mono);letter-spacing:.08em;color:var(--accent);text-transform:uppercase}.muted{color:var(--muted);font-size:12px}.monospace{font:12px/1.55 var(--mono);overflow-wrap:anywhere}
+nav{display:flex;flex-wrap:wrap;gap:13px;align-items:center;font-size:12px}
+.shell{padding:15px;max-width:1900px;margin:auto;display:grid;grid-template-columns:minmax(280px,345px) minmax(390px,1fr);gap:15px;align-items:start}
+.panel{min-width:0;border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
+.panel-head{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;gap:9px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.panel-body{padding:15px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px}.filters label{font-size:11px;color:var(--muted);display:grid;gap:4px}.filters label.wide{grid-column:1/-1}
+select,input{background:var(--bg);color:var(--ink);border:1px solid #53665e;border-radius:5px;padding:8px;min-width:0;width:100%}
+.actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.actions .grow{flex:1}
+.status{font-size:12px;color:var(--muted);min-height:20px;padding:8px 0}.status.error{color:var(--error)}
+.list{display:grid;gap:6px;max-height:68vh;overflow:auto;padding:0 15px 15px}
+.item{width:100%;text-align:left;padding:11px;border-radius:7px;background:#202d29;border:1px solid #34473e;display:grid;gap:5px}
+.item.active{background:#2a3c33;border-color:var(--accent)}.item .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.item .top b{font-size:12px;font-weight:650}.item small{font:11px/1.4 var(--mono);color:var(--muted);overflow-wrap:anywhere}
+.tag{display:inline-block;border:1px solid #526759;border-radius:30px;padding:2px 7px;font:10px var(--mono);color:var(--subtle)}
+.tag.bad{border-color:#876455;color:var(--error)}.tag.good{color:var(--accent)}
+#detail{min-height:550px}.detail-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.modes{display:flex;gap:5px}.modes button.selected{background:#405647;border-color:var(--accent);color:#fff}
+.summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:12px}
+.fact{border:1px solid var(--line);border-radius:6px;padding:10px;background:var(--raised);min-width:0}
+.fact .key{font:10px var(--mono);text-transform:uppercase;color:var(--muted)}.fact .value{font:12px var(--mono);word-break:break-word;margin-top:3px}
+.caption{font-size:12px;color:var(--muted);line-height:1.5;margin:9px 0}
+.role{border:1px solid var(--line);border-radius:8px;margin:12px 0;overflow:hidden}
+.role-head{padding:11px 14px;background:var(--raised);display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.role-head .path{font:11px var(--mono);color:var(--muted);overflow-wrap:anywhere}
+.role-content{padding:11px;display:grid;gap:9px}
+.block{border:1px solid #465a50;border-radius:7px;overflow:hidden;background:#151d1b}
+.block summary{cursor:pointer;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:11px 13px;list-style:none}
+.block summary::-webkit-details-marker{display:none}.block summary::after{content:"+";font:17px var(--mono);color:var(--accent)}.block[open] summary::after{content:"−"}
+.block .title{font:600 13px var(--mono);overflow-wrap:anywhere}.block .subtitle{font-size:11px;color:var(--muted);margin-top:3px}
+.block-body{border-top:1px solid var(--line);padding:10px}.block-controls{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin:0 0 7px}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;tab-size:2;background:#0e1614;border:1px solid #2c3a34;border-radius:6px;padding:11px;font:12px/1.55 var(--mono);color:#d7e3d9;max-height:52vh;overflow:auto;margin:0}
+details.extra{margin:8px 0 0;padding:8px 10px;border:1px dashed #51665b;border-radius:5px}
+details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
+.source{font:11px/1.5 var(--mono);color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;padding:7px 0}
+.source-row{margin:8px 0;padding:7px;border:1px solid var(--line);border-radius:5px}
+.source-row strong{display:block;color:var(--subtle);font-size:12px}.origin-fields{display:grid;gap:5px}
+.origin-fields button{font:11px var(--mono);text-align:left;overflow-wrap:anywhere}
+.pro-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:15px 0 8px}
+.pro-section{border:1px solid var(--line);border-radius:7px;margin:12px 0;padding:10px}
+.pro-section summary{cursor:pointer;font-weight:600;font-size:13px}
+.pro-section pre{margin-top:10px}
+.stage{border-left:3px solid #709d83;padding:9px 11px;margin:8px 0;background:var(--raised);border-radius:5px}
+.stage b{display:block;font:600 12px var(--mono)}.stage .source{padding:2px 0}
+.empty{padding:35px 15px;color:var(--muted);text-align:center;font-size:13px}
+.hint{border:1px dashed var(--line);padding:10px 12px;border-radius:6px;color:var(--muted);font-size:12px}
+#notice{margin:11px 0;color:var(--muted);font-size:12px;min-height:18px}
+@media(max-width:1000px){.shell{grid-template-columns:1fr}.list{max-height:260px}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){header{padding:14px}.shell{padding:9px}.summary-grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.role-head{align-items:start}}
+</style>
+</head>
+<body>
+<header>
+<div><div class="eyebrow">Nilo · Laboratorio</div><h1>Contexto que recibe el LLM</h1>
+<p class="muted">Solicitudes reales archivadas, sin reinterpretar sus mensajes.</p></div>
+<nav aria-label="Secciones del laboratorio"><a href="/">Escenarios</a><a href="/sandbox">Acciones</a><a href="/historico">Historial</a><a href="/ajustes">Ajustes</a><span class="tag">Visor LLM</span></nav>
+</header>
+<main class="shell">
+<aside class="panel" aria-label="Seleccionar solicitud">
+<div class="panel-head"><h2>Deliberaciones y conversaciones</h2><button type="button" id="refresh">Actualizar</button></div>
+<div class="panel-body">
+<form id="filters">
+<div class="filters">
+<label>Proveedor<select id="provider"><option value="">Todos</option><option value="gemini">Gemini</option><option value="groq">Groq</option><option value="openai_compatible">Compatible</option></select></label>
+<label>Tipo<select id="purpose"><option value="">Todos</option><option value="deliberacion">Deliberación</option><option value="chat">Chat</option></select></label>
+<label>Estado<select id="state"><option value="">Todos</option><option value="accepted">Aceptado</option><option value="rejected">Rechazado</option><option value="http_error">Error HTTP</option><option value="transport_error">Error de red</option><option value="transport_attempted">Intentado</option><option value="response_received">Respondido</option><option value="invalid_http_response">Respuesta inválida</option></select></label>
+<label>Fecha UTC<input type="date" id="date"></label>
+<label class="wide">Modelo<input id="model" maxlength="120" placeholder="Nombre exacto del modelo"></label>
+<label class="wide">ID de deliberación<input id="call" maxlength="32" placeholder="32 caracteres hexadecimales"></label>
+<label>Sesión<input id="session" type="number" min="1" step="1" placeholder="Todas"></label>
+<label>Registros por página<select id="limit"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
+</div>
+<div class="actions" style="margin-top:12px"><button class="grow" type="submit">Aplicar filtros</button><button type="button" id="clear">Limpiar</button></div>
+</form>
+<p class="status" id="list-status" role="status">Cargando capturas…</p>
+</div>
+<div id="attempt-list" class="list" aria-label="Intentos archivados"></div>
+<div class="panel-body actions"><button id="more" type="button" disabled>Cargar anteriores</button><span class="muted" id="count"></span></div>
+</aside>
+<section class="panel" aria-label="Contenido de la solicitud">
+<div class="panel-head">
+<div><h2>Contenido literal</h2><p class="muted">Cada bloque conserva su texto original. Los subtítulos son externos al prompt.</p></div>
+<div class="modes" aria-label="Modo de visualización">
+<button type="button" id="simple-mode" class="selected" aria-pressed="true">Simplificada</button>
+<button type="button" id="pro-mode" aria-pressed="false">Profesional</button>
+</div>
+</div>
+<div class="panel-body">
+<div id="notice" role="status"></div>
+<div id="detail" aria-live="polite"><p class="empty">Seleccioná una deliberación para ver qué se envió al modelo.</p></div>
+</div>
+</section>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const FIELDS=["provider","purpose","state","date","model","call","session","limit"];
+let attempts=[],nextBefore=null,current=null,activeId="",mode="simple";
+const N=(tag,className="",text)=>{const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined&&text!==null)node.textContent=String(text);return node};
+function append(parent,...children){for(const child of children)parent.appendChild(child);return parent}
+function showText(parent,value){parent.appendChild(N("pre","",value===undefined?"":value));return parent}
+function formatDate(s){return s?String(s).replace("T"," ").slice(0,19):"Sin fecha"}
+function statusClass(status){return status==="accepted"?"good":status==="rejected"||status.includes("error")?"bad":""}
+function updateStatus(msg,error=false){$("list-status").textContent=msg;$("list-status").classList.toggle("error",error)}
+function updateNotice(msg,error=false){$("notice").textContent=msg;$("notice").style.color=error?"var(--error)":"var(--muted)"}
+function setMode(which){mode=which;for(const id of ["simple","pro"]){const btn=$(id+"-mode"),yes=id===which;btn.classList.toggle("selected",yes);btn.setAttribute("aria-pressed",String(yes))}if(current)renderDetail(current)}
+function filterQuery(before){const q=new URLSearchParams();for(const id of FIELDS){const value=$(id).value.trim();if(!value)continue;const key=id==="state"?"status":id;q.set(key,value)}if(before!==null)q.set("before",String(before));return q.toString()}
+async function fetchJson(url){const response=await fetch(url,{cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok)throw new Error(data.error||("HTTP "+response.status));return data}
+async function refresh(reset=true){
+const before=reset?null:nextBefore;
+if(!reset&&before===null)return;
+$("more").disabled=true;updateStatus("Leyendo capturas…");
+try{
+const response=await fetchJson("/api/lab/llm/attempts?"+filterQuery(before));
+if(reset)attempts=[];attempts.push(...response.attempts);
+nextBefore=response.next_before;
+renderAttempts();
+$("count").textContent=attempts.length+" intentos cargados";
+updateStatus(!response.available?"Todavía no hay solicitudes capturadas en esta partida.":attempts.length?"Elegí un intento para inspeccionarlo.":"No hay intentos que coincidan con esos filtros.");
+$("more").disabled=nextBefore===null;
+if(reset&&attempts.length){await selectAttempt(attempts[0].attempt_id)}
+if(reset&&!attempts.length){current=null;activeId="";$("detail").replaceChildren(N("p","empty","No hay solicitudes disponibles. La captura se genera únicamente cuando Nilo consulta realmente a un LLM."));}
+}catch(err){updateStatus("No fue posible leer el historial: "+err.message,true);$("more").disabled=nextBefore===null}
+}
+function renderAttempts(){
+const list=$("attempt-list");list.replaceChildren();
+for(const item of attempts){
+const btn=N("button","item"+(item.attempt_id===activeId?" active":""));btn.type="button";btn.dataset.attempt=item.attempt_id;
+const top=N("div","top");
+append(top,N("b","",item.purpose==="chat"?"Conversación":"Deliberación"),N("span","tag "+statusClass(item.status),item.status));
+const name=N("div","monospace",item.provider+" · "+item.model);
+const meta=N("small","",formatDate(item.started_utc)+" · intento "+item.attempt_ordinal);
+append(btn,top,name,meta);
+btn.addEventListener("click",()=>selectAttempt(item.attempt_id));
+list.appendChild(btn);
+}
+}
+async function selectAttempt(id){
+activeId=id;renderAttempts();updateNotice("Abriendo solicitud…");
+try{
+const data=await fetchJson("/api/lab/llm/attempt?id="+encodeURIComponent(id));
+if(id!==activeId)return;
+current=data;updateNotice("");renderDetail(data);
+}catch(err){if(id!==activeId)return;current=null;updateNotice("No se pudo abrir este intento: "+err.message,true);$("detail").replaceChildren(N("p","empty","El detalle no está disponible."));}
+}
+function kv(label,value){const wrap=N("div","fact");append(wrap,N("div","key",label),N("div","value",value===null||value===undefined?"—":value));return wrap}
+async function copyLiteral(value){try{await navigator.clipboard.writeText(value);updateNotice("Texto literal copiado.")}catch(_){updateNotice("No se pudo copiar el texto.",true)}}
+function actionButton(title,value){const b=N("button","",title);b.type="button";b.addEventListener("click",()=>copyLiteral(value));return b}
+function fieldSources(pointer,meta,role){
+const out=N("div","origin-fields");
+if(!meta){append(out,N("p","muted","Esta solicitud no tiene procedencia archivada."));return out}
+if(!pointer){
+const refs=(meta.role_sources&&meta.role_sources[role])||[];
+if(refs.length){append(out,N("p","muted","Referencias del código que construye este rol:"));
+for(const ref of refs)append(out,N("div","source-row monospace",ref))}
+else append(out,N("p","muted","Este mensaje no tiene referencias de origen archivadas."));
+return out
+}
+const field=(meta.fields||[]).find(f=>f.json_pointer===pointer);
+const root=pointer.split("/")[1].replace(/~1/g,"/").replace(/~0/g,"~");
+const provenance=meta.origins&&meta.origins[root];
+if(field){append(out,N("p","muted","Campo: "+field.json_pointer+" · "+field.origin_precision+" · en la solicitud: "+String(field.in_http_payload)))}
+else append(out,N("p","muted","No hay traza individual de este campo."));
+if(provenance){
+append(out,N("p","muted","Origen: "+provenance.status));
+for(const ref of provenance.references||[]){
+const r=N("div","source-row");append(r,N("strong","",ref.file+" : "+ref.line),N("div","source",ref.function+" · "+ref.source_kind),N("div","source",ref.expression_excerpt||""));out.appendChild(r);
+}
+}else append(out,N("p","muted","No se encontró origen de este campo en la traza."));
+const nested=(meta.fields||[]).filter(f=>f.json_pointer.startsWith(pointer+"/"));
+if(nested.length){
+const details=N("details","extra");append(details,N("summary","","Subcampos registrados ("+nested.length+")"));
+const box=N("div","origin-fields");for(const f of nested.slice(0,150)){
+const b=N("button","",f.json_pointer);b.type="button";b.addEventListener("click",()=>{
+const area=details.querySelector(".selected-origin");
+if(area)area.remove();
+const span=N("p","source selected-origin",f.json_pointer+" · "+f.origin_precision+" · en payload: "+String(f.in_http_payload));
+box.appendChild(span);
+});box.appendChild(b);
+}
+if(nested.length>150)append(box,N("p","muted","Se muestran los primeros 150 subcampos."));
+details.appendChild(box);out.appendChild(details);
+}
+return out
+}
+function renderBlock(block,meta,role){
+const details=N("details","block");const summary=N("summary");
+const lhs=N("span");append(lhs,N("div","title",block.title||"Contenido"),N("div","subtitle",block.subtitle||""));
+summary.appendChild(lhs);details.appendChild(summary);
+const body=N("div","block-body"),toolbar=N("div","block-controls");
+toolbar.appendChild(actionButton("Copiar bloque",block.literal));
+append(body,toolbar,showText(N("div"),block.literal));
+const origin=N("details","extra");append(origin,N("summary","","Origen y transformaciones"),fieldSources(block.json_pointer,meta,role));body.appendChild(origin);
+details.appendChild(body);return details
+}
+function renderMessages(data,container){
+const p=N("p","caption","El texto se presenta por roles y campos originales. El contenido no se traduce, resume ni normaliza.");container.appendChild(p);
+for(const message of data.messages||[]){
+const section=N("section","role"),head=N("div","role-head");
+append(head,N("b","",message.role),N("span","path",message.path));
+const body=N("div","role-content");
+for(const block of message.blocks||[])body.appendChild(renderBlock(block,data.provenance,message.role));
+if(!message.blocks||!message.blocks.length)body.appendChild(N("p","muted","Este mensaje no tiene bloques textuales."));
+append(section,head,body);container.appendChild(section);
+}
+}
+function renderProfessional(data,container){
+const intro=N("p","caption","Misma captura; incluye texto HTTP íntegro, trazas y referencias. Nunca se reconstruye desde el estado actual.");container.appendChild(intro);
+const body=N("details","pro-section");body.open=true;
+append(body,N("summary","","Cuerpo HTTP original · "+data.body_bytes+" bytes"),actionButton("Copiar cuerpo original",data.body_utf8));showText(body,data.body_utf8);container.appendChild(body);
+const roles=N("details","pro-section");append(roles,N("summary","","Mensajes íntegros por rol y ruta ("+(data.messages||[]).length+")"));
+for(const msg of data.messages||[]){const item=N("div","stage");append(item,N("b","",msg.role+" · "+msg.path),N("div","source","Caracteres: "+msg.length_codepoints));showText(item,msg.text);roles.appendChild(item)}
+container.appendChild(roles);
+const meta=data.provenance;
+const trace=N("details","pro-section");trace.open=true;append(trace,N("summary","","Transformaciones observadas"));
+if(!meta){trace.appendChild(N("p","hint","No se archivó procedencia para esta consulta. El texto original sí está disponible."))}
+else{
+append(trace,N("p","caption","Verificación contra cuerpo HTTP: "+meta.payload_verification+" · Referencias AST: no prueban por sí solas ramas ejecutadas."));
+for(const step of meta.transitions||[]){const div=N("div","stage");
+append(div,N("b","",step.previous_stage+" → "+step.stage),N("div","source","Agregados: "+step.added_count+" · Eliminados: "+step.removed_count+" · Modificados: "+step.modified_count));
+const d=N("details","extra");append(d,N("summary","","Ver rutas JSON afectadas"),showText(N("div"),JSON.stringify({added:step.added,removed:step.removed,modified:step.modified},null,2)));div.appendChild(d);trace.appendChild(div)}
+const src=N("details","extra");append(src,N("summary","","Procedencia y referencias completas"),showText(N("div"),JSON.stringify({origins:meta.origins,fields:meta.fields,role_sources:meta.role_sources,omitted_roots:meta.omitted_roots},null,2)));trace.appendChild(src)
+}
+container.appendChild(trace);
+}
+function renderDetail(data){
+const root=$("detail");root.replaceChildren();
+const toolbar=N("div","detail-toolbar");
+append(toolbar,N("h2","",data.purpose==="chat"?"Conversación registrada":"Deliberación registrada"),actionButton("Copiar solicitud",data.body_utf8));
+root.appendChild(toolbar);
+const facts=N("div","summary-grid");
+append(facts,kv("Proveedor",data.provider),kv("Modelo",data.model),kv("Estado",data.status),
+kv("Momento simulado",data.simulated_at),kv("Intento",data.attempt_ordinal),kv("Inicio UTC",formatDate(data.started_utc)));
+root.appendChild(facts);
+const meta=N("p","caption","ID de consulta: "+data.call_id+" · ID de intento: "+data.attempt_id+" · SHA-256: "+data.body_sha256);
+root.appendChild(meta);
+if(data.linked_record)root.appendChild(N("p","caption","Vínculo exacto con historial: "+data.linked_record.category+" · secuencia "+data.linked_record.seq));
+const canvas=N("div");root.appendChild(canvas);
+if(mode==="simple")renderMessages(data,canvas);else renderProfessional(data,canvas);
+}
+$("simple-mode").addEventListener("click",()=>setMode("simple"));
+$("pro-mode").addEventListener("click",()=>setMode("pro"));
+$("refresh").addEventListener("click",()=>refresh(true));
+$("filters").addEventListener("submit",ev=>{ev.preventDefault();refresh(true)});
+$("clear").addEventListener("click",()=>{for(const id of FIELDS){$(id).value=id==="limit"?"25":""}refresh(true)});
+$("more").addEventListener("click",()=>refresh(false));
+refresh(true);
+</script>
+</body></html>

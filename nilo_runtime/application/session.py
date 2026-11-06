@@ -12,7 +12,8 @@ class SessionLifecycle:
         # La aplicación sigue usando DB y las semillas anteriores. El modo de
         # prueba inyecta una base aislada y semillas explícitas.
         self.services=services if services is not None else RuntimeServices()
-        self.lock=threading.RLock();self.conn=sqlite3.connect(db_path if db_path is not None else DB,check_same_thread=False,timeout=15)
+        self.conn_db_path=db_path if db_path is not None else DB
+        self.lock=threading.RLock();self.conn=sqlite3.connect(self.conn_db_path,check_same_thread=False,timeout=15)
         self.conn.execute('PRAGMA journal_mode=WAL')
         # Una migración inválida no deja tablas parcialmente confirmadas.
         # Abrir primero una unidad de trabajo, incluso para las DDL legadas.
@@ -31,6 +32,9 @@ class SessionLifecycle:
         self.archive=History(self.conn)
         self.review=ReviewStore(self.conn)
         self.sessions=RunHistory(self.conn,HERE)
+        from nilo_runtime.storage.llm_requests import RequestTraceStore
+        self.llm_request_store=RequestTraceStore.for_world(
+            self.conn_db_path)
         from nilo_runtime.storage.timeline import TimelineStore
         self.timeline=TimelineStore(self.conn)
         self.timeline_capture_enabled=True

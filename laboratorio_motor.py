@@ -20,6 +20,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 from nilo_runtime.web.security import authorize, parse_body, RequestError
 from nilo_runtime.labs.hub import LabHub
+from nilo_runtime.labs.llm_read import LocalLLMReadAPI, ReadError
 
 from action_contracts import ACTION_GUIDE, SUPPORTED_OPERATIONS, before as contract_before, classify
 from action_results import ActionResult
@@ -36,6 +37,7 @@ from world import TRAVEL_MINUTES_PER_TILE, tile, valid
 HTML_FILE = HERE / "laboratorio_motor.html"
 SCENARIO_HTML_FILE = HERE / "laboratorio_escenarios.html"
 HISTORY_HTML_FILE = HERE / "laboratorio_historico.html"
+LLM_VIEWER_HTML_FILE = HERE / "laboratorio_visor_llm.html"
 TRACE_TEXT = {
     "navigation.py:resolve_go": "Comprueba destino y accesibilidad conocida",
     "navigation.py:reachable_shores": "Busca orillas alcanzables",
@@ -262,8 +264,9 @@ class Handler(BaseHTTPRequestHandler):
         except RequestError as exc:
             return self.json({"error":str(exc)},exc.status)
         path = urlsplit(self.path).path
-        if path in ("/", "/index.html","/sandbox","/historico","/ajustes"):
-            source = (HERE/"laboratorio_ajustes.html" if path=="/ajustes" else
+        if path in ("/", "/index.html","/sandbox","/historico","/ajustes","/visor-llm"):
+            source = (LLM_VIEWER_HTML_FILE if path=="/visor-llm" else
+                      HERE/"laboratorio_ajustes.html" if path=="/ajustes" else
                       HTML_FILE if path=="/sandbox" else
                       HISTORY_HTML_FILE if path=="/historico" else SCENARIO_HTML_FILE)
             contents = source.read_bytes()
@@ -275,6 +278,23 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(contents)))
             self.end_headers()
             self.wfile.write(contents)
+        elif path in ("/api/lab/llm/attempts", "/api/lab/llm/attempt"):
+            # Solo servidor del laboratorio: no sumar rutas crudas a la UI
+            # principal. La base se determina desde la partida del LabHub;
+            # jamás desde un parámetro proporcionado por el navegador.
+            try:
+                reader=LocalLLMReadAPI(self.hub.world)
+                raw_query=urlsplit(self.path).query
+                if path.endswith("/attempts"):
+                    self.json(reader.list_attempts(raw_query))
+                else:
+                    self.json(reader.get_attempt(raw_query))
+            except ReadError as exc:
+                self.json({"error":str(exc)},exc.status)
+            except (OSError,sqlite3.Error):
+                self.json({"error":"No se pudo leer el historial de solicitudes"},503)
+            except Exception:
+                self.json({"error":"Error interno del laboratorio"},500)
         elif path in ("/api/lab/profile/list","/api/lab/profile/load"):
             try:
                 if path.endswith("/list"):

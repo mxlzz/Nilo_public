@@ -6,6 +6,7 @@ No guarda nunca claves ni respuestas crudas de error en el estado persistido.
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+from nilo_runtime.agent.trace_context import choose_candidate, candidate_finished
 from email.utils import parsedate_to_datetime
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import hashlib
@@ -201,6 +202,7 @@ def route(cfg, state, lock, handler, purpose='deliberación', sleep=time.sleep):
                 continue
         # Solo un reintento corto para fallos transitorios; no saturar al proveedor.
         for attempt in range(2):
+            choose_candidate(name,pcfg.get('MODEL',''))
             with lock:
                 h=_health(state,health_key)
                 h['attempts_total']+=1;h['attempts_today']+=1
@@ -225,6 +227,7 @@ def route(cfg, state, lock, handler, purpose='deliberación', sleep=time.sleep):
             except Exception:
                 failure=ProviderFailure(f'{name}: respuesta inesperada', 'invalid')
             else:
+                candidate_finished(True)
                 with lock:
                     h=_health(state,health_key)
                     h['success_total']+=1;h['success_today']+=1
@@ -235,6 +238,9 @@ def route(cfg, state, lock, handler, purpose='deliberación', sleep=time.sleep):
                     state['last_provider_model']=pcfg.get('MODEL','')
                     state['last_provider_purpose']=purpose
                 return result,name,pcfg.get('MODEL','')
+            # Rechazo de contrato tras recibir respuesta: distinguirlo
+            # de HTTP/transport, cuyo estado ya se archivó en _post.
+            candidate_finished(False)
             with lock:
                 h=_health(state,health_key)
                 h['failures_total']+=1;h['failures_today']+=1
