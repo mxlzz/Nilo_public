@@ -24,11 +24,15 @@ legend{color:var(--muted);font-size:12px;padding:0 6px}.check-grid{display:grid;
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}.meta{font:11px Consolas,monospace;letter-spacing:.045em;color:var(--muted);text-transform:uppercase}
 @media(max-width:920px){.layout{grid-template-columns:1fr}.grid,.check-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.grid,.pair,.check-grid{grid-template-columns:1fr}header{padding:15px}.layout{padding:10px}}
+nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
 </style>
 </head><body>
-<header><div><div class="meta">Nilo 0.7 · entorno de pruebas</div><h1>Laboratorio · Centro de ajustes</h1><small>Variantes de configuración, solicitudes LLM y recuperación verificable.</small></div>
-<nav aria-label="Navegar entre herramientas">
-<a href="/">Escenarios</a><a href="/sandbox">Acciones</a><a href="/historico">Partidas históricas</a><a href="/visor-llm">Visor LLM</a>
+<header><div><div class="meta">Nilo 0.7 · entorno de pruebas</div><h1>Centro de ajustes</h1><small>Configuración del motor · Solicitudes calculadas para comparar · Copias seguras de partidas</small></div>
+<nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
+<a href="/visor-llm">Solicitudes LLM</a>
+<a href="/historico">Historial</a>
+<a href="/">Pruebas</a>
+<a href="/ajustes" aria-current="page">Ajustes</a>
 </nav></header>
 <main class="layout">
 <section class="panel editor" aria-label="Perfil experimental">
