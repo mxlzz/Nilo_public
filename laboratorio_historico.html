@@ -87,6 +87,7 @@ const $=id=>document.getElementById(id);
 const safe=v=>String(v===undefined||v===null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const json=v=>JSON.stringify(v,null,2);
 let events=[],view=[],selected=null,details=null,oldText="";
+let sourceToken=0,detailToken=0;
 const isReplayable=e=>Boolean(e&&e.replayable);
 async function ask(url,options){
  let response=await fetch(url,options),body=await response.json();
@@ -97,11 +98,30 @@ function setMessage(msg,bad=false){
  $("runStatus").textContent=msg;
  $("runStatus").style.color=bad?"#9d332b":"";
 }
+function clearSelection(message="Seleccioná un momento para consultar su registro."){
+ detailToken++;
+ selected=null;details=null;oldText="";
+ $("timeline").value=0;$("marker").textContent="—";
+ $("prev").disabled=true;$("next").disabled=true;$("replay").disabled=true;
+ $("editContainer").hidden=true;$("legacyWarning").hidden=true;
+ $("kind").textContent="Sin seleccionar";
+ $("eventTitle").textContent="Elegí un momento";
+ $("eventDescription").textContent="";$("eventVersion").textContent="";
+ $("command").textContent="—";$("override").value="";
+ $("resultView").textContent=message;
+ setMessage("");
+}
 function showData(data){
+ clearSelection();
  events=data.entries||[];
  $("fileStatus").textContent=data.source+" · "+events.length+" momentos · "+
     data.checkpoint_count+" puntos restaurables";
- if(!events.length){$("events").innerHTML='<p class="muted">La partida no tiene eventos relevantes.</p>';return}
+ if(!events.length){
+  view=[];$("timeline").max=0;$("count").textContent="0 momentos visibles";
+  $("firstLabel").textContent="—";$("lastLabel").textContent="—";
+  $("events").innerHTML='<p class="muted">La partida no tiene eventos relevantes.</p>';
+  clearSelection("Esta partida no tiene momentos para inspeccionar.");return
+ }
  filterEvents();
 }
 function filterEvents(){
@@ -118,12 +138,16 @@ function filterEvents(){
  $("timeline").max=Math.max(0,view.length-1);
  $("firstLabel").textContent=view[0]?.label||"—";
  $("lastLabel").textContent=view[view.length-1]?.label||"—";
- if(!view.length){$("events").innerHTML='<p class="muted">No hay coincidencias.</p>';return}
+ if(!view.length){
+  $("events").innerHTML='<p class="muted">No hay coincidencias.</p>';
+  clearSelection("No hay momentos que coincidan con los filtros.");return
+ }
  let at=view.findIndex(e=>selected&&e.id===selected.id);
  selectIndex(at>=0?at:0);
 }
 function selectIndex(index){
- if(!view.length)return;
+ if(!view.length){clearSelection();return}
+ const requestToken=++detailToken;
  const i=Math.max(0,Math.min(view.length-1,index));
  selected=view[i];
  $("timeline").value=i;$("marker").textContent=(i+1)+" / "+view.length;
@@ -145,7 +169,7 @@ function selectIndex(index){
  $("resultView").innerHTML='<p class="muted">Cargando detalles del momento seleccionado…</p>';
  setMessage("");
  ask("/api/history/event?id="+encodeURIComponent(selected.id)).then(r=>{
-  if(selected.id!==r.id)return;
+  if(requestToken!==detailToken||!selected||selected.id!==r.id)return;
   details=r;oldText=json(r.command||{});
   $("command").textContent=oldText;
   $("override").value=oldText;
@@ -159,7 +183,7 @@ function selectIndex(index){
      (related.length?related.map(x=>'<details><summary>Diagnóstico del archivo</summary><pre>'+safe(json(x.payload))+'</pre></details>').join(""):
      '<p class="muted">No hay diagnóstico asociado de forma inequívoca a este checkpoint. Se mostrará la nueva ejecución por separado.</p>');
   }
- }).catch(err=>{$("resultView").innerHTML='<p class="error">'+safe(err.message)+'</p>'});
+ }).catch(err=>{if(requestToken===detailToken)$("resultView").innerHTML='<p class="error">'+safe(err.message)+'</p>'});
 }
 function renderTrace(trace){
  if(!trace||!trace.length)return '<p class="muted">Sin funciones instrumentadas en esta etapa.</p>';
@@ -198,29 +222,36 @@ function renderReplay(data){
 }
 async function replay(){
  if(!details?.replayable)return;
+ const replayToken=detailToken;
  $("replay").disabled=true;setMessage("Reproduciendo el motor desde el estado anterior…");
  try{
   let current=$("override").value.trim();
   let override=current===oldText?null:JSON.parse(current);
   let r=await ask("/api/history/replay",{method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({id:details.id,override,max_ticks:400})});
+  if(replayToken!==detailToken)return;
   renderReplay(r);setMessage("Reproducción completada sin modificar la partida.");
- }catch(err){setMessage(err.message,true)}
- finally{$("replay").disabled=false}
+ }catch(err){if(replayToken===detailToken)setMessage(err.message,true)}
+ finally{if(replayToken===detailToken)$("replay").disabled=false}
 }
 async function loadLocal(){
- try{const data=await ask("/api/history/default");showData(data)}
- catch(err){$("fileStatus").textContent=err.message}
+ const requestToken=++sourceToken;
+ $("fileStatus").textContent="Cargando partida actual…";
+ try{
+  const data=await ask("/api/history/default");
+  if(requestToken===sourceToken)showData(data);
+ }catch(err){if(requestToken===sourceToken)$("fileStatus").textContent=err.message}
 }
 $("file").onchange=async e=>{
  const f=e.target.files?.[0];if(!f)return;
+ const requestToken=++sourceToken;
  $("fileStatus").textContent="Leyendo "+f.name+"…";
  if(f.size>200*1024*1024){$("fileStatus").textContent="Máximo 200 MB por archivo.";return}
  try{
   const data=await ask("/api/history/upload",{method:"POST",
     headers:{"Content-Type":"application/octet-stream"},body:f});
-  showData(data);
- }catch(err){$("fileStatus").textContent=err.message}
+  if(requestToken===sourceToken)showData(data);
+ }catch(err){if(requestToken===sourceToken)$("fileStatus").textContent=err.message}
 };
 $("defaultFile").onclick=loadLocal;
 $("filter").onchange=filterEvents;$("search").oninput=filterEvents;
@@ -229,6 +260,9 @@ $("prev").onclick=()=>selectIndex(Number($("timeline").value)-1);
 $("next").onclick=()=>selectIndex(Number($("timeline").value)+1);
 $("resetOverride").onclick=()=>{$("override").value=oldText};
 $("replay").onclick=replay;
-ask("/api/history/catalog").then(showData).catch(e=>{$("fileStatus").textContent=e.message});
+const initialToken=++sourceToken;
+ask("/api/history/catalog")
+ .then(data=>{if(initialToken===sourceToken)showData(data)})
+ .catch(e=>{if(initialToken===sourceToken)$("fileStatus").textContent=e.message});
 })();
 </script></body></html>
