@@ -91,7 +91,7 @@ class BrowserMarkup06(unittest.TestCase):
         self.assertNotIn("document.write",script)
         self.assertIn("node.textContent=String(text)",script)
         self.assertIn("pre",self.text)
-        self.assertIn("segments",self.text)
+        self.assertIn("message.blocks",self.text)
         self.assertIn("block.literal",script)
         self.assertNotIn("markdown",script.lower())
 
