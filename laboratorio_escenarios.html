@@ -64,7 +64,7 @@ details summary{cursor:pointer;font-size:12px;font-weight:600}
   <div class="panel-inner">
    <h2 id="caseTitle">Elegí un escenario</h2><p id="caseDescription" class="small"></p>
    <div class="note" id="caseNote">Cada escenario prepara explícitamente sus condiciones. Después ejecuta el motor real sin un LLM.</div>
-   <h3>Órdenes que habría generado el LLM</h3>
+   <h3>Órdenes predefinidas de prueba</h3>
    <pre id="casePlan"></pre>
    <div class="row"><label>Semilla <input id="caseSeed" type="number" min="0" max="1000000000" value="7321"></label></div>
    <button class="primary" id="runCase">Ejecutar escenario</button>
@@ -162,11 +162,9 @@ function renderTrace(rows){
  if(!rows||!rows.length)return '<p class="meta">La etapa no tiene funciones instrumentadas.</p>';
  return '<div class="trace-list">'+rows.map((r,i)=>{
    let code=(r.codigo||[]).map(x=>String(x.linea).padStart(4," ")+"  "+x.texto).join("\n");
-   let ref=last&&last.version?"v"+last.version:"main";
-   let url="https://github.com/mxlzz/Nilo/blob/"+ref+"/"+encodeURIComponent(r.archivo)+"#L"+r.inicio;
    return '<div class="trace-item"><div><b>'+(i+1)+'. '+escapeHTML(r.explicacion)+'</b> <span class="trace-ref">'+escapeHTML(r.funcion)+"() · "+r.repeticiones+'×</span></div>'+
     '<details><summary>Ver líneas de código · '+escapeHTML(r.archivo)+':'+r.inicio+'–'+r.fin+'</summary>'+
-    '<p class="trace-ref"><a target="_blank" rel="noopener" href="'+url+'">Abrir archivo fuente</a> · '+r.lineas_ejecutadas+' líneas ejecutadas'+(r.mas_lineas?' (primeras 14 mostradas)':'')+'</p><pre>'+escapeHTML(code)+'</pre></details></div>';
+    '<p class="trace-ref">Referencia local sin commit verificado · '+r.lineas_ejecutadas+' líneas instrumentadas'+(r.mas_lineas?' (primeras 14 mostradas)':'')+'</p><pre>'+escapeHTML(code)+'</pre></details></div>';
  }).join("")+'</div>';
 }
 const HELP={
