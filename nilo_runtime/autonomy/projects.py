@@ -52,6 +52,23 @@ def closure_diagnostic(project,person,proof=""):
     return {'estado':state,'comprobado':False,'ids_evidencia':ids,
             'motivo':reason}
 
+def completed_project_reference(projects, project_id="", title=""):
+    """Devolver solo un proyecto realmente terminado, por ID o título exacto.
+
+    Es una referencia histórica, no una autorización para completar objetivos.
+    """
+    wanted_id=str(project_id or "").strip()
+    wanted_title=_plain(title).strip()
+    for project in reversed(projects or []):
+        if not isinstance(project,dict) or project.get('status')!='terminado':
+            continue
+        if wanted_id:
+            if project.get('id')==wanted_id:return project
+        elif wanted_title and _plain(project.get('title','')).strip()==wanted_title:
+            return project
+    return None
+
+
 def project_needs_review(project):
     if not isinstance(project,dict):return False
     # Es una sugerencia de revisión, no cierre automático.

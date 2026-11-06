@@ -117,6 +117,34 @@ class DecisionUseCases:
         # proyecto idéntico después de cerrar uno durante la misma deliberación.
         if project_action in ('completar','abandonar','pausar'):
             target=chosen or current
+            # `completar` no puede crear otro proyecto al rechazar un cierre.
+            # Tampoco puede cerrar un proyecto activo con el ID de otro.
+            if project_action=='completar' and (target is None or (
+                    selected_id and selected_id!=target.get('id'))):
+                from nilo_runtime.autonomy.projects import completed_project_reference
+                completed=completed_project_reference(saved,selected_id,objective)
+                if completed:
+                    reason=('El proyecto ya figura terminado con su evidencia: '
+                            +str(completed.get('title','')).strip()+'.')
+                elif target is None:
+                    reason='No hay un proyecto activo identificado para completar.'
+                else:
+                    reason='El ID citado no corresponde al proyecto activo.'
+                p['last_closure_rejection']={
+                    'project_id':completed.get('id') if completed else (selected_id or None),
+                    'objective':completed.get('title') if completed else objective,
+                    'reason':reason,'when':self.stamp(),
+                    'already_completed':bool(completed),
+                    'not_a_completed_goal':not bool(completed),
+                    'next_options':['iniciar un proyecto nuevo explícitamente',
+                                    'actuar sin proyecto','reconsiderar intereses']}
+                self.event([reason+' No abrí un proyecto nuevo por intentar '
+                            'completar uno anterior.'], 'evaluación')
+                p['plan']=[]
+                p['review_at_minutes']=p.get('clock_minutes',0)
+                p['local_followups']=0
+                self.write()
+                return
             if project_action=='completar' and not proof_ok:
                 from goal_evidence import check_goal
                 valid_goal,goal_ids,reason=check_goal(target,p,proof) if target else (False,[],'No hay proyecto activo.')
@@ -157,6 +185,10 @@ class DecisionUseCases:
                 retire_project(p,target,status,self.stamp(),
                                reason=decision.get('estado_actual') or decision.get('motivo'),
                                evidence=closure if status=='terminado' else None)
+                # No seguir mostrando como vigente un rechazo de un proyecto retirado.
+                if ((p.get('last_closure_rejection') or {}).get('project_id')
+                        == target.get('id')):
+                    p.pop('last_closure_rejection',None)
                 p['plan']=[]
                 p['review_at_minutes']=p.get('clock_minutes',0)
                 p['local_followups']=0
