@@ -63,6 +63,7 @@
     "laboratorio_historico.html": "sha256-calculated-during-packaging",
     "laboratorio_motor.html": "sha256-calculated-during-packaging",
     "laboratorio_motor.py": "sha256-calculated-during-packaging",
+    "laboratorio_visor_llm.html": "sha256-calculated-during-packaging",
     "laboratory.py": "sha256-calculated-during-packaging",
     "LEEME_PORTABLE.txt": "sha256-calculated-during-packaging",
     "LEEME_PRIMERO.txt": "sha256-calculated-during-packaging",

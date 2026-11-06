@@ -37,6 +37,7 @@ from world import TRAVEL_MINUTES_PER_TILE, tile, valid
 HTML_FILE = HERE / "laboratorio_motor.html"
 SCENARIO_HTML_FILE = HERE / "laboratorio_escenarios.html"
 HISTORY_HTML_FILE = HERE / "laboratorio_historico.html"
+LLM_VIEWER_HTML_FILE = HERE / "laboratorio_visor_llm.html"
 TRACE_TEXT = {
     "navigation.py:resolve_go": "Comprueba destino y accesibilidad conocida",
     "navigation.py:reachable_shores": "Busca orillas alcanzables",
@@ -263,8 +264,9 @@ class Handler(BaseHTTPRequestHandler):
         except RequestError as exc:
             return self.json({"error":str(exc)},exc.status)
         path = urlsplit(self.path).path
-        if path in ("/", "/index.html","/sandbox","/historico","/ajustes"):
-            source = (HERE/"laboratorio_ajustes.html" if path=="/ajustes" else
+        if path in ("/", "/index.html","/sandbox","/historico","/ajustes","/visor-llm"):
+            source = (LLM_VIEWER_HTML_FILE if path=="/visor-llm" else
+                      HERE/"laboratorio_ajustes.html" if path=="/ajustes" else
                       HTML_FILE if path=="/sandbox" else
                       HISTORY_HTML_FILE if path=="/historico" else SCENARIO_HTML_FILE)
             contents = source.read_bytes()
