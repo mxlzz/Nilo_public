@@ -74,7 +74,8 @@ class BrowserMarkup06(unittest.TestCase):
 
     def test_page_has_two_views_filters_buttons_and_labeled_block_sections(self):
         self.assertTrue(set(IDS) <= self.doc.ids)
-        self.assertTrue({"/","/sandbox","/historico","/ajustes"} <= self.doc.hrefs)
+        self.assertTrue({"/","/visor-llm","/historico","/ajustes"} <= self.doc.hrefs)
+        self.assertIn('aria-current="page"', self.text)
         for marker in ("Simplificada","Profesional",
                        "Contexto que recibe el LLM","Copiar bloque",
                        "Procedencia del campo","body_utf8","json_pointer",
