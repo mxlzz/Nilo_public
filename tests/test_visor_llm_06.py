@@ -77,7 +77,7 @@ class BrowserMarkup06(unittest.TestCase):
         self.assertTrue({"/","/sandbox","/historico","/ajustes"} <= self.doc.hrefs)
         for marker in ("Simplificada","Profesional",
                        "Contexto que recibe el LLM","Copiar bloque",
-                       "Origen y transformaciones","body_utf8","json_pointer",
+                       "Procedencia del campo","body_utf8","json_pointer",
                        "renderMessages","renderProfessional","block.literal"):
             self.assertIn(marker,self.text)
         self.assertIn('type="date" id="date"',self.text)
