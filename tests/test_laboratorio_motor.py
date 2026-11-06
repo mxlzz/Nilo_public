@@ -128,7 +128,7 @@ class UserInterfaceTests(unittest.TestCase):
         from action_contracts import SUPPORTED_OPERATIONS
         from laboratorio_motor import HTML_FILE
         html = HTML_FILE.read_text(encoding="utf-8")
-        self.assertIn("Cómo funciona el motor", html)
+        self.assertIn("Mundo interactivo", html)
         for op in SUPPORTED_OPERATIONS:
             self.assertIn('"' + op + '"', html)
 
