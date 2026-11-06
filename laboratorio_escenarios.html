@@ -47,7 +47,8 @@ details summary{cursor:pointer;font-size:12px;font-weight:600}
 @media(max-width:730px){.shell{grid-template-columns:1fr;padding:8px}.panel-head{padding:10px}.op-grid{grid-template-columns:repeat(3,1fr)}.left-stack{grid-template-rows:260px auto}#result{max-height:none}}
 nav[data-lab-nav="primary"]{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
-</style></head><body>
+</style>
+<link rel="stylesheet" href="/assets/laboratorio.css"></head><body data-lab="escenarios">
 <header>
  <div><h1>Pruebas del motor</h1><div class="meta">Simulación aislada con el motor real · Solicitudes calculadas, no enviadas al LLM</div></div>
  <div class="lab-navigation">
@@ -63,6 +64,7 @@ nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"]
  <a class="meta" href="/sandbox">Mundo interactivo</a>
  </nav>
  </div>
+<div class="lab-theme-control"><button id="lab-theme-toggle" type="button" aria-label="Cambiar tema">Tema: sistema</button></div>
 </header>
 <div class="shell">
  <div class="left-stack" id="leftColumn">
@@ -481,4 +483,5 @@ getJSON("/api/catalog").then(data=>{
 }).catch(showError);
 })();
 </script>
+<script src="/assets/laboratorio_ui.js" defer></script>
 </body></html>
