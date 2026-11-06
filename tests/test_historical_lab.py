@@ -116,7 +116,7 @@ class HistoricalLabTests(unittest.TestCase):
 
     def test_historical_interface_script_syntax(self):
         html=HISTORY_HTML_FILE.read_text(encoding="utf-8")
-        self.assertIn("Depurador histórico",html)
+        self.assertIn("Historial de partidas",html)
         self.assertIn('id="timeline"',html)
         self.assertIn('id="file"',html)
         node=shutil.which("node")

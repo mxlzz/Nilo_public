@@ -11,12 +11,23 @@ button{padding:10px 13px;border:1px solid #506261;background:#263332;color:var(-
 .mapwrap{padding:14px;background:#101819;overflow-x:auto}.mapgrid{display:grid;width:max-content;grid-template-columns:repeat(15,26px);gap:2px;margin:auto}.cell{width:26px;height:26px;padding:0;display:grid;place-items:center;border-radius:3px;border:1px solid transparent;background:#273232;color:#97aba4;font:15px var(--mono);cursor:pointer}.cell.unknown{background:#171e20;color:#364549;cursor:default}.cell.edge{color:#8c9799}.cell.rock{background:#34404a;color:#c5ced8}.cell.tree{background:#254a39;color:#b5e0c5}.cell.water{background:#253f50;color:#acd1eb}.cell.site{background:#514334;color:#f0d6a9}.cell.sand{background:#474136;color:#e1ca9d}.cell.self{background:#b2cfbd;color:#11221c;font-weight:900}.cell.selected{outline:2px solid #f3c88b;outline-offset:0;z-index:1}.cell:not(.unknown):hover{border-color:#e2d2b2}.mapkey{display:flex;gap:8px 15px;flex-wrap:wrap;margin-top:13px;color:var(--muted);font:11px var(--mono)}.mapkey b{color:var(--ink)}.kv{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #2c373a;font-size:12px}.kv b{font-family:var(--mono);font-weight:500;color:#d9e4df}.tablewrap{max-height:230px;overflow:auto}.jump{background:transparent;border:none;padding:1px 4px;color:var(--accent);font-size:12px;text-align:left}.statebox{display:flex;flex-wrap:wrap;gap:7px;padding:10px 0}.statebox span{font:11px var(--mono);color:#cbd9d3;border:1px solid #394947;border-radius:6px;padding:5px 7px}.divider{height:1px;background:var(--line);margin:14px 0}.label{font:10px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
 .output{padding:16px}.resulttitle{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}.tag{font:11px var(--mono);border-radius:5px;padding:5px 7px;background:#2b3c34;color:var(--good)}.tag.failed{background:#452c2b;color:var(--bad)}.tag.neutral{background:#383728;color:var(--warn)}.facts{padding-left:18px;margin:8px 0 13px}.facts li{margin-bottom:7px;overflow-wrap:anywhere}.trace{display:grid;gap:7px}.step{background:var(--up);border:1px solid #354347;border-radius:8px;padding:9px 11px}.stephead{display:flex;justify-content:space-between;align-items:center;gap:8px}.stephead strong{font-size:12px;font-weight:600}.src{font:11px var(--mono);white-space:nowrap}.step p{font-size:11px;color:var(--muted);margin-top:2px}.muted{color:var(--muted)}.jsonbox{font:11px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:440px;overflow:auto;padding:12px;border-radius:7px;background:#101719;border:1px solid var(--line)}.history{font-size:11px;color:var(--muted);display:grid;gap:6px}.historyentry{display:flex;gap:10px;border-bottom:1px solid #283438;padding-bottom:6px}.historyentry b{color:var(--ink)}.tabs{display:flex;gap:6px}.tabs button{padding:6px 8px;font-size:11px}.tabs button.on{background:#accfbd;color:#14211d;border-color:#accfbd}.hidden{display:none!important}.error{color:#ffc5bb;font-size:12px;white-space:pre-wrap}.footer{max-width:1700px;margin:auto;padding:10px 22px 28px;color:var(--muted);font-size:11px}
 @media(max-width:1180px){.layout{grid-template-columns:minmax(290px,.85fr) minmax(330px,1fr)}.results{grid-column:1/-1}}@media(max-width:670px){.layout{grid-template-columns:minmax(0,1fr);padding:10px}.results{grid-column:auto}.mapgrid{grid-template-columns:repeat(15, min(6vw,26px))}.cell{width:min(6vw,26px);height:min(6vw,26px);font-size:12px}header{padding:14px}}
+ .lab-navigation{display:grid;gap:7px}nav[data-lab-nav]{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:12px}
+nav[data-lab-nav="primary"]{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
 </style>
 </head>
 <body>
 <header>
- <div><div class="eyebrow">NILO / LABORATORIO</div><h1>Cómo funciona el motor</h1><p class="sub">Probá acciones sin LLM. Respuestas y trazas extraídas del código real.</p></div>
-<nav style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:12px"><a href="/">Escenarios</a><a href="/historico">Historial</a><a href="/ajustes">Ajustes</a><a href="/visor-llm">Visor LLM</a><span class="pill">Sandbox · copia aislada</span></nav>
+ <div><div class="eyebrow">NILO / LABORATORIO</div><h1>Mundo interactivo</h1><p class="sub">Pruebas aisladas con el motor real · Solicitudes calculadas sin llamar al LLM.</p></div>
+<div class="lab-navigation"><nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
+<a href="/visor-llm">Solicitudes LLM</a>
+<a href="/historico">Historial</a>
+<a href="/" aria-current="page">Pruebas</a>
+<a href="/ajustes">Ajustes</a>
+</nav>
+<nav aria-label="Modalidades de prueba" data-lab-nav="secondary">
+<a href="/">Escenarios</a><a href="/?modo=plan">Plan de acciones</a><a href="/sandbox" aria-current="page">Mundo interactivo</a>
+</nav></div>
 </header>
 <main class="layout">
 <section class="panel">

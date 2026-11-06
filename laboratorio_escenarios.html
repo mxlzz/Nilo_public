@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nilo — laboratorio de escenarios del motor</title>
+<title>Nilo · Pruebas del motor</title>
 <style>
 :root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45;color:#182025;background:#f4f5f4}
 *{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid #cbd4d2;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
@@ -10,7 +10,7 @@ p{margin:6px 0 10px}.meta{color:#586568;font-size:12px}.button-row{display:flex;
 button{border:1px solid #a6b6b3;background:#fff;border-radius:5px;padding:7px 10px;color:#172523;cursor:pointer;font:inherit;font-size:12px}
 button:hover{border-color:#356a5e;background:#eef5f1}button[disabled]{opacity:.45;cursor:default}
 button.active,button.primary{background:#265b50;color:white;border-color:#265b50}
-button.negative{border-color:#b55e59;color:#772e2d}.tabs{display:flex;gap:7px;align-items:center}.shell{display:grid;grid-template-columns:minmax(330px,.95fr) minmax(440px,1.45fr);gap:12px;padding:14px;max-width:1880px;margin:auto}
+button.negative{border-color:#b55e59;color:#772e2d}.tabs{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.lab-navigation{display:grid;gap:7px}.shell{display:grid;grid-template-columns:minmax(330px,.95fr) minmax(440px,1.45fr);gap:12px;padding:14px;max-width:1880px;margin:auto}
 .panel{min-width:0;background:white;border:1px solid #cad3d2;border-radius:7px;overflow:hidden}.panel-head{padding:12px 14px;border-bottom:1px solid #d6dedd;display:flex;align-items:center;justify-content:space-between;gap:8px}.panel-inner{padding:12px 14px}.list{display:grid;gap:4px}.list button{text-align:left;display:block;width:100%;padding:9px;border:1px solid transparent;background:#f7f8f7}.list button:hover,.list button.active{border-color:#7caca0;background:#e7f2ee}
 .case-num{font:11px ui-monospace,Consolas,monospace;color:#54746b;margin-right:6px}
 .group-title{padding:12px 3px 5px;font-size:11px;font-weight:700;letter-spacing:.045em;text-transform:uppercase;color:#4a6662;border-top:1px solid #e0e5e3;margin-top:10px}
@@ -45,10 +45,24 @@ details summary{cursor:pointer;font-size:12px;font-weight:600}
 #sandboxPane{grid-column:1}.shell.sandbox-active #sandboxPane{grid-column:1;grid-row:1}.shell.sandbox-active .result-panel{grid-column:2;grid-row:1}.hidden{display:none!important}.footer{color:#63736f;font-size:11px;max-width:1800px;margin:0 auto;padding:8px 18px 20px}
 @media(max-width:1000px){.shell{grid-template-columns:1fr}.left-stack{height:auto;min-height:0;grid-template-rows:300px auto}.left-stack #detailPanel{min-height:250px}.result-panel{grid-column:1}#sandboxPane{grid-column:1}}
 @media(max-width:730px){.shell{grid-template-columns:1fr;padding:8px}.panel-head{padding:10px}.op-grid{grid-template-columns:repeat(3,1fr)}.left-stack{grid-template-rows:260px auto}#result{max-height:none}}
+nav[data-lab-nav="primary"]{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
 </style></head><body>
 <header>
- <div><h1>Laboratorio del motor de Nilo</h1><div class="meta">Escenarios reproducibles · Ejecución real mediante Simulation · Código y mediciones</div></div>
- <div class="tabs"><button id="tabCases" class="active">Escenarios</button><button id="tabSandbox">Sandbox de acciones</button><a class="meta" href="/historico">Partidas históricas</a><a class="meta" href="/sandbox">Sandbox interactivo</a><a class="meta" href="/ajustes">Centro de ajustes</a><a class="meta" href="/visor-llm">Visor LLM</a></div>
+ <div><h1>Pruebas del motor</h1><div class="meta">Simulación aislada con el motor real · Solicitudes calculadas, no enviadas al LLM</div></div>
+ <div class="lab-navigation">
+ <nav class="tabs" aria-label="Secciones del laboratorio" data-lab-nav="primary">
+<a href="/visor-llm">Solicitudes LLM</a>
+<a href="/historico">Historial</a>
+<a href="/" aria-current="page">Pruebas</a>
+<a href="/ajustes">Ajustes</a>
+</nav>
+ <nav class="tabs" aria-label="Modalidades de prueba">
+ <button type="button" id="tabCases" class="active" aria-pressed="true" aria-current="page">Escenarios</button>
+ <button type="button" id="tabSandbox" aria-pressed="false">Plan de acciones</button>
+ <a class="meta" href="/sandbox">Mundo interactivo</a>
+ </nav>
+ </div>
 </header>
 <div class="shell">
  <div class="left-stack" id="leftColumn">
@@ -293,12 +307,23 @@ async function runCase(){
  }catch(e){showError(e);$("caseMessage").textContent=e.message}
  finally{$("runCase").disabled=false}
 }
-function activateSandbox(on){
+function activateSandbox(on,updateAddress=true){
  $("tabSandbox").classList.toggle("active",on);$("tabCases").classList.toggle("active",!on);
+ $("tabSandbox").setAttribute("aria-pressed",String(on));
+ $("tabCases").setAttribute("aria-pressed",String(!on));
+ if(on){$("tabSandbox").setAttribute("aria-current","page");$("tabCases").removeAttribute("aria-current")}
+ else{$("tabCases").setAttribute("aria-current","page");$("tabSandbox").removeAttribute("aria-current")}
  $("leftColumn").classList.toggle("hidden",on);
  document.querySelector(".shell").classList.toggle("sandbox-active",on);
  $("sandboxPane").classList.toggle("hidden",!on);
+ if(updateAddress){
+  const address=on?"/?modo=plan":"/";
+  if(window.location.pathname+window.location.search!==address){
+   window.history.pushState({labMode:on?"plan":"escenarios"},"",address);
+  }
+ }
 }
+function modeFromAddress(){return new URLSearchParams(window.location.search).get("modo")==="plan"}
 const G={
  go:[["Destino",[["(16,10)",{x:16,y:10}],["(23,7)",{x:23,y:7}],["(35,16)",{x:35,y:16}],
                 ["Árbol (pendiente)",{target:"arbol"}],["Piedra (pendiente)",{target:"piedra"}],
@@ -426,6 +451,8 @@ async function manualRun(){
 $("filter").oninput=listCases;
 $("tabCases").onclick=()=>activateSandbox(false);
 $("tabSandbox").onclick=()=>activateSandbox(true);
+window.addEventListener("popstate",()=>activateSandbox(modeFromAddress(),false));
+activateSandbox(modeFromAddress(),false);
 $("runCase").onclick=runCase;
 $("copyResult").onclick=()=>{if(last)navigator.clipboard.writeText(textJSON(last)).catch(()=>{})};
 $("addStep").onclick=()=>{
