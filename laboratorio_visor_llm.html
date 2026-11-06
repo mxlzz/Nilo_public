@@ -58,13 +58,19 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 #notice{margin:11px 0;color:var(--muted);font-size:12px;min-height:18px}
 @media(max-width:1000px){.shell{grid-template-columns:1fr}.list{max-height:260px}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){header{padding:14px}.shell{padding:9px}.summary-grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.role-head{align-items:start}}
+nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
 </style>
 </head>
 <body>
 <header>
-<div><div class="eyebrow">Nilo · Laboratorio</div><h1>Contexto que recibe el LLM</h1>
+<div><div class="eyebrow">Nilo · Laboratorio / Solicitudes reales</div><h1>Contexto que recibe el LLM</h1>
 <p class="muted">Solicitudes reales archivadas, sin reinterpretar sus mensajes.</p></div>
-<nav aria-label="Secciones del laboratorio"><a href="/">Escenarios</a><a href="/sandbox">Acciones</a><a href="/historico">Historial</a><a href="/ajustes">Ajustes</a><span class="tag">Visor LLM</span></nav>
+<nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
+<a href="/visor-llm" aria-current="page">Solicitudes LLM</a>
+<a href="/historico">Historial</a>
+<a href="/">Pruebas</a>
+<a href="/ajustes">Ajustes</a>
+</nav>
 </header>
 <main class="shell">
 <aside class="panel" aria-label="Seleccionar solicitud">
