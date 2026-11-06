@@ -224,6 +224,7 @@ for(const group of groupAttempts(attempts)){
  const title=first.purpose==="chat"?"Conversación":"Deliberación";
  const id=String(first.call_id||first.attempt_id||"");
  const label=group.length===1?"1 intento":group.length+" intentos";
+ section.setAttribute("aria-label",title+" · consulta "+id+" · "+label);
  append(header,N("b","",title),N("small","",label+" · "+id.slice(0,8)));
  section.appendChild(header);
  for(const item of group){
