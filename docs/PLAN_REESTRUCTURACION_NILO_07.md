@@ -1,12 +1,9 @@
 # Nilo 0.7 — Plan de reestructuración integral por etapas
 
-**Estado vigente al 6/11/2026:** etapas **00–23 completadas** en `refactor/0.7`;
-**etapa 24 · Limpieza final y release** habilitada, pendiente de ejecución. La etapa 23 se cerró con criterio arquitectónico acotado y observaciones reales de Gemini; **Groq no fue verificado**. [Acta de cierre](ETAPA_23_CIERRE_ARQUITECTURA_07.md). El seguimiento actual está en
-[ESTADO_REESTRUCTURACION_07.md](ESTADO_REESTRUCTURACION_07.md) y el cierre de la
-migración pública en [MIGRACION_PUBLICA_ETAPA_03.md](MIGRACION_PUBLICA_ETAPA_03.md).
+**Estado al 6/11/2026:** **00–23 finalizadas**; **etapa 24 validada técnicamente**, publicación 0.7.0 pendiente de fusión y release. La matriz experimental multi-proveedor quedó fuera del bloqueo arquitectónico; Groq no verificado. [Informe etapa 23](ETAPA_23_CIERRE_ARQUITECTURA_07.md) · [Etapa 24](ETAPA_24_CIERRE_07.md) · [Tablero](ESTADO_REESTRUCTURACION_07.md).
 La descripción de propuesta que sigue se conserva como registro del plan original.
 
-**Decisión de versión (4/11/2026):** reservar `0.7` para el resultado integrado de la reestructuración de Nilo. La base comparativa es `0.6.4`. Esta hoja es una **propuesta de ejecución detallada**, todavía sin implementación ni fecha de publicación. La nueva física térmica queda fuera de `0.7` y se considera para `0.8`. Referencias: [auditoría 0.6.4](AUDITORIA_ARQUITECTURA_NILO_07_2026-11-04.md), [#74](https://github.com/mxlzz/Nilo_public/issues/74).
+**Decisión de versión (4/11/2026):** reservar `0.7` para el resultado integrado de la reestructuración de Nilo. La base comparativa es `0.6.4`. Esta hoja conserva la propuesta original y el cierre técnico de las etapas; la publicación se acredita por el release. La nueva física térmica queda fuera de `0.7` y se considera para `0.8`. Referencias: [auditoría 0.6.4](AUDITORIA_ARQUITECTURA_NILO_07_2026-11-04.md), [#74](https://github.com/mxlzz/Nilo_public/issues/74).
 
 ## Principio de trabajo
 

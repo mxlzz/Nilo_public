@@ -1,6 +1,6 @@
 # Nilo 0.7 — Etapa 24 · Apertura y criterios de publicación
 
-**Estado:** en ejecución, **no completada** (2026-11-06). La etapa 23 se cerró con [acta explícita](ETAPA_23_CIERRE_ARQUITECTURA_07.md), sin afirmar Groq probado ni autonomía mejorada.
+**Estado:** validación técnica completada (2026-11-06); publicación a verificar. Ver [acta de cierre técnico](ETAPA_24_CIERRE_07.md). La etapa 23 se cerró con [acta explícita](ETAPA_23_CIERRE_ARQUITECTURA_07.md), sin afirmar Groq probado ni autonomía mejorada.
 
 ## Punto de partida verificado
 
@@ -36,3 +36,7 @@ Preparado en rama de trabajo, pendiente de verificación CI en commit de impleme
 - `.github/workflows/paquete.yml` bloquea la publicación hasta superar CI Linux y Windows, no pisa tags existentes y publica solo desde `main`; el PR continúa borrador.
 
 Pendiente para cerrar: resultados de CI en esta revisión, limpieza/compatibilidad de fachadas por consumidores, verificación final del ZIP y publicación controlada. No registrar release hasta tener evidencia.
+
+## Resolución tras validaciones del 6/11/2026
+
+El candidato 0.7.0 pasó [CI completa Linux y Windows #42214267816](https://github.com/mxlzz/Nilo_public/actions/runs/42214267816), después de corregir el diagnóstico de bytecode, instalar Python mediante hash .NET y cerrar correctamente las conexiones SQLite/WAL durante el rollback. Los tests antiguos se alinearon con la nueva etiqueta de producto sin quitar su comparación histórica de UI. Se conservaron adaptadores de API utilizados y solo se distribuyen 168 archivos allowlisted más `BUILD_INFO.json` y el manifiesto generado. La fusión, tag y publicación se acreditarán por separado.
