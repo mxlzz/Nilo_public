@@ -1,6 +1,6 @@
 # Nilo 0.7 — Etapa 24 · Apertura y criterios de publicación
 
-**Estado:** habilitada, **no completada** (2026-11-06). La etapa 23 se cerró con [acta explícita](ETAPA_23_CIERRE_ARQUITECTURA_07.md), sin afirmar Groq probado ni autonomía mejorada.
+**Estado:** en ejecución, **no completada** (2026-11-06). La etapa 23 se cerró con [acta explícita](ETAPA_23_CIERRE_ARQUITECTURA_07.md), sin afirmar Groq probado ni autonomía mejorada.
 
 ## Punto de partida verificado
 
@@ -24,3 +24,15 @@
 Bucle de cierre de proyectos, recreación de objetivos y exploración sin frontera (deuda funcional). Groq no verificado empíricamente en etapa 23: no anunciarlo como integración probada a partir de esta etapa; la prueba de red puede integrarse a una smoke opcional cuando haya credenciales, sin detener la auditoría de empaquetado.
 
 **Criterio:** no declarar finalizada la etapa 24 ni publicar el release mientras las verificaciones de instalación, importación, restauración e identidad de versión no estén acreditadas.
+
+## Implementación de salida a release (6/11/2026)
+
+Preparado en rama de trabajo, pendiente de verificación CI en commit de implementación:
+
+- Etiqueta de producto `0.7.0`, textos de inicio y notas de versión actualizados; formato de guardado SQLite v5 sin cambio.
+- Manifiesto fuente normalizado como lista de archivos permitidos. El ZIP incluye un manifiesto nuevo con SHA256 calculados sobre bytes reales y `BUILD_INFO.json` de versión/commit. Los archivos de desarrollo `.github`, `tests` y `tools` no se distribuyen.
+- `run_history.engine_identity` recupera el SHA del bundle portable si no hay `.git`, sin asumir un commit inexistente.
+- Auditor de paquetes y pruebas de regresión del ZIP; **nuevo smoke Windows** usando el Python 3.12.10 embebido, partida nueva, migración por API pública y restauración con backup. Su resultado final se debe verificar en Actions, no deducirlo de la configuración del job.
+- `.github/workflows/paquete.yml` bloquea la publicación hasta superar CI Linux y Windows, no pisa tags existentes y publica solo desde `main`; el PR continúa borrador.
+
+Pendiente para cerrar: resultados de CI en esta revisión, limpieza/compatibilidad de fachadas por consumidores, verificación final del ZIP y publicación controlada. No registrar release hasta tener evidencia.

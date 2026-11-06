@@ -30,7 +30,18 @@ def engine_identity(root):
         ).hexdigest()
     except OSError:
         manifest_digest = None
+    # Los ZIP de release no incluyen .git: registrar su SHA de origen
+    # desde el metadato incluido y protegido por el manifiesto del ZIP.
     commit = None
+    try:
+        build_info = json.loads((root / "BUILD_INFO.json").read_text("utf-8"))
+        build_sha = str(build_info.get("code_commit") or "").lower()
+        if (build_info.get("product") == "Nilo"
+                and build_info.get("version") == version
+                and re.fullmatch(r"[0-9a-f]{40}", build_sha)):
+            commit = build_sha
+    except (OSError, ValueError, TypeError):
+        pass
     try:
         top = subprocess.run(
             ["git", "-C", str(root), "rev-parse", "--show-toplevel"],

@@ -1,66 +1,45 @@
-Edición Nilo 05.7: agenda autónoma, reintento prudente y espera segura.
-
-NILO 05.7 - EDICION PORTABLE DE WINDOWS 64 BITS
+NILO 0.7.0 — EDICIÓN PORTABLE DE WINDOWS 64 BITS
 ================================================
-No hace falta instalar Python ni tener permisos de administrador.
-NO es un EXE autonomo precompilado ni incluye Python dentro del ZIP inicial:
-la primera ejecucion descarga automaticamente Python embebible oficial (11 MB).
-Una vez completada, podes copiar la carpeta entera a otra PC y ejecutarla
-incluso sin internet para arrancar. Las consultas Gemini/Groq siguen requiriendo red.
 
-COMO INICIAR
-1. Descomprimi Nilo_05_7 en una carpeta con permisos de escritura.
-2. Ejecuta INICIAR_NILO.bat. El primer inicio prepara su propio python\python.exe.
-3. El asistente ofrece importar CONFIGURACION de la version anterior y,
-   por separado, una COPIA de la partida. Nilo viejo no se modifica.
-4. Cuando termines, para otra computadora lleva la carpeta completa, incluido
-   python\, config.env y nilo_mundo.sqlite3 (si queres continuar el mundo).
-   No ejecutes dos copias del mismo archivo SQLite en una carpeta compartida.
+No necesita instalar Python en Windows ni permisos de administrador para
+configurar el entorno local. El ZIP inicial NO contiene un EXE autónomo:
+en el primer inicio descarga CPython 3.12.10 embebible oficial desde python.org,
+verifica su SHA256 y lo guarda dentro de la carpeta de Nilo.
+Los modelos Gemini y Groq requieren Internet y tus propias claves API.
 
-SI LA NOTEBOOK BLOQUEA DESCARGAS
-- Descarga en otra PC, desde python.org, este ZIP oficial:
-  https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip
-- Copialo SIN descomprimir en la misma carpeta donde esta INICIAR_NILO.bat.
-- Hace doble clic nuevamente en INICIAR_NILO.bat. Verifica el SHA256, descomprime
-  el motor en python\ y configura rutas automaticamente.
-- O prepara por primera vez el portable en tu PC personal y lleva la carpeta
-  Nilo_05_7 COMPLETA a la notebook del trabajo.
+INSTALACIÓN
+1. Extraé Nilo-0.7.0.zip en una carpeta NUEVA con permisos de escritura.
+2. Ejecutá INICIAR_NILO.bat; se prepara python\\python.exe en esa carpeta.
+3. El asistente puede copiar CONFIGURACIÓN y, por separado, la PARTIDA anterior.
+   La instalación original permanece sin modificaciones.
+4. Si importás una partida, verificá su información antes de retirar la versión
+   anterior. Usá RESPALDAR_PARTIDA.bat para crear copias recuperables.
 
-SEGURIDAD E INTEGRIDAD
-- SHA256 exigido al ZIP del interprete:
-  4acbed6dd1c744b0376e3b1cf57ce906f9dc9e95e68824584c8099a63025a3c3
-- Solo se extrae el ZIP si coincide. Nunca se usa un Python instalado en Windows.
-- No cambia PATH, registro, archivos de sistema ni configuracion de seguridad.
-- La notebook debe permitir ejecutar programas .exe locales y scripts BAT.
-- En algunos equipos gestionados por una organizacion las politicas pueden
-  impedir ejecutar software portable. Respeta las politicas de tu organizacion.
-- El archivo config.env contiene secretos de acceso a las APIs. No lo compartas.
+SI NO SE PERMITE DESCARGAR PYTHON
+Descargá en otra PC el archivo oficial:
+https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip
+Copialo sin descomprimir junto a INICIAR_NILO.bat y repetí el inicio.
+SHA256 esperado:
+4acbed6dd1c744b0376e3b1cf57ce906f9dc9e95e68824584c8099a63025a3c3
 
-Respaldos e importacion usan el mismo Python portable.
-Para borrar el programa, cerra Nilo y elimina su carpeta, preservando antes
-los respaldos del mundo que quieras conservar.
+TRAZABILIDAD
+BUILD_INFO.json guarda el commit de compilación cuando se conoce, y
+MANIFIESTO_SHA256.json contiene los hashes de los archivos incluidos.
+El historial de la partida registra versión, commit y manifiesto.
+Las versiones anteriores pueden no disponer de estos datos.
 
-FUNCIONES HEREDADAS DE 05.3
-- Refugios y herramientas pueden reformarse, repararse y desmontarse.
-- Nueva pestaña PLANOS: plantas ASCII y revisiones del objeto.
-- La geometria local y los componentes estan separados del minimapa.
-- Los espacios escritos en el plano son propuestas de uso, no paredes medidas.
+RESPALDOS Y SEGURIDAD
+- Nunca compartas config.env: contiene tus credenciales de proveedor.
+- No compartas la SQLite si no querés divulgar los recuerdos de Nilo.
+- No abras simultáneamente dos programas sobre la misma base SQLite.
+- Los ejecutables y Python quedan dentro de la carpeta de Nilo;
+  el instalador no cambia PATH, registro ni archivos de Windows.
+- Para volver a una versión anterior, conservá la carpeta y partida previas.
+- No reemplaces los archivos de una versión antigua por los de esta.
+- No se incluye ningún mundo, clave API ni copia personal en el ZIP.
 
-NOVEDADES 05.4
-- Nilo puede presentar posibles fallas con expectativa, resultado observado y evidencias del motor.
-- En Propuestas se puede clasificar cada caso y transmitir la evaluación a Nilo.
-- Abrir una Novedad con detalle marca automáticamente ese punto como leído.
+Nilo 0.7.0 es una refactorización arquitectónica. No elimina necesariamente
+los bucles históricos de autonomía. Groq no se verificó con una corrida real
+en la evaluación de esta etapa.
 
-NOVEDADES 05.5
-- Distingue descanso deliberado de tiempo de espera.
-- Registra energía y necesidades antes/después de acciones verificadas.
-- Compara recuperaciones en refugio e intemperie solo si hay muestras válidas.
-- Mantiene las pruebas y conclusiones en SQLite y las presenta en ENSAYOS.
-- Conserva las investigaciones anteriores: no inventa mediciones retrospectivas.
-
-NOVEDADES 05.6
-- Ensayos físicos cuantificados y comparaciones verificables en la pestaña ENSAYOS.
-- Nilo puede comparar dureza/resistencia, recipientes, flotación y mecanismos con datos de pruebas ejecutadas; no puede deducir causalidad universal.
-- Menos urgencias cotidianas de comida y bebida, resueltas por rutinas cuando hay recursos.
-- Abrigo y seguridad no decaen sin fenómenos de amenaza/clima modelados.
-- La pestaña HÁBITOS registra tareas repetitivas y Nilo puede considerar alternativas por decisión propia.
+Más detalles: README.md y docs\\NOTAS_VERSION_070.md.

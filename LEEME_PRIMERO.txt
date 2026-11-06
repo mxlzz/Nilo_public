@@ -1,39 +1,34 @@
-Nilo 05.7 - Agenda, autonomía y deliberación
+NILO 0.7.0 — LEÉ ESTO PRIMERO
+================================
 
-Edición Nilo 05.7: agenda diferida, reconsideración de métodos y espera segura de API.
+Esta versión reorganiza el motor completo para facilitar auditoría,
+mantenimiento y ajustes futuros. No es una actualización de comportamiento
+autónomo ni una garantía de que se hayan resuelto los bucles históricos.
 
-NILO 05.7 (alfa) - Programa completo y asistente de primer inicio
+INSTALACIÓN EN WINDOWS DE 64 BITS
+1. Descomprimí Nilo-0.7.0.zip en una carpeta NUEVA.
+2. Ejecutá INICIAR_NILO.bat.
+3. En el primer inicio se prepara Python 3.12.10 portable y se ofrece
+   importar una COPIA de la configuración y/o la partida anterior.
+4. Conservá la instalación anterior. No sobrescribas ninguna SQLite original.
+5. Iniciá Nilo y verificá el historial de tu partida antes de continuar.
 
-1. Descomprimí la carpeta Nilo_05_7 en un lugar distinto de tus versiones anteriores.
-2. Ejecutá INICIAR_NILO.bat: incorpora automáticamente Python portable en su carpeta la primera vez, sin instalarlo en Windows.
-3. En el primer inicio elegí tu instalación anterior Nilo_05_6_2 o indicá su carpeta manualmente y copiá sus claves, si existen.
-4. Elegí por separado si querés importar UNA COPIA de la partida existente.
-5. Revisá la pestaña Ensayos para ver mediciones, comparaciones y conclusiones con pruebas.
-6. Tus datos anteriores se copian sin alterar la instalación de origen.
+ATAJOS
+- INICIAR_NILO.bat: abrir Nilo.
+- ABRIR_LABORATORIO.bat: ver el laboratorio sin alterar el mundo original.
+- RESPALDAR_PARTIDA.bat: hacer una copia SQLite consistente.
+- RESTAURAR_PARTIDA.bat: restaurar una copia con confirmación.
+- EXPORTAR_HISTORIAL.bat: exportar el historial de la partida.
 
-Las rutinas solo repiten procedimientos comprobados bajo límites de necesidad y cercanía.
-Si no hay una actividad útil y segura, Nilo queda inactivo. La pausa automática del tiempo simulado se puede desactivar.
-No incluye editor dinámico de reglas físicas; está previsto para otra versión.
+NO PUBLICAR
+- config.env ni datos de las claves Gemini/Groq.
+- nilo_mundo.sqlite3 o respaldos si querés mantener privados los recuerdos.
 
-La instalación de origen permanece intacta. Si ya existe la partida aquí, no se inicia
-el asistente otra vez. Usá RESPALDAR_PARTIDA.bat antes de cambios importantes.
-Nunca publiques config.env ni archivos SQLite.
+DISTRIBUCIÓN
+- BUILD_INFO.json: versión y commit exacto cuando disponible.
+- MANIFIESTO_SHA256.json: hashes de todos los archivos del ZIP.
+- LEEME_PORTABLE.txt: cómo funciona el intérprete portable y su SHA256.
+- docs/NOTAS_VERSION_070.md: cambios y limitaciones de Nilo 0.7.0.
 
-Para detalles de portabilidad y primer inicio: LEEME_PORTABLE.txt
-
-LABORATORIO DEL MOTOR (v0.6.1)
-- Doble clic en ABRIR_LABORATORIO.bat: abre el simulador de operaciones en el navegador.
-- Usa un mundo de prueba o una copia en memoria de la partida guardada. No necesita claves de API ni modifica la partida original.
-- Permite pulsar acciones y ver resultados físicos y trazas breves del código ejecutado.
-
-LABORATORIO DE ESCENARIOS (v0.6.2)
-- Doble clic en ABRIR_LABORATORIO.bat; abre http://127.0.0.1:8766.
-- Página principal: catálogo de 68 escenarios con código, etapas, resultados y mediciones; incluye ejecutar todos.
-- Pestaña Sandbox: botones para crear órdenes y planes de hasta 12 operaciones sobre el motor real.
-- Archivo físico antiguo en /sandbox. Ningún escenario altera el mundo original.
-
-DEPURADOR HISTORICO (v0.6.3)
-- Abri ABRIR_LABORATORIO.bat y selecciona Partidas historicas, o ingresa a http://127.0.0.1:8766/historico.
-- Abri la partida actual o carga un archivo .sqlite3. Recorre el slider para seleccionar acciones y deliberaciones.
-- Los nuevos checkpoints permiten repetir decisiones y acciones en una copia temporal, con trazas y resultados. Las partidas antiguas sin checkpoints son de consulta historica.
-- No se llama a Gemini ni Groq y la partida original no se modifica desde el laboratorio.
+La validación de etapa 23 incluyó una partida real Gemini y pruebas de
+regresión; no se verificó Groq con una nueva corrida real.

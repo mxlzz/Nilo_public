@@ -109,6 +109,10 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_laboratorio_21.py' -v
       - name: Evidencia LLM, no divulgación y preflight sin credenciales (etapa 23)
         run: python -m unittest discover -s tests -p 'test_autonomia_23.py' -v
+      - name: Auditoría de manifiesto y dependencias distribuibles (etapa 24)
+        run: python tools/auditar_release_24.py --json
+      - name: Integridad, procedencia y seguridad de ZIP (etapa 24)
+        run: python -m unittest discover -s tests -p 'test_release_24.py' -v
       - name: Inventario de suites y revisión estática transversal (etapa 22)
         run: python tools/auditar_qa_22.py --output qa_22_inventory.json
       - name: Metamorfismos, integración y rollback multi-semilla (etapa 22)
@@ -211,3 +215,18 @@ jobs:
             autonomia-23-*/evaluation.md
           if-no-files-found: ignore
           retention-days: 30
+
+  portable_windows_24:
+    name: "Etapa 24 · instalación real Windows 64-bit + migración/rollback"
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.corrida_real != true }}
+    runs-on: windows-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar ZIP con Python embebido, partida nueva, migración y rollback
+        run: python tools/verificar_windows_24.py
