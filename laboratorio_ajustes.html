@@ -2,7 +2,7 @@
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nilo · Centro de ajustes del motor</title>
 <style>
-:root{color-scheme:dark;--bg:#101512;--panel:#1a241d;--line:#354739;--fg:#e4eee3;--muted:#a3b6a5;--focus:#b4d89f;--sub:#243329}
+/* Tokens globales definidos en assets/laboratorio.css */
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
 header{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 h1{font-size:21px;font-weight:600;margin:0}h2{font-size:16px;margin:0 0 12px}h3{font-size:13px;margin:12px 0}
@@ -24,8 +24,7 @@ legend{color:var(--muted);font-size:12px;padding:0 6px}.check-grid{display:grid;
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}.meta{font:11px Consolas,monospace;letter-spacing:.045em;color:var(--muted);text-transform:uppercase}
 @media(max-width:920px){.layout{grid-template-columns:1fr}.grid,.check-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.grid,.pair,.check-grid{grid-template-columns:1fr}header{padding:15px}.layout{padding:10px}}
-nav[data-lab-nav="primary"]{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
-nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
+
 </style>
 <link rel="stylesheet" href="/assets/laboratorio.css">
 </head><body data-lab="ajustes">
