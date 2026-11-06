@@ -61,8 +61,9 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 nav[data-lab-nav="primary"]{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
 </style>
+<link rel="stylesheet" href="/assets/laboratorio.css">
 </head>
-<body>
+<body data-lab="visor_llm">
 <header>
 <div><div class="eyebrow">Nilo · Laboratorio / Solicitudes reales</div><h1>Contexto que recibe el LLM</h1>
 <p class="muted">Solicitudes reales archivadas, sin reinterpretar sus mensajes.</p></div>
@@ -72,6 +73,7 @@ nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"]
 <a href="/">Pruebas</a>
 <a href="/ajustes">Ajustes</a>
 </nav>
+<div class="lab-theme-control"><button id="lab-theme-toggle" type="button" aria-label="Cambiar tema">Tema: sistema</button></div>
 </header>
 <main class="shell">
 <aside class="panel" aria-label="Seleccionar solicitud">
@@ -289,4 +291,5 @@ $("clear").addEventListener("click",()=>{for(const id of FIELDS){$(id).value=id=
 $("more").addEventListener("click",()=>refresh(false));
 refresh(true);
 </script>
+<script src="/assets/laboratorio_ui.js" defer></script>
 </body></html>
