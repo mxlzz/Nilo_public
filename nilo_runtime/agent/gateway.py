@@ -17,7 +17,7 @@ from nilo_runtime.agent.budget import (
 from nilo_runtime.agent.responses import parse_json
 from providers import error_from_http, ProviderFailure
 from action_contracts import instructions as action_instructions
-from nilo_runtime.agent.trace_context import transport_started, transport_finished
+from nilo_runtime.agent.trace_context import transport_started, transport_finished, observe_context
 
 def _post(url, payload, headers, provider):
     """Único límite de red; la identificación del proveedor nunca depende de URL."""
@@ -92,7 +92,9 @@ def _headers(cfg):
 def build_deliberation_request(cfg,context):
     """Preparar la solicitud sin red, aplicando presupuesto al payload completo."""
     from cognitive_projection import project_context
+    observe_context("percepcion",context)
     context=project_context(context)
+    observe_context("proyeccion",context)
     # El perfil cambia únicamente el payload; nunca la memoria del mundo.
     from nilo_runtime.core.lab_settings import OPTIONAL_CONTEXT
     omission=cfg.get("_LAB_OMIT_CONTEXT") or ()
@@ -100,6 +102,7 @@ def build_deliberation_request(cfg,context):
         raise ValueError("No se puede omitir contexto obligatorio")
     if omission:
         context={k:v for k,v in context.items() if k not in omission}
+    observe_context("perfil",context)
     note=cfg.get("_LAB_PROMPT_NOTE") or ""
     if not isinstance(note,str) or len(note)>700 or "\r" in note or "\x00" in note:
         raise ValueError("Nota de sistema del laboratorio inválida")
@@ -108,19 +111,28 @@ def build_deliberation_request(cfg,context):
     provider=cfg.get('PROVIDER','gemini')
     model=cfg.get('MODEL','gemini-3.1-flash-lite')
     if provider=='groq':
-        selected=bounded_context(compact_context(context,char_budget=18000),4100)
+        selected=compact_context(context,char_budget=18000)
+        observe_context("compactacion",selected)
+        selected=bounded_context(selected,4100)
         system=GROQ_SYSTEM+'\n'+brief_actions()+extra
     elif provider=='gemini':
-        selected=bounded_context(compact_context(context,char_budget=25000),9100)
+        selected=compact_context(context,char_budget=25000)
+        observe_context("compactacion",selected)
+        selected=bounded_context(selected,9100)
         system=SYSTEM+'\n'+action_instructions()+extra
     elif cfg.get('_compact_context'):
-        selected=bounded_context(compact_context(context,char_budget=23000),6900)
+        selected=compact_context(context,char_budget=23000)
+        observe_context("compactacion",selected)
+        selected=bounded_context(selected,6900)
         system=SYSTEM+'\n'+action_instructions()+extra
     else:
         # El proveedor OpenAI-compatible conserva el mismo límite de percepción;
         # jamás recibe puntajes internos por omitir el contexto compacto.
-        selected=bounded_context(compact_context(context,char_budget=25000),9100)
+        selected=compact_context(context,char_budget=25000)
+        observe_context("compactacion",selected)
+        selected=bounded_context(selected,9100)
         system=SYSTEM+'\n'+action_instructions()+extra
+    observe_context("presupuesto",selected)
     data=json.dumps(selected,ensure_ascii=False,separators=(',',':'))
     if provider=='gemini':
         url=_endpoint(cfg)
@@ -147,6 +159,8 @@ def build_deliberation_request(cfg,context):
         else:
             from providers import ProviderFailure
             raise ProviderFailure('groq: solicitud supera presupuesto interno','too_large')
+        observe_context("limite_proveedor",selected)
+    observe_context("solicitud_preparada",selected)
     return url,payload,headers
 
 
@@ -167,7 +181,9 @@ def request_llm(cfg, context):
 def build_chat_request(cfg,context,messages,system_instruction=None):
     """Mismo payload que el chat real, comprobable sin llamar a la red."""
     from cognitive_projection import project_context
+    observe_context("percepcion",context)
     context=project_context(context)
+    observe_context("proyeccion",context)
     system_instruction=system_instruction or CHAT_SYSTEM
     provider=cfg.get('PROVIDER','gemini')
     model=cfg.get('MODEL','gemini-3.1-flash-lite')
@@ -182,6 +198,7 @@ def build_chat_request(cfg,context,messages,system_instruction=None):
         context=keep
         history=history[-4:]
         history=[dict(m,text=m['text'][:550]) for m in history]
+    observe_context("filtro_chat",context)
     grounded='CONTEXTO COMPROBADO (no lo contradigas): '+json.dumps(context,ensure_ascii=False,default=str)
     if provider=='gemini':
         url=_endpoint(cfg)
@@ -209,6 +226,7 @@ def build_chat_request(cfg,context,messages,system_instruction=None):
         if provider=='groq':payload['reasoning_effort']='low'
         headers=_headers(cfg)
     else:raise ValueError('Proveedor desconocido')
+    observe_context("solicitud_preparada",context)
     return url,payload,headers
 
 

@@ -9,6 +9,7 @@ from __future__ import annotations
 from contextlib import closing
 from datetime import datetime, timezone
 import hashlib
+import json
 from pathlib import Path
 import secrets
 import sqlite3
@@ -76,11 +77,16 @@ class RequestTraceStore:
         )""")
         db.execute("""CREATE INDEX IF NOT EXISTS llm_requests_call
                       ON llm_requests(call_id, attempt_ordinal)""")
+        # Migración aditiva de la base sidecar. No modifica la SQLite del mundo.
+        db.execute("""CREATE TABLE IF NOT EXISTS llm_request_provenance (
+            attempt_id TEXT PRIMARY KEY,
+            metadata_json TEXT NOT NULL
+        )""")
         db.commit()
         return db
 
     def begin(self, *, body, call_id, session_id, purpose, source_id,
-              simulated_at, ordinal, provider, model):
+              simulated_at, ordinal, provider, model, provenance=None):
         """Un intento HTTP = una copia literal de los bytes serializados."""
         if type(body) is not bytes:
             raise TypeError("El cuerpo de transporte debe ser bytes")
@@ -103,9 +109,18 @@ class RequestTraceStore:
                 ))
                 # Mantener el historial más reciente por mundo. No afecta a
                 # la partida ni a decisiones; las copias antiguas son privadas.
+                if provenance is not None:
+                    # Solo metadatos: ningún valor interno anterior al payload.
+                    encoded = json.dumps(provenance,ensure_ascii=False,
+                                         separators=(",",":"))
+                    db.execute("""INSERT INTO llm_request_provenance
+                                  (attempt_id,metadata_json) VALUES (?,?)""",
+                               (attempt_id,encoded))
                 db.execute("""DELETE FROM llm_requests WHERE rowid IN (
                     SELECT rowid FROM llm_requests ORDER BY rowid DESC
                     LIMIT -1 OFFSET ?)""", (MAX_RECORDS,))
+                db.execute("""DELETE FROM llm_request_provenance
+                    WHERE attempt_id NOT IN (SELECT attempt_id FROM llm_requests)""")
                 db.commit()
         except (OSError, sqlite3.Error):
             self.capture_errors += 1
@@ -148,3 +163,33 @@ class RequestTraceStore:
             if len(body) != row["body_bytes"]:
                 raise ValueError("Longitud del cuerpo de solicitud alterada")
         return values
+
+    def provenance_for(self, attempt_id):
+        """Lectura local, sin exportar ni reconstituir contexto omitido."""
+        if (not isinstance(attempt_id,str) or len(attempt_id)!=32
+                or any(c not in "0123456789abcdef" for c in attempt_id)):
+            raise ValueError("Identificador de intento inválido")
+        if not self.path.is_file():
+            return None
+        with self._lock, closing(sqlite3.connect(
+                f"{self.path.as_uri()}?mode=ro", uri=True, timeout=0.5)) as db:
+            try:
+                row = db.execute("""SELECT p.metadata_json, r.body,
+                                    r.body_sha256,r.body_bytes
+                                    FROM llm_request_provenance p
+                                    JOIN llm_requests r USING (attempt_id)
+                                    WHERE p.attempt_id=?""",
+                                 (attempt_id,)).fetchone()
+            except sqlite3.OperationalError as exc:
+                if "no such table" in str(exc):
+                    return None  # Sidecar heredada sin tabla de etapa 04.
+                raise
+        if row is None:
+            return None
+        metadata, body, expected_hash, expected_size = row
+        if hashlib.sha256(body).hexdigest()!=expected_hash or len(body)!=expected_size:
+            raise ValueError("Cuerpo de solicitud con integridad alterada")
+        result=json.loads(metadata)
+        if not isinstance(result,dict) or result.get("schema_version")!=1:
+            raise ValueError("Metadatos de procedencia incompatibles")
+        return result

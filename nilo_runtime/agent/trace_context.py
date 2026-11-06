@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from contextvars import ContextVar
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from secrets import token_hex
 
 
@@ -26,6 +26,7 @@ class TraceCall:
     provider: str = ""
     model: str = ""
     current_id: str | None = None
+    snapshots: list = field(default_factory=list)
 
 
 @contextmanager
@@ -76,9 +77,12 @@ def transport_started(body: bytes, provider: str):
     if scope is None:
         return None
     scope.ordinal += 1
+    from nilo_runtime.agent.provenance import build_metadata
+    meta = _try(build_metadata, scope.snapshots, body, str(provider), scope.purpose)
     scope.current_id = _try(
         scope.store.begin,
         body=body,
+        provenance=meta,
         call_id=scope.call_id,
         session_id=scope.session_id,
         purpose=scope.purpose,
@@ -116,3 +120,19 @@ def choose_candidate(provider, model):
         scope.provider, scope.model, scope.current_id = (
             str(provider), str(model), None
         )
+        scope.snapshots.clear()
+
+
+def observe_context(stage, context):
+    """Guardar únicamente una copia efímera bajo un intento realmente activo.
+
+    El observador no puede cambiar el contexto original, y el contenido
+    intermedio no se persiste: solo cambios por ruta y referencias al código.
+    """
+    scope = _ACTIVE.get()
+    if scope is None:
+        return
+    from nilo_runtime.agent.provenance import snapshot_context
+    copied = _try(snapshot_context, context)
+    if copied is not None:
+        scope.snapshots.append((stage, copied))
