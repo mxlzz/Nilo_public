@@ -18,6 +18,8 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
+from nilo_runtime.web.security import authorize, parse_body, RequestError
+from nilo_runtime.labs.hub import LabHub
 
 from action_contracts import ACTION_GUIDE, SUPPORTED_OPERATIONS, before as contract_before, classify
 from action_results import ActionResult
@@ -35,20 +37,37 @@ HTML_FILE = HERE / "laboratorio_motor.html"
 SCENARIO_HTML_FILE = HERE / "laboratorio_escenarios.html"
 HISTORY_HTML_FILE = HERE / "laboratorio_historico.html"
 TRACE_TEXT = {
-    "world.py:resolve_go": "Comprueba destino y accesibilidad conocida",
-    "world.py:reachable_shores": "Busca orillas alcanzables",
-    "world.py:pathfind": "Calcula ruta entre casillas conocidas",
-    "world.py:choose_frontier": "Selecciona una frontera explorable",
-    "world.py:exploration_frontier": "Filtra fronteras y sectores posibles",
+    "navigation.py:resolve_go": "Comprueba destino y accesibilidad conocida",
+    "navigation.py:reachable_shores": "Busca orillas alcanzables",
+    "navigation.py:pathfind": "Calcula ruta entre casillas conocidas",
+    "navigation.py:choose_frontier": "Selecciona una frontera explorable",
+    "navigation.py:exploration_frontier": "Filtra fronteras y sectores posibles",
     "world.py:prepare_navigation": "Prepara el recorrido sin mover",
-    "world.py:advance_navigation": "Avanza por casillas y revela terreno",
-    "world.py:reveal": "Incorpora casillas observadas",
+    "navigation.py:advance_navigation": "Avanza por casillas y revela terreno",
+    "island.py:reveal": "Incorpora casillas observadas",
     "world.py:navigation_result": "Resume desplazamiento y hallazgos",
     "world.py:execute_action": "Aplica las reglas físicas de la acción",
-    "world.py:nearest_known": "Localiza una fuente conocida y alcanzable",
+    "resources.py:nearest_known": "Localiza una fuente conocida y alcanzable",
+    "resources.py:harvest_at": "Verifica depósito, distancia, balance y extracción",
+    "resources.py:transfer_units": "Transfiere unidades sin saldos negativos",
+    "resources.py:forage_action": "Gestiona reservas vegetales y recolección",
+    "resources.py:exchange_units": "Verifica el balance de lotes materiales",
+    "tool_use.py:use_action": "Prueba acciones de herramientas con efectos reales",
+    "fabrication.py:combine_action": "Combina materiales bajo transacción física",
+    "fabrication.py:fabricate_action": "Fabrica artefactos bajo precondiciones",
+    "intervention.py:execute_prepared": "Publica una reforma tras validarla completa",
+    "intervention.py:_preflight": "Valida materiales, componentes y capacidades",
+    "construction.py:_apply_intervention_mutating": "Interviene únicamente una copia del objeto",
+    "objects.py:physical_item": "Crea una pieza transportable con forma física declarada",
+    "objects.py:make_item": "Asigna identidad y propiedades a un objeto físico",
+    "objects.py:item_effects": "Calcula capacidades desde forma y resistencia",
+    "components.py:normalize_parts": "Valida materiales y formas de piezas",
+    "components.py:normalize_joints": "Comprueba tipos y referencias de uniones",
+    "components.py:connected_parts": "Verifica continuidad del ensamblaje",
+    "construction.py:ensure_object": "Migra objeto legado sin consumir IDs innecesarios",
     "world.py:inspect_target": "Comprueba visibilidad y examina el objetivo",
-    "world.py:dig_with_tool": "Contrasta herramienta y resistencia de roca",
-    "world.py:adjacent_rock": "Selecciona roca físicamente adyacente",
+    "tool_use.py:dig_with_tool": "Contrasta herramienta y resistencia de roca",
+    "tool_use.py:adjacent_rock": "Selecciona roca físicamente adyacente",
     "environments.py:perform_result": "Solicita un resultado físico tipado",
     "environments.py:perform": "Invoca el motor del entorno",
     "environments.py:start_navigation": "Solicita preparación de ruta",
@@ -68,10 +87,10 @@ TRACE_TEXT = {
     "construction.py:apply_intervention": "Modifica piezas y revisiones del objeto",
     "construction.py:initialize_object": "Registra piezas de la construcción",
     "construction.py:recompute": "Recalcula atributos tras la modificación",
-    "physics.py:geometry_from_step": "Interpreta geometría declarada",
-    "physics.py:body_physics": "Calcula atributos físicos de materiales",
-    "physics.py:evaluate_containment": "Evalúa retención de contenido",
-    "physics.py:evaluate_buoyancy": "Evalúa flotación",
+    "materials.py:geometry_from_step": "Interpreta geometría declarada",
+    "materials.py:body_physics": "Calcula atributos físicos de materiales",
+    "materials.py:evaluate_containment": "Evalúa retención de contenido",
+    "materials.py:evaluate_buoyancy": "Evalúa flotación",
     "mechanics.py:create_assembly": "Ensambla piezas y uniones reales",
     "mechanics.py:test_assembly": "Contrasta comportamiento del mecanismo",
     "experiment_log.py:capture": "Fotografía el estado medible",
@@ -82,12 +101,22 @@ TRACE_TEXT = {
     "inventions.py:submit_debug_report": "Registra una posible anomalía",
     "inventions.py:record_action_outcome": "Documenta la acción y sus resultados",
     "laboratory.py:compare": "Compara mediciones registradas",
-    "survival.py:update_needs": "Actualiza necesidades durante el tiempo simulado",
+    "survival.py:update_needs": "Conserva el contrato histórico de evolución corporal",
+    "needs.py:update_needs": "Evolución física de energía, hambre y sed",
+    "needs.py:perceived_needs": "Proyecta sensaciones sin barras numéricas",
+    "policy.py:rest_minutes": "Valida descanso voluntario",
+    "policy.py:wait_minutes": "Valida espera sin recuperación",
+    "policy.py:should_collapse": "Decide pérdida de conciencia por energía",
+    "policy.py:can_wake": "Decide recuperación de conciencia",
+    "shelter.py:shelter_properties": "Evalúa resguardo físico sin interpretar nombres",
+    "island_views.py:survival_conditions": "Consulta resguardo y fuentes de agua de la posición",
     "brain.py:context_for": "Prepara la percepción y memorias del contexto",
-    "brain.py:compact_context": "Acota campos del contexto",
-    "brain.py:build_deliberation_request": "Arma el mensaje final sin enviarlo",
+    "budget.py:compact_context": "Acota campos del contexto",
+    "budget.py:bounded_context": "Ajusta contexto al presupuesto del modelo",
+    "gateway.py:build_deliberation_request": "Arma el mensaje final sin enviarlo",
+    "gateway.py:build_chat_request": "Prepara mensajes de chat sin llamar a la API",
     "cognitive_projection.py:project_context": "Filtra conocimiento no perceptible",
-    "prompt_budget.py:bounded_context": "Ajusta contexto al presupuesto del modelo",
+    "responses.py:normalize_decision": "Valida respuesta JSON y acciones planificadas",
 }
 
 
@@ -132,210 +161,41 @@ class ExecutionTrace:
             row["first"] = lines[0]
             row["last"] = lines[-1]
             row["line_count"] = len(lines)
-            row["url"] = ("https://github.com/mxlzz/Nilo/blob/v0.6.1/"
-                          + row["file"] + "#L" + str(row["first"])
+            # Las trazas corresponden al código realmente ejecutado de 0.7.
+            source_path = {
+                "navigation.py": "nilo_runtime/worlds/navigation.py",
+                "island.py": "nilo_runtime/worlds/island.py",
+                "resources.py": "nilo_runtime/worlds/resources.py",
+                "fabrication.py": "nilo_runtime/worlds/fabrication.py",
+                "intervention.py": "nilo_runtime/worlds/intervention.py",
+                "tool_use.py": "nilo_runtime/worlds/tool_use.py",
+                "objects.py": "nilo_runtime/worlds/objects.py",
+                "components.py": "nilo_runtime/worlds/components.py",
+                "materials.py": "nilo_runtime/physics/materials.py",
+                "needs.py": "nilo_runtime/physiology/needs.py",
+                "policy.py": "nilo_runtime/physiology/policy.py",
+                "shelter.py": "nilo_runtime/worlds/shelter.py",
+            }.get(row["file"], row["file"])
+            row["url"] = ("https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/"
+                          + source_path + "#L" + str(row["first"])
                           + "-L" + str(row["last"]))
             rows.append(row)
         return rows
 
 
-class MotorLab:
-    """Mundo independiente en RAM; nunca guarda modificaciones en la partida."""
+from nilo_runtime.labs.sandbox import SimulationSandbox
+
+
+class MotorLab(SimulationSandbox):
+    """Fachada compatible del laboratorio, sin motor físico duplicado."""
 
     def __init__(self):
-        self.lock = threading.RLock()
-        self.reset("nuevo", 7321, True)
+        super().__init__(trace_factory=ExecutionTrace)
 
-    def reset(self, mode="nuevo", seed=7321, kit=False):
-        with self.lock:
-            if mode not in ("nuevo", "partida"):
-                raise ValueError("Origen de mundo no reconocido.")
-            if mode == "partida":
-                if not DB.is_file():
-                    raise ValueError("No existe una partida guardada en esta carpeta.")
-                uri = "file:" + DB.as_posix() + "?mode=ro"
-                conn = sqlite3.connect(uri, uri=True, timeout=4)
-                try:
-                    row = conn.execute("SELECT payload FROM snapshot WHERE id=1").fetchone()
-                finally:
-                    conn.close()
-                if not row:
-                    raise ValueError("La base no contiene una partida para copiar.")
-                state = json.loads(row[0])
-                if not isinstance(state.get("world"), dict) or not isinstance(state.get("person"), dict):
-                    raise ValueError("Snapshot sin mundo o personaje válidos.")
-                self.origin = "Copia en memoria del último estado guardado"
-            else:
-                if type(seed) is not int or not 0 <= seed <= 1000000000:
-                    raise ValueError("La semilla debe estar entre 0 y 1.000.000.000.")
-                state = initial_state(seed)
-                self.origin = "Mundo nuevo, semilla " + str(seed)
-            self.world = copy.deepcopy(state["world"])
-            self.person = copy.deepcopy(state["person"])
-            self.person["pending"] = None
-            self.person["plan"] = []
-            if kit:
-                for material, qty in (("madera", 16), ("piedra", 16),
-                                      ("arcilla", 10), ("fibra", 10),
-                                      ("mineral oscuro", 8), ("alimento", 6)):
-                    self.person["inventory"][material] = max(
-                        qty, self.person["inventory"].get(material, 0))
-                self.origin += " · materiales de prueba añadidos"
-            self.environment = get_environment("isla_v1")
-            self.rng = random.Random(9821 + int(self.person.get("clock_minutes", 0)))
-            self.history = []
-            self.last = None
-            return self.state()
+    def reset(self,mode="nuevo",seed=7321,kit=False):
+        # Mantener la ruta histórica parcheable por los tests existentes.
+        return super().reset(mode,seed,kit,source=DB)
 
-    def state(self):
-        with self.lock:
-            w, p = self.world, self.person
-            x, y, z = p["pos"]
-            known = set(w.get("revealed", []))
-            cells = []
-            for yy in range(y - 7, y + 8):
-                row = []
-                for xx in range(x - 7, x + 8):
-                    inside = valid(xx, yy)
-                    discovered = inside and f"{xx},{yy},{z}" in known
-                    ch = tile(w, xx, yy, z) if discovered else "?"
-                    if (xx, yy) == (x, y):
-                        ch = "@"
-                    row.append({"x": xx, "y": yy, "ch": ch, "known": bool(discovered),
-                                "selectable": bool(inside and discovered)})
-                cells.append(row)
-            structures = [{"id": o.get("id"), "name": o.get("name"),
-                           "pos": o.get("pos"), "version": o.get("revision", 1)}
-                          for o in w.get("structures", [])]
-            items = [{"id": o.get("id"), "name": o.get("name"),
-                      "form": o.get("form"), "revision": o.get("revision", 1)}
-                     for o in p.get("items", [])]
-            sites = [{"name": name, "pos": [q["x"], q["y"], q.get("z", 0)]}
-                     for name, q in w.get("sites", {}).items()
-                     if f"{q['x']},{q['y']},{q.get('z',0)}" in known]
-            return {"origin": self.origin, "position": list(p["pos"]),
-                    "minute": round(p.get("clock_minutes", 0), 2),
-                    "inventory": {k: v for k, v in p["inventory"].items() if v},
-                    "needs": dict(p.get("needs", {})),
-                    "map": cells, "known": len(known),
-                    "structures": structures, "items": items, "sites": sites,
-                    "history": self.history[-15:][::-1], "last": self.last,
-                    "actions": [{"name": k, "description": v} for k, v in ACTION_GUIDE.items()]}
-
-    def _execute(self, step):
-        w, p, env = self.world, self.person, self.environment
-        op = step["op"]
-        if op in ("go", "explore", "gather", "ascend"):
-            nav = env.start_navigation(w, p, step, self.rng)
-            if nav is not None:
-                env.move_navigation(w, p, nav, len(nav["route"]))
-                facts, success, notable = env.finish_navigation(nav, p)
-                duration = len(nav["route"]) * TRAVEL_MINUTES_PER_TILE
-                if nav.get("kind") == "ascend" and success:
-                    res = env.perform_result(w, p, step, self.rng)
-                    facts += list(res.facts)
-                    success, notable = res.success, notable or res.notable
-                elif nav.get("kind") == "gather":
-                    arrived = success and tuple(p["pos"][:2]) == tuple(nav["destination"])
-                    if arrived:
-                        res = env.perform_result(w, p, step, self.rng)
-                        facts += list(res.facts)
-                        success, notable = res.success, notable or res.notable
-                    else:
-                        success = False
-                        facts.append("Solo avancé hacia la fuente; todavía no extraje material.")
-                return ActionResult.from_legacy(step, facts, success, notable,
-                                                duration_minutes=duration)
-        stamp = "Laboratorio · minuto " + str(round(p.get("clock_minutes", 0), 2))
-        if op == "design":
-            success, message = register_design(p, step, stamp)
-            return ActionResult.from_legacy(step, [message], success, success, 26)
-        if op == "propose":
-            success, message = submit_proposal(p, step, stamp,
-                                               ("flotacion", "contencion", "excavacion", "impacto"))
-            return ActionResult.from_legacy(step, [message], success, success, 28)
-        if op == "report_issue":
-            success, message = submit_debug_report(p, step, stamp)
-            return ActionResult.from_legacy(step, [message], success, success, 24)
-        if op == "compare":
-            success, message, _entry = compare_physical(p, step, stamp)
-            return ActionResult.from_legacy(step, [message], success, success, 15)
-        if op == "conclude":
-            success, message, _entry = observational_conclusion(p, step, stamp)
-            return ActionResult.from_legacy(step, [message], success, success, 12)
-        return env.perform_result(w, p, step, self.rng)
-
-    def act(self, step):
-        if not isinstance(step, dict) or not isinstance(step.get("op"), str):
-            raise ValueError("La acción debe ser un objeto con operación válida.")
-        if step["op"] not in SUPPORTED_OPERATIONS:
-            raise ValueError("Operación no disponible en esta versión del motor.")
-        if len(json.dumps(step, ensure_ascii=False)) > 4000:
-            raise ValueError("Acción demasiado extensa.")
-        with self.lock:
-            saved_world = copy.deepcopy(self.world)
-            saved_person = copy.deepcopy(self.person)
-            saved_rng = self.rng.getstate()
-            start = capture(self.world, self.person)
-            prior = contract_before(self.world, self.person, step)
-            try:
-                with ExecutionTrace() as trace:
-                    result = self._execute(step)
-                    if step['op'] in ('rest', 'wait'):
-                        result = replace(result, duration_minutes=rest_minutes(step) or 30)
-                    duration = max(0.0, min(float(result.duration_minutes), 1440))
-                    self.person["clock_minutes"] = self.person.get("clock_minutes", 0) + duration
-                    shelter, water = self.environment.surroundings(self.world, self.person)
-                    update_needs(self.person, self.world, duration, shelter, water,
-                                 active=step["op"] not in ("rest", "wait"),
-                                 resting=step["op"] == "rest")
-                    stamp = "Laboratorio · minuto " + str(round(self.person["clock_minutes"], 2))
-                    measured = measure(self.person, step, start,
-                                       capture(self.world, self.person),
-                                       list(result.facts), result.success, stamp,
-                                       action_result=result)
-                    diagnostic = classify(self.world, self.person, step, prior, result)
-                    record_action_outcome(self.person, step, result.success,
-                                          list(result.facts), stamp, self.person["pos"])
-                lines = trace.records()
-            except Exception:
-                # Operación de prueba atómica aunque el código lance una excepción.
-                self.world = saved_world
-                self.person = saved_person
-                self.rng.setstate(saved_rng)
-                raise
-            report = {"step": step, "result": result.to_record(),
-                      "diagnostic": diagnostic,
-                      "measurement": {"id": measured["id"],
-                                      "inventory_delta": measured["inventory_delta"],
-                                      "needs_delta": measured["needs_delta"]}
-                      if measured else None,
-                      "trace": lines}
-            self.last = report
-            self.history.append({"op": step["op"], "success": result.success,
-                                 "status": result.status,
-                                 "facts": list(result.facts)[:2]})
-            return self.state()
-
-    def payload(self, provider="gemini"):
-        if provider not in ("gemini", "groq"):
-            raise ValueError("Proveedor de previsualización no soportado.")
-        with self.lock:
-            with ExecutionTrace() as trace:
-                context = context_for(self.world, self.person, [],
-                                      "Laboratorio · minuto " + str(round(self.person["clock_minutes"], 2)))
-                cfg = {"PROVIDER": provider,
-                       "MODEL": "gemini-3.1-flash-lite" if provider == "gemini" else "openai/gpt-oss-20b",
-                       "GEMINI_API_KEY": "simulacion-sin-red", "GROQ_API_KEY": "simulacion-sin-red"}
-                _, payload, _ = build_deliberation_request(cfg, context)
-            if provider == "gemini":
-                sent = json.loads(payload["contents"][0]["parts"][0]["text"].split("SITUACIÓN REAL: ", 1)[1])
-            else:
-                sent = json.loads(payload["messages"][1]["content"])
-            return {"provider": provider, "context": sent,
-                    "sections_omitted": sorted(set(context) - set(sent)),
-                    "trace": trace.records(),
-                    "note": "Vista real del constructor de payload; no se envió ninguna consulta LLM."}
 
 class HistorySource:
     """Sólo administra un archivo de consulta. Nunca modifica la partida original."""
@@ -378,6 +238,11 @@ class HistorySource:
 
 class Handler(BaseHTTPRequestHandler):
     lab = None
+    history = None
+    hub = None
+
+    def _authorized(self):
+        authorize(self.headers,self.server.server_address[1])
 
     def log_message(self, *_):
         pass
@@ -393,9 +258,13 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
+        try:self._authorized()
+        except RequestError as exc:
+            return self.json({"error":str(exc)},exc.status)
         path = urlsplit(self.path).path
-        if path in ("/", "/index.html","/sandbox","/historico"):
-            source = (HTML_FILE if path=="/sandbox" else
+        if path in ("/", "/index.html","/sandbox","/historico","/ajustes"):
+            source = (HERE/"laboratorio_ajustes.html" if path=="/ajustes" else
+                      HTML_FILE if path=="/sandbox" else
                       HISTORY_HTML_FILE if path=="/historico" else SCENARIO_HTML_FILE)
             contents = source.read_bytes()
             self.send_response(200)
@@ -406,6 +275,15 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(contents)))
             self.end_headers()
             self.wfile.write(contents)
+        elif path in ("/api/lab/profile/list","/api/lab/profile/load"):
+            try:
+                if path.endswith("/list"):
+                    self.json(self.hub.list())
+                else:
+                    name=(parse_qs(urlsplit(self.path).query).get("name") or [""])[0]
+                    self.json(self.hub.load(name))
+            except (ValueError,TypeError,OSError) as exc:
+                self.json({"error":str(exc)[:350]},400)
         elif path == "/api/catalog":
             from laboratorio_casos import catalog
             self.json(catalog())
@@ -446,7 +324,48 @@ class Handler(BaseHTTPRequestHandler):
             self.json({"error": "No encontrado"}, 404)
 
     def do_POST(self):
+        try:self._authorized()
+        except RequestError as exc:
+            return self.json({"error":str(exc)},exc.status)
         path = urlsplit(self.path).path
+        if path.startswith("/api/lab/profile/"):
+            names={
+                "/api/lab/profile/save","/api/lab/profile/apply",
+                "/api/lab/profile/restore","/api/lab/profile/preview",
+                "/api/lab/profile/compare","/api/lab/profile/backup-world",
+                "/api/lab/profile/restore-world",
+            }
+            if path not in names:
+                return self.json({"error":"No encontrado"},404)
+            try:
+                body=parse_body(self.headers,self.rfile,maximum=65000)
+                if path=="/api/lab/profile/save":
+                    result=self.hub.save(body.get("profile"))
+                elif path=="/api/lab/profile/apply":
+                    result=self.hub.apply(body.get("profile"),body.get("confirm"))
+                elif path=="/api/lab/profile/restore":
+                    result=self.hub.restore(body.get("checkpoint"),body.get("confirm"))
+                elif path=="/api/lab/profile/preview":
+                    result=self.hub.preview(body.get("profile"),
+                        provider=body.get("provider","gemini"),
+                        seed=body.get("seed",7321))
+                elif path=="/api/lab/profile/compare":
+                    result=self.hub.compare(body.get("profile"),
+                        provider=body.get("provider","gemini"),
+                        seed=body.get("seed",7321),
+                        scenario=body.get("scenario"))
+                elif path=="/api/lab/profile/backup-world":
+                    result=self.hub.backup_world(body.get("confirm"))
+                else:
+                    result=self.hub.restore_world_copy(
+                        body.get("name"),body.get("confirm"))
+                return self.json(result)
+            except RequestError as exc:
+                return self.json({"error":str(exc)},exc.status)
+            except (ValueError,KeyError,TypeError,OSError,sqlite3.Error) as exc:
+                return self.json({"error":str(exc)[:350]},400)
+            except Exception:
+                return self.json({"error":"Error interno del laboratorio"},500)
         if path == "/api/history/upload":
             try:
                 size = int(self.headers.get("Content-Length", "0"))
@@ -490,11 +409,19 @@ class Handler(BaseHTTPRequestHandler):
             self.json({"error": "Error del motor: " + type(exc).__name__}, 500)
 
 
+def create_lab_server(port=8766,*,lab=None,history=None,hub=None):
+    """Cada servicio tiene su propio sandbox y archivo histórico."""
+    class BoundHandler(Handler):
+        pass
+    BoundHandler.lab=lab if lab is not None else MotorLab()
+    BoundHandler.history=history if history is not None else HistorySource()
+    BoundHandler.hub=hub if hub is not None else LabHub(HERE,DB)
+    return ThreadingHTTPServer(("127.0.0.1",port),BoundHandler)
+
+
 def main():
     port = int(os.environ.get("NILO_LAB_PORT", "8766"))
-    Handler.lab = MotorLab()
-    Handler.history = HistorySource()
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server = create_lab_server(port)
     address = "http://127.0.0.1:" + str(port)
     print("\nLABORATORIO DEL MOTOR · Nilo\n" + address)
     print("Estado aislado en RAM. Sin llamadas LLM ni cambios en la partida original.")
@@ -505,6 +432,7 @@ def main():
         pass
     finally:
         server.server_close()
+        server.RequestHandlerClass.lab.close()
 
 
 if __name__ == "__main__":

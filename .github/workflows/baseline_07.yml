@@ -1,0 +1,68 @@
+name: Nilo 0.7 · Compatibilidad histórica pública
+
+on:
+  push:
+    branches: ["refactor/**"]
+    paths:
+      - ".github/workflows/baseline_07.yml"
+      - "tools/preparar_baseline_publica_07.py"
+      - "tools/verificar_importacion_baseline_07.py"
+      - "tests/fixtures/baseline_historico_07.*"
+      - "nilo.py"
+      - "nilo_runtime/**"
+      - "world.py"
+      - "environments.py"
+      - "catalogo.py"
+      - "catalog/**"
+      - "island_views.py"
+      - "survival.py"
+      - "bodily_policy.py"
+      - "experiment_log.py"
+      - "construction.py"
+      - "inventions.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    name: Seis partidas históricas sintéticas
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Runtime de la rama 0.7
+        uses: actions/checkout@v4
+        with:
+          path: work
+      - name: Referencia pública 0.6.4 — snapshot inmutable
+        uses: actions/checkout@v4
+        with:
+          ref: 8b7bc69afea1c003d51029f76c592d7b1f85b74b
+          path: sources/v064
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar SHA-256, integridad y procedencia sintética de seis partidas
+        run: python work/tools/preparar_baseline_publica_07.py --output baseline_07
+      - name: Importar seis partidas en la referencia pública 0.6.4 usando copias
+        run: |
+          python work/tools/verificar_importacion_baseline_07.py --baseline baseline_07 --reference-root sources/v064
+          mv baseline_07/migration_probe.json baseline_07/migration_probe_064.json
+      - name: Importar seis partidas en el runtime 0.7 usando copias
+        run: |
+          python work/tools/verificar_importacion_baseline_07.py --baseline baseline_07 --reference-root work
+          mv baseline_07/migration_probe.json baseline_07/migration_probe_runtime_07.json
+      - name: Comprobar catálogo único de operaciones
+        run: python work/tools/auditar_operaciones_07.py
+      - name: Auditar topología y catálogo del generador actual
+        run: python work/tools/auditar_mundo_08.py
+      - name: Comparar seis semillas de isla_v1 con 0.6.4
+        run: cd work && python -m unittest discover -s tests -p 'test_mundo_08.py' -v
+      - name: Publicar resultados y fixtures sintéticas verificadas
+        uses: actions/upload-artifact@v4
+        with:
+          name: nilo-07-baseline-064-synthetic
+          path: baseline_07/
+          if-no-files-found: error
+          retention-days: 90

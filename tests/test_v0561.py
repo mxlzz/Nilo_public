@@ -167,7 +167,10 @@ class StabilizationTests(unittest.TestCase):
             'instruccion_de_resumen':'Resumí solo estas entradas.'}
         with patch('brain.urllib.request.urlopen',side_effect=fake_open):
             reply,tokens=request_chat(cfg,ctx,[{'role':'user','text':'¿Qué me perdí?'}])
-        sent=actual['messages'][0]['content']
+        # Etapa 15: información del usuario y del mundo se envía como datos,
+        # no como una instrucción privilegiada de sistema.
+        self.assertNotIn('nota-1',actual['messages'][0]['content'])
+        sent=actual['messages'][1]['content']
         self.assertIn('nota-1',sent)
         self.assertIn('nota-2',sent)
         self.assertIn('Resumí solo estas entradas',sent)

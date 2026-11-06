@@ -4,6 +4,8 @@ Aprobar un fenómeno es autorización editorial, no una implementación física:
 solo el código verificado del motor puede producir cambios en el mundo.
 """
 from __future__ import annotations
+
+from nilo_runtime.core.identity import new_uuid
 import uuid
 from action_contracts import SUPPORTED_OPERATIONS
 from diagnostic_support import select_physics_evidence, select_debug_evidence
@@ -47,7 +49,7 @@ def register_design(person, step, stamp):
     if prior:
         version=prior['versions'][-1]['version']+1
     else:
-        prior={'id':'inv-'+uuid.uuid4().hex[:10],'name':name,'created':stamp,'versions':[],
+        prior={'id':'inv-'+new_uuid().hex[:10],'name':name,'created':stamp,'versions':[],
                'tests':[],'status':'hipotesis','verified':False}
         person['designs'].append(prior);version=1
     prior['name']=name;prior['updated']=stamp
@@ -129,10 +131,18 @@ def record_design_test(person,step,success,results,stamp,measurement_id=None,
     object_id=_str(step.get('_built_object_id') or step.get('_used_tool_id'),90)
     objects=list(person.get('items',[]))+(list((world or {}).get('structures',[])))
     if op=='rest' and measurement and measurement.get('condition')=='refugio':
+        # La tasa energética en el refugio inicial (terreno h) no demuestra
+        # que una obra nueva le aporte cubierta: exigir evidencia física propia
+        # de la estructura, no nombres, categorías o cifras autodeclaradas.
+        from nilo_runtime.worlds.shelter import shelter_properties
         position=(measurement.get('start') or {}).get('position')
+        assessment=shelter_properties(world or {},position)
+        if (not assessment['sheltered'] or assessment['source']!='structures'
+                or assessment['status']!='verified'):
+            return None
+        ids=set(assessment.get('structure_ids',[]))
         structure=next((b for b in (world or {}).get('structures',[])
-                        if b.get('pos')==position and b.get('category')=='habitaculo'
-                        and b.get('shelter_condition')!='insuficiente' and b.get('design_id')),None)
+                        if b.get('id') in ids and b.get('design_id')),None)
         if not structure:return None
         material_id=structure['design_id']
         object_id=structure['id']
@@ -242,7 +252,7 @@ def submit_proposal(person,step,stamp,available_physics):
     # modelo. Una palabra compartida o un ID inventado no justifican el vínculo.
     linked,association=select_physics_evidence(step,person.get('unmodeled_attempts',[]))
     proposal={'evidence_quality':'respaldada_por_no_evaluable' if linked else 'hipotesis_sin_prueba_de_fisica',
-              'id':'sol-'+uuid.uuid4().hex[:10],'when':stamp,'phenomenon':phenomenon,
+              'id':'sol-'+new_uuid().hex[:10],'when':stamp,'phenomenon':phenomenon,
               'type':'physics','rationale':rationale,'experiment':question,'missing_capability':gap,
               'context':_str(step.get('context'),400),'evidence_ids':[a['id'] for a in linked],
               'evidence':linked,'evidence_relation':association,
@@ -258,7 +268,7 @@ def submit_proposal(person,step,stamp,available_physics):
 def record_action_outcome(person, step, success, facts, stamp, position):
     """Registro comprobable de un intento, independiente de la explicación del LLM."""
     ensure_records(person)
-    entry={'id':'act-'+uuid.uuid4().hex[:12], 'when':stamp,
+    entry={'id':'act-'+new_uuid().hex[:12], 'when':stamp,
            'op':_str(step.get('op'),32),
            'target':_str(step.get('target') or step.get('item') or step.get('name') or
                         (f"({step.get('x')},{step.get('y')})" if 'x' in step else ''),130),
@@ -314,7 +324,7 @@ def submit_debug_report(person, step, stamp):
                 else pending_revision.get('evidence_relation',association)),
             'status':'pendiente','review':None})
         return True,f"Amplié la propuesta '{title}' y la devolví a evaluación, sin afirmar que existe un bug."
-    report={'id':'bug-'+uuid.uuid4().hex[:10], 'type':'debug','when':stamp,
+    report={'id':'bug-'+new_uuid().hex[:10], 'type':'debug','when':stamp,
             'title':title,'expected':expected,'observed':observed,
             'issue_kind':kind,'manual_reference':manual_reference,
             'rationale':rationale,'related_action':_str(step.get('related_action'),32),

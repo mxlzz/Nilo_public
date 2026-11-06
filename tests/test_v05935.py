@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.5 — síntesis priorizada, continuación y lecturas exactas."""
 import tempfile
 import unittest
@@ -136,12 +137,12 @@ class SummaryIntegration(unittest.TestCase):
 
 class InterfaceStructure(unittest.TestCase):
     def test_more_button_is_linked_to_continuation(self):
-        html=(Path(__file__).resolve().parent.parent/'interfaz.html').read_text('utf8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertIn('id="catchup-more"',html)
         self.assertIn('id="catchup-history"',html)
         self.assertGreater(html.index('id="catchup-more"'),html.index('id="catchup-content"'))
         self.assertIn('renderNextObserverSummary(summaryContinuation,summaryGeneration)',html)
         self.assertIn('Registros destacados (',html)
         self.assertIn('summaryContinuation=packet.continuation||null',html)
-        self.assertIn("'news','journal'",(Path(__file__).resolve().parent.parent/'nilo.py').read_text('utf8'))
+        self.assertIn("'news','journal'",(Path(__file__).resolve().parent.parent/'nilo_runtime/application/records.py').read_text('utf8'))
 if __name__=='__main__':unittest.main()

@@ -30,7 +30,14 @@ try {
         try { $client.DownloadFile($downloadUrl, $downloadTemp) }
         finally { $client.Dispose() }
     }
-    $sha = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToUpperInvariant()
+    # Usar el SHA256 de .NET directamente: compatible incluso si no existe
+    # el cmdlet Get-FileHash en el entorno de PowerShell.
+    $hasher = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $stream = [System.IO.File]::OpenRead($archive)
+        try { $sha = [BitConverter]::ToString($hasher.ComputeHash($stream)).Replace('-', '') }
+        finally { $stream.Dispose() }
+    } finally { $hasher.Dispose() }
     if ($sha -ne $expectedSha256) {
         throw "El ZIP de Python no coincide con la suma SHA256 esperada. No se ejecutara. Verifica que descargaste $filename desde python.org."
     }

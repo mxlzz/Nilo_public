@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """Nilo 0.5.9.3.4: expansión persistente y lectura de origen al seguir vínculos."""
 from pathlib import Path
 import re
@@ -7,7 +8,7 @@ import tempfile
 import unittest
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/'interfaz.html').read_text(encoding='utf-8')
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 
 class ExpansionAndNavigation(unittest.TestCase):
     def test_all_tabs_keep_expanded_details_across_rerender(self):

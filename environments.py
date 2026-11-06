@@ -18,6 +18,8 @@ from brain import context_for
 from island_views import map_snapshot, survival_conditions
 from island_planning import IslandPlanner
 from action_results import evidence_before, result_from_execution
+from nilo_runtime.core.operations import get_spec
+from nilo_runtime.worlds.island import ISLAND_GENERATOR
 
 
 class Environment(Protocol):
@@ -42,8 +44,13 @@ class Environment(Protocol):
 class IslandEnvironment:
     environment_id: str="isla_v1"
 
+    @property
+    def world_definition(self):
+        # Metadatos observacionales del entorno, no conocimiento del LLM.
+        return ISLAND_GENERATOR.definition
+
     def make_world(self, seed):
-        return new_world(seed)
+        return ISLAND_GENERATOR.generate(seed)
 
     def materials(self):
         from catalogo import clone_materials
@@ -56,7 +63,11 @@ class IslandEnvironment:
         return resolve_go(world,agent,step)
 
     def start_navigation(self, world, agent, step, rng):
-        return prepare_navigation(world,agent,step,rng)
+        try:
+            spec=get_spec(step.get('op'))
+        except ValueError:
+            return None
+        return prepare_navigation(world,agent,step,rng) if spec.navigable else None
 
     def move_navigation(self, world, agent, navigation, due):
         return advance_navigation(world,agent,navigation,due)
@@ -68,6 +79,12 @@ class IslandEnvironment:
         return execute_action(world,agent,step,rng)
 
     def perform_result(self, world, agent, step, rng):
+        spec=get_spec(step.get('op'))
+        if spec.executor != 'physical':
+            raise ValueError(
+                f"La operación {spec.name!r} se despacha como documento, "
+                "nunca como acción física."
+            )
         before=evidence_before(agent)
         legacy=self.perform(world,agent,step,rng)
         return result_from_execution(step,legacy,agent,before)

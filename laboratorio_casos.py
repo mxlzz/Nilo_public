@@ -21,8 +21,16 @@ from world import tile, tile_key, set_tile, reveal, valid, MATERIALS, YIELDS
 
 ROOT = Path(__file__).resolve().parent
 WATCH = {
-    "brain.py": {"normalize_decision", "context_for", "compact_context", "build_deliberation_request"},
-    "nilo.py": {"plan_ready", "tick", "validate_plan", "improve_plan", "event", "write", "followup_without_llm"},
+    "brain.py": {"context_for"},
+    "nilo_runtime/agent/responses.py": {"normalize_decision", "parse_json"},
+    "nilo_runtime/agent/gateway.py": {"build_deliberation_request", "request_llm", "build_chat_request", "request_chat"},
+    "nilo_runtime/agent/budget.py": {"compact_context", "bounded_context"},
+    # La traza sigue las funciones REALES después de extraer el motor a
+    # casos de uso, no las confunde con la fachada nilo.py.
+    "nilo_runtime/application/session.py": {"write"},
+    "nilo_runtime/application/records.py": {"event"},
+    "nilo_runtime/application/decisions.py": {"plan_ready", "validate_plan", "improve_plan", "followup_without_llm"},
+    "nilo_runtime/application/clockwork.py": {"tick"},
     "island_planning.py": {"validate_plan", "improve_plan"},
     "environments.py": {"perform_result", "start_navigation", "move_navigation", "finish_navigation"},
     "world.py": {"resolve_go", "pathfind", "choose_frontier", "exploration_frontier", "prepare_navigation",
@@ -43,7 +51,7 @@ WATCH = {
     "goal_evidence.py": {"check_goal"},
     "timing.py": {"effective_speed"},
     "cognitive_projection.py": {"project_context"},
-    "prompt_budget.py": {"bounded_context"},
+    # prompt_budget.py es fachada; los recortes reales viven en agent/budget.py.
     "agenda.py": {"set_agenda", "choose_agenda_step", "record_agenda_result"},
 }
 EXPLAIN = {
@@ -417,12 +425,16 @@ class Trace:
     def hook(self,frame,event,arg):
         path=Path(frame.f_code.co_filename)
         name=frame.f_code.co_name
-        if path.name not in WATCH or name not in WATCH[path.name] or path.parent != ROOT:
+        try:
+            relative=path.relative_to(ROOT).as_posix()
+        except ValueError:
+            return None
+        if relative not in WATCH or name not in WATCH[relative]:
             return None
         if event=="call":
             if len(self.calls)>=self.max_calls:
                 return None
-            row={"archivo":path.name,"funcion":name,
+            row={"archivo":relative,"funcion":name,
                  "explicacion":EXPLAIN.get(name,name.replace("_"," ")),
                  "inicio":frame.f_code.co_firstlineno+1,"fin":frame.f_code.co_firstlineno+1,
                  "lineas":set(),"repeticiones":1}

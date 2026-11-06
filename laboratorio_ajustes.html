@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nilo · Centro de ajustes del motor</title>
+<style>
+:root{color-scheme:dark;--bg:#101512;--panel:#1a241d;--line:#354739;--fg:#e4eee3;--muted:#a3b6a5;--focus:#b4d89f;--sub:#243329}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+h1{font-size:21px;font-weight:600;margin:0}h2{font-size:16px;margin:0 0 12px}h3{font-size:13px;margin:12px 0}
+small,.muted{color:var(--muted)}a{color:var(--focus);text-decoration:none}a:hover{text-decoration:underline}
+nav{display:flex;flex-wrap:wrap;gap:13px}.layout{max-width:1480px;margin:0 auto;padding:20px;display:grid;grid-template-columns:minmax(300px,410px) minmax(300px,1fr);gap:16px;align-items:start}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:18px;min-width:0}
+.editor{display:flex;flex-direction:column;gap:13px}label{display:grid;gap:5px;color:var(--muted);font-size:12px}
+input,textarea,select,button{font:inherit}input,textarea,select{width:100%;border:1px solid #516552;background:var(--bg);color:var(--fg);border-radius:5px;padding:9px}
+textarea{min-height:104px;resize:vertical}button{background:var(--sub);color:var(--fg);padding:8px 13px;border:1px solid #586d59;border-radius:6px;cursor:pointer}
+button:hover{border-color:var(--focus)}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--focus)}
+button.primary{background:#394b36}button[disabled]{opacity:.5;cursor:wait}.buttons{display:flex;gap:8px;flex-wrap:wrap}
+fieldset{border:1px solid var(--line);border-radius:7px;padding:12px;margin:0}
+legend{color:var(--muted);font-size:12px;padding:0 6px}.check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.check-grid label{display:flex;align-items:start;gap:7px;word-break:break-word}.check-grid input{width:auto;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+#response{white-space:pre-wrap;word-break:break-word;overflow:auto;max-height:60vh;min-height:150px;background:#0c130e;border:1px solid var(--line);border-radius:7px;padding:13px;color:#c7dcc5;font:12px/1.5 Consolas,monospace}
+#status{min-height:22px;color:var(--focus);font-size:12px}.section{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.section:first-child{margin-top:0;padding-top:0;border:0}
+.danger{border-color:#967f66}.note{font-size:12px;color:var(--muted);line-height:1.6}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}.meta{font:11px Consolas,monospace;letter-spacing:.045em;color:var(--muted);text-transform:uppercase}
+@media(max-width:920px){.layout{grid-template-columns:1fr}.grid,.check-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.grid,.pair,.check-grid{grid-template-columns:1fr}header{padding:15px}.layout{padding:10px}}
+</style>
+</head><body>
+<header><div><div class="meta">Nilo 0.7 · entorno de pruebas</div><h1>Laboratorio · Centro de ajustes</h1><small>Variantes de configuración, solicitudes LLM y recuperación verificable.</small></div>
+<nav aria-label="Navegar entre herramientas">
+<a href="/">Escenarios</a><a href="/sandbox">Acciones</a><a href="/historico">Partidas históricas</a>
+</nav></header>
+<main class="layout">
+<section class="panel editor" aria-label="Perfil experimental">
+<h2>Perfil de ajustes</h2>
+<label>Nombre de la variante (minúsculas, sin espacios)<input id="name" value="mi-variante" maxlength="40" pattern="[a-z0-9][a-z0-9_-]*"></label>
+<div class="grid">
+<label>Deliberaciones LLM/día<input id="limit-llm" type="number" min="1" max="500" step="1" value="100"></label>
+<label>Conversaciones/día<input id="limit-chat" type="number" min="1" max="100" step="1" value="40"></label>
+<label>Mínimo entre consultas (seg)<input id="limit-between" type="number" min="10" max="300" step="1" value="15"></label>
+</div>
+<fieldset><legend>Contexto opcional que no se enviará al LLM</legend>
+<div id="optional" class="check-grid"></div>
+<p class="note">La posición, las necesidades, los proyectos activos y la evidencia física no pueden ocultarse. Omitir información del mensaje no elimina registros de Nilo.</p></fieldset>
+<label>Nota adicional del sistema (máx. 700 caracteres)
+<textarea id="prompt-note" maxlength="700" placeholder="Instrucción experimental complementaria; el núcleo del personaje se conserva."></textarea></label>
+<div class="buttons">
+<button type="button" id="preview" class="primary">Ver solicitud exacta</button>
+<button type="button" id="compare">Comparar con baseline</button>
+<button type="button" id="save">Guardar variante</button>
+</div>
+<div class="pair">
+<label>Proveedor<select id="provider"><option value="gemini">Gemini</option><option value="groq">Groq</option></select></label>
+<label>Semilla de ensayo<input id="seed" type="number" min="0" max="1000000000" value="7321"></label>
+</div>
+<label>Escenario opcional para comparación física<select id="scenario"><option value="">Solo contexto (rápido)</option></select></label>
+<p class="note">Las comparaciones usan el constructor real de solicitudes, sin red ni consumo de API. Un escenario ejecuta el motor físico real dos veces con la misma semilla; la variante actual no modifica leyes físicas.</p>
+</section>
+<section class="panel" aria-label="Resultados y versiones">
+<div class="section">
+<h2>Variantes y aplicación</h2>
+<div class="pair">
+<label>Cargar perfil guardado<select id="saved"><option value="">Seleccionar variante</option></select></label>
+<label>Restaurar checkpoint de configuración<select id="checkpoints"><option value="">Seleccionar respaldo</option></select></label>
+</div>
+<div class="buttons" style="margin-top:9px">
+<button id="load" type="button">Cargar en editor</button>
+<button id="apply" type="button" class="primary">Aplicar al próximo inicio</button>
+<button id="restore" type="button" class="danger">Restaurar ajustes anteriores</button>
+<button id="baseline" type="button">Volver a baseline en editor</button>
+</div>
+<p class="note">Aplicar guarda automáticamente el perfil anterior y registra una huella de integridad. No escribe archivos Python ni claves API. <strong>Reiniciá Nilo para garantizar la aplicación completa.</strong> Restaurar ajustes no cambia el día ni el mundo.</p>
+</div>
+<div class="section">
+<h2>Backups de partidas (operación independiente)</h2>
+<div class="buttons">
+<button type="button" id="world-backup">Crear copia de la partida</button>
+</div>
+<label style="margin-top:12px">Restaurar respaldo como otra partida<select id="world-saves"><option value="">Seleccionar copia disponible</option></select></label>
+<div class="buttons" style="margin-top:9px"><button type="button" id="world-restore">Crear partida recuperada (nueva)</button></div>
+<p class="note">Se usa el backup consistente de SQLite, incluyendo WAL. Nunca se sobrescribe la partida principal ni se vuelve automáticamente a un día anterior. Los backups se guardan en lab_profiles/world_backups; las copias restauradas, en lab_profiles/world_restores.</p>
+</div>
+<div class="section">
+<div class="pair"><h2>Vista previa y diferencias</h2><span class="meta" id="active-label">Baseline</span></div>
+<div id="status" role="status" aria-live="polite"></div>
+<pre id="response" tabindex="0">Seleccioná «Ver solicitud exacta» para inspeccionar el JSON, la nota de sistema y los campos que recibiría el modelo.</pre>
+</div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let catalog=null, currentProfile=null;
+const escapeText=value=>String(value??'');
+function setStatus(message,isError=false){$('status').textContent=message;$('status').style.color=isError?'#e0a58d':'var(--focus)';}
+function show(value){$('response').textContent=JSON.stringify(value,null,2);}
+async function get(path){const r=await fetch(path,{cache:'no-store'});const o=await r.json();if(!r.ok)throw Error(o.error||'No se pudo leer el laboratorio');return o;}
+async function post(path,value){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(value)});const o=await r.json();if(!r.ok)throw Error(o.error||'La operación fue rechazada');return o;}
+function getProfile(){
+  return {version:1,name:$('name').value.trim(),
+    limits:{MAX_LLM_CALLS_PER_DAY:Number($('limit-llm').value),
+      MAX_CHAT_CALLS_PER_DAY:Number($('limit-chat').value),
+      MIN_REAL_SECONDS_BETWEEN_CALLS:Number($('limit-between').value)},
+    omit_context:[...document.querySelectorAll('#optional input:checked')].map(x=>x.value),
+    prompt_note:$('prompt-note').value};
+}
+function setProfile(p){
+ $('name').value=p.name;
+ $('limit-llm').value=p.limits.MAX_LLM_CALLS_PER_DAY;
+ $('limit-chat').value=p.limits.MAX_CHAT_CALLS_PER_DAY;
+ $('limit-between').value=p.limits.MIN_REAL_SECONDS_BETWEEN_CALLS;
+ $('prompt-note').value=p.prompt_note;
+ document.querySelectorAll('#optional input').forEach(x=>x.checked=p.omit_context.includes(x.value));
+ currentProfile=p;
+}
+function updateLists(data){
+ catalog=data;
+ $('saved').innerHTML='<option value="">Seleccionar variante</option>';
+ for(const item of data.saved||[]){
+   if(item.invalid)continue;
+   const opt=document.createElement('option');opt.value=item.name;opt.textContent=item.name;$('saved').append(opt);
+ }
+ $('checkpoints').innerHTML='<option value="">Seleccionar respaldo</option>';
+ for(const id of data.backups||[]){
+   const opt=document.createElement('option');opt.value=id;opt.textContent=id;$('checkpoints').append(opt);
+ }
+ $('world-saves').innerHTML='<option value="">Seleccionar copia disponible</option>';
+ for(const name of data.world_backups||[]){
+   const opt=document.createElement('option');opt.value=name;opt.textContent=name;$('world-saves').append(opt);
+ }
+ $('active-label').textContent='Aplicado: '+(data.active?.name||'baseline');
+}
+async function reload(){updateLists(await get('/api/lab/profile/list'));}
+function busy(button,promise){
+ button.disabled=true;
+ return Promise.resolve().then(promise).catch(e=>{setStatus(e.message,true);show({error:e.message})})
+ .finally(()=>button.disabled=false);
+}
+$('preview').onclick=()=>busy($('preview'),async()=>{
+ const value=await post('/api/lab/profile/preview',{profile:getProfile(),provider:$('provider').value,seed:Number($('seed').value)});
+ show(value);setStatus('Vista previa preparada localmente. No se envió ninguna consulta.');
+});
+$('compare').onclick=()=>busy($('compare'),async()=>{
+ const value=await post('/api/lab/profile/compare',{profile:getProfile(),provider:$('provider').value,
+ seed:Number($('seed').value),scenario:$('scenario').value||null});
+ show(value);setStatus('Comparación terminada; ambas solicitudes fueron construidas sin red.');
+});
+$('save').onclick=()=>busy($('save'),async()=>{
+ const value=await post('/api/lab/profile/save',{profile:getProfile()});
+ await reload();show(value);setStatus('Variante guardada sin cambiar el motor.');
+});
+$('load').onclick=()=>busy($('load'),async()=>{
+ if(!$('saved').value)throw Error('Elegí un perfil guardado.');
+ const value=await get('/api/lab/profile/load?name='+encodeURIComponent($('saved').value));
+ setProfile(value);show(value);setStatus('Perfil cargado en el editor; no está aplicado.');
+});
+$('apply').onclick=()=>busy($('apply'),async()=>{
+ if(!confirm('¿Aplicar esta variante para el próximo inicio? Se crea un checkpoint previo de los ajustes.'))return;
+ const value=await post('/api/lab/profile/apply',{profile:getProfile(),confirm:true});
+ await reload();show(value);setStatus(value.applied?'Perfil registrado. Reiniciá Nilo.':'El perfil ya coincide con el vigente.');
+});
+$('restore').onclick=()=>busy($('restore'),async()=>{
+ const id=$('checkpoints').value;if(!id)throw Error('Seleccioná un checkpoint.');
+ if(!confirm('¿Restaurar los ajustes del checkpoint? La partida no cambia.'))return;
+ const value=await post('/api/lab/profile/restore',{checkpoint:id,confirm:true});
+ await reload();setProfile(value.current);show(value);setStatus('Ajustes restaurados; reiniciá Nilo.');
+});
+$('baseline').onclick=()=>{setProfile(catalog.baseline);setStatus('Baseline cargado solo en el editor.');};
+$('world-backup').onclick=()=>busy($('world-backup'),async()=>{
+ if(!confirm('¿Crear un respaldo SQLite consistente de la partida guardada?'))return;
+ const value=await post('/api/lab/profile/backup-world',{confirm:true});
+ await reload();show(value);setStatus('Se creó una copia; la partida original no cambió.');
+});
+$('world-restore').onclick=()=>busy($('world-restore'),async()=>{
+ const name=$('world-saves').value;if(!name)throw Error('Seleccioná una copia.');
+ if(!confirm('¿Restaurar como archivo NUEVO, sin modificar ni abrir la partida activa?'))return;
+ const value=await post('/api/lab/profile/restore-world',{confirm:true,name});
+ show(value);setStatus('Partida recuperada en otra ruta, sin sustituir la original.');
+});
+(async()=>{
+ try{
+  const data=await get('/api/lab/profile/list');
+  $('optional').replaceChildren();
+  for(const key of data.editable_optional_context){
+    const label=document.createElement('label');
+    const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.value=key;
+    label.append(checkbox,document.createTextNode(key.replaceAll('_',' ')));
+    $('optional').append(label);
+  }
+  updateLists(data);setProfile(data.active);
+  const cases=await get('/api/catalog');
+  for(const item of cases.casos||[]){
+    const option=document.createElement('option');option.value=item.id;option.textContent=item.title;
+    $('scenario').append(option);
+  }
+  setStatus('El motor vigente está protegido. Los ajustes se aplican tras reiniciar.');
+ }catch(e){setStatus(e.message,true);}
+})();
+</script>
+</body></html>

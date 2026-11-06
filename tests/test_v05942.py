@@ -50,6 +50,9 @@ class CognitiveProjection(unittest.TestCase):
             'space':{'representation':'2.5d-schematic','width_m':2},
             'status':'función pendiente de comprobar'
         }]
+        # La obra del ensayo cognitivo ya fue observada, no es un secreto
+        # extraído del mapa del motor.
+        self.w['revealed'].append('17,19,0')
 
     def test_sanitizes_internal_scores_but_preserves_measurements(self):
         self.p['measurements']=[{

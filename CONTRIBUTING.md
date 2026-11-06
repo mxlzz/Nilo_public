@@ -4,8 +4,8 @@ Este repositorio es público, pero solamente las personas con permiso de escritu
 
 ## Estado y ramas
 
-- `main`: última versión estable, actualmente Nilo **0.6.4**. Mantener estable.
-- `refactor/0.7`: desarrollo de la reconstrucción 0.7.0. Las etapas 00–08 están completas; la siguiente es 09 (navegación y exploración).
+- `main`: rama estable; Nilo **0.7.0** tras la publicación del release.
+- `refactor/0.7`: rama histórica de la reestructuración 0.7.0, con las 25 etapas completadas técnicamente.
 - Para cambios concretos, preferir ramas `work/**` o `fix/**` y abrir un PR hacia la rama correspondiente.
 - [Issue central de 0.7](https://github.com/mxlzz/Nilo_public/issues/74) · [PR de seguimiento](https://github.com/mxlzz/Nilo_public/pull/77).
 

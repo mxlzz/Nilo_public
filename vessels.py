@@ -9,6 +9,7 @@ import math
 from physics import body_physics, evaluate_containment
 from construction import find_object
 from survival import ensure_needs
+from nilo_runtime.worlds.resources import ResourceBalanceError, transfer_units
 
 
 def capacity(obj,person,material="agua"):
@@ -118,11 +119,29 @@ def interact(world,person,step,rng=None):
         if dest_old>0 and material!=dest_mat:return _fail("El destino tiene contenido incompatible.")
         limit=capacity(dest,person,material)
         free=round(max(0,limit-dest_old),2)
-        q=_quantity(step.get("quantity"),min(old,free),integer=material!="agua")
+        suggested=(min(old,free) if material=="agua" else
+                   int(math.floor(min(old,free))))
+        q=_quantity(step.get("quantity"),suggested,integer=material!="agua")
         if q is None or q>old or q>free:return _fail(f"No se puede transferir esa cantidad: origen {old}, espacio disponible {free}.")
-        # Primero validar, luego mutar ambos extremos.
-        _set_contents(source,material,old-q,person,"transferencia")
-        _set_contents(dest,material,dest_old+q,person,source["id"])
+        # El agua conserva la precisión decimal que ya tenía. Las transferencias
+        # de sólidos usan el mismo balance entero del inventario/depósitos.
+        if material!="agua":
+            if not float(old).is_integer() or not float(dest_old).is_integer():
+                return _fail("El contenido sólido existente no tiene unidades enteras válidas.")
+            left={material:int(old)}
+            right={material:int(dest_old)}
+            try:
+                receipt=transfer_units(left,material,right,material,int(q),
+                                       maximum=int(math.floor(limit)))
+            except ResourceBalanceError:
+                return _fail("No se puede transferir esa cantidad sin violar el balance.")
+            source_after=receipt.source_after
+            dest_after=receipt.destination_after
+        else:
+            source_after=old-q
+            dest_after=dest_old+q
+        _set_contents(source,material,source_after,person,"transferencia")
+        _set_contents(dest,material,dest_after,person,source["id"])
         _record(person,step,method,source["id"],dest["id"],material,q,
                 {"source":old,"destination":dest_old},
                 {"source":round(old-q,2),"destination":round(dest_old+q,2)})
@@ -162,26 +181,41 @@ def interact(world,person,step,rng=None):
         q=_quantity(step.get("quantity"),1,integer=True)
         if q is None or q>inv.get(material,0) or q>round(max(0,capacity(dest,person,material)-old),2):
             return _fail("No hay material sólido suficiente o capacidad libre.")
-        inv[material]-=q
-        _set_contents(dest,material,old+q,person,"inventario")
+        if not float(old).is_integer():
+            return _fail("El contenido sólido existente no tiene unidades enteras válidas.")
+        hold={material:int(old)}
+        try:
+            receipt=transfer_units(inv,material,hold,material,q,
+                                   maximum=int(math.floor(capacity(dest,person,material))))
+        except ResourceBalanceError:
+            return _fail("No hay material sólido suficiente o capacidad libre.")
+        _set_contents(dest,material,receipt.destination_after,person,"inventario")
         _record(person,step,method,"inventario",dest["id"],material,q,
-                {"source":inv[material]+q,"destination":old},
-                {"source":inv[material],"destination":old+q})
+                {"source":receipt.source_before,"destination":old},
+                {"source":receipt.source_after,"destination":receipt.destination_after})
         return 12,[f"Guardé {q} unidades de {material} en {dest['id']}; se descontaron del inventario."],True,True
     if method=="retirar":
         if not source:return _fail("Retirar exige un recipiente identificado y accesible.")
         material,old=_contents(source)
         if not material or material=="agua" or old<=0:
             return _fail("Para agua usá transferir o descargar; retirar devuelve sólidos al inventario.")
-        q=_quantity(step.get("quantity"),old,integer=True)
+        q=_quantity(step.get("quantity"),
+                    int(old) if float(old).is_integer() else None,
+                    integer=True)
         if q is None or q>old:return _fail("La cantidad solicitada no está almacenada.")
         inv=person.setdefault("inventory",{})
         before=inv.get(material,0)
-        inv[material]=before+q
-        _set_contents(source,material,old-q,person,"retiro_inventario")
+        if not float(old).is_integer():
+            return _fail("El contenido sólido existente no tiene unidades enteras válidas.")
+        hold={material:int(old)}
+        try:
+            receipt=transfer_units(hold,material,inv,material,q)
+        except ResourceBalanceError:
+            return _fail("La reserva de sólidos es inválida; no hubo transferencia.")
+        _set_contents(source,material,receipt.source_after,person,"retiro_inventario")
         _record(person,step,method,source["id"],"inventario",material,q,
                 {"source":old,"destination":before},
-                {"source":round(old-q,2),"destination":before+q})
+                {"source":receipt.source_after,"destination":receipt.destination_after})
         return 12,[f"Retiré {q} unidades de {material} de {source['id']}; regresaron al inventario."],True,True
     return _fail(f"El método '{method}' no pertenece a esta capacidad.")
 

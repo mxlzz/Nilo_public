@@ -98,7 +98,9 @@ class Delegations(unittest.TestCase):
 
     def test_delegated_drink_and_eat_are_finite_not_automatic(self):
         p=person()
-        with patch('habits._near_water',return_value=True):
+        # Etapa 17: la función ejecutable pertenece a autonomy.habits;
+        # el módulo raíz habits solo conserva un import compatible.
+        with patch('nilo_runtime.autonomy.habits._near_water',return_value=True):
             self.assertIsNone(choose_wait_action({},p)) # no delegation
             set_wait_preferences(p,[{'op':'drink'}], 'día 1')
             step,_=choose_wait_action({},p)

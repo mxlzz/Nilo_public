@@ -94,22 +94,24 @@ class DesignEvidence(unittest.TestCase):
         self.assertTrue(success,facts)
         shelter=self.w['structures'][-1]
         self.assertEqual(shelter['design_id'],d['id'])
-        self.assertNotEqual(shelter['shelter_condition'],'insuficiente')
+        self.assertNotIn('shelter_condition',shelter)
         record_design_test(self.p,step,success,facts,'Día 1',measurement_id='med-b',
                            measurement={'success':True},world=self.w)
         self.assertEqual(d['status'],'prototipo construido')
         sample={'id':'med-r','success':True,'op':'rest','condition':'refugio',
                 'start':{'position':list(self.p['pos']),'sheltered':True},
                 'needs_delta':{'energia':3.0}}
-        record_design_test(self.p,{'op':'rest'},True,['Recuperé 3 puntos'],'Día 1',
-                           measurement_id='med-r',measurement=sample,world=self.w)
-        self.assertEqual(d['status'],'funcion parcialmente comprobada')
+        # Descansar sobre la celda inicial h no verifica que la obra fabricada
+        # aporte cubierta. Ni un registro inventado puede conceder eficacia.
+        evidence=record_design_test(self.p,{'op':'rest'},True,
+                                    ['Recuperé 3 puntos'],'Día 1',
+                                    measurement_id='med-r',measurement=sample,
+                                    world=self.w)
+        self.assertIsNone(evidence)
+        self.assertEqual(d['status'],'prototipo construido')
         self.assertFalse(d['verified'])
-        self.assertEqual(d['verified_functions'][0]['name'],'recuperacion_bajo_cubierta')
-        record_design_test(self.p,{'op':'rest'},True,['Repetí'],'Día 1',
-                           measurement_id='med-r',measurement=sample,world=self.w)
-        self.assertEqual(len(d['tests']),2)
-        self.assertEqual(d['tests'][1]['measurement_id'],'med-r')
+        self.assertFalse(d.get('verified_functions'))
+        self.assertEqual(len(d['tests']),1)
 
     def test_no_spontaneous_claim_from_unlinked_legacy_object(self):
         d=design(self.p,'herramienta','excavar roca',[('cabeza','piedra')])

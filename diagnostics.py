@@ -6,6 +6,8 @@ El paquete sólo usa evidencia registrada, no inspecciona secretos del mundo.
 """
 from __future__ import annotations
 
+from nilo_runtime.core.identity import new_uuid
+
 import hashlib
 import json
 import uuid
@@ -78,7 +80,7 @@ def record_invariant_issue(person, issue, outcome, stamp, environment_id):
                     "error_confirmado_pendiente_de_correccion")):
             return None
     proposal = {
-        "id": "bug-" + uuid.uuid4().hex[:10], "type": "debug",
+        "id": "bug-" + new_uuid().hex[:10], "type": "debug",
         "issue_kind": "error", "manual_reference": str(outcome.get('op',''))[:32],
         "origin": "motor", "check_id": check_id, "when": stamp,
         "title": "Chequeo de integridad: " + CHECKS[check_id],
@@ -111,7 +113,7 @@ def record_contract_issue(person, contract, outcome, stamp, environment_id):
                                            'error_confirmado_pendiente_de_correccion')):
             return None
     data={
-        'id':'bug-'+uuid.uuid4().hex[:10], 'type':'debug',
+        'id':'bug-'+new_uuid().hex[:10], 'type':'debug',
         'issue_kind':'error','origin':'motor','check_id':'contract_'+code,
         'manual_reference':op,'when':stamp,
         'title':'Posible contradicción del contrato: '+code.replace('_',' '),

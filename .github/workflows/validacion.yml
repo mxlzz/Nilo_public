@@ -1,11 +1,39 @@
 name: Validación Nilo
 on:
   workflow_dispatch:
+    inputs:
+      corrida_real:
+        description: "Ejecutar corrida real 0.7 con clave del repositorio (no automático)"
+        required: true
+        type: boolean
+        default: false
+      provider:
+        description: "Proveedor"
+        required: true
+        type: choice
+        options: [gemini, groq]
+        default: gemini
+      model:
+        description: "Modelo (vacío utiliza el modelo por defecto del proveedor)"
+        required: false
+        type: string
+        default: ""
+      world_seed:
+        description: "Semilla de mundo"
+        required: true
+        type: number
+        default: 7321
+      rng_seed:
+        description: "Semilla de decisiones del agente"
+        required: true
+        type: number
+        default: 1129
   push:
-    branches: [main, "work/**"]
+    branches: [main, "work/**", "refactor/**"]
   pull_request:
 jobs:
   tests:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.corrida_real != true }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -13,12 +41,112 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Auditoría de dependencias y ciclos (Nilo 0.7)
+        run: python tools/auditar_arquitectura.py
+      - name: Auditoría de identidad y RNG del dominio (Nilo 0.7)
+        run: python tools/auditar_identidad_07.py
+      - name: Auditoría de catálogo, contratos y dispatch de operaciones (Nilo 0.7)
+        run: python tools/auditar_operaciones_07.py
+      - name: Auditoría del motor headless y fachada HTTP (Nilo 0.7)
+        run: python tools/auditar_orquestador_07.py
+      - name: Auditoría de topología y generación del mundo (Nilo 0.7)
+        run: python tools/auditar_mundo_08.py
+      - name: Auditoría de navegación y único BFS (etapa 09)
+        run: python tools/auditar_navegacion_09.py
+      - name: Rutas, fronteras y transiciones (etapa 09)
+        run: python -m unittest discover -s tests -p 'test_navegacion_09.py' -v
+      - name: Benchmark comparativo de fronteras (etapa 09)
+        run: python tools/benchmark_navegacion_09.py
+      - name: Auditoría de recursos e inventario (etapa 10)
+        run: python tools/auditar_recursos_10.py
+      - name: Conservación, extracción y almacenamiento (etapa 10)
+        run: python -m unittest discover -s tests -p 'test_recursos_10.py' -v
+      - name: Auditoría materiales, objetos y componentes (etapa 11)
+        run: python tools/auditar_objetos_11.py
+      - name: Formas, etiquetas, propiedades y uniones (etapa 11)
+        run: python -m unittest discover -s tests -p 'test_objetos_11.py' -v
+      - name: Auditoría de interacciones y construcción (etapa 12)
+        run: python tools/auditar_interacciones_12.py
+      - name: Operaciones materiales, reformas y ensayos (etapa 12)
+        run: python -m unittest discover -s tests -p 'test_interacciones_12.py' -v
+      - name: Auditoría fisiología, descanso y resguardo (etapa 13)
+        run: python tools/auditar_fisiologia_13.py
+      - name: Sensaciones, sueño, refugio físico y tiempos (etapa 13)
+        run: python -m unittest discover -s tests -p 'test_fisiologia_13.py' -v
+      - name: Auditoría de proyecciones y conocimiento observado (etapa 14)
+        run: python tools/auditar_observacion_14.py
+      - name: Lecturas puras, mapa y contexto del agente (etapa 14)
+        run: python -m unittest discover -s tests -p 'test_observacion_14.py' -v
+      - name: Auditoría de prompts y gateway (etapa 15)
+        run: python tools/auditar_deliberacion_15.py
+      - name: Solicitudes, JSON, fallback y chat (etapa 15)
+        run: python -m unittest discover -s tests -p 'test_deliberacion_15.py' -v
+      - name: Auditoría memoria, investigaciones y referencias (etapa 16)
+        run: python tools/auditar_memoria_16.py
+      - name: Memoria episódica, hipótesis y evidencia por ID (etapa 16)
+        run: python -m unittest discover -s tests -p 'test_memoria_16.py' -v
+      - name: Auditoría de proyectos, agenda, hábitos y estrategias (etapa 17)
+        run: python tools/auditar_autonomia_17.py
+      - name: Ciclo de vida, delegaciones y repetición real (etapa 17)
+        run: python -m unittest discover -s tests -p 'test_autonomia_17.py' -v
+      - name: Auditoría de SQLite, migración y backup (etapa 18)
+        run: python tools/auditar_persistencia_18.py
+      - name: Transacciones, WAL, backups y restauración (etapa 18)
+        run: python -m unittest discover -s tests -p 'test_persistencia_18.py' -v
+      - name: Benchmark reproducible de historial incremental (etapa 18)
+        run: python tools/benchmark_persistencia_18.py --count 2500
+      - name: Auditoría de contratos API y origen local (etapa 19)
+        run: python tools/auditar_api_19.py
+      - name: Contratos HTTP, lectura pura y seguridad local (etapa 19)
+        run: python -m unittest discover -s tests -p 'test_api_19.py' -v
+      - name: Auditoría de assets, navegación y paridad UI (etapa 20)
+        run: python tools/auditar_interfaz_20.py
+      - name: CSS/JS externos, DOM, HTTP y ZIP de interfaz (etapa 20)
+        run: python -m unittest discover -s tests -p 'test_interfaz_20.py' -v
+      - name: Auditoría de laboratorio, perfiles y recuperación (etapa 21)
+        run: python tools/auditar_laboratorio_21.py
+      - name: Laboratorio unificado y ajustes reversibles (etapa 21)
+        run: python -m unittest discover -s tests -p 'test_laboratorio_21.py' -v
+      - name: Evidencia LLM, no divulgación y preflight sin credenciales (etapa 23)
+        run: python -m unittest discover -s tests -p 'test_autonomia_23.py' -v
+      - name: Auditoría de manifiesto y dependencias distribuibles (etapa 24)
+        run: python tools/auditar_release_24.py --json
+      - name: Integridad, procedencia y seguridad de ZIP (etapa 24)
+        run: python -m unittest discover -s tests -p 'test_release_24.py' -v
+      - name: Inventario de suites y revisión estática transversal (etapa 22)
+        run: python tools/auditar_qa_22.py --output qa_22_inventory.json
+      - name: Metamorfismos, integración y rollback multi-semilla (etapa 22)
+        run: python -m unittest discover -s tests -p 'test_qa_22.py' -v
+      - name: Benchmark transversal de mundos, SQLite y HTTP (etapa 22)
+        run: python tools/benchmark_qa_22.py --seeds 24 --history 3000 --ticks 100 --http 36 --output qa_22_benchmark.json
+      - name: Carga prolongada sintética (8 días, 8000 registros, 48 mundos)
+        run: python tools/benchmark_qa_22.py --seeds 48 --history 8000 --ticks 576 --http 90 --output qa_22_stress.json
+      - name: Cobertura selectiva real por líneas ejecutadas (etapa 22)
+        run: python tools/cobertura_qa_22.py --output qa_22_coverage.json
+      - name: Evidencia reproducible de QA (etapa 22)
+        uses: actions/upload-artifact@v4
+        with:
+          name: nilo-qa-22
+          path: |
+            qa_22_inventory.json
+            qa_22_benchmark.json
+            qa_22_stress.json
+            qa_22_coverage.json
+          if-no-files-found: error
+      - name: Mundo isla_v1 contra snapshots 0.6.4 y seis semillas
+        run: python -m unittest discover -s tests -p 'test_mundo_08.py' -v
+      - name: Motor headless y adaptadores (regresión focalizada)
+        run: timeout 90s python -m unittest discover -s tests -p 'test_orquestador_07.py' -v
       - name: Pruebas sin credenciales
         run: python -m unittest discover -s tests -v
+      - name: Continuidad RNG/IDs entre procesos y semillas globales (#143)
+        run: python tools/verificar_identidad_07.py
       - name: Escenarios físicos deterministas
         run: python validar_escenarios.py --seed 7321
       - name: Reproducir decisiones y estados sin proveedor
         run: python reproducir.py tests/fixtures/replay_basico.json
+      - name: Importar runtime desde ZIP portable (sin publicar release)
+        run: python tools/verificar_paquete_07.py
       - name: Comparar huellas entre procesos independientes
         shell: bash
         run: |
@@ -36,3 +164,69 @@ jobs:
               if delta: print('DIFERENCIAS',k,delta)
           assert a['fingerprint']==b['fingerprint'], 'Reproducción entre procesos diferente'
           PY
+
+
+  evaluacion_real_23:
+    name: "Autonomía 23 · Gemini/Groq real (solo manual)"
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.corrida_real == true && github.ref == 'refs/heads/refactor/0.7' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    concurrency:
+      group: nilo-real-23-${{ inputs.provider }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Ejecutar Nilo con el modelo real y sin fallback
+        env:
+          PROVIDER_SELECTED: ${{ inputs.provider }}
+          MODEL_SELECTED: ${{ inputs.model }}
+          SEED_SELECTED: ${{ inputs.world_seed }}
+          RNG_SELECTED: ${{ inputs.rng_seed }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "$MODEL_SELECTED" ]; then
+            if [ "$PROVIDER_SELECTED" = "gemini" ]; then
+              MODEL_SELECTED="gemini-3.1-flash-lite"
+            else
+              MODEL_SELECTED="openai/gpt-oss-20b"
+            fi
+          fi
+          python tools/ejecutar_autonomia_23.py \
+            --provider "$PROVIDER_SELECTED" \
+            --model "$MODEL_SELECTED" \
+            --world-seed "$SEED_SELECTED" --rng-seed "$RNG_SELECTED" \
+            --max-calls 8 --max-seconds 420 --speed 60 \
+            --output "autonomia-23-${GITHUB_RUN_ID}"
+      - name: Subir informe anonimizado (sin SQLite ni credenciales)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: nilo-autonomia-23-${{ github.run_id }}
+          path: |
+            autonomia-23-*/manifest.json
+            autonomia-23-*/evaluation.json
+            autonomia-23-*/evaluation.md
+          if-no-files-found: ignore
+          retention-days: 30
+
+  portable_windows_24:
+    name: "Etapa 24 · instalación real Windows 64-bit + migración/rollback"
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.corrida_real != true }}
+    runs-on: windows-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar ZIP con Python embebido, partida nueva, migración y rollback
+        run: python tools/verificar_windows_24.py

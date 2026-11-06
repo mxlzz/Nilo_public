@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """Regresiones 0.5.9.3.11: vínculos, jerarquía y lectura del resumen."""
 import tempfile
 import unittest
@@ -105,7 +106,7 @@ class InterfacePlacement(unittest.TestCase):
     def test_embedded_javascript_syntax_when_node_is_available(self):
         node=shutil.which('node')
         if node is None:self.skipTest('Node.js no disponible')
-        html=(Path(__file__).resolve().parent.parent/'interfaz.html').read_text('utf8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         js=html.split('<script>',1)[1].rsplit('</script>',1)[0]
         with tempfile.TemporaryDirectory() as folder:
             filename=Path(folder)/'nilo_interface.js'
@@ -115,7 +116,7 @@ class InterfacePlacement(unittest.TestCase):
             self.assertEqual(result.returncode,0,result.stderr)
 
     def test_summary_actions_below_report_without_extra_phrase(self):
-        html=(Path(__file__).resolve().parent.parent/'interfaz.html').read_text('utf8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertLess(html.index('id="catchup-content" class="catchup-content"'),
                         html.index('id="catchup-actions"'))
         self.assertNotIn('narrada por un observador externo.',html)

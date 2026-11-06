@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.18: condiciones autoestablecidas y filtros de lectura."""
 import unittest
 from pathlib import Path
@@ -85,7 +86,7 @@ class ConditionedReminders(unittest.TestCase):
 
 class InterfaceStatusFilters(unittest.TestCase):
     def test_filter_and_indicator_share_one_toolbar(self):
-        html=(ROOT/"interfaz.html").read_text("utf-8")
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertIn('id="status-filter-wrap"',html)
         self.assertIn('id="indicator-inline"',html)
         self.assertIn("function matchesStatusView(record,section)",html)

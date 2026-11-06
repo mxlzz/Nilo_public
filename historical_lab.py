@@ -18,78 +18,11 @@ import threading
 import time
 import zlib
 
-FORMAT = "nilo-history-v1"
+from nilo_runtime.storage.timeline import (
+    TimelineStore, FORMAT, MAX_DECOMPRESSED, _tuples, _json, _decompress,
+)
+
 REPLAY_LOCK = threading.RLock()
-MAX_DECOMPRESSED = 100 * 1024 * 1024
-
-
-def _tuples(value):
-    if isinstance(value, list):
-        return tuple(_tuples(x) for x in value)
-    return value
-
-
-def _json(value):
-    return json.dumps(value, ensure_ascii=False, separators=(",", ":"), default=str)
-
-
-def _decompress(data):
-    decoder = zlib.decompressobj()
-    raw = decoder.decompress(data, MAX_DECOMPRESSED + 1)
-    if len(raw) > MAX_DECOMPRESSED or decoder.unconsumed_tail:
-        raise ValueError("El checkpoint supera el tamaño máximo de seguridad.")
-    raw += decoder.flush(MAX_DECOMPRESSED + 1 - len(raw))
-    if len(raw) > MAX_DECOMPRESSED or not decoder.eof:
-        raise ValueError("Checkpoint truncado o demasiado grande.")
-    return json.loads(raw)
-
-
-class TimelineStore:
-    def __init__(self, conn):
-        self.conn = conn
-        self.conn.execute("""CREATE TABLE IF NOT EXISTS timeline_checkpoints (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            kind TEXT NOT NULL CHECK(kind IN ('decision','action')),
-            clock_minutes REAL NOT NULL,
-            day_label TEXT NOT NULL,
-            engine_version TEXT NOT NULL,
-            history_seq INTEGER NOT NULL,
-            source TEXT NOT NULL,
-            operation TEXT,
-            decision_json TEXT,
-            blob BLOB NOT NULL,
-            blob_sha256 TEXT NOT NULL,
-            created_real REAL NOT NULL
-        )""")
-        self.conn.execute("CREATE INDEX IF NOT EXISTS timeline_by_clock ON timeline_checkpoints(clock_minutes,id)")
-
-    def record(self, kind, state, rng, *, source="", action=None, decision=None, engine_version=""):
-        if kind not in ("decision", "action"):
-            raise ValueError("Tipo de punto histórico desconocido.")
-        body = {"format": FORMAT, "state": state,
-                "rng_state": rng.getstate(),
-                "global_rng_state": random.getstate()}
-        raw = _json(body).encode("utf-8")
-        # Un checkpoint enorme no debe detener la vida de Nilo: registrar un
-        # error observacional fuera de esta ruta si se supera el presupuesto.
-        if len(raw) > MAX_DECOMPRESSED:
-            return None
-        packed = zlib.compress(raw, level=3)
-        row = self.conn.execute("SELECT COALESCE(MAX(seq),0) FROM history").fetchone()
-        minute = float(state["person"]["clock_minutes"])
-        day = int(minute // 1440) + 1
-        hh = int(minute % 1440) // 60
-        mm = int(minute % 60)
-        c = self.conn.execute("""INSERT INTO timeline_checkpoints(
-            kind, clock_minutes, day_label, engine_version, history_seq,
-            source, operation, decision_json, blob, blob_sha256, created_real
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?)""", (
-            kind, minute, f"Día {day} · {hh:02d}:{mm:02d}", engine_version or "sin_version",
-            int(row[0]), source or "", (action or {}).get("op"),
-            _json(decision if decision is not None else action) if decision is not None or action is not None else None,
-            packed, hashlib.sha256(packed).hexdigest(), time.time()
-        ))
-        return int(c.lastrowid)
 
 
 @contextmanager
@@ -326,8 +259,20 @@ def replay(filename, event_id, *, override=None, max_ticks=400):
                 sim.s["planning"] = False
                 sim.s["paused"] = False
                 sim.s["auto_wait_frozen"] = False
+                if "entropy_state" in payload:
+                    from nilo_runtime.core.identity import EntropySession
+                    sim.entropy = EntropySession.from_record(
+                        payload["entropy_state"],
+                        world_seed=int(state["world"].get("seed",7321)),
+                    )
+                    sim.rng = sim.entropy.agent_rng
+                    sim.rng_seed = sim.entropy.rng_seed
+                else:
+                    # Los checkpoints 0.6.x sólo conservaban RNG físico y
+                    # global; sus UUID de os.urandom no se pueden reconstruir.
+                    sim.legacy_identity_mode = True
+                    sim.rng_seed = -1
                 sim.rng.setstate(_tuples(payload["rng_state"]))
-                sim.rng_seed = -1  # restored checkpoint; do not reseed
                 stages = []
                 if event["kind"] == "decision":
                     decision = copy.deepcopy(override if override is not None else event["command"])

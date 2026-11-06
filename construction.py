@@ -5,6 +5,8 @@ objeto. Las plantas usan coordenadas locales, dimensiones limitadas por
 recursos, y un historial inmutable de versiones. No simula dinámica 3D.
 """
 from __future__ import annotations
+
+from nilo_runtime.core.identity import new_uuid
 from collections import Counter
 from copy import deepcopy
 import math
@@ -13,6 +15,8 @@ import hashlib
 
 DIRECTIONS = {'N', 'S', 'E', 'O'}
 from catalogo import RECOVERABILITY
+from nilo_runtime.worlds.resources import exchange_units
+from nilo_runtime.worlds.intervention import execute_prepared
 
 
 def number(value, default, minimum, maximum):
@@ -106,21 +110,24 @@ def _tool_scheme(obj):
 
 
 def _components(materials):
-    return [{'id':'cmp-'+uuid.uuid4().hex[:9],'material':m,'condition':1.0}
+    return [{'id':'cmp-'+new_uuid().hex[:9],'material':m,'condition':1.0}
             for m in materials]
 
 
 def ensure_object(obj, *, structure=False):
     """Migra obras/herramientas anteriores sin fingir detalles desconocidos."""
-    obj.setdefault('components',_components(_materials(obj)))
+    # setdefault evalúa su argumento aun cuando la clave ya existe:
+    # eso consumía IDs y desviaba el replay en consultas de objetos legados.
+    if 'components' not in obj:
+        obj['components']=_components(_materials(obj))
     if not isinstance(obj.get('space'),dict):
         obj['space']=dimensions(_materials(obj),obj.get('layout'))
     if structure:
         obj.setdefault('category','prototipo')
         obj.setdefault('revision',1)
         obj.setdefault('revisions',[])
-        if obj.get('category')=='habitaculo':
-            obj.setdefault('shelter_condition', 'cubierto_parcialmente' if len(obj.get('components',[]))>=4 and float(obj.get('resistance',0))>=3 else 'insuficiente')
+        # Las etiquetas históricas se conservan, pero no generan cobertura
+        # nueva en saves sin mediciones de cubierta.
         if not obj['revisions']:
             obj['revisions'].append(_version(obj, 'Inventario inicial', 'Registro de geometría aproximada; no se observaron subdivisiones internas.'))
     else:
@@ -143,8 +150,8 @@ def initialize_object(obj, *, structure=False, layout=None):
     obj['components']=_components(_materials(obj))
     obj['space']=dimensions(_materials(obj),layout)
     obj['revision']=1
-    if structure and obj.get('category')=='habitaculo':
-        obj['shelter_condition']='cubierto_parcialmente' if len(obj['components'])>=4 and float(obj.get('resistance',0))>=3 else 'insuficiente'
+    # Un nombre de habitáculo no constituye una cubierta verificable.
+    # La evaluación física de resguardo reside en worlds.shelter.
     obj['revisions']=[_version(obj,'Construcción inicial','Geometría estimada a partir de recursos reales.')]
     return obj
 
@@ -177,11 +184,11 @@ def recompute(obj,person):
         obj['hardness']=max((float(person.get('materials',{}).get(m,{}).get('dureza',2)) for m in mats),default=0.0)
         obj['weight']=round(sum(float(person.get('materials',{}).get(m,{}).get('peso',2)) for m in mats),2)
     obj['space']=dimensions(mats,obj.get('space'))
-    if obj.get('category') == 'habitaculo':
-        obj['shelter_condition']='cubierto_parcialmente' if len(mats)>=4 and strength>=3 else 'insuficiente'
+    # No actualizar shelter_condition por categoría textual: el campo
+    # heredado conserva su historia visual, sin habilitar protección física.
     if obj.get('portable'):
         from physics import body_physics
-        from world import item_effects
+        from nilo_runtime.worlds.objects import item_effects
         obj['durability']=max(0,min(100,round(100*sum(c['condition'] for c in obj['components'])/max(1,len(mats)))))
         obj['physics']=body_physics(mats,obj.get('geometry',{}),person.get('materials',{}))
         obj['possible_uses']=item_effects(obj)
@@ -212,11 +219,11 @@ def salvage(components,person,*, complete=False):
             if roll<remaining:recovered+=1
         if recovered>0:
             counts[m]=recovered
-            person['inventory'][m]=person['inventory'].get(m,0)+recovered
+    exchange_units(person['inventory'],credits=dict(counts))
     return dict(counts)
 
 
-def apply_intervention(world,person,step):
+def _apply_intervention_mutating(world,person,step):
     """Modificar/reparar/desarmar objetos identificables y accesibles.
 
     No modifica el mundo si falla la validación. Ejecuta la operación sobre
@@ -288,7 +295,7 @@ def apply_intervention(world,person,step):
     elif mode=='repair':
         if chosen.get('condition',1)>=.95:
             return 5,['Esa pieza no presenta desgaste que justifique repararla.'],False,False
-    for m,n in cost.items():inv[m]-=n
+    exchange_units(inv,cost)
     recovered=salvage(removed,person) if removed else {}
     if mode in ('add','replace'):existing.extend(_components(mats))
     if mode=='repair':chosen['condition']=min(1., chosen['condition']+.25*len(mats))
@@ -356,3 +363,12 @@ def apply_intervention(world,person,step):
             obj['space']=normalized
             obj['revisions'][-1]=_version(obj,mode,'Reorganización propuesta; espacios no evaluados funcionalmente.')
     return 30,[f"Intervine '{obj['name']}' (v{obj['revision']}, {mode}). Materiales empleados: {mats or 'ninguno'}; recuperados: {recovered or 'ningún lote completo'}. Conservé su historial y esquema."],True,True
+
+
+
+def apply_intervention(world,person,step):
+    """Valida, ejecuta en copia y confirma una intervención física completa."""
+    from vessels import preflight_intervention as check_contents
+    from structural_loads import preflight_intervention as check_loads
+    return execute_prepared(world,person,step,find_object,_materials,
+                            _apply_intervention_mutating,check_contents,check_loads)

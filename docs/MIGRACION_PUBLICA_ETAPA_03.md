@@ -33,10 +33,6 @@ y el snapshot público inmutable de 0.6.4. No depende de secretos, commits o
 releases privados. Se habilitó la ejecución manual de la validación general.
 No se alteraron las leyes físicas, los prompts ni la versión del producto.
 
-## Punto de continuación
+## Punto de continuación histórico (5/11/2026)
 
-La reestructuración conserva **00–08 completadas (9/25)** en `refactor/0.7`.
-La **etapa 09 — Navegación y exploración** permanece pendiente.
-Esta migración no implementa esa etapa, no integra 0.7 en `main` y no declara
-una mejora conductual del LLM. Las corridas LLM comparativas corresponden a
-la etapa 23 del plan de reestructuración y requieren su propio alcance.
+Al cerrar la migración de issues se habían completado las etapas 00–08; la etapa 09 seguía pendiente. Ese corte no publicaba 0.7 ni probaba mejoras conductuales. Posteriormente se completaron los pasos 09–23 y la validación técnica de 24. Véase [tablero actualizado](ESTADO_REESTRUCTURACION_07.md); no usar esta instantánea histórica para determinar el release.

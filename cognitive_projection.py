@@ -6,18 +6,7 @@ No concede capacidades ni convierte el modelo esquemático en prueba física.
 """
 from __future__ import annotations
 from copy import deepcopy
-
-
-def _desgaste(value):
-    """Descripción orientativa, no una medición exacta conocida por introspección."""
-    if not isinstance(value,(int,float)) or isinstance(value,bool):
-        return 'estado de desgaste desconocido'
-    if value<=0:return 'inutilizable'
-    if value<35:return 'muy desgastado'
-    if value<70:return 'desgaste apreciable'
-    if value<95:return 'desgaste leve'
-    return 'sin desgaste apreciable'
-
+from nilo_runtime.perception.objects import desgaste_observable as _desgaste
 
 def _piezas(rows):
     result=[]
@@ -76,9 +65,12 @@ def _antecedente(context):
 
 def project_context(context):
     """Devuelve COPIA cognitiva: nunca contamina snapshots, UI ni SQLite."""
-    from brain import _cognitive_needs_context
+    from nilo_runtime.agent.budget import _cognitive_needs_context
     view=deepcopy(_cognitive_needs_context(context))
     if not isinstance(view,dict):return view
+    # Alias histórico engañoso: knowledge incluye ensayos FALLIDOS y
+    # observaciones sin ID. La vista nueva explicita estado y procedencia.
+    view.pop('experimentos_comprobados',None)
     precedent=_antecedente(view)
     if precedent:view['antecedente_relevante']=precedent
     if 'proyecto_actual' in view:view['proyecto_actual']=_proyecto(view['proyecto_actual'])

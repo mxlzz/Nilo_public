@@ -5,6 +5,7 @@ límite deriva de componentes, material, condición y tamaño, nunca del nombre 
 categoría narrativa. Las unidades son lotes abstractos del mundo de Nilo.
 """
 from __future__ import annotations
+from nilo_runtime.worlds.resources import transfer_units, ResourceBalanceError
 
 import math
 from physics import properties
@@ -154,9 +155,12 @@ def interact(world, person, step, rng=None):
                 f"La carga propuesta superaría el límite estático de esta estructura. "
                 "Primero puedo ensayarla o reforzar sus componentes."
             ], False, False
-        # Precondiciones completas antes de modificar cualquiera de los dos registros.
-        inventory[material] -= quantity
-        current[material] = existing + quantity
+        # Transferencia física de los lotes: ambas reservas se validan
+        # y se actualizan en una sola operación conservativa.
+        try:
+            transfer_units(inventory,material,current,material,quantity)
+        except ResourceBalanceError:
+            return 5,["La reserva no permite depositar esa carga sin perder unidades."],False,False
         obj["cargas_almacenadas"] = current
         after = round(applied + sample_mass, 3)
         _record(person, method, obj, material, quantity,
@@ -173,11 +177,12 @@ def interact(world, person, step, rng=None):
         if not isinstance(existing, int) or quantity > existing:
             return 5, ["No hay esa cantidad de material almacenada en la construcción."], False, False
         old_inventory = inventory.get(material, 0)
-        inventory[material] = old_inventory + quantity
-        if existing == quantity:
-            current.pop(material, None)
-        else:
-            current[material] = existing - quantity
+        try:
+            receipt=transfer_units(current,material,inventory,material,quantity)
+        except ResourceBalanceError:
+            return 5,["El balance de materiales almacenados es inválido; no se recuperó carga."],False,False
+        if receipt.source_after==0:
+            current.pop(material,None)
         obj["cargas_almacenadas"] = current
         after = round(applied - sample_mass, 3)
         _record(person, method, obj, material, quantity,

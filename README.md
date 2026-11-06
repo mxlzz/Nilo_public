@@ -1,10 +1,40 @@
+# Nilo 0.7.0 — Reestructuración integral del motor
+
+Nilo 0.7.0 reorganiza la aplicación en módulos de mundo, física, necesidades,
+autonomía, percepción, almacenamiento, motor, proveedor LLM e interfaz. Es una
+**versión de arquitectura y mantenimiento**, no una promesa de nuevas conductas
+ni de eliminación de los bucles históricos.
+
+**Instalación (Windows 64 bits):** descargá el archivo `Nilo-0.7.0.zip` desde
+[Releases](https://github.com/mxlzz/Nilo_public/releases), extraelo en una
+**carpeta nueva** y ejecutá `INICIAR_NILO.bat`. La primera ejecución instala
+Python portable oficial dentro de esa carpeta; permite importar *una copia*
+de la configuración o partida anterior, sin modificar la instalación original.
+No distribuye claves, mundos ni partidas personales.
+
+La importación conserva el formato SQLite de las partidas compatibles. Para
+restaurar una versión anterior, conservá la carpeta original y tus respaldos.
+El código estable se publica desde `main`; la rama `refactor/0.7` conserva el
+historial de su reconstrucción arquitectónica.
+
+**Alcance comprobado:** regresión automatizada, migraciones con copias y una
+corrida autónoma Gemini real de 5 h 53 min. **Groq no fue verificado con una
+corrida real durante esta etapa**. La duplicación de proyectos y exploraciones
+infructuosas siguen registradas como deuda funcional.
+
+[Notas de versión 0.7.0](docs/NOTAS_VERSION_070.md) ·
+[Arquitectura y evidencias del cierre](docs/ETAPA_23_CIERRE_ARQUITECTURA_07.md) ·
+[Seguimiento de versión](docs/ESTADO_REESTRUCTURACION_07.md)
+
+---
+
 # Nilo — documentación técnica
 
 **Repositorio público:** [issues y validación de la migración](docs/MIGRACION_PUBLICA_ETAPA_03.md).
-`main` conserva Nilo 0.6.4; el desarrollo de 0.7 continúa en `refactor/0.7`,
-con etapas 00–08 completadas y etapa 09 pendiente.
+`main` corresponde a la línea estable y Nilo 0.7.0 a la reestructuración ya validada.
+El texto siguiente conserva documentación histórica anterior a 0.7.0.
 
-**Última versión: Nilo 0.6.4 — laboratorio de escenarios más accesible, con solicitud LLM íntegra, ayudas y resultados desplegables; sin cambios en las reglas físicas.** Las construcciones fijas ahora pueden ensayar cargas y almacenar o devolver materiales reales mediante un segundo módulo de capacidades independiente (`structural_loads.py`), y sus límites dependen de piezas, resistencias y geometría en vez de nombres. [Historial de cambios](docs/CAMBIOS.md). Conserva el sistema de evaluación de 0.5.9.4, que incluye `evaluar_corridas.py`, que analiza copias SQLite sin modificar las partidas, métricas de acciones y autonomía, comparación descriptiva con advertencias de comparabilidad y huella del estado inicial y semilla efectiva por sesión. [Protocolo de evaluación](docs/PROTOCOLO_EVALUACION_0594.md). La exploración dirigida de la .35 se conserva íntegra. No se modifican necesidades ni física.
+**Referencia histórica: Nilo 0.6.4 — laboratorio de escenarios más accesible, con solicitud LLM íntegra, ayudas y resultados desplegables; sin cambios en las reglas físicas.** Las construcciones fijas ahora pueden ensayar cargas y almacenar o devolver materiales reales mediante un segundo módulo de capacidades independiente (`structural_loads.py`), y sus límites dependen de piezas, resistencias y geometría en vez de nombres. [Historial de cambios](docs/CAMBIOS.md). Conserva el sistema de evaluación de 0.5.9.4, que incluye `evaluar_corridas.py`, que analiza copias SQLite sin modificar las partidas, métricas de acciones y autonomía, comparación descriptiva con advertencias de comparabilidad y huella del estado inicial y semilla efectiva por sesión. [Protocolo de evaluación](docs/PROTOCOLO_EVALUACION_0594.md). La exploración dirigida de la .35 se conserva íntegra. No se modifican necesidades ni física.
 
 **[Auditoría técnica previa a 0.6 (2/11/2026)](docs/AUDITORIA_PRE_06_2026-11-02.md)** — revisión de la arquitectura de la 0.5.9.3.35 y contraste con dos runs anteriores. Conclusión: no se necesitó una versión intermedia; se publicó **0.5.9.4** para reunir evidencia antes de comenzar 0.6 por cortes verticales.
 

@@ -16,4 +16,4 @@ Issue relacionado: #
 ## Impacto
 Indicá diferencias deliberadas de comportamiento, regresiones conocidas y límites de las pruebas.
 
-> **0.7:** no fusionar el PR de seguimiento de 0.7 a `main` antes de completar las etapas 00–24, validar y decidir la publicación 0.7.0.
+> **Releases:** no fusionar ni publicar sin que hayan pasado los tests de regresión, instalación y rollback de la versión correspondiente.

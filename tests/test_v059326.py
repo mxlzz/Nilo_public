@@ -1,5 +1,6 @@
 """0.5.9.3.26: relaciones exhaustivas, grupos contiguos y efectos de recipientes."""
 from __future__ import annotations
+from ui_fixture import legacy_markup, legacy_html_path
 import json
 import random
 import re
@@ -15,7 +16,7 @@ from physical_links import snapshot, entities_for_action
 from nilo import Simulation
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/'interfaz.html').read_text('utf-8')
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 
 
 class FullRelations(unittest.TestCase):

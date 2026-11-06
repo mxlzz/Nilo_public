@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """Nilo 0.5.9.2.1: interfaz plegable, navegación y avisos discretos."""
 from html.parser import HTMLParser
 from pathlib import Path
@@ -9,7 +10,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parent.parent
-HTML = (ROOT / "interfaz.html").read_text(encoding="utf-8")
+HTML = legacy_markup(Path(__file__).resolve().parents[1])
 
 
 class Structure(HTMLParser):
@@ -184,7 +185,7 @@ const checks = [
 eval(source+'\n'+checks);
 """
         proc = subprocess.run(
-            ["node", "-e", runner, str(ROOT/"interfaz.html")],
+            ["node", "-e", runner, str(legacy_html_path(ROOT))],
             capture_output=True, text=True, check=False,
         )
         self.assertEqual(proc.returncode, 0, proc.stderr)

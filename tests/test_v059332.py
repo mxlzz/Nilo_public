@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """Regresiones .32: progreso espacial, autonomía y contexto de proyectos."""
 import tempfile
 import unittest
@@ -100,7 +101,7 @@ class Continuity(unittest.TestCase):
 
     def test_agenda_interface_shows_explicit_nonverification(self):
         from pathlib import Path
-        ui=(Path(__file__).resolve().parents[1]/'interfaz.html').read_text('utf-8')
+        ui=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertIn("t.cumplimiento_objetivo?.estado==='no_verificado_por_ejecucion'",ui)
         self.assertIn('Los pasos se ejecutaron; el cumplimiento del objetivo declarado',ui)
 

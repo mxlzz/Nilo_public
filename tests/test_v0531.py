@@ -1,5 +1,6 @@
 """Nilo 05.3.1: orillas, diagnósticos y novedades sin repetición."""
 from __future__ import annotations
+from ui_fixture import legacy_markup, legacy_html_path
 import json, random, sqlite3, tempfile, unittest, subprocess, re
 from pathlib import Path
 import nilo
@@ -128,7 +129,7 @@ class NewsTests(unittest.TestCase):
             finally:nilo.DB=old
 
     def test_legacy_news_extra_does_not_repeat_title_in_browser(self):
-        html=(ROOT/'interfaz.html').read_text(encoding='utf8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         code=html.split('function newsExtra(n){',1)[1].split('function drawFeed(){',1)[0]
         script=('function newsExtra(n){'+code+
                 '\nlet data={read_positions:{news:0},news:[{id:"old1",seq:1,kind:"resultado",when:"Día 2",title:"Construí un refugio.",detail:"Construí un refugio. Tiene una cubierta inclinada."},{id:"old2",seq:2,kind:"resultado",when:"Día 3",title:"Llené un recipiente.",detail:"Llené un recipiente."}]};'

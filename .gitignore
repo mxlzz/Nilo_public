@@ -19,3 +19,12 @@ venv/
 # Preferencias propias de cada instalación (importadas con consentimiento)
 preferencias_interfaz.json
 preferencias_interfaz.json.tmp
+
+# Perfil activo, checkpoints y backups del laboratorio: datos privados locales.
+lab_profiles/
+
+# Evidencias efímeras de la etapa 22; se publican como artifacts de CI
+qa_22_inventory.json
+qa_22_benchmark.json
+qa_22_coverage.json
+qa_22_stress.json

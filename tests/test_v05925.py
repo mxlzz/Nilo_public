@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.2.5 — importación de preferencias y lectura visual por registro."""
 import json
 import shutil
@@ -9,7 +10,7 @@ from pathlib import Path
 from interface_prefs import FILENAME, import_settings, load, save, validate
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/"interfaz.html").read_text(encoding="utf-8")
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 JS=HTML.split("<script>",1)[1].split("</script>",1)[0]
 CSS=HTML.split("<style>",1)[1].split("</style>",1)[0]
 
@@ -66,7 +67,7 @@ class VisualPreferences(unittest.TestCase):
 
 class VisualEntries(unittest.TestCase):
     def test_notes_use_real_individual_read_status_and_no_long_button(self):
-        self.assertIn("item['read']=", (ROOT/"nilo.py").read_text(encoding="utf-8"))
+        self.assertIn("item['read']=", (ROOT/"nilo_runtime/application/records.py").read_text(encoding="utf-8"))
         self.assertNotIn("data-read-note=",HTML)
         self.assertIn("markRead(tab==='notes'?'journal':'news',id,true)",JS)
         self.assertNotIn("Leído hasta aquí",HTML)
@@ -100,7 +101,7 @@ class VisualEntries(unittest.TestCase):
     def test_import_uses_installer_and_browser_sync_without_llm(self):
         self.assertIn("from interface_prefs import import_settings",(ROOT/"primer_inicio.py").read_text())
         self.assertIn("import_settings(source, HERE)",(ROOT/"migrar.py").read_text())
-        self.assertIn("/api/ui-preferences",(ROOT/"nilo.py").read_text())
+        self.assertIn("/api/ui-preferences",(ROOT/"nilo_runtime/web/http.py").read_text())
         self.assertIn("bootstrapUIPrefs().finally(()=>refresh())",JS)
         self.assertIn("nilo.mapZoom.v2",JS)
         self.assertIn("nilo.tabIndicators.v1",JS)
@@ -135,7 +136,7 @@ assert.equal(measurement.dataset.reviewEntryKey,'m1');
 assert(measurement.classes.has('new-record'));
 console.log('per-record highlights OK');
 """
-        result=subprocess.run(["node","-e",runner,str(ROOT/"interfaz.html")],
+        result=subprocess.run(["node","-e",runner,str(legacy_html_path(ROOT))],
                               capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertIn("per-record highlights OK",result.stdout)

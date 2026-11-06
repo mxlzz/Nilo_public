@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.2 — contrato de inspección, proyectos, pruebas y diagnóstico."""
 import json
 import random
@@ -46,6 +47,9 @@ class ManualAndInspection(unittest.TestCase):
 
     def test_remote_building_is_known_but_out_of_range(self):
         self.world['structures'][0]['pos']=[30,15,0]
+        # Etapa 14: una obra remota solo puede identificarse si esa celda
+        # es realmente conocida; la mera existencia interna no informa a Nilo.
+        self.world['revealed'].append("30,15,0")
         _,facts,success,_=execute_action(self.world,self.person,
                       {'op':'inspect','target':'obra-ref-1'},random.Random(1))
         self.assertFalse(success)
@@ -57,7 +61,8 @@ class ManualAndInspection(unittest.TestCase):
         _,facts,success,_=execute_action(self.world,self.person,
                     {'op':'inspect','target':'tool-1'},random.Random(1))
         self.assertTrue(success)
-        self.assertIn('Durabilidad: 85',facts[0])
+        self.assertIn('Desgaste observable: desgaste leve',facts[0])
+        self.assertNotIn('85%',facts[0])
 
     def test_food_stock_cap_is_non_destructive(self):
         before=dict(self.person['inventory'])
@@ -139,7 +144,7 @@ class DiagnosticAndHistory(unittest.TestCase):
         finally:db.close()
 
     def test_proposals_have_internal_filters_without_new_tab(self):
-        html=(ROOT/'interfaz.html').read_text('utf-8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertIn('data-proposal-filter=',html)
         self.assertIn("proposalFilter==='debug'",html)
         self.assertIn("issue_kind==='limitacion'",html)

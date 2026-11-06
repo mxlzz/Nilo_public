@@ -20,13 +20,17 @@ class MotorLabTests(unittest.TestCase):
         result = self.lab.act({"op": "explore"})
         self.assertIn("status", result["last"]["result"])
         self.assertTrue(result["last"]["trace"])
-        self.assertTrue(any(r["file"] == "world.py" and
+        self.assertTrue(any(r["file"] == "navigation.py" and
                             r["function"] == "exploration_frontier"
                             for r in result["last"]["trace"]))
         for row in result["last"]["trace"]:
             self.assertGreaterEqual(row["first"], 1)
             self.assertGreaterEqual(row["last"], row["first"])
             self.assertIn("#L", row["url"])
+            self.assertIn("github.com/mxlzz/Nilo_public/blob/refactor/0.7/",
+                          row["url"])
+            if row["file"] == "navigation.py":
+                self.assertIn("/nilo_runtime/worlds/navigation.py#L", row["url"])
 
     def test_fabricate_and_test_load_with_real_capability(self):
         before = self.lab.person["inventory"]["madera"]
@@ -49,11 +53,29 @@ class MotorLabTests(unittest.TestCase):
         self.assertIn(("action_results.py", "result_from_execution"), names)
         self.assertTrue(self.lab.world["structures"][-1]["ensayos_de_carga"])
 
+    def test_craft_trace_resolves_physical_object_module(self):
+        result=self.lab.act({"op":"craft","name":"hacha ficticia",
+                             "materials":["madera"],"form":"punta"})
+        self.assertTrue(result["last"]["result"]["success"])
+        rows=result["last"]["trace"]
+        functions={(row["file"],row["function"]) for row in rows}
+        self.assertIn(("objects.py","physical_item"),functions)
+        self.assertIn(("objects.py","item_effects"),functions)
+        for row in rows:
+            if row["file"]=="objects.py":
+                self.assertIn("/nilo_runtime/worlds/objects.py#L",row["url"])
+
     def test_rest_duration_respects_user_choice(self):
         first = self.lab.person["clock_minutes"]
         result = self.lab.act({"op": "rest", "minutes": 60})
-        self.assertEqual(result["last"]["result"]["duration_minutes"], 60)
-        self.assertEqual(self.lab.person["clock_minutes"]-first, 60)
+        # Etapa 21: el sandbox ejecuta Simulation.tick; la duración del
+        # handler puede ser estimada, la medición real manda.
+        self.assertAlmostEqual(
+            self.lab.person["measurements"][-1]["duration_minutes"],60,places=3)
+        # plan_ready registra además la entrada de cuaderno; ese tiempo
+        # transcurre en el motor real y no forma parte del descanso medido.
+        self.assertGreaterEqual(self.lab.person["clock_minutes"]-first,60)
+        self.assertLess(self.lab.person["clock_minutes"]-first,62)
 
     def test_context_preview_does_not_call_a_provider(self):
         for name in ("gemini", "groq"):

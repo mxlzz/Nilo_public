@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.12: navigation history, honest excavation, and focused UI."""
 import shutil
 import subprocess
@@ -29,7 +30,7 @@ class DiggingDescriptionTests(unittest.TestCase):
 
 class InterfaceNavigationTests(unittest.TestCase):
     def test_back_controls_and_origin_restoration_are_available(self):
-        html=(ROOT/'interfaz.html').read_text('utf-8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertNotIn('id="record-navigation-back"',html)
         self.assertIn('id="record-dialog-back"',html)
         self.assertIn('function captureRecordLocation()',html)
@@ -44,7 +45,7 @@ class InterfaceNavigationTests(unittest.TestCase):
     def test_javascript_parses(self):
         node=shutil.which('node')
         if not node:self.skipTest('Node.js no disponible')
-        html=(ROOT/'interfaz.html').read_text('utf-8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         js=html.split('<script>',1)[1].rsplit('</script>',1)[0]
         with tempfile.TemporaryDirectory() as folder:
             path=Path(folder)/'interface.js'

@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.20: recuperación energética y relaciones con evidencia física."""
 import sqlite3
 import unittest
@@ -116,7 +117,7 @@ class UiContract(unittest.TestCase):
         self.assertEqual(choice["accion_proyecto"],"sin_proyecto")
 
     def test_all_four_features_present(self):
-        html=(ROOT/"interfaz.html").read_text("utf-8")
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertIn("function enforceAccordionGroup(node)",html)
         self.assertIn("function assignAccordionGroups()",html)
         self.assertIn("function recentTabEntry(t)",html)

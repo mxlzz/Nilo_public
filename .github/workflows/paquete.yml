@@ -5,9 +5,10 @@ on:
     paths: [VERSION]
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
-  versioned-release:
+  check_linux:
+    name: "Release 0.7.0 · auditoría Linux y regresiones"
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -15,14 +16,47 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Comprobar reglas y compatibilidad
+      - name: Auditoría de arquitectura y manifiesto de release
+        run: |
+          python tools/auditar_arquitectura.py
+          python tools/auditar_release_24.py --json
+      - name: Pruebas integrales sin proveedores
         run: |
           python -m unittest discover -s tests -v
           python validar_escenarios.py --seed 7321
           python reproducir.py tests/fixtures/replay_basico.json
-      - name: Construir Nilo-versión.zip
-        run: python empaquetar_version.py
-      - name: Publicar ZIP en GitHub Releases
+          python tools/verificar_paquete_07.py
+
+  check_windows:
+    name: "Release 0.7.0 · paquete Windows real y rollback"
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Descargar intérprete oficial, iniciar, migrar y restaurar en Windows
+        run: python tools/verificar_windows_24.py
+
+  versioned_release:
+    name: "Publicar Nilo 0.7.0 en GitHub Releases"
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: [check_linux, check_windows]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Revalidar versión y construir ZIP
+        run: |
+          python tools/auditar_release_24.py --json
+          python empaquetar_version.py
+      - name: Publicar solo si no existe todavía el release
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -32,8 +66,8 @@ jobs:
           tag="v${version}"
           file="dist/Nilo-${version}.zip"
           if gh release view "${tag}" >/dev/null 2>&1; then
-            gh release upload "${tag}" "${file}" --clobber
-          else
-            gh release create "${tag}" "${file}" --target "${GITHUB_SHA}" --title "Nilo ${version}" \
-              --notes "Distribución portable de Nilo. Descargá Nilo-${version}.zip y extraé la carpeta Nilo-${version}. La partida original y las claves API nunca forman parte del paquete."
+            echo "ERROR: Ya existe ${tag}; se requiere revisión manual, sin clobber."
+            exit 1
           fi
+          gh release create "${tag}" "${file}" --target "${GITHUB_SHA}" \
+            --title "Nilo ${version}" --notes-file docs/NOTAS_VERSION_070.md

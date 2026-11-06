@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """Trazabilidad: enlaces explícitos, inversos, persistentes y no especulativos."""
 import json
 import sqlite3
@@ -86,7 +87,7 @@ class RelationTests(unittest.TestCase):
 
 class BrowserAndServerTests(unittest.TestCase):
     def test_html_writes_no_links_into_nilo_journal_text(self):
-        html=(ROOT/'interfaz.html').read_text(encoding='utf-8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertIn("data-note=\"${esc(e.id)}\"",html)
         self.assertIn("${recordLinks('journal',e.id)}</article>",html)
         for label in ("recordLinks('research',q.id)","recordLinks('prediction',p.id)",

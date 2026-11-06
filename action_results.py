@@ -6,47 +6,8 @@ muestras y pruebas efectivamente registradas durante esta operación.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Optional
-
+from nilo_runtime.core.outcomes import ActionResult, LegacyExecution
 from physics import evaluate_buoyancy, evaluate_containment
-
-
-@dataclass(frozen=True)
-class ActionResult:
-    op: str
-    status: str
-    success: bool
-    notable: bool
-    facts: tuple[str, ...]
-    duration_minutes: float = 0.0
-    physical: Optional[dict] = None
-
-    @classmethod
-    def from_legacy(cls, step, facts, success, notable, duration_minutes=0,
-                    *, no_evaluable=False, physical=None, status_override=None):
-        status = status_override or ("no_evaluable" if no_evaluable else
-                  "verified_success" if success else "verified_failure")
-        return cls(str(step.get("op", "")), status, bool(success), bool(notable),
-                   tuple(map(str, facts)), float(duration_minutes),
-                   physical=physical)
-
-    def as_legacy(self):
-        """Adaptador para consumidores aún no migrados."""
-        return self.duration_minutes, list(self.facts), self.success, self.notable
-
-    def to_record(self):
-        """Solo valores JSON, sin objetos Python ni datos secretos."""
-        return {
-            "op": self.op,
-            "status": self.status,
-            "success": self.success,
-            "notable": self.notable,
-            "duration_minutes": self.duration_minutes,
-            "facts": list(self.facts),
-            "physical": self.physical,
-        }
-
 
 def evidence_before(agent):
     """Marcadores mínimos para acreditar que una prueba ocurrió AHORA."""
@@ -62,7 +23,11 @@ def evidence_before(agent):
 
 def result_from_execution(step, legacy, agent, before):
     """Empaquetar efectos del motor; ninguna clasificación consulta la narrativa."""
-    duration, facts, success, notable = legacy
+    executed = LegacyExecution.parse(legacy)
+    duration, facts, success, notable = (
+        executed.duration_minutes, executed.facts,
+        executed.success, executed.notable,
+    )
     no_evaluable = len(agent.get("unmodeled_attempts", [])) > before["unmodeled"]
     physical = _physical_evidence(step, agent, before, success)
     if physical is None and success and agent.get("_last_capability_evidence") is not before.get("capability_evidence"):

@@ -1,5 +1,6 @@
 """Regresión de frontera de planificación y representación configurable (0.5.8.2)."""
 from __future__ import annotations
+from ui_fixture import legacy_markup, legacy_html_path
 
 import tempfile
 import unittest
@@ -88,7 +89,7 @@ class ThemeSelectParser(HTMLParser):
 class ThemeBoundary(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.markup = (Path(__file__).resolve().parent.parent / "interfaz.html").read_text(encoding="utf-8")
+        cls.markup = legacy_markup(Path(__file__).resolve().parents[1])
 
     def test_five_persistent_local_themes(self):
         parsed = ThemeSelectParser()

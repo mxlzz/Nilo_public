@@ -10,6 +10,8 @@ import re
 import json
 import hashlib
 import zipfile
+import os
+import subprocess
 from pathlib import Path
 
 
@@ -40,6 +42,25 @@ def package_files(root: Path):
         yield path, relative
 
 
+def _build_commit(root: Path) -> str | None:
+    """SHA del checkout fuente, incluido dentro del ZIP portable sin .git."""
+    sha = os.environ.get("GITHUB_SHA", "").strip().lower()
+    if re.fullmatch(r"[0-9a-f]{40}", sha):
+        return sha
+    try:
+        top = subprocess.run(["git", "-C", str(root), "rev-parse", "--show-toplevel"],
+                             capture_output=True, text=True, timeout=3, check=False)
+        if top.returncode == 0 and Path(top.stdout.strip()).resolve() == root:
+            result = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"],
+                                    capture_output=True, text=True, timeout=3, check=False)
+            sha = result.stdout.strip().lower()
+            if result.returncode == 0 and re.fullmatch(r"[0-9a-f]{40}", sha):
+                return sha
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        pass
+    return None
+
+
 def build_package(root: Path, output_dir: Path | None = None) -> Path:
     root = root.resolve()
     version = (root / "VERSION").read_text(encoding="utf-8").strip()
@@ -66,6 +87,16 @@ def build_package(root: Path, output_dir: Path | None = None) -> Path:
         data=path.read_bytes()
         entries.append((relative.as_posix(),data))
         hashes[relative.as_posix()]=hashlib.sha256(data).hexdigest()
+    commit = _build_commit(root)
+    build_info = {
+        "product": "Nilo",
+        "version": version,
+        "code_commit": commit,
+        "provenance": "git_sha" if commit else "sin_commit_verificable",
+    }
+    build_info_bytes = (json.dumps(build_info, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    entries.append(("BUILD_INFO.json", build_info_bytes))
+    hashes["BUILD_INFO.json"] = hashlib.sha256(build_info_bytes).hexdigest()
     actual_manifest=json.dumps({"version":version,"files":hashes},
                                indent=2,ensure_ascii=False).encode("utf-8")+b"\n"
     entries.append(("MANIFIESTO_SHA256.json",actual_manifest))

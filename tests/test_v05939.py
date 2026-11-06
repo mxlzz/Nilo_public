@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """Regresiones de la serie 0.5.9.3.9 (sin API externa)."""
 import unittest
 from pathlib import Path
@@ -75,7 +76,7 @@ class ObserverReviewTests(unittest.TestCase):
 
 class UXTests(unittest.TestCase):
     def test_direct_construction_links_and_historical_materials(self):
-        html=(Path(__file__).resolve().parent.parent/'interfaz.html').read_text('utf8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         self.assertNotIn('id="builddetail"',html)
         self.assertNotIn('data-open-plans',html)
         self.assertIn("historicMaterialDiff",html)
@@ -83,7 +84,7 @@ class UXTests(unittest.TestCase):
         self.assertIn("if(building)openPlanForBuilding(",html)
 
     def test_speed_controls(self):
-        html=(Path(__file__).resolve().parent.parent/'interfaz.html').read_text('utf8')
+        html=legacy_markup(Path(__file__).resolve().parents[1])
         for v in (1,10,60,80):
             self.assertIn(f'data-speed="{v}"',html)
         for v in (300,600):

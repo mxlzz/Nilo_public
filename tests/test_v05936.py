@@ -28,7 +28,10 @@ class EpisodicRecall(unittest.TestCase):
                   for i in range(20)],
             ],
         }
-        self.world = {'sites': {'cueva': {'x': 23, 'y': 7, 'z': 0}}}
+        # La entrada que Nilo ya recorrió figura en el terreno revelado;
+        # el catálogo interno de sitios por sí solo no acredita conocimiento.
+        self.world = {'sites': {'cueva': {'x': 23, 'y': 7, 'z': 0}},
+                      'revealed': ['23,7,0']}
 
     def test_old_successful_descent_survives_recent_noise(self):
         recalled = recall_relevant(self.person, self.world)

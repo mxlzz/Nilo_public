@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.23 — La lectura del registro no modifica la autonomía del personaje."""
 import re
 import shutil
@@ -7,7 +8,7 @@ import unittest
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/'interfaz.html').read_text(encoding='utf-8')
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 
 
 class ReadabilityInterface(unittest.TestCase):

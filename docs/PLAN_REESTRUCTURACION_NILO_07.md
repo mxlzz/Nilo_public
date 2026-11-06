@@ -1,13 +1,9 @@
 # Nilo 0.7 — Plan de reestructuración integral por etapas
 
-**Estado vigente al 5/11/2026:** etapas 00–08 completadas en `refactor/0.7`;
-etapa 09 pendiente. `main` conserva el runtime estable 0.6.4.
-Seguimiento: [issue público 74](https://github.com/mxlzz/Nilo_public/issues/74),
-[tablero en la rama de desarrollo](https://github.com/mxlzz/Nilo_public/blob/refactor/0.7/docs/ESTADO_REESTRUCTURACION_07.md)
-y [migración pública verificada](MIGRACION_PUBLICA_ETAPA_03.md).
+**Estado al 6/11/2026:** **00–23 finalizadas**; **etapa 24 validada técnicamente**, publicación 0.7.0 pendiente de fusión y release. La matriz experimental multi-proveedor quedó fuera del bloqueo arquitectónico; Groq no verificado. [Informe etapa 23](ETAPA_23_CIERRE_ARQUITECTURA_07.md) · [Etapa 24](ETAPA_24_CIERRE_07.md) · [Tablero](ESTADO_REESTRUCTURACION_07.md).
 La descripción de propuesta que sigue se conserva como registro del plan original.
 
-**Decisión de versión (4/11/2026):** reservar `0.7` para el resultado integrado de la reestructuración de Nilo. La base comparativa es `0.6.4`. Esta hoja es una **propuesta de ejecución detallada**, todavía sin implementación ni fecha de publicación. La nueva física térmica queda fuera de `0.7` y se considera para `0.8`. Referencias: [auditoría 0.6.4](AUDITORIA_ARQUITECTURA_NILO_07_2026-11-04.md), [#74](https://github.com/mxlzz/Nilo_public/issues/74).
+**Decisión de versión (4/11/2026):** reservar `0.7` para el resultado integrado de la reestructuración de Nilo. La base comparativa es `0.6.4`. Esta hoja conserva la propuesta original y el cierre técnico de las etapas; la publicación se acredita por el release. La nueva física térmica queda fuera de `0.7` y se considera para `0.8`. Referencias: [auditoría 0.6.4](AUDITORIA_ARQUITECTURA_NILO_07_2026-11-04.md), [#74](https://github.com/mxlzz/Nilo_public/issues/74).
 
 ## Principio de trabajo
 
@@ -68,7 +64,7 @@ No reescribir el sistema entero de una vez ni dejar dos motores permanentes. Tra
 | Paso | Revisión profunda y reescritura | Puerta de salida |
 |---|---|---|
 | **22 · QA transversal y rendimiento** | Reevaluar huecos de los 646 tests/68 escenarios; ampliar tests unitarios, integración, metamórficos, cambios de estado, estáticos, UI, cargas largas y cobertura; auditar deuda surgida durante la migración. | CI verificable, benchmark SQLite/navegación, matriz de cambios intencionales vs baseline. |
-| **23 · Evaluación autónoma real** | Comparar partidas Gemini/Groq con semillas, snapshots, presupuestos y condiciones registrados. Examinar bucles, continuidad, curiosidad, consumo LLM y hechos medibles; revisar anomalías y corregir solo lo atribuible. | Informe conductual reproducible, sin declarar mejoría por impresión o por tests sintéticos. |
+| **23 · Evaluación autónoma real** | **Cerrada con alcance revisado el 6/11/2026:** auditar integración y trazabilidad sobre la partida Gemini real y CI, discriminar defectos de refactorización de limitaciones funcionales preexistentes. Matriz comparativa Gemini/Groq pasa al backlog, sin fingir verificación. | [Acta de cierre arquitectónico](ETAPA_23_CIERRE_ARQUITECTURA_07.md), sin afirmar mejora conductual ni Groq verificado. |
 | **24 · Limpieza final y release 0.7.0** | Auditoría final del árbol: imports y módulos huérfanos, compatibilidad residual, rutas alternativas, documentación, empaquetado, seguridad, migración y rollback. Eliminar adaptadores temporales sin uso. | Instalación nueva e importada correctas, reversión probada, manifest y release `0.7.0`; sin segundo motor legado permanente. |
 
 ## Criterios que no se negocian durante la migración

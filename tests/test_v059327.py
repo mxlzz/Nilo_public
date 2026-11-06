@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.3.27: espera voluntaria, capacidad útil y vistas compactas de proyectos."""
 import json
 import math
@@ -17,7 +18,7 @@ from physics import evaluate_containment
 from nilo import Simulation
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/'interfaz.html').read_text('utf-8')
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 
 
 class WaitOperation(unittest.TestCase):
@@ -66,8 +67,10 @@ class WaitOperation(unittest.TestCase):
                 sim.tick(20);sim.tick(20);sim.tick(20)
                 self.assertIsNone(p['pending'])
                 self.assertAlmostEqual(p['clock_minutes']-before,60,places=1)
-                self.assertGreater(p['needs']['energia'],40)
-                self.assertLess(p['needs']['energia'],42)
+                # En 0.7 wait transcurre sin descanso: solo aplica el
+                # desgaste fisiológico basal, no recupera energía pasivamente.
+                self.assertLess(p['needs']['energia'],40)
+                self.assertAlmostEqual(p['needs']['energia'],39.4,places=1)
                 rows=[m for m in p['measurements'] if m.get('op')=='wait']
                 self.assertEqual(len(rows),1)
                 self.assertFalse(rows[0]['rest_comparable'])

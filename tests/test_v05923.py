@@ -1,3 +1,4 @@
+from ui_fixture import legacy_markup, legacy_html_path
 """0.5.9.2.3 — regresiones visuales y de navegación del dashboard."""
 from html.parser import HTMLParser
 from pathlib import Path
@@ -6,7 +7,7 @@ import subprocess
 import unittest
 
 ROOT=Path(__file__).resolve().parent.parent
-HTML=(ROOT/"interfaz.html").read_text(encoding="utf-8")
+HTML=legacy_markup(Path(__file__).resolve().parents[1])
 JS=HTML.split("<script>",1)[1].split("</script>",1)[0]
 CSS=HTML.split("<style>",1)[1].split("</style>",1)[0]
 
@@ -125,7 +126,7 @@ const checks=[
 ].join('\n');
 eval(source+'\n'+checks);
 """
-        result=subprocess.run(["node","-e",runner,str(ROOT/"interfaz.html")],
+        result=subprocess.run(["node","-e",runner,str(legacy_html_path(ROOT))],
                               capture_output=True,text=True,check=False)
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertIn("map toggle OK",result.stdout)

@@ -1,3 +1,9 @@
+# Nilo 0.7.0 — reestructuración arquitectónica
+
+Detalle: [Notas de versión](NOTAS_VERSION_070.md). Modularidad, trazabilidad, QA y compatibilidad de partidas; no se afirma mejora de autonomía.
+
+---
+
 ## Nilo 0.6.4 · Laboratorio comprensible y solicitud íntegra al LLM (3/11/2026)
 
 - Se consolidaron catálogo y condiciones en la columna izquierda; la derecha usa secciones desplegables con **«Qué recibe el LLM»** abierta primero. Se retiraron el contador de 68 escenarios y el botón «Ejecutar todos» de la interfaz; el catálogo sigue ejecutándose completo en CI.
