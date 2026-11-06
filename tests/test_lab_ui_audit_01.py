@@ -24,7 +24,7 @@ def page(name):
 
 
 def script(name):
-    match = re.search(r"<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>", page(name))
+    match = re.search(r"<script(?:\s[^>]*)?>([\s\S]*?)</script>", page(name))
     if not match:
         raise AssertionError("La pantalla no contiene script: " + name)
     return match.group(1)
@@ -154,10 +154,8 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
   assert.ok(el("resultView").textContent.includes("no tiene momentos"));
 })().catch(error=>{console.error(error);process.exitCode=1;});
 """
-        harness = harness.replace("SOURCE", repr(js).replace("\\u", "\\u"))
-        # repr() no es un literal JS confiable ante escapes de Python: usar JSON.
         import json
-        harness = harness.replace(repr(js).replace("\\u", "\\u"), json.dumps(js, ensure_ascii=False))
+        harness = harness.replace("SOURCE", json.dumps(js, ensure_ascii=False))
         proc = subprocess.run(
             [node, "-e", harness], text=True, capture_output=True, timeout=15,
         )
