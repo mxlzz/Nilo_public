@@ -107,6 +107,20 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 const $=id=>document.getElementById(id);
 const FIELDS=["provider","purpose","state","date","model","call","session","limit"];
 let attempts=[],nextBefore=null,current=null,activeId="",mode="simple";
+let listEpoch=0,detailEpoch=0;
+const STATUS_LABELS={
+ accepted:"Aceptado por el validador",rejected:"Rechazado por el validador",
+ http_error:"Error HTTP",transport_error:"Error de transporte",
+ transport_attempted:"Envío iniciado; sin resultado archivado",
+ response_received:"Respuesta recibida; pendiente de validación",
+ invalid_http_response:"Respuesta HTTP inválida"
+};
+const PROVENANCE_LABELS={
+ available:"Completa",partial:"Parcial",unavailable:"No disponible",
+ not_recorded:"No registrada"
+};
+function statusLabel(value){return STATUS_LABELS[value]||String(value||"Sin estado")}
+function provenanceLabel(value){return PROVENANCE_LABELS[value]||String(value||"Sin estado")}
 const N=(tag,className="",text)=>{const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined&&text!==null)node.textContent=String(text);return node};
 function append(parent,...children){for(const child of children)parent.appendChild(child);return parent}
 function showText(parent,value){parent.appendChild(N("pre","",value===undefined?"":value));return parent}
@@ -118,11 +132,17 @@ function setMode(which){mode=which;for(const id of ["simple","pro"]){const btn=$
 function filterQuery(before){const q=new URLSearchParams();for(const id of FIELDS){const value=$(id).value.trim();if(!value)continue;const key=id==="state"?"status":id;q.set(key,value)}if(before!==null)q.set("before",String(before));return q.toString()}
 async function fetchJson(url){const response=await fetch(url,{cache:"no-store",credentials:"same-origin"});const data=await response.json();if(!response.ok)throw new Error(data.error||("HTTP "+response.status));return data}
 async function refresh(reset=true){
+const requestToken=++listEpoch;
+if(reset){
+ detailEpoch++;activeId="";current=null;
+ $("detail").replaceChildren(N("p","empty","Cargando solicitudes…"));
+}
 const before=reset?null:nextBefore;
 if(!reset&&before===null)return;
 $("more").disabled=true;updateStatus("Leyendo capturas…");
 try{
 const response=await fetchJson("/api/lab/llm/attempts?"+filterQuery(before));
+if(requestToken!==listEpoch)return;
 if(reset)attempts=[];attempts.push(...response.attempts);
 nextBefore=response.next_before;
 renderAttempts();
@@ -131,14 +151,17 @@ updateStatus(!response.available?"Todavía no hay solicitudes capturadas en esta
 $("more").disabled=nextBefore===null;
 if(reset&&attempts.length){await selectAttempt(attempts[0].attempt_id)}
 if(reset&&!attempts.length){current=null;activeId="";$("detail").replaceChildren(N("p","empty","No hay solicitudes disponibles. La captura se genera únicamente cuando Nilo consulta realmente a un LLM."));}
-}catch(err){updateStatus("No fue posible leer el historial: "+err.message,true);$("more").disabled=nextBefore===null}
+ }catch(err){
+ if(requestToken!==listEpoch)return;
+ updateStatus("No fue posible leer el historial: "+err.message,true);$("more").disabled=nextBefore===null
+}
 }
 function renderAttempts(){
 const list=$("attempt-list");list.replaceChildren();
 for(const item of attempts){
 const btn=N("button","item"+(item.attempt_id===activeId?" active":""));btn.type="button";btn.dataset.attempt=item.attempt_id;
 const top=N("div","top");
-append(top,N("b","",item.purpose==="chat"?"Conversación":"Deliberación"),N("span","tag "+statusClass(item.status),item.status));
+append(top,N("b","",item.purpose==="chat"?"Conversación":"Deliberación"),N("span","tag "+statusClass(item.status),statusLabel(item.status)));
 const name=N("div","monospace",item.provider+" · "+item.model);
 const meta=N("small","",formatDate(item.started_utc)+" · intento "+item.attempt_ordinal);
 append(btn,top,name,meta);
@@ -147,12 +170,13 @@ list.appendChild(btn);
 }
 }
 async function selectAttempt(id){
+const requestToken=++detailEpoch;
 activeId=id;renderAttempts();updateNotice("Abriendo solicitud…");
 try{
 const data=await fetchJson("/api/lab/llm/attempt?id="+encodeURIComponent(id));
-if(id!==activeId)return;
+if(requestToken!==detailEpoch||id!==activeId)return;
 current=data;updateNotice("");renderDetail(data);
-}catch(err){if(id!==activeId)return;current=null;updateNotice("No se pudo abrir este intento: "+err.message,true);$("detail").replaceChildren(N("p","empty","El detalle no está disponible."));}
+}catch(err){if(requestToken!==detailEpoch||id!==activeId)return;current=null;updateNotice("No se pudo abrir este intento: "+err.message,true);$("detail").replaceChildren(N("p","empty","El detalle no está disponible."));}
 }
 function kv(label,value){const wrap=N("div","fact");append(wrap,N("div","key",label),N("div","value",value===null||value===undefined?"—":value));return wrap}
 async function copyLiteral(value){try{await navigator.clipboard.writeText(value);updateNotice("Texto literal copiado.")}catch(_){updateNotice("No se pudo copiar el texto.",true)}}
@@ -201,7 +225,7 @@ summary.appendChild(lhs);details.appendChild(summary);
 const body=N("div","block-body"),toolbar=N("div","block-controls");
 toolbar.appendChild(actionButton("Copiar bloque",block.literal));
 append(body,toolbar,showText(N("div"),block.literal));
-const origin=N("details","extra");append(origin,N("summary","","Origen y transformaciones"),fieldSources(block.json_pointer,meta,role));body.appendChild(origin);
+const origin=N("details","extra");append(origin,N("summary","","Procedencia del campo"),fieldSources(block.json_pointer,meta,role));body.appendChild(origin);
 details.appendChild(body);return details
 }
 function renderMessages(data,container){
@@ -216,7 +240,7 @@ append(section,head,body);container.appendChild(section);
 }
 }
 function renderProfessional(data,container){
-const intro=N("p","caption","Misma captura; incluye texto HTTP íntegro, trazas y referencias. Nunca se reconstruye desde el estado actual.");container.appendChild(intro);
+const intro=N("p","caption","Misma captura; incluye texto HTTP íntegro, trazas y referencias. Nunca se reconstruye desde el estado actual. Estado original del intento: "+data.status+". Una respuesta aceptada no acredita ejecución física.");container.appendChild(intro);
 const body=N("details","pro-section");body.open=true;
 append(body,N("summary","","Cuerpo HTTP original · "+data.body_bytes+" bytes"),actionButton("Copiar cuerpo original",data.body_utf8));showText(body,data.body_utf8);container.appendChild(body);
 const roles=N("details","pro-section");append(roles,N("summary","","Mensajes íntegros por rol y ruta ("+(data.messages||[]).length+")"));
@@ -240,12 +264,13 @@ const toolbar=N("div","detail-toolbar");
 append(toolbar,N("h2","",data.purpose==="chat"?"Conversación registrada":"Deliberación registrada"),actionButton("Copiar solicitud",data.body_utf8));
 root.appendChild(toolbar);
 const facts=N("div","summary-grid");
-append(facts,kv("Proveedor",data.provider),kv("Modelo",data.model),kv("Estado",data.status),
-kv("Momento simulado",data.simulated_at),kv("Intento",data.attempt_ordinal),kv("Inicio UTC",formatDate(data.started_utc)));
+append(facts,kv("Proveedor",data.provider),kv("Modelo",data.model),kv("Estado del intento",statusLabel(data.status)),
+kv("Momento simulado",data.simulated_at),kv("Intento",data.attempt_ordinal),kv("Inicio UTC",formatDate(data.started_utc)),
+kv("Procedencia",provenanceLabel(data.provenance_status)));
 root.appendChild(facts);
 const meta=N("p","caption","ID de consulta: "+data.call_id+" · ID de intento: "+data.attempt_id+" · SHA-256: "+data.body_sha256);
 root.appendChild(meta);
-if(data.linked_record)root.appendChild(N("p","caption","Vínculo exacto con historial: "+data.linked_record.category+" · secuencia "+data.linked_record.seq));
+if(data.linked_record)root.appendChild(N("p","caption","Registro relacionado por ID: "+data.linked_record.category+" · secuencia "+data.linked_record.seq+". Este vínculo no demuestra que la acción se haya ejecutado."));
 const canvas=N("div");root.appendChild(canvas);
 if(mode==="simple")renderMessages(data,canvas);else renderProfessional(data,canvas);
 }
