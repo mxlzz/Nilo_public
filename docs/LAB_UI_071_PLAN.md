@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | **01 · Correcciones funcionales y semánticas — validada** | Estados y etiquetas veraces; historial sin información vieja; enlaces precisos. | [Acta 01](LAB_UI_071_ETAPA_01.md) y [CI aprobado #42292210597](https://github.com/mxlzz/Nilo_public/actions/runs/42292210597). |
 | **02 · Arquitectura de información — implementada, en validación** | Cuatro secciones globales; tres modalidades de Pruebas; vínculos y nombres consistentes, estados navegables sin cambiar la física. | [Acta 02](LAB_UI_071_ETAPA_02.md), tests de navegación y CI final. |
-| **03 · Sistema de diseño** | CSS y componentes comunes, tokens, claro/oscuro, tipografía y responsive. | Paridad funcional de todas las páginas y tests de componentes. |
+| **03 · Sistema de diseño — implementada, en validación** | Tokens, CSS compartido y controlador de tema sistema/claro/oscuro. Se preservan distribuciones y motores. | [Acta 03](LAB_UI_071_ETAPA_03.md); pruebas de CSS/JS, rutas HTTP y empaquetado; CI final. |
 | **04 · Cinco subetapas por pantalla** | Visor LLM, Historial, Escenarios, Sandbox, Ajustes; revisar una pantalla por subetapa. | Pruebas de interacción y revisión visual por pantalla; preservar el texto crudo. |
 | **05 · Auditoría final** | Accesibilidad, rendimiento, compatibilidad y regresiones transversales. | Validaciones finales, documentación y decisión de integración. |
 
