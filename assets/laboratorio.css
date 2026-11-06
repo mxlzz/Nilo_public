@@ -15,7 +15,7 @@
   --up:var(--lab-raised);--raised:var(--lab-raised);--sub:var(--lab-raised);
   --line:var(--lab-border);--ink:var(--lab-text);--fg:var(--lab-text);
   --muted:var(--lab-muted);--accent:var(--lab-accent);--focus:var(--lab-focus);
-  --bad:var(--lab-bad);--good:var(--lab-good);--warn:var(--lab-warn);
+  --bad:var(--lab-bad);--good:var(--lab-good);--warn:var(--lab-warn);--error:var(--lab-bad);--subtle:var(--lab-muted);
   --mono:var(--lab-mono);
 }
 @media (prefers-color-scheme:dark){
@@ -86,6 +86,8 @@ body[data-lab] .tabs button.on,body[data-lab] .modes button.selected{
   background:var(--lab-accent);border-color:var(--lab-accent);
   color:var(--lab-accent-contrast);
 }
+body[data-lab] :is(button.danger,button.negative){color:var(--lab-bad);border-color:var(--lab-bad);background:var(--lab-bad-bg)}
+body[data-lab] :is(button.danger,button.negative):hover:not(:disabled){background:var(--lab-bad-bg);filter:brightness(.985)}
 body[data-lab] button:disabled{opacity:.55;cursor:not-allowed}
 body[data-lab] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 body[data-lab] select,body[data-lab] textarea{
