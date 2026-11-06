@@ -143,14 +143,17 @@ class BrowserHttp06(unittest.TestCase):
             conn.close()
 
     def test_viewer_is_served_only_at_lab_path_without_creating_sidecar(self):
-        self.assertFalse(self.store.path.exists())
+        # Otras pruebas de esta clase pueden haber escrito una captura
+        # sintética: comprobar ausencia de cambios, no ausencia de datos.
+        before=(self.store.path.read_bytes() if self.store.path.exists() else None)
         status,headers,body=self.request("/visor-llm")
         self.assertEqual(status,200)
         self.assertEqual(headers["Content-Type"],"text/html; charset=utf-8")
         self.assertEqual(headers["Cache-Control"],"no-store")
         self.assertIn(b"id=\"simple-mode\"",body)
         self.assertIn(b"id=\"pro-mode\"",body)
-        self.assertFalse(self.store.path.exists())
+        after=(self.store.path.read_bytes() if self.store.path.exists() else None)
+        self.assertEqual(before,after)
         self.assertEqual(dispatch(object(),"GET","/visor-llm").status,404)
         self.assertEqual(dispatch(object(),"GET",
                 "/api/lab/llm/attempts").status,404)
