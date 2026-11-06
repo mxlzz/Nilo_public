@@ -15,8 +15,9 @@ button{padding:10px 13px;border:1px solid #506261;background:#263332;color:var(-
 nav[data-lab-nav="primary"]{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
 </style>
+<link rel="stylesheet" href="/assets/laboratorio.css">
 </head>
-<body>
+<body data-lab="motor">
 <header>
  <div><div class="eyebrow">NILO / LABORATORIO</div><h1>Mundo interactivo</h1><p class="sub">Pruebas aisladas con el motor real · Solicitudes calculadas sin llamar al LLM.</p></div>
 <div class="lab-navigation"><nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
@@ -28,6 +29,7 @@ nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"]
 <nav aria-label="Modalidades de prueba" data-lab-nav="secondary">
 <a href="/">Escenarios</a><a href="/?modo=plan">Plan de acciones</a><a href="/sandbox" aria-current="page">Mundo interactivo</a>
 </nav></div>
+<div class="lab-theme-control"><button id="lab-theme-toggle" type="button" aria-label="Cambiar tema">Tema: sistema</button></div>
 </header>
 <main class="layout">
 <section class="panel">
@@ -262,4 +264,5 @@ fetch("/api/state").then(function(r){return r.json()}).then(function(s){
  el("operation").value="explore";renderState(s,false);
 }).catch(function(e){err("No se pudo conectar al motor: "+String(e))});
 })();
-</script></body></html>
+</script><script src="/assets/laboratorio_ui.js" defer></script>
+</body></html>
