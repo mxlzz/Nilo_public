@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nilo · Laboratorio del motor 0.6.1</title>
+<title>Nilo · Laboratorio de acciones</title>
 <style>
 :root{color-scheme:dark;--bg:#111416;--surface:#191e20;--up:#20282a;--line:#344144;--ink:#ecf0ed;--muted:#9eb0b0;--accent:#a9cbbd;--warn:#e3bc89;--bad:#e6a39d;--good:#a8d3b0;--mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}h1,h2,h3,p{margin:0}h1{font-size:20px;font-weight:650;letter-spacing:-.04em}h2{font-size:15px;font-weight:640}h3{font-size:13px}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
@@ -54,7 +54,7 @@ button{padding:10px 13px;border:1px solid #506261;background:#263332;color:var(-
  </div>
 </section>
 <section class="panel results">
- <header><h2>04 · Resultado y recorrido del código</h2><div class="tabs"><button id="tabResult" class="on">Resultado</button><button id="tabPrompt">Vista LLM</button></div></header>
+ <header><h2>04 · Resultado y recorrido del código</h2><div class="tabs"><button id="tabResult" class="on">Resultado</button><button id="tabPrompt">Solicitud calculada</button></div></header>
  <div class="output" id="resultView">
   <div id="result"><p class="small">Elegí una operación y ejecutala para ver qué ocurrió y qué funciones se recorrieron.</p></div>
   <div class="section">
@@ -66,7 +66,7 @@ button{padding:10px 13px;border:1px solid #506261;background:#263332;color:var(-
   <div class="buttonrow"><button id="gemini" class="primary">Ver contexto Gemini</button><button id="groq">Ver contexto Groq</button></div>
   <p class="small" style="margin:11px 0" id="promptInfo"></p>
   <div id="promptTrace"></div>
-  <details style="margin-top:13px" open><summary class="small" style="cursor:pointer">Contexto exacto enviado al proveedor</summary><pre id="promptJSON" class="jsonbox"></pre></details>
+  <details style="margin-top:13px" open><summary class="small" style="cursor:pointer">Cuerpo JSON que se enviaría al proveedor</summary><pre id="promptJSON" class="jsonbox"></pre></details>
  </div>
 </section>
 </main>
