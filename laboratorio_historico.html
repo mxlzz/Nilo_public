@@ -33,8 +33,9 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
 @media(max-width:700px){.layout{grid-template-columns:1fr;padding:8px}.result-panel{grid-column:auto}.timeline-items{max-height:240px}header{padding:12px}}
 nav[data-lab-nav="primary"]{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
-</style></head>
-<body>
+</style>
+<link rel="stylesheet" href="/assets/laboratorio.css"></head>
+<body data-lab="historico">
 <header>
  <div><h1>Historial de partidas</h1><div class="muted">Registros originales de solo lectura · Reproducciones aisladas desde estados preservados</div></div>
  <nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
@@ -43,6 +44,7 @@ nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"]
 <a href="/">Pruebas</a>
 <a href="/ajustes">Ajustes</a>
 </nav>
+<div class="lab-theme-control"><button id="lab-theme-toggle" type="button" aria-label="Cambiar tema">Tema: sistema</button></div>
 </header>
 <main class="layout">
 <section class="panel">
@@ -272,4 +274,5 @@ ask("/api/history/catalog")
  .then(data=>{if(initialToken===sourceToken)showData(data)})
  .catch(e=>{if(initialToken===sourceToken)$("fileStatus").textContent=e.message});
 })();
-</script></body></html>
+</script><script src="/assets/laboratorio_ui.js" defer></script>
+</body></html>
