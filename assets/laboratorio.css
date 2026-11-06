@@ -131,6 +131,17 @@ body[data-lab] :is(.stage.warn){background:var(--lab-warn-bg);color:var(--lab-te
 body[data-lab] :is(.status,.pill,.tag){background:var(--lab-raised);color:var(--lab-text);border-color:var(--lab-border)}
 body[data-lab] .tag.bad{color:var(--lab-bad)}
 body[data-lab] .tag.good{color:var(--lab-good)}
+/* Eliminar fondos de tema fijo heredados que quebraban el contraste al invertir colores. */
+body[data-lab] :is(.report-section,.trace-item,.role,.block,.block-body,.pro-section){
+  background:var(--lab-surface);color:var(--lab-text)
+}
+body[data-lab] :is(.note,.status-note,.code-entry){
+  background:var(--lab-raised);color:var(--lab-text)
+}
+body[data-lab] :is(.metric strong,.fact .value){color:var(--lab-accent)}
+body[data-lab] .options button.on{background:var(--lab-good-bg);border-color:var(--lab-focus);color:var(--lab-text)}
+body[data-lab] .trace-ref a{color:var(--lab-accent)}
+body[data-lab] .lab-navigation{display:grid;gap:7px}
 body[data-lab] .report-section>summary,body[data-lab] .panel-head{color:var(--lab-text)}
 body[data-lab] :is(.footer,.group-title,.tmeta,.case-num,.mapkey){color:var(--lab-muted)}
 body[data-lab] .help-dialog{background:var(--lab-surface);color:var(--lab-text);border-color:var(--lab-border)}
