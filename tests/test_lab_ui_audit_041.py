@@ -59,7 +59,6 @@ class ViewerStage041(unittest.TestCase):
         self.assertIn("Aplicar filtros",markup)
         self.assertIn("Limpiar",markup)
         self.assertIn("Consultas y reintentos",markup)
-        self.assertIn("Vista",markup) if False else None
 
     def test_syntax_and_literal_safety(self):
         source=script()
