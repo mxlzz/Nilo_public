@@ -24,7 +24,9 @@ def inspect(root: Path = ROOT) -> dict:
     }
     required.update(p.relative_to(root).as_posix()
                     for directory in STATIC
-                    for p in (root / directory).rglob("*") if p.is_file())
+                    for p in (root / directory).rglob("*")
+                    if p.is_file() and "__pycache__" not in p.parts
+                    and p.suffix.lower() not in (".pyc", ".pyo"))
     required.update(DOCS)
     required.update(("VERSION", "README.md", "INICIAR_NILO.bat",
                      "PREPARAR_ENTORNO.bat", "OBTENER_PYTHON.ps1",
