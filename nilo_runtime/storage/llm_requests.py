@@ -9,11 +9,12 @@ from __future__ import annotations
 from contextlib import closing
 from datetime import datetime, timezone
 import hashlib
-import json
 from pathlib import Path
 import secrets
 import sqlite3
 import threading
+
+from nilo_runtime.agent.provenance_codec import encode_metadata, decode_metadata
 
 MAX_RECORDS = 5000  # Retención FIFO por base; sin límite de días que borre sesiones.
 _STATUSES = frozenset((
@@ -111,8 +112,7 @@ class RequestTraceStore:
                 # la partida ni a decisiones; las copias antiguas son privadas.
                 if provenance is not None:
                     # Solo metadatos: ningún valor interno anterior al payload.
-                    encoded = json.dumps(provenance,ensure_ascii=False,
-                                         separators=(",",":"))
+                    encoded = encode_metadata(provenance)
                     db.execute("""INSERT INTO llm_request_provenance
                                   (attempt_id,metadata_json) VALUES (?,?)""",
                                (attempt_id,encoded))
@@ -189,7 +189,4 @@ class RequestTraceStore:
         metadata, body, expected_hash, expected_size = row
         if hashlib.sha256(body).hexdigest()!=expected_hash or len(body)!=expected_size:
             raise ValueError("Cuerpo de solicitud con integridad alterada")
-        result=json.loads(metadata)
-        if not isinstance(result,dict) or result.get("schema_version")!=1:
-            raise ValueError("Metadatos de procedencia incompatibles")
-        return result
+        return decode_metadata(metadata)

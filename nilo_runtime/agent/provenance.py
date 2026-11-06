@@ -13,6 +13,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from nilo_runtime.agent.provenance_codec import encode_metadata
+
 ROOT = Path(__file__).resolve().parents[2]
 STAGE_NAMES = (
     "percepcion", "proyeccion", "perfil",
@@ -20,7 +22,6 @@ STAGE_NAMES = (
     "filtro_chat", "solicitud_preparada",
 )
 _MAX_FIELDS = 8000
-_MAX_TRACE_BYTES = 400000
 _MAX_DEPTH = 9
 _CHAT_PREFIX = "CONTEXTO COMPROBADO (no lo contradigas): "
 _GEMINI_PREFIX = "SITUACIÓN REAL: "
@@ -40,7 +41,7 @@ def _type(value):
     return "unknown"
 
 
-def _paths(value):
+def _paths(value, max_depth=_MAX_DEPTH):
     """Campos presentes, sin copias de valores en la salida del observador."""
     paths = {}
     stack = [("", value, 0)]
@@ -50,7 +51,7 @@ def _paths(value):
             paths[pointer] = _type(item)
         if len(paths) >= _MAX_FIELDS:
             raise ValueError("Contexto demasiado grande para trazabilidad completa")
-        if depth >= _MAX_DEPTH:
+        if depth >= max_depth:
             continue
         if isinstance(item, dict):
             for name, child in reversed(list(item.items())):
@@ -61,9 +62,9 @@ def _paths(value):
     return paths
 
 
-def _changes(before, after):
+def _changes(before, after, max_depth=_MAX_DEPTH):
     """Comparación de paths Y valores en memoria; solo sale su estado."""
-    left, right = _paths(before), _paths(after)
+    left, right = _paths(before, max_depth), _paths(after, max_depth)
     diffs = {"added": [], "removed": [], "modified": []}
     for path in sorted(left.keys() | right.keys()):
         if path not in left:
@@ -287,7 +288,7 @@ def _json_sent(body: bytes, provider: str, purpose: str):
     return None
 
 
-def build_metadata(snapshots, body: bytes, provider: str, purpose: str):
+def _build_metadata(snapshots, body: bytes, provider: str, purpose: str, *, max_depth=_MAX_DEPTH):
     """Compila etapas observadas; omite valores internos del JSON persistido.
 
     La igualdad contra el cuerpo capturado se verifica antes de atribuir
@@ -307,15 +308,17 @@ def build_metadata(snapshots, body: bytes, provider: str, purpose: str):
     all_paths = set()
     initial = None
     introduced = {}
-    final_paths = _paths(final)
+    final_paths = _paths(final, max_depth)
     for index, (name, value) in enumerate(snapshots):
-        paths = _paths(value)
+        paths = _paths(value, max_depth)
         for p in paths:
             all_paths.add(p)
             introduced.setdefault(p, name)
+            if len(all_paths) >= _MAX_FIELDS:
+                raise ValueError("Demasiadas rutas acumuladas")
         if index:
             prev_name, prev = snapshots[index - 1]
-            delta = _changes(prev, value)
+            delta = _changes(prev, value, max_depth)
             sequence.append({
                 "stage": name, "previous_stage": prev_name, **delta,
                 "added_count": len(delta["added"]),
@@ -351,6 +354,7 @@ def build_metadata(snapshots, body: bytes, provider: str, purpose: str):
         })
     meta = {
         "schema_version": 1,
+        "coverage": {"max_depth": max_depth, "list_identity": "index"},
         "source_scope": "referencias_ast_no_registro_de_ramas_ejecutadas",
         "comparison_scope": "mismo_json_pointer_por_etapa; listas_por_indice",
         "payload_verification": exposure,
@@ -364,18 +368,39 @@ def build_metadata(snapshots, body: bytes, provider: str, purpose: str):
         "omitted_roots": sorted(root for root in origins
                                 if "/" + _escape(root) not in final_paths),
     }
-    size = len(json.dumps(meta, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
-    if size > _MAX_TRACE_BYTES:
-        # La captura del cuerpo sigue intacta, pero no se publica una traza
-        # parcial haciéndola pasar por completa.
-        return {
-            "schema_version": 1,
-            "trace_status": "excede_limite",
-            "payload_verification": exposure,
-            "field_count": len(fields),
-            "size_without_truncation": size,
-        }
+    # Identify the exact boundary of depth-limited coverage. No hidden values.
+    cut = set()
+    for _, value in snapshots:
+        for pointer in _paths(value, max_depth):
+            if pointer.count("/") == max_depth:
+                child = _at(value, pointer)
+                if isinstance(child, (dict, list)) and child:
+                    cut.add(pointer)
+    meta["coverage"]["unexpanded_paths"] = sorted(cut)
+    meta["trace_status"] = "partial" if cut else "complete"
     return meta
+
+
+def build_metadata(snapshots, body: bytes, provider: str, purpose: str):
+    """Preserve full metadata when compressible; retain explicit root coverage otherwise."""
+    if not snapshots:
+        return None
+    # Invalid contracts must not be disguised as size degradation.
+    if any(name not in STAGE_NAMES or not isinstance(value, dict)
+           for name, value in snapshots):
+        raise ValueError("Etapas de observación incorrectas")
+    try:
+        meta = _build_metadata(snapshots, body, provider, purpose)
+        encode_metadata(meta)  # Apply the bound to stored bytes, not repeated JSON labels.
+        return meta
+    except ValueError:
+        # Root changes compare full in-memory values, including changes below
+        # the boundary; only the nested attribution is omitted.
+        meta = _build_metadata(snapshots, body, provider, purpose, max_depth=1)
+        meta["trace_status"] = "partial"
+        meta["coverage"]["reason"] = "nested_detail_exceeds_budget"
+        encode_metadata(meta)
+        return meta
 
 
 def snapshot_context(value):

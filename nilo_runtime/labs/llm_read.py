@@ -15,6 +15,7 @@ import re
 import sqlite3
 from urllib.parse import parse_qs
 
+from nilo_runtime.agent.provenance_codec import decode_metadata
 from nilo_runtime.labs.literal_segments import index_saved_attempt
 from nilo_runtime.storage.llm_requests import RequestTraceStore
 
@@ -258,7 +259,7 @@ class LocalLLMReadAPI:
             # No confundir formatos no admitidos o corruptos con ausencia.
             raise ReadError("El contenido capturado no pudo indexarse", 422) from exc
         try:
-            metadata = json.loads(entry["metadata_json"]) if entry["metadata_json"] else None
+            metadata = decode_metadata(entry["metadata_json"]) if entry["metadata_json"] else None
         except (ValueError, TypeError) as exc:
             raise ReadError("La procedencia almacenada no es válida", 409) from exc
         if metadata is not None and (
@@ -270,7 +271,9 @@ class LocalLLMReadAPI:
             "messages": segments["messages"],
             "provenance": metadata,
             "provenance_status": (
-                "available" if metadata is not None else "not_recorded"),
+                ("unavailable" if metadata.get("trace_status") == "unavailable" else
+                 "partial" if metadata.get("trace_status") in ("partial", "excede_limite")
+                 else "available") if metadata is not None else "not_recorded"),
             "source": "local",
             "linked_record": self._linked_record(
                 call_id=entry["call_id"], purpose=entry["purpose"],

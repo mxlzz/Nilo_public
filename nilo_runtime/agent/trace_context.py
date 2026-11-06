@@ -78,7 +78,14 @@ def transport_started(body: bytes, provider: str):
         return None
     scope.ordinal += 1
     from nilo_runtime.agent.provenance import build_metadata
-    meta = _try(build_metadata, scope.snapshots, body, str(provider), scope.purpose)
+    try:
+        meta = build_metadata(scope.snapshots, body, str(provider), scope.purpose)
+    except Exception:
+        # Keep the literal body even when metadata cannot be produced. Never
+        # archive exception text: it may contain values from a hidden context.
+        meta = {"schema_version": 1, "trace_status": "unavailable",
+                "reason": "metadata_capture_failed",
+                "payload_verification": "no_verificado_con_el_payload"}
     scope.current_id = _try(
         scope.store.begin,
         body=body,
