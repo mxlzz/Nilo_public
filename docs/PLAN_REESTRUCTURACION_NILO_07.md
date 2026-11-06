@@ -1,7 +1,7 @@
 # Nilo 0.7 — Plan de reestructuración integral por etapas
 
-**Estado vigente al 5/11/2026:** etapas **00–22 completadas** en `refactor/0.7`;
-etapa **23 · Evaluación autónoma real** en curso (herramientas listas; corridas reales aún pendientes). El seguimiento actual está en
+**Estado vigente al 6/11/2026:** etapas **00–23 completadas** en `refactor/0.7`;
+**etapa 24 · Limpieza final y release** habilitada, pendiente de ejecución. La etapa 23 se cerró con criterio arquitectónico acotado y observaciones reales de Gemini; **Groq no fue verificado**. [Acta de cierre](ETAPA_23_CIERRE_ARQUITECTURA_07.md). El seguimiento actual está en
 [ESTADO_REESTRUCTURACION_07.md](ESTADO_REESTRUCTURACION_07.md) y el cierre de la
 migración pública en [MIGRACION_PUBLICA_ETAPA_03.md](MIGRACION_PUBLICA_ETAPA_03.md).
 La descripción de propuesta que sigue se conserva como registro del plan original.
@@ -67,7 +67,7 @@ No reescribir el sistema entero de una vez ni dejar dos motores permanentes. Tra
 | Paso | Revisión profunda y reescritura | Puerta de salida |
 |---|---|---|
 | **22 · QA transversal y rendimiento** | Reevaluar huecos de los 646 tests/68 escenarios; ampliar tests unitarios, integración, metamórficos, cambios de estado, estáticos, UI, cargas largas y cobertura; auditar deuda surgida durante la migración. | CI verificable, benchmark SQLite/navegación, matriz de cambios intencionales vs baseline. |
-| **23 · Evaluación autónoma real** | Comparar partidas Gemini/Groq con semillas, snapshots, presupuestos y condiciones registrados. Examinar bucles, continuidad, curiosidad, consumo LLM y hechos medibles; revisar anomalías y corregir solo lo atribuible. | Informe conductual reproducible, sin declarar mejoría por impresión o por tests sintéticos. |
+| **23 · Evaluación autónoma real** | **Cerrada con alcance revisado el 6/11/2026:** auditar integración y trazabilidad sobre la partida Gemini real y CI, discriminar defectos de refactorización de limitaciones funcionales preexistentes. Matriz comparativa Gemini/Groq pasa al backlog, sin fingir verificación. | [Acta de cierre arquitectónico](ETAPA_23_CIERRE_ARQUITECTURA_07.md), sin afirmar mejora conductual ni Groq verificado. |
 | **24 · Limpieza final y release 0.7.0** | Auditoría final del árbol: imports y módulos huérfanos, compatibilidad residual, rutas alternativas, documentación, empaquetado, seguridad, migración y rollback. Eliminar adaptadores temporales sin uso. | Instalación nueva e importada correctas, reversión probada, manifest y release `0.7.0`; sin segundo motor legado permanente. |
 
 ## Criterios que no se negocian durante la migración

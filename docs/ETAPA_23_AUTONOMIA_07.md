@@ -1,6 +1,6 @@
 # Nilo 0.7 — Etapa 23 · Evaluación autónoma real
 
-**Estado: en curso.** Se incorporaron instrumentos de ejecución y análisis en la rama de trabajo. **Todavía no se acreditan corridas reales de Gemini y Groq.** No cerrar la etapa por tests sintéticos o resultados del modo demo. La rama main y VERSION siguen en 0.6.4; PR #77 permanece como borrador.
+**Estado: cerrada el 6/11/2026 con alcance arquitectónico revisado** (ver [acta de cierre](ETAPA_23_CIERRE_ARQUITECTURA_07.md)). Se auditó una corrida Gemini real de 5h53 con trazas del motor. **Groq no fue verificado y no hay comparación controlada entre proveedores.** Este documento conserva el protocolo prospectivo original como referencia histórica; la matriz de cuatro partidas se traslada al backlog y no condiciona la salida de la reestructuración. La rama main y VERSION siguen en 0.6.4; PR #77 permanece borrador.
 
 [Plan general](PLAN_REESTRUCTURACION_NILO_07.md) · [Tablero](ESTADO_REESTRUCTURACION_07.md) · [Protocolo previo](PROTOCOLO_EVALUACION_0594.md).
 
@@ -48,4 +48,9 @@ La revisión de cada caso debe estudiar: secuencia de planes y resultados físic
 
 ## 5. Puerta de salida
 
-**Pendiente:** cuatro corridas reales documentadas, comparación reproducible, inspección de anomalías con IDs de acciones/mediciones y corrección exclusivamente de defectos atribuibles al motor si aparecen. La validación CI de instrumental no constituye cierre conductual. [CI integral del instrumental inicial #42100801500](https://github.com/mxlzz/Nilo_public/actions/runs/42100801500) finalizó **success** con nueve pruebas focalizadas, suite sin credenciales, replay y paquete portable. Los ajustes posteriores de identidad por commit y referencias de episodios tienen ejecución de CI propia; no atribuirles retrospectivamente aquel éxito. Hasta entonces, la etapa 24 y el release 0.7.0 permanecen bloqueados.
+**Puerta original sustituida por decisión de alcance 6/11/2026:** la matriz de cuatro corridas reales no es exigencia del refactor; se acreditan una sesión Gemini real trazable, consistencia SQLite, vínculo de registros y CI integral. Groq y comparación de mejora conductual quedan **no verificados** y documentados para pruebas futuras. Los defectos históricos de autonomía no se corrigen durante el release salvo que impidan integración o pruebas. La validación CI de instrumental no constituye cierre conductual. [CI integral del instrumental inicial #42100801500](https://github.com/mxlzz/Nilo_public/actions/runs/42100801500) finalizó **success** con nueve pruebas focalizadas, suite sin credenciales, replay y paquete portable. Los ajustes posteriores de identidad por commit y referencias de episodios tienen ejecución de CI propia; no atribuirles retrospectivamente aquel éxito. Hasta entonces, la etapa 24 y el release 0.7.0 permanecen bloqueados.
+
+
+## 6. Resolución de alcance (2026-11-06)
+
+La finalidad de Nilo 0.7 es mejorar modularidad, auditabilidad y mantenibilidad, no resolver en el mismo ciclo toda la deuda histórica de conducta. Por decisión explícita del proyecto, las cuatro corridas prospectivas Gemini/Groq dejan de ser condición de salida de la refactorización. Se verificó empíricamente la integración con Gemini, no Groq; [acta y evidencia](ETAPA_23_CIERRE_ARQUITECTURA_07.md). El programa sigue sujeto al control final de instalación, migración y rollback de la etapa 24; este cierre **no** equivale a release.
