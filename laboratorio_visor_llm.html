@@ -59,6 +59,43 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 @media(max-width:1000px){.shell{grid-template-columns:1fr}.list{max-height:260px}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){header{padding:14px}.shell{padding:9px}.summary-grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.role-head{align-items:start}}
 
+/* Etapa 04.1: composición específica del visor; tokens desde laboratorio.css. */
+.filters-primary{grid-template-columns:repeat(2,minmax(0,1fr))}
+.filter-advanced{margin-top:11px;border:1px solid var(--lab-border);border-radius:8px}
+.filter-advanced>summary{padding:9px 11px;font-size:12px;color:var(--lab-muted)}
+.filter-advanced[open]>summary{border-bottom:1px solid var(--lab-border)}
+.filter-advanced>.filters{padding:11px}
+.attempt-group{margin:2px 0 11px;padding:7px;border:1px solid var(--lab-border);border-radius:8px;background:var(--lab-surface);min-width:0}
+.attempt-group-title{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:2px 3px 8px;color:var(--lab-text);flex-wrap:wrap}
+.attempt-group-title b{font-size:12px}
+.attempt-group-title small{font:11px/1.45 var(--lab-mono);color:var(--lab-muted)}
+.attempt-group .item+.item{margin-top:5px}
+.attempt-group .item .tag{white-space:normal;text-align:right;max-width:60%}
+.block-index{margin:14px 0;border:1px solid var(--lab-border);border-radius:8px;background:var(--lab-surface)}
+.block-index>summary{padding:10px 12px;font-size:13px;font-weight:650}
+.block-index[open]>summary{border-bottom:1px solid var(--lab-border)}
+.block-index-list{display:grid;gap:10px;padding:12px;max-height:220px;overflow:auto}
+.block-index-group{display:grid;gap:6px}
+.block-index-group>strong{font:600 12px/1.4 var(--lab-font)}
+.block-index-items{display:flex;gap:6px;flex-wrap:wrap}
+.block-index-items button{font:11px/1.35 var(--lab-font);padding:5px 8px}
+.capture-meta{margin:12px 0;border:1px solid var(--lab-border);border-radius:7px}
+.capture-meta>summary{padding:9px 11px;color:var(--lab-muted);font-size:12px}
+.capture-meta[open]>summary{border-bottom:1px solid var(--lab-border)}
+.capture-meta-body{padding:10px;display:grid;gap:9px}
+.capture-meta-body .monospace{font:11px/1.5 var(--lab-mono);overflow-wrap:anywhere}
+#detail .role .block:focus-within{outline:1px solid var(--lab-focus);outline-offset:2px}
+#detail .block summary:focus-visible{outline:2px solid var(--lab-focus);outline-offset:2px}
+@media(max-width:760px){
+ .filters-primary{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .attempt-group .item .tag{max-width:none}
+ .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:440px){
+ .filters-primary{grid-template-columns:1fr}
+ .filters-primary label.wide{grid-column:1}
+ .block-index-list{max-height:200px}
+}
 </style>
 <link rel="stylesheet" href="/assets/laboratorio.css">
 </head>
@@ -76,19 +113,24 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 </header>
 <main class="shell">
 <aside class="panel" aria-label="Seleccionar solicitud">
-<div class="panel-head"><h2>Deliberaciones y conversaciones</h2><button type="button" id="refresh">Actualizar</button></div>
+<div class="panel-head"><div><h2>Consultas y reintentos</h2><p class="muted">Los intentos de una misma consulta se agrupan sin descartar registros.</p></div><button type="button" id="refresh">Actualizar</button></div>
 <div class="panel-body">
 <form id="filters">
-<div class="filters">
+<div class="filters filters-primary">
 <label>Proveedor<select id="provider"><option value="">Todos</option><option value="gemini">Gemini</option><option value="groq">Groq</option><option value="openai_compatible">Compatible</option></select></label>
 <label>Tipo<select id="purpose"><option value="">Todos</option><option value="deliberacion">Deliberación</option><option value="chat">Chat</option></select></label>
-<label>Estado<select id="state"><option value="">Todos</option><option value="accepted">Aceptado</option><option value="rejected">Rechazado</option><option value="http_error">Error HTTP</option><option value="transport_error">Error de red</option><option value="transport_attempted">Intentado</option><option value="response_received">Respondido</option><option value="invalid_http_response">Respuesta inválida</option></select></label>
+<label class="wide">Estado<select id="state"><option value="">Todos</option><option value="accepted">Aceptado por validador</option><option value="rejected">Rechazado por validador</option><option value="http_error">Error HTTP</option><option value="transport_error">Error de transporte</option><option value="transport_attempted">Envío iniciado</option><option value="response_received">Respuesta recibida</option><option value="invalid_http_response">Respuesta inválida</option></select></label>
+</div>
+<details class="filter-advanced">
+<summary>Más filtros · fecha, modelo e identificadores</summary>
+<div class="filters">
 <label>Fecha UTC<input type="date" id="date"></label>
+<label>Registros por página<select id="limit"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
 <label class="wide">Modelo<input id="model" maxlength="120" placeholder="Nombre exacto del modelo"></label>
 <label class="wide">ID de deliberación<input id="call" maxlength="32" placeholder="32 caracteres hexadecimales"></label>
-<label>Sesión<input id="session" type="number" min="1" step="1" placeholder="Todas"></label>
-<label>Registros por página<select id="limit"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
+<label class="wide">Sesión<input id="session" type="number" min="1" step="1" placeholder="Todas"></label>
 </div>
+</details>
 <div class="actions" style="margin-top:12px"><button class="grow" type="submit">Aplicar filtros</button><button type="button" id="clear">Limpiar</button></div>
 </form>
 <p class="status" id="list-status" role="status">Cargando capturas…</p>
@@ -98,7 +140,7 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 </aside>
 <section class="panel" aria-label="Contenido de la solicitud">
 <div class="panel-head">
-<div><h2>Contenido literal</h2><p class="muted">Cada bloque conserva su texto original. Los subtítulos son externos al prompt.</p></div>
+<div><h2>Texto de la solicitud</h2><p class="muted">Roles y campos originales, sin reescritura. Títulos y subtítulos fuera del texto enviado.</p></div>
 <div class="modes" aria-label="Modo de visualización">
 <button type="button" id="simple-mode" class="selected" aria-pressed="true">Simplificada</button>
 <button type="button" id="pro-mode" aria-pressed="false">Profesional</button>
@@ -154,7 +196,7 @@ if(requestToken!==listEpoch)return;
 if(reset)attempts=[];attempts.push(...response.attempts);
 nextBefore=response.next_before;
 renderAttempts();
-$("count").textContent=attempts.length+" intentos cargados";
+$("count").textContent=groupAttempts(attempts).length+" consultas · "+attempts.length+" intentos cargados";
 updateStatus(!response.available?"Todavía no hay solicitudes capturadas en esta partida.":attempts.length?"Elegí un intento para inspeccionarlo.":"No hay intentos que coincidan con esos filtros.");
 $("more").disabled=nextBefore===null;
 if(reset&&attempts.length){await selectAttempt(attempts[0].attempt_id)}
@@ -164,17 +206,41 @@ if(reset&&!attempts.length){current=null;activeId="";$("detail").replaceChildren
  updateStatus("No fue posible leer el historial: "+err.message,true);$("more").disabled=nextBefore===null
 }
 }
+function groupAttempts(items){
+const groups=new Map();
+for(const item of items){
+ const key=String(item.session_id??"")+" / "+String(item.call_id||item.attempt_id);
+ if(!groups.has(key))groups.set(key,[]);
+ groups.get(key).push(item);
+}
+return [...groups.values()]
+}
 function renderAttempts(){
 const list=$("attempt-list");list.replaceChildren();
-for(const item of attempts){
-const btn=N("button","item"+(item.attempt_id===activeId?" active":""));btn.type="button";btn.dataset.attempt=item.attempt_id;
-const top=N("div","top");
-append(top,N("b","",item.purpose==="chat"?"Conversación":"Deliberación"),N("span","tag "+statusClass(item.status),statusLabel(item.status)));
-const name=N("div","monospace",item.provider+" · "+item.model);
-const meta=N("small","",formatDate(item.started_utc)+" · intento "+item.attempt_ordinal);
-append(btn,top,name,meta);
-btn.addEventListener("click",()=>selectAttempt(item.attempt_id));
-list.appendChild(btn);
+for(const group of groupAttempts(attempts)){
+ const first=group[0];
+ const section=N("section","attempt-group");
+ const header=N("div","attempt-group-title");
+ const title=first.purpose==="chat"?"Conversación":"Deliberación";
+ const id=String(first.call_id||first.attempt_id||"");
+ const label=group.length===1?"1 intento":group.length+" intentos";
+ section.setAttribute("aria-label",title+" · consulta "+id+" · "+label);
+ append(header,N("b","",title),N("small","",label+" · "+id.slice(0,8)));
+ section.appendChild(header);
+ for(const item of group){
+  const selected=item.attempt_id===activeId;
+  const btn=N("button","item"+(selected?" active":""));
+  btn.type="button";btn.dataset.attempt=item.attempt_id;
+  btn.setAttribute("aria-pressed",String(selected));
+  const top=N("div","top");
+  append(top,N("b","","Intento "+item.attempt_ordinal),N("span","tag "+statusClass(item.status),statusLabel(item.status)));
+  const name=N("div","monospace",item.provider+" · "+item.model);
+  const meta=N("small","",formatDate(item.started_utc)+(item.simulated_at?" · "+item.simulated_at:""));
+  append(btn,top,name,meta);
+  btn.addEventListener("click",()=>selectAttempt(item.attempt_id));
+  section.appendChild(btn);
+ }
+ list.appendChild(section);
 }
 }
 async function selectAttempt(id){
@@ -236,16 +302,44 @@ append(body,toolbar,showText(N("div"),block.literal));
 const origin=N("details","extra");append(origin,N("summary","","Procedencia del campo"),fieldSources(block.json_pointer,meta,role));body.appendChild(origin);
 details.appendChild(body);return details
 }
-function renderMessages(data,container){
-const p=N("p","caption","El texto se presenta por roles y campos originales. El contenido no se traduce, resume ni normaliza.");container.appendChild(p);
-for(const message of data.messages||[]){
-const section=N("section","role"),head=N("div","role-head");
-append(head,N("b","",message.role),N("span","path",message.path));
-const body=N("div","role-content");
-for(const block of message.blocks||[])body.appendChild(renderBlock(block,data.provenance,message.role));
-if(!message.blocks||!message.blocks.length)body.appendChild(N("p","muted","Este mensaje no tiene bloques textuales."));
-append(section,head,body);container.appendChild(section);
+function focusBlock(details){
+ details.open=true;
+ if(typeof details.scrollIntoView==="function")details.scrollIntoView({behavior:"auto",block:"start"});
+ const heading=details.querySelector("summary");
+ if(heading&&typeof heading.focus==="function")heading.focus({preventScroll:true});
 }
+function renderMessages(data,container){
+container.appendChild(N("p","caption","Los bloques muestran fragmentos textuales originales, agrupados por rol y por campo. El índice y sus subtítulos no forman parte de la solicitud."));
+const index=N("details","block-index");
+index.open=true;
+const count=(data.messages||[]).reduce((total,msg)=>total+(msg.blocks||[]).length,0);
+append(index,N("summary","","Índice de bloques · "+count+" fragmentos"));
+const links=N("div","block-index-list");
+const messageSections=[];
+for(const message of data.messages||[]){
+ const section=N("section","role"),head=N("div","role-head");
+ append(head,N("b","",message.role),N("span","path",message.path));
+ const body=N("div","role-content"),group=N("div","block-index-group");
+ const entries=message.blocks||[];
+ append(group,N("strong","",message.role+" · "+entries.length+" bloques"));
+ const items=N("div","block-index-items");
+ for(const block of entries){
+  const target=renderBlock(block,data.provenance,message.role);
+  const button=N("button","",block.title||"Contenido");
+  button.type="button";
+  button.addEventListener("click",()=>focusBlock(target));
+  items.appendChild(button);
+  body.appendChild(target);
+ }
+ if(!entries.length)body.appendChild(N("p","muted","Este mensaje no tiene bloques textuales."));
+ group.appendChild(items);
+ links.appendChild(group);
+ append(section,head,body);
+ messageSections.push(section);
+}
+index.appendChild(links);
+container.appendChild(index);
+for(const section of messageSections)container.appendChild(section);
 }
 function renderProfessional(data,container){
 const intro=N("p","caption","Misma captura; incluye texto HTTP íntegro, trazas y referencias. Nunca se reconstruye desde el estado actual. Estado original del intento: "+data.status+". Una respuesta aceptada no acredita ejecución física.");container.appendChild(intro);
@@ -272,13 +366,22 @@ const toolbar=N("div","detail-toolbar");
 append(toolbar,N("h2","",data.purpose==="chat"?"Conversación registrada":"Deliberación registrada"),actionButton("Copiar solicitud",data.body_utf8));
 root.appendChild(toolbar);
 const facts=N("div","summary-grid");
-append(facts,kv("Proveedor",data.provider),kv("Modelo",data.model),kv("Estado del intento",statusLabel(data.status)),
-kv("Momento simulado",data.simulated_at),kv("Intento",data.attempt_ordinal),kv("Inicio UTC",formatDate(data.started_utc)),
-kv("Procedencia",provenanceLabel(data.provenance_status)));
+append(facts,kv("Modelo",data.model),kv("Estado del intento",statusLabel(data.status)),
+ kv("Momento simulado",data.simulated_at),kv("Procedencia",provenanceLabel(data.provenance_status)));
 root.appendChild(facts);
-const meta=N("p","caption","ID de consulta: "+data.call_id+" · ID de intento: "+data.attempt_id+" · SHA-256: "+data.body_sha256);
-root.appendChild(meta);
-if(data.linked_record)root.appendChild(N("p","caption","Registro relacionado por ID: "+data.linked_record.category+" · secuencia "+data.linked_record.seq+". Este vínculo no demuestra que la acción se haya ejecutado."));
+const capture=N("details","capture-meta");
+append(capture,N("summary","","Metadatos originales de la captura"));
+const metadata=N("div","capture-meta-body");
+append(metadata,
+ kv("Proveedor",data.provider),
+ kv("Intento",data.attempt_ordinal),
+ kv("Inicio UTC",formatDate(data.started_utc)),
+ kv("Sesión",data.session_id??"—"),
+ N("p","monospace","ID de consulta: "+data.call_id),
+ N("p","monospace","ID de intento: "+data.attempt_id),
+ N("p","monospace","SHA-256 del cuerpo: "+data.body_sha256));
+if(data.linked_record)append(metadata,N("p","caption","Registro relacionado por ID: "+data.linked_record.category+" · secuencia "+data.linked_record.seq+". Este vínculo no demuestra que la acción se haya ejecutado."));
+capture.appendChild(metadata);root.appendChild(capture);
 const canvas=N("div");root.appendChild(canvas);
 if(mode==="simple")renderMessages(data,canvas);else renderProfessional(data,canvas);
 }
