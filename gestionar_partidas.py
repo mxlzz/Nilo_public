@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import shutil
 import sqlite3
+from contextlib import closing
 
 HERE = Path(__file__).resolve().parent
 DB = HERE/'nilo_mundo.sqlite3'
@@ -21,7 +22,7 @@ VERSION = (HERE/'VERSION').read_text('utf-8').strip() if (HERE/'VERSION').exists
 
 
 def check_db(path: Path) -> None:
-    with sqlite3.connect(f'{path.resolve().as_uri()}?mode=ro', uri=True) as con:
+    with closing(sqlite3.connect(f'{path.resolve().as_uri()}?mode=ro', uri=True)) as con:
         valid = con.execute('PRAGMA quick_check').fetchone()
         if not valid or valid[0] != 'ok':
             raise ValueError('La copia de la partida no pasó la comprobación de integridad.')
@@ -37,8 +38,11 @@ def backup() -> Path:
     target = BACKUPS / f'{stamp}_v{VERSION.replace("/", "-")}'
     target.mkdir()
     try:
-        with sqlite3.connect(f'{DB.resolve().as_uri()}?mode=ro', uri=True, timeout=10) as src:
-            with sqlite3.connect(target/'nilo_mundo.sqlite3') as dst:
+        # sqlite3.Connection.__exit__ NO cierra la conexión en Python.
+        # Usar closing() para liberar lectores WAL también en Windows.
+        with closing(sqlite3.connect(f'{DB.resolve().as_uri()}?mode=ro',
+                                     uri=True, timeout=10)) as src:
+            with closing(sqlite3.connect(target/'nilo_mundo.sqlite3')) as dst:
                 src.backup(dst)
         check_db(target/'nilo_mundo.sqlite3')
         if CONFIG.exists():

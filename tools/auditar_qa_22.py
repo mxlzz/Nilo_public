@@ -100,9 +100,17 @@ def inventory():
         errors.append("La navegación no contiene el rechazo seguro de infinitos")
     packages=(ROOT/"MANIFIESTO_SHA256.json").read_text("utf-8")
     manifest=json.loads(packages).get("files",{})
-    for item in ("tests/test_qa_22.py","tools/benchmark_qa_22.py",
-                 "tools/auditar_qa_22.py","tools/cobertura_qa_22.py"):
-        if item not in manifest:errors.append("Falta en manifiesto: "+item)
+    # En 0.7.0 se separa el ZIP de producción de herramientas y tests.
+    # Las puertas deben existir EN EL REPO, no viajar en el ZIP del usuario.
+    development=("tests/test_qa_22.py","tools/benchmark_qa_22.py",
+                 "tools/auditar_qa_22.py","tools/cobertura_qa_22.py")
+    product_version=(ROOT/"VERSION").read_text("utf-8").strip()
+    if product_version=="0.7.0":
+        for item in development:
+            if item in manifest:errors.append("Herramienta de desarrollo en ZIP: "+item)
+    else:
+        for item in development:
+            if item not in manifest:errors.append("Falta en manifiesto: "+item)
     return {
         "schema":"nilo_qa_inventory_v1",
         "test_files":len(files),

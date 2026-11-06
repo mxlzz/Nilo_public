@@ -5,6 +5,7 @@ No requiere claves LLM. La fuente del save se preserva y no se publican datos.
 from __future__ import annotations
 
 import hashlib
+from contextlib import closing
 import json
 import os
 from pathlib import Path
@@ -75,7 +76,7 @@ def main():
         before = digest(old_db)
         if len(expected) == 40:
             import sqlite3
-            with sqlite3.connect(old_db) as db:
+            with closing(sqlite3.connect(old_db)) as db:
                 commit = db.execute("SELECT code_commit FROM engine_sessions "
                                     "ORDER BY id DESC LIMIT 1").fetchone()[0]
             assert commit == expected, (commit, expected)
@@ -91,9 +92,14 @@ def main():
              "from pathlib import Path; from nilo import Simulation; "
              "sim=Simulation(db_path=Path('nilo_mundo.sqlite3')); "
              "sim.write(); sim.conn.close(); print('Migración abierta')"], target)
+        # Los BAT de respaldo/restauración son procesos distintos. También
+        # así se acredita que no quedan conexiones SQLite abiertas.
+        made = run([str(target_python), "-B", "-c",
+                    "from gestionar_partidas import backup; print(backup())"], target)
+        folder = Path(made.stdout.strip().splitlines()[-1])
         run([str(target_python), "-B", "-c",
-             "from gestionar_partidas import backup, restore; "
-             "folder=backup(); restore(folder); "
+             "from pathlib import Path; from gestionar_partidas import restore; "
+             "restore(Path(" + repr(str(folder)) + ")); "
              "print('Backup y restore verificados')"], target)
         assert digest(old_db) == before
         run([str(target_python), "-B", "-c",
