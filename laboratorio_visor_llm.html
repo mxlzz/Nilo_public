@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nilo · Visor literal del contexto LLM</title>
 <style>
-:root{color-scheme:dark;--bg:#111716;--panel:#192220;--raised:#202b28;--line:#364742;--ink:#ebf0ec;--muted:#a4b7af;--accent:#b6d6bf;--subtle:#d3ddd6;--error:#ecc0b0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+/* Tokens globales definidos en assets/laboratorio.css */
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
 a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}button{cursor:pointer;background:var(--raised);color:var(--ink);border:1px solid #54695e;border-radius:6px;padding:7px 11px}button:hover{border-color:var(--accent)}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button:disabled{opacity:.55;cursor:default}
 header{display:flex;justify-content:space-between;align-items:center;padding:17px 22px;border-bottom:1px solid var(--line);gap:12px;flex-wrap:wrap}
@@ -58,11 +58,11 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 #notice{margin:11px 0;color:var(--muted);font-size:12px;min-height:18px}
 @media(max-width:1000px){.shell{grid-template-columns:1fr}.list{max-height:260px}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){header{padding:14px}.shell{padding:9px}.summary-grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.role-head{align-items:start}}
-nav[data-lab-nav="primary"]{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
-nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
+
 </style>
+<link rel="stylesheet" href="/assets/laboratorio.css">
 </head>
-<body>
+<body data-lab="visor_llm">
 <header>
 <div><div class="eyebrow">Nilo · Laboratorio / Solicitudes reales</div><h1>Contexto que recibe el LLM</h1>
 <p class="muted">Solicitudes reales archivadas, sin reinterpretar sus mensajes.</p></div>
@@ -72,6 +72,7 @@ nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"]
 <a href="/">Pruebas</a>
 <a href="/ajustes">Ajustes</a>
 </nav>
+<div class="lab-theme-control"><button id="lab-theme-toggle" type="button" aria-label="Cambiar tema">Tema: sistema</button></div>
 </header>
 <main class="shell">
 <aside class="panel" aria-label="Seleccionar solicitud">
@@ -289,4 +290,5 @@ $("clear").addEventListener("click",()=>{for(const id of FIELDS){$(id).value=id=
 $("more").addEventListener("click",()=>refresh(false));
 refresh(true);
 </script>
+<script src="/assets/laboratorio_ui.js" defer></script>
 </body></html>

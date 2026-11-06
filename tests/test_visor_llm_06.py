@@ -39,8 +39,13 @@ class BrowserContract(HTMLParser):
             assert a["id"] not in self.ids, "id duplicado: " + a["id"]
             self.ids.add(a["id"])
         if tag == "script":
-            self.in_script = True
-            assert "src" not in a, "La vista inicial utiliza JS autocontenido"
+            # Los cuerpos LLM permanecen renderizados por JS inline controlado.
+            # La única dependencia añadida es el selector local de tema.
+            if "src" in a:
+                assert a["src"] == "/assets/laboratorio_ui.js", "JS externo no autorizado"
+                self.in_script = False
+            else:
+                self.in_script = True
         if tag == "a":
             self.hrefs.add(a.get("href"))
         for name,_ in attrs:

@@ -2,7 +2,7 @@
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nilo · Historial reproducible</title>
 <style>
-:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#1d272b;background:#f3f5f4;font-size:13px;line-height:1.45}
+/* Tokens globales definidos en assets/laboratorio.css */
 *{box-sizing:border-box}body{margin:0}header{padding:15px 20px;background:#fff;border-bottom:1px solid #d1dcda;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
 h1{font-size:20px;margin:0}h2{font-size:16px;margin:0 0 10px}h3{font-size:13px;margin:12px 0 6px}p{margin:6px 0 10px}
 a{color:#286659}button{border:1px solid #9aafaa;background:#fff;color:#1f3430;padding:8px 12px;border-radius:5px;cursor:pointer;font:inherit}
@@ -31,10 +31,10 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
 #resultView{max-height:78vh;overflow:auto}
 @media(max-width:1200px){.layout{grid-template-columns:300px 1fr}.result-panel{grid-column:1/-1}}
 @media(max-width:700px){.layout{grid-template-columns:1fr;padding:8px}.result-panel{grid-column:auto}.timeline-items{max-height:240px}header{padding:12px}}
-nav[data-lab-nav="primary"]{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
-nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
-</style></head>
-<body>
+
+</style>
+<link rel="stylesheet" href="/assets/laboratorio.css"></head>
+<body data-lab="historico">
 <header>
  <div><h1>Historial de partidas</h1><div class="muted">Registros originales de solo lectura · Reproducciones aisladas desde estados preservados</div></div>
  <nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
@@ -43,6 +43,7 @@ nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"]
 <a href="/">Pruebas</a>
 <a href="/ajustes">Ajustes</a>
 </nav>
+<div class="lab-theme-control"><button id="lab-theme-toggle" type="button" aria-label="Cambiar tema">Tema: sistema</button></div>
 </header>
 <main class="layout">
 <section class="panel">
@@ -272,4 +273,5 @@ ask("/api/history/catalog")
  .then(data=>{if(initialToken===sourceToken)showData(data)})
  .catch(e=>{if(initialToken===sourceToken)$("fileStatus").textContent=e.message});
 })();
-</script></body></html>
+</script><script src="/assets/laboratorio_ui.js" defer></script>
+</body></html>

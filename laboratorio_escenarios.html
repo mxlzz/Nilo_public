@@ -3,7 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nilo · Pruebas del motor</title>
 <style>
-:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45;color:#182025;background:#f4f5f4}
+/* Tokens globales definidos en assets/laboratorio.css */
 *{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid #cbd4d2;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
 h1{font-size:21px;margin:0}h2{font-size:16px;margin:0 0 12px}h3{font-size:14px;margin:12px 0 6px}
 p{margin:6px 0 10px}.meta{color:#586568;font-size:12px}.button-row{display:flex;gap:7px;flex-wrap:wrap}
@@ -45,9 +45,9 @@ details summary{cursor:pointer;font-size:12px;font-weight:600}
 #sandboxPane{grid-column:1}.shell.sandbox-active #sandboxPane{grid-column:1;grid-row:1}.shell.sandbox-active .result-panel{grid-column:2;grid-row:1}.hidden{display:none!important}.footer{color:#63736f;font-size:11px;max-width:1800px;margin:0 auto;padding:8px 18px 20px}
 @media(max-width:1000px){.shell{grid-template-columns:1fr}.left-stack{height:auto;min-height:0;grid-template-rows:300px auto}.left-stack #detailPanel{min-height:250px}.result-panel{grid-column:1}#sandboxPane{grid-column:1}}
 @media(max-width:730px){.shell{grid-template-columns:1fr;padding:8px}.panel-head{padding:10px}.op-grid{grid-template-columns:repeat(3,1fr)}.left-stack{grid-template-rows:260px auto}#result{max-height:none}}
-nav[data-lab-nav="primary"]{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
-nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"] a[aria-current="page"]{font-weight:700;text-decoration:underline}
-</style></head><body>
+
+</style>
+<link rel="stylesheet" href="/assets/laboratorio.css"></head><body data-lab="escenarios">
 <header>
  <div><h1>Pruebas del motor</h1><div class="meta">Simulación aislada con el motor real · Solicitudes calculadas, no enviadas al LLM</div></div>
  <div class="lab-navigation">
@@ -63,6 +63,7 @@ nav[data-lab-nav="primary"] a[aria-current="page"],nav[data-lab-nav="secondary"]
  <a class="meta" href="/sandbox">Mundo interactivo</a>
  </nav>
  </div>
+<div class="lab-theme-control"><button id="lab-theme-toggle" type="button" aria-label="Cambiar tema">Tema: sistema</button></div>
 </header>
 <div class="shell">
  <div class="left-stack" id="leftColumn">
@@ -481,4 +482,5 @@ getJSON("/api/catalog").then(data=>{
 }).catch(showError);
 })();
 </script>
+<script src="/assets/laboratorio_ui.js" defer></script>
 </body></html>

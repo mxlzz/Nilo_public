@@ -9,6 +9,8 @@
     "archive.py": "sha256-calculated-during-packaging",
     "assets/actions.js": "sha256-calculated-during-packaging",
     "assets/feed.js": "sha256-calculated-during-packaging",
+    "assets/laboratorio_ui.js": "sha256-calculated-during-packaging",
+    "assets/laboratorio.css": "sha256-calculated-during-packaging",
     "assets/nilo.css": "sha256-calculated-during-packaging",
     "assets/records.js": "sha256-calculated-during-packaging",
     "assets/state.js": "sha256-calculated-during-packaging",
@@ -75,6 +77,7 @@
     "nilo_runtime/agent/budget.py": "sha256-calculated-during-packaging",
     "nilo_runtime/agent/gateway.py": "sha256-calculated-during-packaging",
     "nilo_runtime/agent/prompts.py": "sha256-calculated-during-packaging",
+    "nilo_runtime/agent/provenance_codec.py": "sha256-calculated-during-packaging",
     "nilo_runtime/agent/provenance.py": "sha256-calculated-during-packaging",
     "nilo_runtime/agent/responses.py": "sha256-calculated-during-packaging",
     "nilo_runtime/agent/trace_context.py": "sha256-calculated-during-packaging",
@@ -174,7 +177,6 @@
     "validar_escenarios.py": "sha256-calculated-during-packaging",
     "VERSION": "sha256-calculated-during-packaging",
     "vessels.py": "sha256-calculated-during-packaging",
-    "world.py": "sha256-calculated-during-packaging",
-    "nilo_runtime/agent/provenance_codec.py": "sha256-calculated-during-packaging"
+    "world.py": "sha256-calculated-during-packaging"
   }
 }
