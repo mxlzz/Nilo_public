@@ -20,7 +20,7 @@ from nilo_runtime.labs.profiles import baseline
 from auditar_contexto_llm import scenario_context
 
 ROOT=Path(__file__).resolve().parents[1]
-ASSET=ROOT/"assets"/"laboratorio_revision.js"
+ASSET=ROOT/"assets"/"laboratorio_ui.js"
 
 
 class ReviewArtifactTests(unittest.TestCase):
@@ -161,8 +161,9 @@ const id=a.key(m.path,m.blocks[0]);
                      "laboratorio_ajustes.html"):
             with self.subTest(path=path):
                 html=(ROOT/path).read_text(encoding="utf-8")
-                self.assertIn('/assets/laboratorio_revision.js',html)
-                self.assertIn('/assets/laboratorio_revision.css',html)
+                self.assertIn('/assets/laboratorio_ui.js',html)
+                self.assertIn('/assets/laboratorio.css',html)
+                self.assertNotIn('/assets/laboratorio_revision.',html)
                 self.assertIn('NiloReview.controller(',html)
                 self.assertIn('.addHeader(',html)
                 self.assertIn('.addBlock(',html)
@@ -191,9 +192,10 @@ const id=a.key(m.path,m.blocks[0]);
                 self.assertFalse(info["writes_to_world"])
                 self.assertIn("antecedentes_relacionados",info["optional_context"])
                 self.assertEqual(get('/api/lab/audit/info?file=/etc/passwd')[0],400)
-                for path in ('/assets/laboratorio_revision.js',
-                             '/assets/laboratorio_revision.css'):
+                for path in ('/assets/laboratorio_ui.js',
+                             '/assets/laboratorio.css'):
                     self.assertEqual(get(path)[0],200)
+                self.assertNotEqual(get('/assets/laboratorio_revision.js')[0],200)
                 self.assertNotEqual(get('/assets/../../etc/passwd')[0],200)
             finally:
                 server.shutdown();server.server_close()
