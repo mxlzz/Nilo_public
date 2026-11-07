@@ -243,6 +243,99 @@ function selectIndex(index){
   }
  }).catch(err=>{if(requestToken===detailToken)$("resultView").innerHTML='<p class="error">'+safe(err.message)+'</p>'});
 }
+function rawDetail(title,value){
+ const encoded=safe(json(value));
+ return '<details><summary>'+safe(title)+'</summary><pre>'+encoded+'</pre></details>';
+}
+function renderEpisode(data){
+ // Todo texto de partida o proveedor debe pasar por safe(). No usar HTML
+ // de respuesta, mensajes ni notas como markup de la interfaz.
+ const attempts=data.attempts||[],linked=data.linked||{},related=data.related||{};
+ const decision=data.decision;
+ const original=data.recorded_event||{};
+ const cards=[];
+ const meta=attempts.map(a=>{
+   const response=a.response;
+   const link=(data.open_in_llm_viewer&&/^[0-9a-f]{32}$/.test(a.attempt_id||""))?
+     '<a href="/visor-llm?id='+encodeURIComponent(a.attempt_id)+'">Abrir solicitud literal en el visor</a>':
+     '<span class="muted">Solicitud literal no accesible desde esta partida en el visor actual.</span>';
+   const label='Intento '+safe(a.attempt_ordinal)+' · '+safe(a.provider)+' / '+safe(a.model)+
+      ' · '+safe(a.status)+' · '+safe(a.body_bytes)+' bytes';
+   const responseLabel=response?
+     (response.capture_status==="captured"?"Respuesta literal archivada":"Respuesta omitida por tamaño; solo hash/tamaño"):
+     "Respuesta no archivada en esta versión";
+   return '<div class="episode-evidence"><b>'+label+'</b><p class="episode-label">'+safe(responseLabel)+
+     (response?' · fase: '+safe(response.parse_phase):'')+'</p>'+
+     '<div class="episode-actions">'+link+'</div>'+
+     (response?rawDetail("Integridad y captura",{sha256:response.body_sha256,bytes:response.body_bytes,
+        capture_status:response.capture_status,parse_phase:response.parse_phase}):'')+
+     (response&&response.text!==null?'<details><summary>Ver texto original del modelo</summary><pre>'+safe(response.text)+'</pre></details>':'')+
+     '</div>';
+ }).join("");
+ cards.push('<section class="episode-card"><h3>1 · Recibió</h3>'+
+   '<p class="episode-label">Solicitud HTTP real enviada al proveedor, cuando está archivada. No es una reconstrucción del estado actual.</p>'+
+   (attempts.length?meta:'<p class="episode-empty">No hay solicitud HTTP archivada para este episodio.</p>')+
+   '</section>');
+ const note=attempts.some(a=>a.response&&a.response.text!==null)?
+   "Hay respuesta original en los intentos desplegables del apartado anterior.":
+   "Sin respuesta textual original registrada; el registro normalizado no equivale al texto crudo.";
+ cards.push('<section class="episode-card"><h3>2 · Decidió</h3><p class="episode-label">'+safe(note)+'</p>'+
+   (decision?rawDetail("Ver decisión normalizada completa",decision)+
+    (decision.cuaderno?'<p class="episode-evidence">Cuaderno del modelo: '+safe(decision.cuaderno)+'</p>':''):
+    '<p class="episode-empty">No hay decisión normalizada atribuible a este episodio.</p>')+
+   '</section>');
+ const actions=linked.planned_actions||[];
+ let executed=actions.length?actions.map((a,i)=>
+   '<div class="episode-evidence"><b>'+(i+1)+'. '+safe(a.operation||"Acción")+'</b> · '+safe(a.label||"")+
+   '<p class="episode-label">Checkpoint '+safe(a.checkpoint_id)+' · vínculo exacto por '+safe(a.matched_by)+
+   '</p>'+rawDetail("Metadatos del checkpoint",a)+'</div>').join(""):
+   '<p class="episode-empty">Sin acciones del plan enlazadas mediante identificadores exactos. Esto no demuestra que no hubiera actividad.</p>';
+ if(original.kind==="action"){
+   executed='<p class="episode-label">Actividad registrada individualmente: no se atribuye a una deliberación por proximidad temporal.</p>'+
+     rawDetail("Operación original del checkpoint",original.command||{});
+ }
+ if(original.kind==="diagnostic"){
+   executed=rawDetail("Diagnóstico histórico original",original.historical||{});
+ }
+ cards.push('<section class="episode-card"><h3>3 · Ejecutó</h3>'+executed+'</section>');
+ const groups=[
+   ["Cuaderno archivado",related.journals||[]],
+   ["Mediciones",related.measurements||[]],
+   ["Diagnósticos",related.diagnostics||[]],
+   ["Experiencias",related.experiences||[]]
+ ];
+ const evidence=groups.map(([label,rows])=>
+   '<div class="episode-evidence"><strong>'+safe(label)+' · '+rows.length+'</strong>'+
+   (rows.length?rows.map((x,i)=>rawDetail(label+' #'+(i+1)+' · vínculo '+x.matched_by,x.record)).join(""):
+   '<p class="episode-empty">Sin registros con ID comprobado en esta categoría.</p>')+'</div>').join("");
+ const recorded=original.kind==="action"&&(original.related||[]).length?
+   '<details><summary>Diagnósticos próximos al checkpoint (atribución no comprobada)</summary>'+
+     '<p class="episode-label">La asociación temporal no equivale a evidencia causal.</p>'+
+     (original.related||[]).map((x,i)=>rawDetail("Registro próximo "+(i+1),x.payload)).join("")+
+   '</details>':'';
+ cards.push('<section class="episode-card"><h3>4 · Quedó registrado</h3>'+
+   '<p class="episode-label">Que una experiencia figure en el archivo no prueba que se haya incluido en el próximo prompt.</p>'+
+   evidence+recorded+'</section>');
+ let controls="";
+ if(original.replayable&&original.id?.startsWith("cp:")){
+   controls='<div class="episode-actions"><button id="episodeToReplay" type="button">Examinar este punto en Reproducción</button></div>';
+ }
+ const limitations=(data.limitations||[]).map(t=>'<li>'+safe(t)+'</li>').join("");
+ $("resultView").innerHTML=
+   '<div class="episode-breadcrumb">Episodio · '+safe(data.label||"Sin fecha")+
+   (data.trace_call_id?' · llamada '+safe(data.trace_call_id.slice(0,8))+'…':' · vínculo de llamada no disponible')+
+   '</div>'+
+   '<div class="episode-note">Los textos originales y los datos calculados se distinguen. Una secuencia temporal no demuestra por sí sola por qué el LLM tomó una decisión.</div>'+
+   '<div class="episode-chain">'+cards.join("")+'</div>'+
+   controls+
+   (limitations?'<details><summary>Datos ausentes y límites de atribución ('+(data.limitations||[]).length+')</summary><ul>'+limitations+'</ul></details>':'');
+ const switchToReplay=$("episodeToReplay");
+ if(switchToReplay)switchToReplay.onclick=()=>{
+   const wanted=original.id;setMode("moments");
+   const index=view.findIndex(e=>e.id===wanted);
+   if(index>=0)selectIndex(index);
+ };
+}
 function renderTrace(trace){
  if(!trace||!trace.length)return '<p class="muted">Sin funciones instrumentadas en esta etapa.</p>';
  return trace.map((r,i)=>{
