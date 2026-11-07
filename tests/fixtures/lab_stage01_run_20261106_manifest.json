@@ -1,0 +1,104 @@
+{
+  "schema": "nilo-lab-stage01-inventory-v1",
+  "privacy": "Solo agregados y SHA-256; sin contenidos de mundo, prompts, respuestas ni identificadores",
+  "source_files": {
+    "world_sha256": "1708a11bb354df01013ce3742c3925aa9a13faf9f453f8b704dc50de3099dc9d",
+    "requests_sha256": "222124794575ac3a11f501585377820f87423f123a5bf342cd0f09d9fb31f58a"
+  },
+  "world": {
+    "engine_versions": [
+      "0.7.0"
+    ],
+    "history_total": 317,
+    "history_by_category": {
+      "decision": 17,
+      "diagnostic": 35,
+      "event": 151,
+      "experience": 17,
+      "journal": 17,
+      "llm_decision": 17,
+      "measurement": 35,
+      "news": 4,
+      "observation": 9,
+      "prediction": 1,
+      "project": 1,
+      "research": 11,
+      "tool": 2
+    },
+    "checkpoints_total": 53,
+    "checkpoints_by_kind": {
+      "action": 36,
+      "decision": 17
+    },
+    "checkpoint_hash_valid": 53,
+    "checkpoint_hash_invalid": 0,
+    "checkpoint_actions_by_op": {
+      "craft": 2,
+      "excavate": 5,
+      "explore": 12,
+      "forage": 1,
+      "gather": 2,
+      "go": 4,
+      "inspect": 7,
+      "use": 3
+    }
+  },
+  "requests": {
+    "attempts_total": 19,
+    "unique_calls": 18,
+    "status_counts": {
+      "accepted": 18,
+      "transport_error": 1
+    },
+    "duplicate_body_hashes": 1,
+    "body_sha256_invalid": 0,
+    "body_length_invalid": 0,
+    "provenance_count": 19,
+    "provenance_errors": 0,
+    "provenance_payload_verification": {
+      "verificado_con_payload_http": 19
+    },
+    "provenance_trace_status": {
+      "complete": 19
+    }
+  },
+  "links": {
+    "archived_llm_decisions": 17,
+    "decisions_with_call_id": 17,
+    "decisions_with_matching_request": 17,
+    "decisions_without_call_id": 0,
+    "accepted_attempts_without_archived_decision": 1
+  },
+  "reference_cases": [
+    {
+      "kind": "primera_solicitud",
+      "body_sha256": "1d3c480277dea758afd1d296c0112261d135913eddc46870772c55d986cf8ced",
+      "body_bytes": 31191,
+      "status": "accepted"
+    },
+    {
+      "kind": "error_transporte",
+      "body_sha256": "7af323efaafb6748e1b78a5d67bed0c4e8867a2218ef90ef02a32a25e77c0ecb",
+      "body_bytes": 36234,
+      "status": "transport_error"
+    },
+    {
+      "kind": "reintento_aceptado",
+      "body_sha256": "7af323efaafb6748e1b78a5d67bed0c4e8867a2218ef90ef02a32a25e77c0ecb",
+      "body_bytes": 36234,
+      "status": "accepted"
+    },
+    {
+      "kind": "aceptada_sin_decision_archivada",
+      "body_sha256": "68b3d071d75e02aab2a1e038bd6ad22fc6a7c9acadc1b37b7f1633f6f76791a3",
+      "body_bytes": 37681,
+      "status": "accepted"
+    }
+  ],
+  "limitations": [
+    "La solicitud HTTP aceptada no garantiza decisión archivada",
+    "No hay respuesta textual cruda en la sidecar de solicitudes de esta versión",
+    "Los checkpoints no garantizan replay idéntico con versiones o fuentes externas distintas",
+    "Los vínculos de acciones con decisiones requieren trazabilidad específica adicional"
+  ]
+}
