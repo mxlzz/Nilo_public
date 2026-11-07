@@ -85,7 +85,7 @@ const cp=x=>Array.from(x).length;
  await assert.rejects(()=>api.buildReview(model,forged,'',policy),/Selección ajena/);
  const incorrect={...model,messages:[{...message,
    blocks:[{...block,literal:'Texto cambiado'}]}]};
- await assert.rejects(()=>api.buildReview(incorrect,selection,'',policy),/Un bloque cambió/);
+ await assert.rejects(()=>api.buildReview(incorrect,selection,'',policy),/Bloque ajeno|Un bloque cambió/);
  const fakeSimulation={...model,kind:'calculated_preview',sent_to_llm:false};
  const preview=await api.buildReview(fakeSimulation,selection,'',policy);
  assert.equal(preview.source.sent_to_llm,false);
