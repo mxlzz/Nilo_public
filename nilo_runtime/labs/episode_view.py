@@ -13,7 +13,9 @@ import re
 import sqlite3
 
 from historical_lab import catalog, select_event
-from nilo_runtime.labs.episode_links import inspect_episode
+from nilo_runtime.labs.episode_links import (
+    inspect_episode, valid_planned_action_checkpoint,
+)
 from nilo_runtime.storage.llm_requests import RequestTraceStore
 
 _EVENT = re.compile(r"(?:cp|hist):[0-9]{1,14}\Z")
@@ -83,9 +85,15 @@ def list_episodes(world, *, limit=_MAX_ITEMS):
     checkpoint_calls = set()
     archived_decisions = []
     with closing(_readonly(world)) as db:
-        if _table(db, "lab_action_links"):
+        if (_table(db,"lab_action_links") and
+                _table(db,"timeline_checkpoints")):
             action_links = list(db.execute(
-                "SELECT action_checkpoint_id,trace_call_id FROM lab_action_links"))
+                """SELECT l.action_checkpoint_id,l.trace_call_id,
+                          l.journal_id,t.source,t.decision_json
+                   FROM lab_action_links l
+                   JOIN timeline_checkpoints t
+                     ON t.id=l.action_checkpoint_id
+                   WHERE t.kind='action'"""))
         if _table(db, "timeline_checkpoints") and (
                 "trace_call_id" in _columns(db, "timeline_checkpoints")):
             checkpoint_calls.update(
@@ -110,7 +118,9 @@ def list_episodes(world, *, limit=_MAX_ITEMS):
                 archived_decisions.append((int(row[0]),row[1],data,call))
 
     linked_action_ids = {int(row[0]) for row in action_links
-                         if row[1] in traced_calls}
+                         if row[1] in traced_calls
+                         and valid_planned_action_checkpoint(
+                             row[3],row[4],row[2])}
     entries = []
     for item in original["entries"]:
         kind, number = item["id"].split(":", 1)
@@ -265,9 +275,17 @@ def get_episode(world, identifier, *, viewer_world=None):
                     trace_id = row[0] if row is not None else None
                 if trace_id is None and _table(db, "lab_action_links"):
                     row = db.execute(
-                        "SELECT trace_call_id FROM lab_action_links "
-                        "WHERE action_checkpoint_id=?", (cp_id,)).fetchone()
-                    trace_id = row[0] if row else None
+                        """SELECT l.trace_call_id,l.journal_id,
+                                  t.source,t.decision_json
+                           FROM lab_action_links l
+                           JOIN timeline_checkpoints t
+                             ON t.id=l.action_checkpoint_id
+                           WHERE l.action_checkpoint_id=?
+                             AND t.kind='action'""",
+                        (cp_id,)).fetchone()
+                    if row and valid_planned_action_checkpoint(
+                            row[2],row[3],row[1]):
+                        trace_id = row[0]
         elif event["kind"] == "llm_decision":
             payload = event.get("historical")
             if isinstance(payload, dict):
