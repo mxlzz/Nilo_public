@@ -115,7 +115,8 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
 const $=id=>document.getElementById(id);
 const safe=v=>String(v===undefined||v===null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const json=v=>JSON.stringify(v,null,2);
-let events=[],view=[],selected=null,details=null,oldText="";
+let events=[],episodes=[],view=[],selected=null,details=null,oldText="";
+let mode="episodes",episodesLoading=false;
 let sourceToken=0,detailToken=0;
 const isReplayable=e=>Boolean(e&&e.replayable);
 async function ask(url,options){
@@ -142,26 +143,47 @@ function clearSelection(message="Seleccioná un momento para consultar su regist
 }
 function showData(data){
  clearSelection();
- events=data.entries||[];
+ events=data.entries||[];episodes=[];episodesLoading=true;
  $("fileStatus").textContent=data.source+" · "+events.length+" momentos · "+
     data.checkpoint_count+" puntos restaurables";
- if(!events.length){
-  view=[];$("timeline").max=0;$("count").textContent="0 momentos visibles";
-  $("firstLabel").textContent="—";$("lastLabel").textContent="—";
-  $("events").innerHTML='<p class="muted">La partida no tiene eventos relevantes.</p>';
-  clearSelection("Esta partida no tiene momentos para inspeccionar.");return
- }
  filterEvents();
+ const token=sourceToken;
+ ask("/api/history/episodes").then(result=>{
+   if(token!==sourceToken)return;
+   episodes=result.entries||[];episodesLoading=false;filterEvents();
+ }).catch(err=>{
+   if(token!==sourceToken)return;
+   episodesLoading=false;
+   if(mode==="episodes"){
+    $("events").innerHTML='<p class="error">'+safe(err.message)+'</p>';
+    $("resultView").textContent="No fue posible consultar el recorrido.";
+   }
+ });
 }
 function filterEvents(){
  let filter=$("filter").value,term=$("search").value.toLowerCase();
- view=events.filter(e=>{
-   let match=filter==="all"||
-     (filter==="decision"&&(e.kind==="decision"||e.kind==="llm_decision"))||
-     (filter==="action"&&(e.kind==="action"||e.kind==="diagnostic"))||
-     (filter==="failure"&&e.failed===true)||
-     (filter==="old"&&!e.replayable);
-   return match&&(e.label+" "+e.op+" "+e.title).toLowerCase().includes(term);
+ if(mode==="episodes"&&episodesLoading){
+   view=[];$("events").innerHTML='<p class="muted">Construyendo el recorrido con los vínculos disponibles…</p>';
+   $("count").textContent="Consultando episodios";$("timeline").max=0;
+   $("prev").disabled=true;$("next").disabled=true;return;
+ }
+ const base=mode==="episodes"?episodes:events;
+ view=base.filter(e=>{
+   let match;
+   if(mode==="episodes"){
+      match=filter==="all"||
+        (filter==="decision"&&(e.episode_kind==="deliberation"||e.episode_kind==="unlinked_call"))||
+        (filter==="action"&&(e.episode_kind==="independent"||e.episode_kind==="legacy"))||
+        (filter==="failure"&&e.failed===true)||
+        (filter==="old"&&(e.episode_kind==="legacy"||!e.replayable));
+   }else{
+      match=filter==="all"||
+        (filter==="decision"&&(e.kind==="decision"||e.kind==="llm_decision"))||
+        (filter==="action"&&(e.kind==="action"||e.kind==="diagnostic"))||
+        (filter==="failure"&&e.failed===true)||
+        (filter==="old"&&!e.replayable);
+   }
+   return match&&((e.label||"")+" "+(e.op||"")+" "+(e.title||"")).toLowerCase().includes(term);
  });
  $("count").textContent=view.length+" momentos visibles";
  $("timeline").max=Math.max(0,view.length-1);
@@ -183,22 +205,29 @@ function selectIndex(index){
  $("prev").disabled=i===0;$("next").disabled=i===view.length-1;
  let left=Math.max(0,i-7),right=Math.min(view.length,i+8);
  $("events").innerHTML=view.slice(left,right).map((e,j)=>'<button class="'+(e.id===selected.id?"active":"")+'" data-index="'+(left+j)+'"><span class="tmeta">'+
-  safe(e.label)+" · "+safe(e.kind)+(e.replayable?" · Restaurable":" · Registro")+'</span><span class="itemtitle">'+safe(e.op)+" · "+safe(e.title||"")+'</span></button>').join("");
+  safe(e.label)+" · "+safe(mode==="episodes"?(e.episode_kind==="deliberation"?"Deliberación":e.episode_kind==="independent"?"Actividad independiente":e.episode_kind==="unlinked_call"?"Consulta sin decisión":"Registro anterior"):e.kind)+(e.replayable?" · Restaurable":" · Registro")+'</span><span class="itemtitle">'+safe(e.op)+" · "+safe(e.title||"")+'</span></button>').join("");
  $("events").querySelectorAll("button[data-index]").forEach(b=>b.onclick=()=>selectIndex(Number(b.dataset.index)));
- $("kind").textContent=selected.replayable?"Punto restaurable":"Registro histórico";
+ $("kind").textContent=mode==="episodes"?(selected.episode_kind==="deliberation"?"Deliberación":selected.episode_kind==="independent"?"Actividad sin vínculo":selected.episode_kind==="unlinked_call"?"Consulta incompleta":"Registro anterior"):(selected.replayable?"Punto restaurable":"Registro histórico");
  $("eventTitle").textContent=selected.op;
  $("eventDescription").textContent=selected.label+" · "+(selected.title||"");
  $("eventVersion").textContent=selected.engine_version?"Motor registrado: "+selected.engine_version:"";
- $("legacyWarning").hidden=selected.replayable;
- $("replay").disabled=!selected.replayable;
- $("editContainer").hidden=!selected.replayable;
+ $("legacyWarning").hidden=mode==="episodes"||selected.replayable;
+ $("replay").disabled=mode==="episodes"||!selected.replayable;
+ $("editContainer").hidden=mode==="episodes"||!selected.replayable;
+ $("rightHeading").textContent=mode==="episodes"?"03 · Ficha de episodio":"03 · Resultado, diferencias y código";
  $("command").textContent="Cargando registro…";
  $("override").value="";
  details=null;oldText="";
  $("resultView").innerHTML='<p class="muted">Cargando detalles del momento seleccionado…</p>';
  setMessage("");
- ask("/api/history/event?id="+encodeURIComponent(selected.id)).then(r=>{
+ ask((mode==="episodes"?"/api/history/episode?id=":"/api/history/event?id=")+encodeURIComponent(selected.id)).then(r=>{
   if(requestToken!==detailToken||!selected||selected.id!==r.id)return;
+  if(mode==="episodes"){
+    details=null;oldText="";
+    $("command").textContent=json(r.decision||r.recorded_event?.command||r.recorded_event?.historical||{});
+    renderEpisode(r);
+    return;
+  }
   details=r;oldText=json(r.command||{});
   $("command").textContent=oldText;
   $("override").value=oldText;
@@ -283,6 +312,20 @@ $("file").onchange=async e=>{
  }catch(err){if(requestToken===sourceToken)$("fileStatus").textContent=err.message}
 };
 $("defaultFile").onclick=loadLocal;
+function setMode(next){
+ if(next!== "episodes"&&next!=="moments")return;
+ mode=next;
+ $("episodesMode").classList.toggle("selected",mode==="episodes");
+ $("momentsMode").classList.toggle("selected",mode==="moments");
+ $("episodesMode").setAttribute("aria-pressed",String(mode==="episodes"));
+ $("momentsMode").setAttribute("aria-pressed",String(mode==="moments"));
+ $("modeDescription").textContent=mode==="episodes"?
+ "Decisiones, acciones independientes y consultas incompletas. Solo se agrupan vínculos identificables.":
+ "Checkpoints y eventos, con reproducción aislada del motor instalado. El original no se modifica.";
+ filterEvents();
+}
+$("episodesMode").onclick=()=>setMode("episodes");
+$("momentsMode").onclick=()=>setMode("moments");
 $("filter").onchange=filterEvents;$("search").oninput=filterEvents;
 $("timeline").oninput=e=>selectIndex(Number(e.target.value));
 $("prev").onclick=()=>selectIndex(Number($("timeline").value)-1);
