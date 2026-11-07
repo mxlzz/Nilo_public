@@ -1,63 +1,64 @@
-# Nilo 0.7.1 — Hoja de ruta: laboratorio → contexto LLM → evaluación
+# Nilo 0.7.1 — Hoja de ruta consolidada · Laboratorio y revisión del motor
 
 **Fecha:** 2026-11-07  
-**Estado:** propuesta de trabajo, no implementación aprobada.  
-**Seguimiento:** [#70 — Laboratorio](https://github.com/mxlzz/Nilo_public/issues/70), [#31 — Contexto adaptativo](https://github.com/mxlzz/Nilo_public/issues/31), [#63 — Proyección cognitiva](https://github.com/mxlzz/Nilo_public/issues/63) y [#3 — Evaluación](https://github.com/mxlzz/Nilo_public/issues/3).  
-**Referencias:** [auditoría del primer prompt y Claude](AUDITORIA_PROMPT_CLAUDE_2026-11-07.md), [propuestas externas](propuestas_externas/claude_2026-11-07/).
+**Estado:** planificación acordada para desarrollo iterativo; **no** equivale a etapas ejecutadas.  
+**Seguimiento:** [#70 · Laboratorio](https://github.com/mxlzz/Nilo_public/issues/70) · [#31 · Contexto LLM](https://github.com/mxlzz/Nilo_public/issues/31) · [#63 · Proyección cognitiva](https://github.com/mxlzz/Nilo_public/issues/63) · [#3 · Evaluación](https://github.com/mxlzz/Nilo_public/issues/3).  
+**Auditorías de referencia:** [contraste con Claude sobre prompt](AUDITORIA_PROMPT_CLAUDE_2026-11-07.md); dos propuestas externas de UX revisadas en el issue #70, **no directrices obligatorias**.
 
-## Propósito
+## Propósito y límites
 
-Desarrollar primero un laboratorio que permita **comprender las reglas efectivamente ejecutadas por el motor**, distinguir el estado físico de su proyección cognitiva y del cuerpo HTTP calculado; **marcar exclusiones propuestas** por secciones y exportar un paquete autocontenido para revisión. Usar luego la herramienta para corregir el contexto y evaluar variantes sin imponer objetivos a Nilo.
+Laboratorio como instrumento de investigación: permite reconstruir episodios de Nilo, entender reglas del motor, inspeccionar **literalmente** el contexto que llegó al LLM y el estado físico que el LLM no conoció, proponer exclusiones mediante checks, adjuntar exportaciones para revisión y después realizar experimentos aislados. Los resultados posteriores guían cambios del motor, no al revés.
 
-No confundir inspección de reglas con edición del motor; propuesta de exclusión con aplicación; prompt reconstruido con captura de una llamada realmente realizada; disminución del tamaño del prompt con mejora de autonomía.
+La decisión del LLM organiza los episodios de deliberación, pero también existen operaciones de agenda/rutina/motor sin consulta y pruebas sandbox. No se inventan vínculos ausentes ni se atribuye causalidad a justificaciones narradas por el modelo.
 
-## Fase A · Instrumental de laboratorio (hacer primero)
+**Reutilizar antes de crear:** visor HTTP literal y procedencia, histórico con checkpoints, escenarios y sandbox, ajustes con perfiles/checks parciales. No sustituir la exactitud del transporte por una reconstrucción estética. La UI final de Pruebas/columna derecha se debate después de contar con la estructura de información.
 
-| Paso | Entregable | Criterio de cierre |
+## Fase A · Laboratorio (8 etapas)
+
+| Etapa | Alcance acotado | Entregable y prueba de aceptación |
 |---|---|---|
-| A1 · Baseline de auditoría | Fixtures del primer HTTP real y turnos representativos (navegación, fabricación, ensayo, proyectos) con hashes, procedencia y versión; secretos excluidos. | Reproducción del payload capturado o explicación de divergencia; regresión sobre constructor actual. |
-| A2 · Inspector de motor | Resultados de **Pruebas** en categorías desplegables: entrada, validaciones/reglas, estado físico antes/después, acciones, mediciones, diagnósticos, trazas y proyección. Los valores permanecen **literales**. | Expandir/cerrar secciones jamás modifica bytes/orden/valor del dato; cada explicación identifica la función/fuente real. |
-| A3 · Inspector de contexto + checks | Árbol por campo/ruta de datos antes y después de proyección/presupuesto; marca explícita **«proponer excluir del prompt»** (secciones o campos). Campos obligatorios marcables para revisión, **no aplicables automáticamente**. | No muta mundo ni partida; distingue ausente, vacío, omitido por presupuesto, obligatorio y propuesto; independencia de selección UI respecto de valor bruto. |
-| A4 · Exportar revisión | Botón superior: JSON versionado autocontenido con versión/commit, escenario/semilla/checkpoint, proveedor, rutas y valores, selección del usuario, efectos de presupuesto, payload calculado baseline y hashes; sin API keys ni datos externos innecesarios. | Exportado entendible sin sesión viva; validación del esquema, importabilidad para auditoría, prueba de no mutación. |
-| A5 · Comparación A/B | Dos payloads HTTP **calculados localmente** del mismo estado (baseline y variante); diferencias por roles, secciones, rutas e información omitida y métricas de bytes/tokens disponibles. | La variante no altera la captura real, no dispara consultas ni modifica comportamiento por defecto; registrar qué cambia y por qué. |
+| **01 · Auditoría de infraestructura** | Inventariar qué registra cada módulo, sus límites de retención, joins y carencias; congelar muestras de solicitudes, escenarios, planes y resultados. | Matriz **disponible / parcial / inexistente** y fixtures reproducibles, hashes/versiones; no afirmar que se capturó una respuesta bruta cuando solo hay decisión normalizada. |
+| **02 · Trazabilidad de episodios** | Enlazar intento HTTP, respuesta cruda (instrumentar captura segura en adelante), normalización/errores, plan, ejecución, memoria y eventos automáticos. | Un episodio se puede reconstruir del origen al resultado; datos ausentes explícitos, sin mutar simulación ni simular históricos inexistentes. |
+| **03 · Recorrido + ficha de episodio** | Vista temporal y ficha progresiva: situación → contexto recibido → respuesta/plan → acciones → resultado → información disponible posterior. | Recorrido reproducible de un turno real y un evento sin LLM; acceso al original para cada eslabón; distinción secuencia/causalidad. |
+| **04 · Inspector de reglas del motor** | Desde cada operación: argumentos, validaciones efectivamente evaluadas, razón observada de rechazo/fallo/efecto parcial, diferencias antes/después, trazas y referencias de código opcionales. | Probar una operación con éxito y otra sin él, sin inferir como ejecutadas condiciones no instrumentadas; información interna y perceptible claramente distinta. |
+| **05 · Inspector literal de contexto LLM** | Reutilizar el visor y su procedencia: bloques desplegables por rol/origen y texto literal original; datos omitidos vs ausentes, perfil/presupuesto, HTTP real vs solicitud local calculada. | Copiar original coincide con captura, sin reescritura; subtítulos y referencias fuera del cuerpo; acciones automáticas diferenciadas de solicitudes. |
+| **06 · Marcas, notas y exportación** | Checks por ruta/sección como **propuesta de exclusión**, notas vinculadas a contenido/episodio/versión, exportación JSON autocontenida arriba de la ficha. | Archivo suficiente para revisión externa (texto literal, hashes, rutas, contexto, propuesta y notas), no modifica prompt activo, motor ni SQLite; campos obligatorios solo revisables. **Hito usable**. |
+| **07 · Experimentación aislada y A/B** | Tres modalidades: prueba física del motor, respuesta del LLM con contexto alternativo y evolución multivuelta; comparación baseline/variante y límites explícitos de reproducibilidad. | Mismo estado de partida de referencia cuando aplica; pruebas locales sin API por defecto, consultas reales solo bajo acción explícita; no contaminar partida original. |
+| **08 · Análisis transversal y QA de UX** | Seguimiento de experiencia→memoria→recuperación, patrones operativos, matriz campo×turno, revisión final de navegación/columna derecha y ayudas. | Tres pruebas reales de usuario: decisión inesperada, repetición, contexto excesivo; diferencias entre dato original, inferencia y anotación visibles; regressions/compatibilidad verificadas. |
 
-La discusión detallada sobre la **columna derecha de Pruebas** se posterga hasta disponer de los componentes de inspección; no acoplarla a la instrumentación. Aprovechar **Visor LLM** para llamadas reales, **Ajustes** para perfiles experimentales y las rutas actuales de **Escenarios/Sandbox** sin duplicar motores.
+**Hito:** al completar **06** ya es posible inspeccionar, marcar y exportar hallazgos para analizar con otra IA. 07–08 amplían capacidad experimental y evaluación de UX.
 
-**Integración con el plan de UI existente:** A2–A5 deben coordinarse con las subetapas previstas **04.3 Escenarios**, **04.4 Mundo interactivo/Sandbox**, **04.5 Ajustes** y **05 QA/packaging**, sin reemplazar o declarar terminadas 04.2 Historial ni otras ramas de interfaz. El visor conserva la semántica de capturas literales y no se reescribe como parte de este roadmap.
+## Fase B · Mejoras del motor con el laboratorio (3 etapas)
 
-## Fase B · Mejoras del motor LLM (a partir de evidencias)
-
-| Paso | Entregable | Criterio de cierre |
+| Etapa | Alcance acotado | Entregable y prueba de aceptación |
 |---|---|---|
-| B1 · Inconsistencias verificadas | Correcciones aisladas: `null` → `"None"`, `design.prediction`, plan de una operación, descripción `descend`, límites cuaderno, continuación dependiente de fallos y fugas numéricas de fisiología. | Tests de contratos y replay, sin inventar resultados físicos ni romper saves/agenda. |
-| B2 · Contexto más pertinente | Política semántica de vacíos, referencias/IDs de evidencia, deduplicación sin perder proveniencia; `contexto_reducido` solo si hubo recorte; varios focos de relevancia. | Comparación A/B demuestra qué se incluyó/excluyó; ausencias importantes siguen explícitas. |
-| B3 · Reglas modulares | Núcleo estable de identidad/autonomía/verdad física; catálogo breve pero **exhaustivo** de acciones; contratos y advertencias pertinentes al estado actual, proyecto, intentos y entidades; detalle recuperable sin agregar misiones. | Ninguna acción física vigente se vuelve invisible; Gemini/Groq conservan semántica; documentación no contradice reglas. |
-| B4 · Respuesta estructurada | Prototipo opcional de schema, validación por operación y semántica, compatibilidad con agenda y proyectos; pruebas de truncamiento/reintentos; temperatura y máximo de tokens como experimentos separados. | JSON válido y ejecución consistente, con fallback seguro por proveedor; sin imposición arbitraria de planes extras. |
-| B5 · Validación longitudinal | Runs LLM controlados en escenarios comparables: validez, errores, bucles, mantenimiento, proyectos, creatividad espontánea, memoria y consumo. | Conclusiones basadas en registros reales; decisión de aceptar/descartar ajustes con evidencias, no solo menos bytes. |
+| **09 · Correcciones verificadas** | Contratos de operaciones y respuestas, pérdidas de `design.prediction`, valores `null`, semántica de `descend`, planes válidos de un paso y otras inconsistencias comprobadas. | Tests por defecto/regresión, compatibilidad de saves; corregir bugs bloqueantes de la fase A antes si impiden su prueba. |
+| **10 · Contexto e instrucciones modulares** | Núcleo conciso, índice completo de capacidades, detalle condicional de contratos, selección multi-foco de memorias, deduplicación con procedencia, presupuesto y schema opcional. | Variantes comparables contra baseline, sin quitar capacidades ni imponer metas; cambios aislados y revertibles. |
+| **11 · Runs comparativos e integración** | Evaluar validez, repetición, memoria, proyectos, exploración, autonomía y costo en partidas comparables; conservar evidencia cualitativa. | Seleccionar mejoras por resultados medidos, documentar aceptaciones/rechazos, mantener referencia anterior y cerrar pruebas. |
 
-## Decisiones de alcance
+## Método de cada etapa
 
-1. No modificar `world`, registros SQLite ni la fisiología desde un checkbox; solamente preparar un expediente de propuesta para revisión.
-2. La vista literal separa **motor interno**, **percepción/contexto** y **HTTP calculado**. Un dato interno no enviado al LLM no se trata como texto «a excluir».
-3. No omitir indiscriminadamente valores `null`, `[]`, `0` o `false`: algunas ausencias y hechos negativos son necesarios.
-4. No aplicar como norma la propuesta de Claude. Sus archivos sirven de referencia y sus ideas se integran solo después de contrastarlas con código y evidencia.
-5. No confundir escenario determinista con una decisión autónoma real ni concluir «mejora» sin evaluación conductual.
+1. Auditar el tramo de código existente y sus dependencias; actualizar límites y riesgos observados.
+2. Especificar el comportamiento deseado y los datos necesarios; incluir casos positivos, negativos, antiguos e incompletos.
+3. Implementar en rama/PR pequeño, ejecutar tests y comprobar no mutación cuando corresponda.
+4. Documentar diferencias, cobertura, estado y pendientes en #70/#31 y esta hoja de ruta. No afirmar que una etapa está terminada sin evidencia.
 
-## Estado de ejecución (actualizar en cada PR)
+Las etapas son **unidades de trabajo**, no once versiones/paquetes descargables. Mantener PRs/UI de etapas históricas del laboratorio sin rehacerlos indiscriminadamente; crear paquetes ejecutables en hitos de prueba, no uno por etapa. Nunca aplicar una exclusión de checkbox como regla activa sin decisión explícita.
 
-| Paso | Estado | Evidencia |
-|---|---|---|
-| A1 | En curso | Auditoría inicial de run y propuesta externa en PR #84; falta fixture reproducible completo. |
-| A2 | Pendiente | — |
-| A3 | Pendiente | — |
-| A4 | Pendiente | — |
-| A5 | Pendiente | — |
-| B1 | Pendiente | — |
-| B2 | Pendiente | — |
-| B3 | Pendiente | — |
-| B4 | Pendiente | — |
-| B5 | Pendiente | — |
+## Estado
 
-**Próximo paso de implementación recomendado:** A1 (fijar muestras y tests) y luego A2 (inspector por secciones con fuente de reglas), evitando iniciar B2/B3 antes de contar con un comparador reproducible.
+| Etapa | Estado |
+|---|---|
+| 01 | **Pendiente de cierre**: auditorías y parte de los datos ya disponibles; falta inventario/fixtures consolidados |
+| 02 | Pendiente (infraestructura parcial: HTTP literal, provenance, checkpoints, decisión normalizada) |
+| 03 | Pendiente (historial básico ya existente) |
+| 04 | Pendiente (trazas y escenarios básicos ya existentes) |
+| 05 | Pendiente (visor literal existente, falta integración del recorrido) |
+| 06 | Pendiente (checks parciales existentes en Ajustes, falta notas/exportador integrado) |
+| 07 | Pendiente (sandbox y comparación parcial ya existentes) |
+| 08 | Pendiente |
+| 09 | Pendiente |
+| 10 | Pendiente |
+| 11 | Pendiente |
 
-> Este documento organiza la propuesta surgida de la conversación del 07/11/2026. Las prioridades y los límites pueden ajustarse; anotar toda variación aquí y en #70/#31.
+**Reemplaza como planificación activa** la primera división tentativa A1–A5 / B1–B5 del 07/11/2026. Se preservan los issues y PRs originales como historial; las claves antiguas no implican una etapa ya completada de esta nueva hoja de ruta.
