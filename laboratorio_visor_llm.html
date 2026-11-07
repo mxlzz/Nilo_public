@@ -419,7 +419,16 @@ if(typeof NiloReview!=="undefined"&&(reviewIdentity!==data.attempt_id||!reviewCo
   provider:data.provider,model:data.model,purpose:data.purpose,
   attempt_id:data.attempt_id,call_id:data.call_id,status:data.status,
   simulated_at:data.simulated_at,messages:data.messages,
-  provenance:data.provenance,related_episode:data.episode||null,
+  provenance:data.provenance,
+  // El exportador analiza el contexto. De un episodio solo se anexan
+  // identificadores de vínculo, no contenido adicional del mundo o cuaderno
+  // que quizá nunca formó parte de esta solicitud.
+  related_episode:data.episode?{
+   call_id:data.call_id,
+   decision_checkpoint_ids:(data.episode.decision_checkpoints||[]).map(x=>x.id),
+   action_checkpoint_ids:(data.episode.planned_actions||[]).map(x=>x.checkpoint_id),
+   archived_decision_count:(data.episode.archived_decisions||[]).length
+  }:null,
   captured_engine_version:data.episode?.decision_checkpoints?.[0]?.engine_version||null
  },auditPolicy);
 }
