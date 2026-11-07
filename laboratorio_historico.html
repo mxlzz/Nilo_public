@@ -257,33 +257,37 @@ function renderEpisode(data){
  const original=data.recorded_event||{};
  const cards=[];
  const meta=attempts.map(a=>{
-   const response=a.response;
    const link=(data.open_in_llm_viewer&&/^[0-9a-f]{32}$/.test(a.attempt_id||""))?
      '<a href="/visor-llm?id='+encodeURIComponent(a.attempt_id)+'">Abrir solicitud literal en el visor</a>':
-     '<span class="muted">Solicitud literal no accesible desde esta partida en el visor actual.</span>';
+     '<span class="muted">No hay vínculo verificable con el visor de la partida activa.</span>';
    const label='Intento '+safe(a.attempt_ordinal)+' · '+safe(a.provider)+' / '+safe(a.model)+
       ' · '+safe(a.status)+' · '+safe(a.body_bytes)+' bytes';
-   const responseLabel=response?
-     (response.capture_status==="captured"?"Respuesta literal archivada":"Respuesta omitida por tamaño; solo hash/tamaño"):
-     "Respuesta no archivada en esta versión";
-   return '<div class="episode-evidence"><b>'+label+'</b><p class="episode-label">'+safe(responseLabel)+
-     (response?' · fase: '+safe(response.parse_phase):'')+'</p>'+
+   return '<div class="episode-evidence"><b>'+label+'</b>'+
      '<div class="episode-actions">'+link+'</div>'+
-     (response?rawDetail("Integridad y captura",{sha256:response.body_sha256,bytes:response.body_bytes,
-        capture_status:response.capture_status,parse_phase:response.parse_phase}):'')+
-     (response&&response.text!==null?'<details><summary>Ver texto original del modelo</summary><pre>'+safe(response.text)+'</pre></details>':'')+
+     rawDetail("Huella de la solicitud",{sha256:a.body_sha256,bytes:a.body_bytes})+
      '</div>';
  }).join("");
  cards.push('<section class="episode-card"><h3>1 · Recibió</h3>'+
-   '<p class="episode-label">Solicitud HTTP real enviada al proveedor, cuando está archivada. No es una reconstrucción del estado actual.</p>'+
+   '<p class="episode-label">Solicitudes HTTP realmente enviadas; el texto exacto se abre en el visor cuando pertenece a la misma partida.</p>'+
    (attempts.length?meta:'<p class="episode-empty">No hay solicitud HTTP archivada para este episodio.</p>')+
    '</section>');
- const note=attempts.some(a=>a.response&&a.response.text!==null)?
-   "Hay respuesta original en los intentos desplegables del apartado anterior.":
-   "Sin respuesta textual original registrada; el registro normalizado no equivale al texto crudo.";
- cards.push('<section class="episode-card"><h3>2 · Decidió</h3><p class="episode-label">'+safe(note)+'</p>'+
-   (decision?rawDetail("Ver decisión normalizada completa",decision)+
-    (decision.cuaderno?'<p class="episode-evidence">Cuaderno del modelo: '+safe(decision.cuaderno)+'</p>':''):
+ const responses=attempts.map(a=>{
+    const response=a.response;
+    const label='Intento '+safe(a.attempt_ordinal)+' · '+safe(a.provider)+' · '+safe(a.status);
+    return '<div class="episode-evidence"><strong>'+label+'</strong>'+
+      (response?'<p class="episode-label">Fase observada: '+safe(response.parse_phase)+' · '+
+      safe(response.capture_status==="captured"?"Texto original conservado":"Texto omitido por límite de tamaño")+'</p>':
+      '<p class="episode-empty">No se conserva la respuesta textual de este intento.</p>')+
+      (response?rawDetail("Verificación del texto original",{sha256:response.body_sha256,
+        bytes:response.body_bytes,phase:response.parse_phase,capture_status:response.capture_status}):'')+
+      (response&&response.text!==null?'<details><summary>Ver respuesta textual literal</summary><pre>'+safe(response.text)+'</pre></details>':'')+
+      '</div>';
+ }).join("");
+ cards.push('<section class="episode-card"><h3>2 · Decidió</h3>'+
+   '<p class="episode-label">La respuesta textual original y la decisión aceptada por el programa son registros distintos.</p>'+
+   (responses||'<p class="episode-empty">No se conserva una respuesta textual original del LLM.</p>')+
+   (decision?rawDetail("Decisión normalizada completa",decision)+
+    (decision.cuaderno?'<p class="episode-evidence">Cuaderno de Nilo (testimonio): '+safe(decision.cuaderno)+'</p>':''):
     '<p class="episode-empty">No hay decisión normalizada atribuible a este episodio.</p>')+
    '</section>');
  const actions=linked.planned_actions||[];
