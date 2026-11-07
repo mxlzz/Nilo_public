@@ -292,14 +292,12 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(contents)))
             self.end_headers()
             self.wfile.write(contents)
-        elif path in ("/assets/laboratorio.css", "/assets/laboratorio_ui.js",
-                       "/assets/laboratorio_revision.css", "/assets/laboratorio_revision.js"):
-            # Assets permitidos explícitamente; no aceptar rutas del navegador.
+        elif path in ("/assets/laboratorio.css", "/assets/laboratorio_ui.js"):
+            # Mantener la única hoja de estilo y el único script compartidos.
+            # Ninguna ruta de asset deriva de un nombre suministrado por cliente.
             static_sources = {
                 "/assets/laboratorio.css": (HERE / "assets/laboratorio.css", "text/css; charset=utf-8"),
                 "/assets/laboratorio_ui.js": (HERE / "assets/laboratorio_ui.js", "text/javascript; charset=utf-8"),
-                "/assets/laboratorio_revision.css": (HERE / "assets/laboratorio_revision.css", "text/css; charset=utf-8"),
-                "/assets/laboratorio_revision.js": (HERE / "assets/laboratorio_revision.js", "text/javascript; charset=utf-8"),
             }
             source, mime = static_sources[path]
             contents = source.read_bytes()
