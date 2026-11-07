@@ -5,7 +5,7 @@ mantienen sus pasos, efectos y contratos originales.
 """
 from __future__ import annotations
 from .deps import *
-from nilo_runtime.agent.trace_context import capture_call
+from nilo_runtime.agent.trace_context import capture_call, response_phase
 
 class DecisionUseCases:
     def validate_plan(self,steps):
@@ -58,20 +58,35 @@ class DecisionUseCases:
 
 
     @entropy_scoped
-    def plan_ready(self,decision,source,tokens=None):
+    def plan_ready(self,decision,source,tokens=None,*,lab_trace_call_id=None):
         p=self.s['person'];p['routine_since_llm']=0
         if p.get('unconscious'):return  # Ignorar una deliberación tardía mientras está inconsciente.
         # Registrar el estado inmediatamente ANTERIOR a procesar la decisión.
         # El checkpoint es técnico: nunca se inyecta en la memoria del LLM.
+        decision_checkpoint_id=None
         if getattr(self, 'timeline_capture_enabled', True):
             try:
-                self.timeline.record('decision',self.s,self.rng,source=source,
-                                     decision=decision,engine_version=self.timeline_version,
-                                     entropy=(None if getattr(self,'historical_replay',False)
-                                              or getattr(self,'legacy_replay_rules',False)
-                                              else self.entropy))
+                decision_checkpoint_id=self.timeline.record(
+                    'decision',self.s,self.rng,source=source,
+                    decision=decision,engine_version=self.timeline_version,
+                    trace_call_id=lab_trace_call_id if source=='llm' else None,
+                    entropy=(None if getattr(self,'historical_replay',False)
+                             or getattr(self,'legacy_replay_rules',False)
+                             else self.entropy))
             except (ValueError,TypeError,OverflowError,sqlite3.Error):
                 pass  # Registrar historial no puede detener al personaje.
+
+        def _lab_link_note(note):
+            # El plan ya lleva _journal_id: relacionarlo en una tabla técnica
+            # permite rastrear acciones sin inyectar IDs HTTP en el mundo.
+            if source!='llm' or not lab_trace_call_id:
+                return
+            try:
+                self.timeline.link_journal(note['id'],lab_trace_call_id,
+                                           decision_checkpoint_id)
+            except (ValueError,TypeError,KeyError,sqlite3.Error,AttributeError):
+                pass  # La observación nunca impide la vida de Nilo.
+
         current=p.get('project');saved=p.setdefault('projects',[])
         objective=decision['objetivo'] or 'Investigar el entorno'
         selected_id=decision.get('proyecto_id') or ''
@@ -96,6 +111,7 @@ class DecisionUseCases:
             note=self.journal(decision['cuaderno'],decision.get('pregunta',''),
                               decision.get('hipotesis',''),source,
                               linked={'research_id':research_entry.get('id') if research_entry else None})
+            _lab_link_note(note)
             for action in p['plan']:
                 if action.get('_origin') not in ('agenda','espera','rutina','motor'):
                     action['_journal_id']=note['id']
@@ -329,6 +345,7 @@ class DecisionUseCases:
         note=self.journal(decision['cuaderno'],decision['pregunta'],decision['hipotesis'],source,
             linked={'project_id':chosen.get('id'),
                     'research_id':research_entry.get('id') if research_entry else None})
+        _lab_link_note(note)
         # Solo el plan de esta deliberación procede de esta entrada. La agenda,
         # los hábitos y las acciones automáticas NO se atribuyen al cuaderno.
         for action in p['plan']:
@@ -379,7 +396,13 @@ class DecisionUseCases:
                 if mode=='llm':
                     def deliberate(pcfg):
                         raw,tokens=request_llm(pcfg,context)
-                        return normalize_decision(raw),tokens
+                        try:
+                            normalized=normalize_decision(raw)
+                        except (ValueError,TypeError,KeyError,IndexError):
+                            response_phase('invalid_contract')
+                            raise
+                        response_phase('normalized')
+                        return normalized,tokens
                     with capture_call(
                             self.llm_request_store, purpose="deliberacion",
                             session_id=self.sessions.session_id,
@@ -416,7 +439,8 @@ class DecisionUseCases:
                             'context_stats':tokens.get('contexto',{}),
                             'trace_call_id':trace_call_id,
                             'decision':decision})
-                    self.plan_ready(decision,mode,tokens)
+                    self.plan_ready(decision,mode,tokens,
+                                    lab_trace_call_id=trace_call_id if mode=='llm' else None)
             except ProvidersUnavailable as exc:
                 with self.lock:
                     self.s['planning']=False;self.s['mode']='espera'
