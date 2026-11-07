@@ -112,7 +112,8 @@ def inspect_episode(world_path, call_id):
             result["limitations"].append("exact_decision_checkpoint_link_unavailable")
 
         if (_table(db,"lab_action_links") and
-                _table(db,"timeline_checkpoints")):
+                _table(db,"timeline_checkpoints") and
+                "decision_json" in _columns(db,"timeline_checkpoints")):
             rows = db.execute(
                 """SELECT l.action_checkpoint_id,l.journal_id,
                           t.operation,t.source,t.day_label,t.history_seq,
