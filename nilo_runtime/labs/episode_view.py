@@ -270,9 +270,12 @@ def get_episode(world, identifier, *, viewer_world=None):
                 if (_table(db, "timeline_checkpoints") and
                         "trace_call_id" in _columns(db, "timeline_checkpoints")):
                     row = db.execute(
-                        "SELECT trace_call_id FROM timeline_checkpoints WHERE id=?",
+                        "SELECT kind,trace_call_id FROM timeline_checkpoints WHERE id=?",
                         (cp_id,)).fetchone()
-                    trace_id = row[0] if row is not None else None
+                    # Solo los checkpoints de DECISIÓN llevan un enlace directo.
+                    # Los de acciones deben verificar la procedencia del plan.
+                    trace_id = (row[1] if row is not None and
+                                row[0]=="decision" else None)
                 if trace_id is None and _table(db, "lab_action_links"):
                     row = db.execute(
                         """SELECT l.trace_call_id,l.journal_id,
