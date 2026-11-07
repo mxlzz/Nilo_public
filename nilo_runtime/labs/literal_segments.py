@@ -42,6 +42,52 @@ _SUBTITLES = {
     "regla": "Reglas del entorno comunicadas en el contexto.",
     "contexto_reducido": "Aviso de recorte incorporado a la solicitud.",
 }
+# Clasificación SOLO para navegación del observador. No altera, resume, fusiona
+# ni selecciona los campos realmente enviados: el contenido es el literal.
+# Claves desconocidas conservan su texto y aparecen en "Otros campos".
+_DISPLAY_GROUPS = (
+    ("situacion","Situación y entorno",
+     "Datos actuales que figuran en esta solicitud.",
+     frozenset(("momento","posición","mundo","percepción_local",
+                "navegacion_a_lugares","orillas_agua_conocidas_alcanzables",
+                "condiciones_de_vida","necesidades","inventario_materiales",
+                "herramientas_que_llevo","construcciones_fijas",
+                "territorio_conocido","lugares_conocidos","seguridad","abrigo"))),
+    ("actividad","Proyectos y actividad",
+     "Información incluida sobre proyectos, tareas y objetivos del personaje.",
+     frozenset(("proyecto_actual","proyectos","investigaciones_activas",
+                "ultimo_cierre_rechazado","agenda_actual","plan_pendiente",
+                "proyectos_en_pausa","proyectos_activos","prioridades"))),
+    ("evidencia","Acciones, resultados y mediciones",
+     "Registros anteriores seleccionados para este mensaje.",
+     frozenset(("resultados_de_acciones","mediciones_reales_recientes",
+                "predicciones_pendientes","pruebas_reales","experimentos",
+                "acciones_recientes","ensayos_recientes","ultimas_acciones"))),
+    ("memoria","Memorias y conocimiento",
+     "Antecedentes, conclusiones y conocimientos comunicados.",
+     frozenset(("memorias_relevantes","conclusiones_verificadas",
+                "conocimiento_con_procedencia","antecedente_relevante",
+                "antecedentes_relacionados","conocimiento","recuerdos",
+                "aprendizajes"))),
+)
+
+
+def _display_group(kind, name, role):
+    if kind == "text":
+        return ("instrucciones" if role == "system" else "texto",
+                "Instrucciones del sistema" if role == "system"
+                else "Texto del mensaje",
+                "Fragmento original escrito en este rol, sin clasificar campos.")
+    if kind == "field":
+        for group_id, title, subtitle, keys in _DISPLAY_GROUPS:
+            if name in keys:
+                return (group_id, title, subtitle)
+        return ("otros", "Otros campos enviados",
+                "Campos literales sin clasificación editorial específica.")
+    return ("sintaxis", "Separadores originales",
+            "Puntuación y espacios del JSON original.")
+
+
 _ROLE_SUBTITLES = {
     "system": "Instrucciones originales enviadas al modelo.",
     "user": "Texto original enviado como mensaje de usuario.",
@@ -174,8 +220,14 @@ def _message(path, role, content, provider, purpose, title):
     def add(kind, a, b, *, name=None, pointer=None):
         if a >= b:
             return
+        literal = content[a:b]
+        group_id, group_title, group_subtitle = _display_group(kind,name,role)
         item = {"kind": kind, "start": a, "end": b,
-                "literal": content[a:b]}
+                "literal": literal,
+                "literal_sha256": hashlib.sha256(literal.encode("utf-8")).hexdigest(),
+                "display_group": group_id,
+                "display_group_title": group_title,
+                "display_group_subtitle": group_subtitle}
         if name is not None:
             item["title"] = name
             item["subtitle"] = _SUBTITLES.get(name, "")
@@ -206,11 +258,20 @@ def _message(path, role, content, provider, purpose, title):
             name=field["title"], pointer=field["json_pointer"])
         cursor = field["end"]
     gap(cursor, len(content))
-    if "".join(s["literal"] for s in segments) != content:
+    if "".join(segment["literal"] for segment in segments) != content:
         raise ValueError("La segmentación no conserva el texto original")
+    if segments and (segments[0]["start"] != 0 or
+                     segments[-1]["end"] != len(content) or
+                     any(left["end"] != right["start"]
+                         for left,right in zip(segments,segments[1:]))):
+        raise ValueError("Los segmentos no cubren offsets contiguos del mensaje")
     return {
         "path": path, "role": role, "title": title,
         "text": content, "length_codepoints": len(content),
+        "text_sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
+        "segmentation_integrity": "lossless_utf8_text_and_contiguous_offsets",
+        "display_order": "original_message_order",
+        "display_groups_are_editorial": True,
         "context_interval": list(interval) if interval else None,
         "segments": segments,
         "blocks": [s for s in segments if s["kind"] in ("text", "field")],
