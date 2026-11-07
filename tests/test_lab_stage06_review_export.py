@@ -95,7 +95,9 @@ const cp=x=>Array.from(x).length;
  const systemBlock={...block,json_pointer:null};
  const system={...message,path:'/systemInstruction/parts/0/text',role:'system',
    blocks:[systemBlock]};
- const extra={...model,messages:[system]};
+ const systemBody=JSON.stringify({systemInstruction:{parts:[{text:txt}]}});
+ const extra={...model,messages:[system],body_utf8:systemBody,
+   body_sha256:hash(systemBody),body_bytes:Buffer.byteLength(systemBody,'utf8')};
  const marked=new Map([[api.key(system.path,systemBlock),{note:'Revisar instrucciones'}]]);
  const uncertain=await api.buildReview(extra,marked,'',policy);
  assert.equal(uncertain.proposals[0].existing_profile_optional_field,false);
@@ -121,8 +123,10 @@ const text='a',h=crypto.createHash('sha256').update(text).digest('hex');
 const m={path:'/messages/0/content',role:'user',text,
  text_sha256:h,segments:[{kind:'text',start:0,end:1,literal:text,
  literal_sha256:h}],blocks:[{kind:'text',start:0,end:1,literal:text,literal_sha256:h}]};
-const src={kind:'captured_http',sent_to_llm:true,body_utf8:text,body_sha256:h,
- body_bytes:1,messages:[m]};
+const body=JSON.stringify({messages:[{role:'user',content:text}]});
+const bodyHash=crypto.createHash('sha256').update(body).digest('hex');
+const src={kind:'captured_http',sent_to_llm:true,body_utf8:body,body_sha256:bodyHash,
+ body_bytes:Buffer.byteLength(body),messages:[m]};
 const id=a.key(m.path,m.blocks[0]);
 (async()=>{
   await assert.rejects(()=>a.buildReview(src,new Map([[id,{note:'x'.repeat(1601)}]]),'',{}),/observación/);
