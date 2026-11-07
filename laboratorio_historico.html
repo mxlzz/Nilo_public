@@ -155,8 +155,16 @@ function showData(data){
    if(token!==sourceToken)return;
    episodesLoading=false;
    if(mode==="episodes"){
-    $("events").innerHTML='<p class="error">'+safe(err.message)+'</p>';
-    $("resultView").textContent="No fue posible consultar el recorrido.";
+     // La vista antigua sigue disponible si falta el índice de episodios.
+     // Es preferible conservar la navegación segura a dejar la UI vacía.
+     mode="moments";
+     $("episodesMode").classList?.remove("selected");
+     $("momentsMode").classList?.add("selected");
+     $("episodesMode").setAttribute?.("aria-pressed","false");
+     $("momentsMode").setAttribute?.("aria-pressed","true");
+     $("modeDescription").textContent="Recorrido no disponible: "+err.message+
+       ". Se muestra el historial tradicional, en modo de lectura.";
+     filterEvents();
    }
  });
 }
@@ -190,8 +198,10 @@ function filterEvents(){
  $("firstLabel").textContent=view[0]?.label||"—";
  $("lastLabel").textContent=view[view.length-1]?.label||"—";
  if(!view.length){
-  $("events").innerHTML='<p class="muted">No hay coincidencias.</p>';
-  clearSelection("No hay momentos que coincidan con los filtros.");return
+  $("events").innerHTML='<p class="muted">No hay momentos disponibles.</p>';
+  if(!base.length)clearSelection("Esta partida no tiene momentos para inspeccionar.");
+  else clearSelection("No hay momentos que coincidan con los filtros.");
+  return;
  }
  let at=view.findIndex(e=>selected&&e.id===selected.id);
  selectIndex(at>=0?at:0);
