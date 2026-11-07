@@ -172,7 +172,7 @@ function filterEvents(){
    let match;
    if(mode==="episodes"){
       match=filter==="all"||
-        (filter==="decision"&&(e.episode_kind==="deliberation"||e.episode_kind==="unlinked_call"))||
+        (filter==="decision"&&(e.episode_kind==="deliberation"||e.episode_kind==="independent_decision"||e.episode_kind==="unlinked_call"))||
         (filter==="action"&&(e.episode_kind==="independent"||e.episode_kind==="legacy"))||
         (filter==="failure"&&e.failed===true)||
         (filter==="old"&&(e.episode_kind==="legacy"||!e.replayable));
@@ -205,9 +205,9 @@ function selectIndex(index){
  $("prev").disabled=i===0;$("next").disabled=i===view.length-1;
  let left=Math.max(0,i-7),right=Math.min(view.length,i+8);
  $("events").innerHTML=view.slice(left,right).map((e,j)=>'<button class="'+(e.id===selected.id?"active":"")+'" data-index="'+(left+j)+'"><span class="tmeta">'+
-  safe(e.label)+" · "+safe(mode==="episodes"?(e.episode_kind==="deliberation"?"Deliberación":e.episode_kind==="independent"?"Actividad independiente":e.episode_kind==="unlinked_call"?"Consulta sin decisión":"Registro anterior"):e.kind)+(e.replayable?" · Restaurable":" · Registro")+'</span><span class="itemtitle">'+safe(e.op)+" · "+safe(e.title||"")+'</span></button>').join("");
+  safe(e.label)+" · "+safe(mode==="episodes"?(e.episode_kind==="deliberation"?"Deliberación":e.episode_kind==="independent_decision"?"Decisión sin LLM":e.episode_kind==="independent"?"Actividad independiente":e.episode_kind==="unlinked_call"?"Consulta sin decisión":"Registro anterior"):e.kind)+(e.replayable?" · Restaurable":" · Registro")+'</span><span class="itemtitle">'+safe(e.op)+" · "+safe(e.title||"")+'</span></button>').join("");
  $("events").querySelectorAll("button[data-index]").forEach(b=>b.onclick=()=>selectIndex(Number(b.dataset.index)));
- $("kind").textContent=mode==="episodes"?(selected.episode_kind==="deliberation"?"Deliberación":selected.episode_kind==="independent"?"Actividad sin vínculo":selected.episode_kind==="unlinked_call"?"Consulta incompleta":"Registro anterior"):(selected.replayable?"Punto restaurable":"Registro histórico");
+ $("kind").textContent=mode==="episodes"?(selected.episode_kind==="deliberation"?"Deliberación":selected.episode_kind==="independent_decision"?"Decisión sin LLM":selected.episode_kind==="independent"?"Actividad sin vínculo":selected.episode_kind==="unlinked_call"?"Consulta incompleta":"Registro anterior"):(selected.replayable?"Punto restaurable":"Registro histórico");
  $("eventTitle").textContent=selected.op;
  $("eventDescription").textContent=selected.label+" · "+(selected.title||"");
  $("eventVersion").textContent=selected.engine_version?"Motor registrado: "+selected.engine_version:"";
