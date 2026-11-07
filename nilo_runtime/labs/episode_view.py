@@ -86,7 +86,8 @@ def list_episodes(world, *, limit=_MAX_ITEMS):
     archived_decisions = []
     with closing(_readonly(world)) as db:
         if (_table(db,"lab_action_links") and
-                _table(db,"timeline_checkpoints")):
+                _table(db,"timeline_checkpoints") and
+                "decision_json" in _columns(db,"timeline_checkpoints")):
             action_links = list(db.execute(
                 """SELECT l.action_checkpoint_id,l.trace_call_id,
                           l.journal_id,t.source,t.decision_json
@@ -276,7 +277,9 @@ def get_episode(world, identifier, *, viewer_world=None):
                     # Los de acciones deben verificar la procedencia del plan.
                     trace_id = (row[1] if row is not None and
                                 row[0]=="decision" else None)
-                if trace_id is None and _table(db, "lab_action_links"):
+                if (trace_id is None and _table(db, "lab_action_links")
+                        and _table(db,"timeline_checkpoints")
+                        and "decision_json" in _columns(db,"timeline_checkpoints")):
                     row = db.execute(
                         """SELECT l.trace_call_id,l.journal_id,
                                   t.source,t.decision_json
