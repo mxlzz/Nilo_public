@@ -131,7 +131,7 @@ class CalculatedPromptTests(unittest.TestCase):
                 indexed=index_request(body,provider=provider,purpose="deliberacion")
                 self.assertEqual(indexed["messages"],
                                  preview["mensajes_literal_estructurado"])
-                self.assertIn("no envío",preview["notas"].lower())
+                self.assertIn("sin llamar a la API",preview["notas"])
 
     def test_profile_preview_uses_transport_serialization_and_never_sends(self):
         ctx=scenario_context("proyecto_refugio")
