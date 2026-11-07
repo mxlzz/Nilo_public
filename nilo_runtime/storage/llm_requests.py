@@ -17,6 +17,7 @@ import threading
 from nilo_runtime.agent.provenance_codec import encode_metadata, decode_metadata
 
 MAX_RECORDS = 5000  # Retención FIFO por base; sin límite de días que borre sesiones.
+MAX_RESPONSE_BYTES = 1024 * 1024  # Límite local; conservar hash y longitud si excede.
 _STATUSES = frozenset((
     "transport_attempted", "response_received", "accepted", "rejected",
     "http_error", "transport_error", "invalid_http_response",
@@ -83,6 +84,18 @@ class RequestTraceStore:
             attempt_id TEXT PRIMARY KEY,
             metadata_json TEXT NOT NULL
         )""")
+        # Migración aditiva: la respuesta ORIGINAL del modelo no se guarda en
+        # history ni se entrega jamás al contexto de Nilo.
+        db.execute("""CREATE TABLE IF NOT EXISTS llm_response_traces (
+            attempt_id TEXT PRIMARY KEY,
+            body BLOB,
+            body_sha256 TEXT NOT NULL,
+            body_bytes INTEGER NOT NULL,
+            capture_status TEXT NOT NULL CHECK(capture_status IN ('captured','too_large')),
+            parse_phase TEXT NOT NULL CHECK(parse_phase IN (
+                'text_received','json_parsed','invalid_json',
+                'normalized','invalid_contract','chat_returned'))
+        )""")
         db.commit()
         return db
 
@@ -121,6 +134,8 @@ class RequestTraceStore:
                     LIMIT -1 OFFSET ?)""", (MAX_RECORDS,))
                 db.execute("""DELETE FROM llm_request_provenance
                     WHERE attempt_id NOT IN (SELECT attempt_id FROM llm_requests)""")
+                db.execute("""DELETE FROM llm_response_traces
+                    WHERE attempt_id NOT IN (SELECT attempt_id FROM llm_requests)""")
                 db.commit()
         except (OSError, sqlite3.Error):
             self.capture_errors += 1
@@ -143,6 +158,77 @@ class RequestTraceStore:
         except (OSError, sqlite3.Error):
             self.capture_errors += 1
             raise
+
+    def record_response(self, attempt_id, text):
+        """Conservar EXACTAMENTE el texto concatenado del proveedor, previo a strip/parseo.
+
+        Si supera 1 MiB guardar únicamente tamaño/hash; no truncar y presentar
+        después como si fuera una respuesta original completa.
+        """
+        if type(text) is not str:
+            raise TypeError("La respuesta textual del modelo debe ser str")
+        raw = text.encode("utf-8")
+        oversized = len(raw) > MAX_RESPONSE_BYTES
+        with self._lock, closing(self._connect()) as db:
+            db.execute("""INSERT OR IGNORE INTO llm_response_traces (
+                attempt_id,body,body_sha256,body_bytes,capture_status,parse_phase
+            ) SELECT ?,?,?,?,?,? FROM llm_requests
+              WHERE attempt_id=? AND status='response_received'""", (
+                attempt_id, sqlite3.Binary(raw) if not oversized else None,
+                hashlib.sha256(raw).hexdigest(), len(raw),
+                "too_large" if oversized else "captured", "text_received",
+                attempt_id,
+            ))
+            db.commit()
+
+    def mark_response_phase(self, attempt_id, phase):
+        """Etapa conocida del parser, sin registrar excepciones ni texto de error."""
+        if phase not in ("json_parsed","invalid_json","normalized",
+                         "invalid_contract","chat_returned"):
+            raise ValueError("Fase de respuesta inválida")
+        with self._lock, closing(self._connect()) as db:
+            db.execute("""UPDATE llm_response_traces SET parse_phase=?
+                WHERE attempt_id=? AND parse_phase NOT IN (
+                    'invalid_json','invalid_contract','normalized','chat_returned')""",
+                (phase,attempt_id))
+            db.commit()
+
+    def response_for(self, attempt_id):
+        """Lectura local explícita con integridad comprobada. None = sin captura."""
+        if (not isinstance(attempt_id,str) or len(attempt_id)!=32
+                or any(c not in "0123456789abcdef" for c in attempt_id)):
+            raise ValueError("Identificador de intento inválido")
+        if not self.path.is_file():
+            return None
+        with self._lock, closing(sqlite3.connect(
+                self.path.as_uri()+"?mode=ro", uri=True, timeout=0.5)) as db:
+            db.row_factory = sqlite3.Row
+            try:
+                row = db.execute("""SELECT body,body_sha256,body_bytes,
+                                    capture_status,parse_phase FROM llm_response_traces
+                                    WHERE attempt_id=?""",(attempt_id,)).fetchone()
+            except sqlite3.OperationalError as exc:
+                if "no such table" in str(exc):
+                    return None
+                raise
+        if row is None:
+            return None
+        body = row["body"]
+        if row["capture_status"]=="captured":
+            if (body is None or len(body)!=row["body_bytes"]
+                    or hashlib.sha256(body).hexdigest()!=row["body_sha256"]):
+                raise ValueError("Respuesta LLM archivada con integridad alterada")
+            text=body.decode("utf-8")
+        elif row["capture_status"]=="too_large":
+            if body is not None:
+                raise ValueError("Respuesta omitida por tamaño contiene cuerpo inesperado")
+            text=None
+        else:
+            raise ValueError("Estado de captura desconocido")
+        return {"text":text,"body_bytes":row["body_bytes"],
+                "body_sha256":row["body_sha256"],
+                "capture_status":row["capture_status"],
+                "parse_phase":row["parse_phase"]}
 
     def recent(self, limit=20):
         """Consulta local; no abrir a través de HTTP hasta la etapa 05."""

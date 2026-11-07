@@ -108,6 +108,23 @@ def transport_finished(status: str, *, code: int | None = None):
         _try(scope.store.finish, scope.current_id, status, code=code)
 
 
+def response_text_received(text: str):
+    """Observación de texto devuelto por el proveedor, no de HTTP completo.
+
+    Solo corre bajo captura real, best-effort y sin afectar parseo o RNG.
+    """
+    scope = _ACTIVE.get()
+    if scope is not None and scope.current_id is not None:
+        _try(scope.store.record_response, scope.current_id, text)
+
+
+def response_phase(phase: str):
+    """Etiquetar una fase sin conservar mensajes de excepción no confiables."""
+    scope = _ACTIVE.get()
+    if scope is not None and scope.current_id is not None:
+        _try(scope.store.mark_response_phase, scope.current_id, phase)
+
+
 def candidate_finished(accepted: bool):
     """Finalizar solamente intentos que YA recibieron una respuesta HTTP.
 

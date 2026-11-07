@@ -17,7 +17,8 @@ from nilo_runtime.agent.budget import (
 from nilo_runtime.agent.responses import parse_json
 from providers import error_from_http, ProviderFailure
 from action_contracts import instructions as action_instructions
-from nilo_runtime.agent.trace_context import transport_started, transport_finished, observe_context
+from nilo_runtime.agent.trace_context import (transport_started, transport_finished,
+    observe_context, response_text_received, response_phase)
 
 def _post(url, payload, headers, provider):
     """Único límite de red; la identificación del proveedor nunca depende de URL."""
@@ -62,6 +63,9 @@ def _response(result, provider, *, chat=False):
         raise ProviderFailure(provider+": respuesta sin estructura válida","invalid") from None
     if not isinstance(txt,str) or not txt.strip():
         raise ProviderFailure(provider+": respuesta vacía del modelo","invalid")
+    # Texto exacto generado (antes de strip y recorte de chat); no se guarda
+    # el JSON HTTP global que incluye metadatos del proveedor.
+    response_text_received(txt)
     return (txt.strip()[:2000] if chat else txt),tokens
 
 def _endpoint(cfg):
@@ -175,7 +179,13 @@ def request_llm(cfg, context):
     raw=_post(url,payload,headers,provider)
     text,tokens=_response(raw,provider)
     tokens["contexto"]=stats
-    return parse_json(text),tokens
+    try:
+        parsed=parse_json(text)
+    except (ValueError,TypeError):
+        response_phase("invalid_json")
+        raise
+    response_phase("json_parsed")
+    return parsed,tokens
 
 
 def build_chat_request(cfg,context,messages,system_instruction=None):
@@ -235,4 +245,5 @@ def request_chat(cfg,context,messages,system_instruction=None):
     provider=cfg.get('PROVIDER','gemini')
     result=_post(url,payload,headers,provider)
     reply,tokens=_response(result,provider,chat=True)
+    response_phase("chat_returned")
     return reply,tokens
