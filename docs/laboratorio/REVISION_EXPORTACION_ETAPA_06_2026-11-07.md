@@ -37,7 +37,7 @@ El origen “HTTP capturado” representa un **intento registrado al construir/a
 
 La construcción de la revisión comprueba: SHA-256 del cuerpo y de cada mensaje, concordancia de los textos con sus rutas JSON, continuidad de offsets y reconstrucción literal de todos los segmentos, identidad de cada bloque con su subcadena Unicode, y SHA-256 del literal seleccionado. Las notas tienen límites de tamaño.
 
-El frontend usa controles de texto DOM, sin interpretar HTML de un proveedor. El único endpoint nuevo es GET /api/lab/audit/info, sin parámetros arbitrarios: devuelve VERSION del motor instalado y la lista existente de OPTIONAL_CONTEXT. Los assets CSS/JS nuevos se sirven a través de rutas fijas del servidor local. No se agregan rutas POST, modificaciones de SQLite o acceso remoto.
+El frontend usa controles de texto DOM, sin interpretar HTML de un proveedor. El único endpoint nuevo es GET /api/lab/audit/info, sin parámetros arbitrarios: devuelve VERSION del motor instalado y la lista existente de OPTIONAL_CONTEXT. La implementación se integra a los **únicos dos assets compartidos ya permitidos**, assets/laboratorio_ui.js y assets/laboratorio.css, manteniendo la misma lista de rutas autorizadas y sin dependencias externas. El visor espera a que el script diferido esté disponible antes de activar el auditor. No se agregan rutas POST, modificaciones de SQLite o acceso remoto.
 
 ## Límites de la etapa
 
@@ -55,7 +55,7 @@ El frontend usa controles de texto DOM, sin interpretar HTML de un proveedor. El
 4. Diferenciación inequívoca entre capturas reales y previsualizaciones sin red.
 5. Checkboxes de familias que activan y desactivan todos sus campos y no pierden la posición original.
 6. Fields del sistema/contrato etiquetados como **revisión obligatoria**; no escritura sobre el perfil.
-7. Los tres visores siguen funcionando, y JS compila.
+7. Los tres visores siguen funcionando y JS compila; las pruebas históricas de tema, seguridad y navegación comprueban que se mantiene **una sola hoja de estilo y un solo script externo compartidos**.
 8. Windows portátil incluye ambos assets nuevos y toda la regresión pasa.
 
 **Siguiente etapa:** validación de experiencia real y organización de hallazgos; después se abordarán la matriz de presencia entre turnos y los experimentos comparativos según la hoja de ruta.
