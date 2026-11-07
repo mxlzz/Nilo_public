@@ -16,6 +16,7 @@ import sqlite3
 from urllib.parse import parse_qs
 
 from nilo_runtime.agent.provenance_codec import decode_metadata
+from nilo_runtime.labs.episode_links import inspect_episode
 from nilo_runtime.labs.literal_segments import index_saved_attempt
 from nilo_runtime.storage.llm_requests import RequestTraceStore
 
@@ -266,9 +267,17 @@ class LocalLLMReadAPI:
                 not isinstance(metadata, dict) or metadata.get("schema_version") != 1):
             raise ReadError("Versión de procedencia incompatible", 409)
         result = _metadata(entry, has_provenance=metadata is not None)
+        try:
+            response = RequestTraceStore(self.sidecar).response_for(ident)
+        except (ValueError,UnicodeError) as exc:
+            raise ReadError("La respuesta capturada no supera la comprobación de integridad",409) from exc
+        episode = (inspect_episode(self.world,entry["call_id"])
+                   if entry["purpose"]=="deliberacion" else None)
         result.update({
             "body_utf8": body.decode("utf-8"),
             "messages": segments["messages"],
+            "response": response,
+            "episode": episode,
             "provenance": metadata,
             "provenance_status": (
                 ("unavailable" if metadata.get("trace_status") == "unavailable" else
