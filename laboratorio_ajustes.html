@@ -37,6 +37,7 @@ legend{color:var(--muted);font-size:12px;padding:0 6px}.check-grid{display:grid;
 
 </style>
 <link rel="stylesheet" href="/assets/laboratorio.css">
+<link rel="stylesheet" href="/assets/laboratorio_revision.css">
 </head><body data-lab="ajustes">
 <header><div><div class="meta">Nilo 0.7 · entorno de pruebas</div><h1>Centro de ajustes</h1><small>Configuración del motor · Solicitudes calculadas para comparar · Copias seguras de partidas</small></div>
 <nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
@@ -105,9 +106,12 @@ legend{color:var(--muted);font-size:12px;padding:0 6px}.check-grid{display:grid;
 </div>
 </section>
 </main>
+<script src="/assets/laboratorio_revision.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 let catalog=null, currentProfile=null;
+const reviewPolicy={};
+NiloReview.readPolicy().then(info=>Object.assign(reviewPolicy,info)).catch(()=>{});
 const escapeText=value=>String(value??'');
 function setStatus(message,isError=false){$('status').textContent=message;$('status').style.color=isError?'#e0a58d':'var(--focus)';}
 function show(value){
@@ -124,21 +128,33 @@ function literalPreview(name, preview){
    const message=document.createElement('p');message.textContent="No hay bloques literales indexados para esta consulta.";
    root.append(message);return root;
  }
+ const audit=NiloReview.controller({
+  kind:"calculated_preview",sent_to_llm:false,
+  body_utf8:preview.solicitud_serializada,
+  body_sha256:preview.huella_solicitud_calculada,body_bytes:preview.bytes,
+  provider:preview.provider,model:preview.model,purpose:"deliberacion",
+  profile:name,stage:"ajustes",messages:preview.mensaje_literal_por_rol,
+  provenance:null
+ },reviewPolicy);
+ audit.addHeader(root,{title:"Revisión exportable de "+name});
  for(const msg of preview.mensaje_literal_por_rol){
    const role=document.createElement('details');
    role.open=msg.role==='user';
    const summary=document.createElement('summary');
    summary.textContent=msg.role==='system'?'Instrucciones del sistema':msg.role==='user'?'Mensaje de usuario':'Rol '+msg.role;
    role.append(summary);
-   let parent=null,group=null;
+   let parent=null,group=null,familyBody=null,familyBlocks=[];
+   function closeFamily(){if(familyBody&&familyBlocks.length)audit.addGroup(familyBody,msg,familyBlocks)}
    for(const block of msg.blocks||[]){
      const family=block.display_group||"otros";
      if(family!==group){
+       closeFamily();familyBlocks=[];
        parent=document.createElement('details');parent.className="literal-section";
        const heading=document.createElement('summary');heading.textContent=block.display_group_title||"Campos originales";
        parent.append(heading);
        const desc=document.createElement('span');desc.className='literal-sub';desc.textContent=block.display_group_subtitle||"";
        parent.append(desc);
+       familyBody=document.createElement("div");parent.append(familyBody);
        role.append(parent);group=family;
      }
      const part=document.createElement('details');
@@ -147,10 +163,11 @@ function literalPreview(name, preview){
      if(block.subtitle){
        const sub=document.createElement('span');sub.className='literal-sub';sub.textContent=block.subtitle;part.append(sub);
      }
+     audit.addBlock(part,msg,block);familyBlocks.push(block);
      const value=document.createElement('pre');value.textContent=block.literal;part.append(value);
-     parent.append(part);
+     familyBody.append(part);
    }
-   root.append(role);
+   closeFamily();root.append(role);
  }
  return root;
 }
