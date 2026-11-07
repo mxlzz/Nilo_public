@@ -156,6 +156,21 @@ def list_episodes(world, *, limit=_MAX_ITEMS):
             "timeline_position":"archive_sequence_verified",
         })
 
+    # Los checkpoints llevan el secuencial del historial justo antes de
+    # capturar el estado; los registros hist:seq llevan su propio secuencial.
+    # Este orden es verificable y permite intercalar archivos sin checkpoint.
+    # Consultas sin ancla se agregan después, sin inventar posición temporal.
+    def history_order(item):
+        ident=item["id"]
+        if ident.startswith("hist:"):
+            return (int(ident.split(":",1)[1]), 0, 0)
+        if ident.startswith("cp:"):
+            seq=item.get("history_seq")
+            return (int(seq) if isinstance(seq,int) else 10**15,
+                    1,int(ident.split(":",1)[1]))
+        return (10**15,2,0)
+    entries.sort(key=history_order)
+
     grouped = {}
     for attempt in _calls(world):
         call_id = attempt["call_id"]
