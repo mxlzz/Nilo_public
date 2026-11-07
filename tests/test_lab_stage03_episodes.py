@@ -212,6 +212,27 @@ class EpisodeStage03Tests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"integridad"):
             get_episode(self.world,"cp:1")
 
+    def test_stale_journal_link_does_not_claim_action(self):
+        with closing(sqlite3.connect(self.world)) as db:
+            db.execute("UPDATE lab_action_links SET journal_id=? "
+                       "WHERE action_checkpoint_id=2",("journal-other",))
+            db.commit()
+        items={e["id"] for e in list_episodes(self.world)["entries"]}
+        self.assertIn("cp:2",items)
+        linked=get_episode(self.world,"cp:1")["linked"]["planned_actions"]
+        self.assertEqual(linked,[])
+        action=get_episode(self.world,"cp:2")
+        self.assertIsNone(action["trace_call_id"])
+
+    def test_automatic_checkpoint_cannot_claim_direct_llm_call_id(self):
+        with closing(sqlite3.connect(self.world)) as db:
+            db.execute("UPDATE timeline_checkpoints SET trace_call_id=? "
+                       "WHERE id=3",(CALL,))
+            db.commit()
+        action=get_episode(self.world,"cp:3")
+        self.assertIsNone(action["trace_call_id"])
+        self.assertEqual(action["kind"],"action")
+
     def test_unlinked_action_with_no_surviving_decision_stays_visible(self):
         with closing(sqlite3.connect(self.world)) as db:
             db.execute("INSERT INTO lab_action_links VALUES(?,?,?)",
