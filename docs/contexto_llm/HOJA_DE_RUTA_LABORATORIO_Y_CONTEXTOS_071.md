@@ -49,7 +49,7 @@ Las etapas son **unidades de trabajo**, no once versiones/paquetes descargables.
 
 | Etapa | Estado |
 |---|---|
-| 01 | **Pendiente de cierre**: auditorías y parte de los datos ya disponibles; falta inventario/fixtures consolidados |
+| 01 | **Auditoría realizada; pendiente CI de PR #85**: inventario completo contra rama UI 04, 6 casos de referencia, manifest sin textos privados y 3 tests locales correctos. [Informe](https://github.com/mxlzz/Nilo_public/blob/work/0.7.1-lab-stage01-inventario/docs/laboratorio/AUDITORIA_ETAPA_01_2026-11-07.md) / [PR #85](https://github.com/mxlzz/Nilo_public/pull/85). |
 | 02 | Pendiente (infraestructura parcial: HTTP literal, provenance, checkpoints, decisión normalizada) |
 | 03 | Pendiente (historial básico ya existente) |
 | 04 | Pendiente (trazas y escenarios básicos ya existentes) |
