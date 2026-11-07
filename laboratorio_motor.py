@@ -333,6 +333,25 @@ class Handler(BaseHTTPRequestHandler):
                 self.json(run(scenario_id, seed=seed))
             except (ValueError, KeyError, TypeError) as exc:
                 self.json({"error":str(exc)},400)
+        elif path in ("/api/history/episodes", "/api/history/episode"):
+            # El servidor decide la partida. El navegador solo elige un ID;
+            # jamás envía rutas de archivos, SQLite ni capturas crudas.
+            try:
+                from nilo_runtime.labs.episode_view import list_episodes, get_episode
+                source = self.history.require()
+                if path.endswith("/episodes"):
+                    if urlsplit(self.path).query:
+                        raise ValueError("La lista de episodios no admite parámetros")
+                    self.json(list_episodes(source))
+                else:
+                    query=parse_qs(urlsplit(self.path).query,
+                                   keep_blank_values=True,max_num_fields=2)
+                    if set(query)!={"id"} or len(query["id"])!=1:
+                        raise ValueError("Identificador de episodio inválido")
+                    self.json(get_episode(source,query["id"][0],
+                                          viewer_world=self.hub.world))
+            except (ValueError,TypeError,sqlite3.Error,OSError) as exc:
+                self.json({"error":str(exc)[:220]},400)
         elif path in ("/api/history/catalog", "/api/history/event", "/api/history/default"):
             try:
                 from historical_lab import catalog, select_event

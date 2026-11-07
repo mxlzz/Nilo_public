@@ -391,7 +391,14 @@ $("refresh").addEventListener("click",()=>refresh(true));
 $("filters").addEventListener("submit",ev=>{ev.preventDefault();refresh(true)});
 $("clear").addEventListener("click",()=>{for(const id of FIELDS){$(id).value=id==="limit"?"25":""}refresh(true)});
 $("more").addEventListener("click",()=>refresh(false));
-refresh(true);
+// Un episodio del historial puede abrir un intento exacto. El endpoint
+// sigue ligado a la partida actual del LabHub; no acepta rutas externas.
+const requestedAttempt=new URLSearchParams(window.location.search).get("id");
+if(requestedAttempt&&/^[0-9a-f]{32}$/.test(requestedAttempt)){
+ refresh(true).then(()=>selectAttempt(requestedAttempt));
+}else{
+ refresh(true);
+}
 </script>
 <script src="/assets/laboratorio_ui.js" defer></script>
 </body></html>

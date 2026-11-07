@@ -29,6 +29,22 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
 .metrics{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.metric{border:1px solid #d7e3de;background:#f8faf9;padding:7px;border-radius:5px;min-width:80px;font-size:11px}
 .metric b{display:block;font-size:14px}.compare{border-collapse:collapse;width:100%;font-size:12px}.compare td,.compare th{border-bottom:1px solid #e4ebe9;text-align:left;padding:6px;vertical-align:top}
 #resultView{max-height:78vh;overflow:auto}
+.mode-switch{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.mode-switch button{flex:1;min-width:120px}
+.mode-switch button.selected{background:var(--accent,#285e50);color:white;border-color:var(--accent,#285e50)}
+.episode-chain{display:grid;gap:9px}
+.episode-card{padding:12px;border:1px solid #d7e3de;border-radius:6px;background:#fafcfb}
+.episode-card h3{margin:0 0 7px;font-size:13px}
+.episode-card details{margin:8px 0}
+.episode-label{font-size:11px;color:#526b62}
+.episode-breadcrumb{font-size:12px;margin:8px 0}
+.episode-evidence{font-size:12px;line-height:1.5;padding:6px 0;border-bottom:1px solid #e2e8e5}
+.episode-evidence:last-child{border-bottom:0}
+.episode-empty{color:#65766f;font-size:12px}
+.episode-note{background:#eef3f1;border-left:3px solid #659d8c;padding:10px;border-radius:4px;font-size:12px}
+.episode-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.episode-actions a,.episode-actions button{font-size:12px}
+@media(max-width:700px){.episode-card{padding:10px}}
 @media(max-width:1200px){.layout{grid-template-columns:300px 1fr}.result-panel{grid-column:1/-1}}
 @media(max-width:700px){.layout{grid-template-columns:1fr;padding:8px}.result-panel{grid-column:auto}.timeline-items{max-height:240px}header{padding:12px}}
 
@@ -47,12 +63,17 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
 </header>
 <main class="layout">
 <section class="panel">
- <div class="heading">01 · Cargar una partida</div>
+ <div class="heading">01 · Partida y recorrido</div>
  <div class="body">
   <p class="muted">Podés abrir la partida de la carpeta actual o seleccionar otra base SQLite. La original se consulta en modo lectura.</p>
   <div class="btnrow"><button id="defaultFile">Usar partida actual</button></div>
   <input id="file" type="file" accept=".sqlite3,.sqlite,.db" aria-label="Elegir archivo de partida" style="width:100%">
   <p id="fileStatus" class="muted">Buscando partida local…</p>
+  <div class="mode-switch" role="group" aria-label="Modo del historial">
+    <button type="button" id="episodesMode" class="selected" aria-pressed="true">Recorrido</button>
+    <button type="button" id="momentsMode" aria-pressed="false">Reproducción</button>
+  </div>
+  <p id="modeDescription" class="muted">Decisiones, acciones independientes y consultas sin cierre. Los datos ausentes se indican; las asociaciones solo se hacen por identificadores comprobados.</p>
   <div class="block"><label for="filter">Filtrar momentos</label>
     <select id="filter" style="width:100%"><option value="all">Decisiones y acciones</option>
     <option value="decision">Solo deliberaciones</option><option value="action">Solo acciones</option>
@@ -63,7 +84,7 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
  </div>
 </section>
 <section class="panel">
- <div class="heading">02 · Seleccionar el momento</div>
+ <div class="heading">02 · Momento seleccionado</div>
  <div class="body">
   <div class="row"><button id="prev" aria-label="Anterior">‹</button><strong id="marker">—</strong><button id="next" aria-label="Siguiente">›</button></div>
   <input type="range" id="timeline" min="0" max="0" step="1" value="0" aria-label="Momento de la partida">
@@ -72,20 +93,20 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
     <p id="eventDescription" class="muted"></p>
     <span class="muted" id="eventVersion"></span>
   </div>
-  <h3>Decisión u operación registrada</h3><pre id="command">—</pre>
+  <details id="originalCommandDetails"><summary>Ver registro original de este momento</summary><pre id="command">—</pre></details>
   <div class="block" id="legacyWarning" hidden><div class="warn">Este momento no tiene estado anterior preservado. Podés consultar el registro auténtico, pero no reproducirlo con exactitud.</div></div>
   <details id="editContainer"><summary>Modificar la orden para una simulación alternativa</summary>
     <p class="muted">El estado inicial será el mismo; solo cambia la orden seleccionada. No se modifica la partida.</p>
     <textarea id="override" spellcheck="false" aria-label="Orden alternativa JSON"></textarea>
     <button id="resetOverride">Restaurar orden original</button>
   </details>
-  <div class="btnrow"><button id="replay" class="primary">Reproducir procesamiento</button></div>
+  <div class="btnrow" id="replayControls"><button id="replay" class="primary">Reproducir procesamiento</button></div>
   <p id="runStatus" class="muted"></p>
  </div>
 </section>
 <section class="panel result-panel">
- <div class="heading">03 · Resultado, diferencias y código</div>
- <div class="body" id="resultView"><p class="muted">Seleccioná una acción o deliberación. Los hechos de una partida antigua se pueden inspeccionar aunque no tengan checkpoint.</p></div>
+ <div class="heading" id="rightHeading">03 · Ficha de episodio</div>
+ <div class="body" id="resultView"><p class="muted">Seleccioná una decisión o actividad. Podés consultar sus datos originales y ver qué relaciones están comprobadas.</p></div>
 </section>
 </main>
 <script>
@@ -94,7 +115,8 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
 const $=id=>document.getElementById(id);
 const safe=v=>String(v===undefined||v===null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const json=v=>JSON.stringify(v,null,2);
-let events=[],view=[],selected=null,details=null,oldText="";
+let events=[],episodes=[],view=[],selected=null,details=null,oldText="";
+let mode="episodes",episodesLoading=false;
 let sourceToken=0,detailToken=0;
 const isReplayable=e=>Boolean(e&&e.replayable);
 async function ask(url,options){
@@ -121,34 +143,65 @@ function clearSelection(message="Seleccioná un momento para consultar su regist
 }
 function showData(data){
  clearSelection();
- events=data.entries||[];
+ events=data.entries||[];episodes=[];episodesLoading=true;
  $("fileStatus").textContent=data.source+" · "+events.length+" momentos · "+
     data.checkpoint_count+" puntos restaurables";
- if(!events.length){
-  view=[];$("timeline").max=0;$("count").textContent="0 momentos visibles";
-  $("firstLabel").textContent="—";$("lastLabel").textContent="—";
-  $("events").innerHTML='<p class="muted">La partida no tiene eventos relevantes.</p>';
-  clearSelection("Esta partida no tiene momentos para inspeccionar.");return
- }
  filterEvents();
+ const token=sourceToken;
+ ask("/api/history/episodes").then(result=>{
+   if(token!==sourceToken)return;
+   episodes=result.entries||[];episodesLoading=false;filterEvents();
+ }).catch(err=>{
+   if(token!==sourceToken)return;
+   episodesLoading=false;
+   if(mode==="episodes"){
+     // La vista antigua sigue disponible si falta el índice de episodios.
+     // Es preferible conservar la navegación segura a dejar la UI vacía.
+     mode="moments";
+     $("episodesMode").classList?.remove("selected");
+     $("momentsMode").classList?.add("selected");
+     $("episodesMode").setAttribute?.("aria-pressed","false");
+     $("momentsMode").setAttribute?.("aria-pressed","true");
+     $("modeDescription").textContent="Recorrido no disponible: "+err.message+
+       ". Se muestra el historial tradicional, en modo de lectura.";
+     filterEvents();
+   }
+ });
 }
 function filterEvents(){
  let filter=$("filter").value,term=$("search").value.toLowerCase();
- view=events.filter(e=>{
-   let match=filter==="all"||
-     (filter==="decision"&&(e.kind==="decision"||e.kind==="llm_decision"))||
-     (filter==="action"&&(e.kind==="action"||e.kind==="diagnostic"))||
-     (filter==="failure"&&e.failed===true)||
-     (filter==="old"&&!e.replayable);
-   return match&&(e.label+" "+e.op+" "+e.title).toLowerCase().includes(term);
+ if(mode==="episodes"&&episodesLoading){
+   view=[];$("events").innerHTML='<p class="muted">Construyendo el recorrido con los vínculos disponibles…</p>';
+   $("count").textContent="Consultando episodios";$("timeline").max=0;
+   $("prev").disabled=true;$("next").disabled=true;return;
+ }
+ const base=mode==="episodes"?episodes:events;
+ view=base.filter(e=>{
+   let match;
+   if(mode==="episodes"){
+      match=filter==="all"||
+        (filter==="decision"&&(e.episode_kind==="deliberation"||e.episode_kind==="independent_decision"||e.episode_kind==="unlinked_call"))||
+        (filter==="action"&&(e.episode_kind==="independent"||e.episode_kind==="legacy"))||
+        (filter==="failure"&&e.failed===true)||
+        (filter==="old"&&(e.episode_kind==="legacy"||!e.replayable));
+   }else{
+      match=filter==="all"||
+        (filter==="decision"&&(e.kind==="decision"||e.kind==="llm_decision"))||
+        (filter==="action"&&(e.kind==="action"||e.kind==="diagnostic"))||
+        (filter==="failure"&&e.failed===true)||
+        (filter==="old"&&!e.replayable);
+   }
+   return match&&((e.label||"")+" "+(e.op||"")+" "+(e.title||"")).toLowerCase().includes(term);
  });
  $("count").textContent=view.length+" momentos visibles";
  $("timeline").max=Math.max(0,view.length-1);
  $("firstLabel").textContent=view[0]?.label||"—";
  $("lastLabel").textContent=view[view.length-1]?.label||"—";
  if(!view.length){
-  $("events").innerHTML='<p class="muted">No hay coincidencias.</p>';
-  clearSelection("No hay momentos que coincidan con los filtros.");return
+  $("events").innerHTML='<p class="muted">No hay momentos disponibles.</p>';
+  if(!base.length)clearSelection("Esta partida no tiene momentos para inspeccionar.");
+  else clearSelection("No hay momentos que coincidan con los filtros.");
+  return;
  }
  let at=view.findIndex(e=>selected&&e.id===selected.id);
  selectIndex(at>=0?at:0);
@@ -162,22 +215,31 @@ function selectIndex(index){
  $("prev").disabled=i===0;$("next").disabled=i===view.length-1;
  let left=Math.max(0,i-7),right=Math.min(view.length,i+8);
  $("events").innerHTML=view.slice(left,right).map((e,j)=>'<button class="'+(e.id===selected.id?"active":"")+'" data-index="'+(left+j)+'"><span class="tmeta">'+
-  safe(e.label)+" · "+safe(e.kind)+(e.replayable?" · Restaurable":" · Registro")+'</span><span class="itemtitle">'+safe(e.op)+" · "+safe(e.title||"")+'</span></button>').join("");
+  safe(e.label)+" · "+safe(mode==="episodes"?(e.episode_kind==="deliberation"?"Deliberación":e.episode_kind==="independent_decision"?"Decisión sin LLM":e.episode_kind==="independent"?"Actividad independiente":e.episode_kind==="unlinked_call"?"Consulta sin decisión":"Registro anterior"):e.kind)+(e.replayable?" · Restaurable":" · Registro")+'</span><span class="itemtitle">'+safe(e.op)+" · "+safe(e.title||"")+'</span></button>').join("");
  $("events").querySelectorAll("button[data-index]").forEach(b=>b.onclick=()=>selectIndex(Number(b.dataset.index)));
- $("kind").textContent=selected.replayable?"Punto restaurable":"Registro histórico";
+ $("kind").textContent=mode==="episodes"?(selected.episode_kind==="deliberation"?"Deliberación":selected.episode_kind==="independent_decision"?"Decisión sin LLM":selected.episode_kind==="independent"?"Actividad sin vínculo":selected.episode_kind==="unlinked_call"?"Consulta incompleta":"Registro anterior"):(selected.replayable?"Punto restaurable":"Registro histórico");
  $("eventTitle").textContent=selected.op;
  $("eventDescription").textContent=selected.label+" · "+(selected.title||"");
  $("eventVersion").textContent=selected.engine_version?"Motor registrado: "+selected.engine_version:"";
- $("legacyWarning").hidden=selected.replayable;
- $("replay").disabled=!selected.replayable;
- $("editContainer").hidden=!selected.replayable;
+ $("legacyWarning").hidden=mode==="episodes"||selected.replayable;
+ $("replay").disabled=mode==="episodes"||!selected.replayable;
+ $("replayControls").hidden=mode==="episodes";
+ $("editContainer").hidden=mode==="episodes"||!selected.replayable;
+ $("originalCommandDetails").open=mode==="moments";
+ $("rightHeading").textContent=mode==="episodes"?"03 · Ficha de episodio":"03 · Resultado, diferencias y código";
  $("command").textContent="Cargando registro…";
  $("override").value="";
  details=null;oldText="";
  $("resultView").innerHTML='<p class="muted">Cargando detalles del momento seleccionado…</p>';
  setMessage("");
- ask("/api/history/event?id="+encodeURIComponent(selected.id)).then(r=>{
+ ask((mode==="episodes"?"/api/history/episode?id=":"/api/history/event?id=")+encodeURIComponent(selected.id)).then(r=>{
   if(requestToken!==detailToken||!selected||selected.id!==r.id)return;
+  if(mode==="episodes"){
+    details=null;oldText="";
+    $("command").textContent=json(r.decision||r.recorded_event?.command||r.recorded_event?.historical||{});
+    renderEpisode(r);
+    return;
+  }
   details=r;oldText=json(r.command||{});
   $("command").textContent=oldText;
   $("override").value=oldText;
@@ -192,6 +254,103 @@ function selectIndex(index){
      '<p class="muted">No hay diagnóstico asociado de forma inequívoca a este checkpoint. Se mostrará la nueva ejecución por separado.</p>');
   }
  }).catch(err=>{if(requestToken===detailToken)$("resultView").innerHTML='<p class="error">'+safe(err.message)+'</p>'});
+}
+function rawDetail(title,value){
+ const encoded=safe(json(value));
+ return '<details><summary>'+safe(title)+'</summary><pre>'+encoded+'</pre></details>';
+}
+function renderEpisode(data){
+ // Todo texto de partida o proveedor debe pasar por safe(). No usar HTML
+ // de respuesta, mensajes ni notas como markup de la interfaz.
+ const attempts=data.attempts||[],linked=data.linked||{},related=data.related||{};
+ const decision=data.decision;
+ const original=data.recorded_event||{};
+ const cards=[];
+ const meta=attempts.map(a=>{
+   const link=(data.open_in_llm_viewer&&/^[0-9a-f]{32}$/.test(a.attempt_id||""))?
+     '<a href="/visor-llm?id='+encodeURIComponent(a.attempt_id)+'">Abrir solicitud literal en el visor</a>':
+     '<span class="muted">No hay vínculo verificable con el visor de la partida activa.</span>';
+   const label='Intento '+safe(a.attempt_ordinal)+' · '+safe(a.provider)+' / '+safe(a.model)+
+      ' · '+safe(a.status)+' · '+safe(a.body_bytes)+' bytes';
+   return '<div class="episode-evidence"><b>'+label+'</b>'+
+     '<div class="episode-actions">'+link+'</div>'+
+     rawDetail("Huella de la solicitud",{sha256:a.body_sha256,bytes:a.body_bytes})+
+     '</div>';
+ }).join("");
+ cards.push('<section class="episode-card"><h3>1 · Recibió</h3>'+
+   '<p class="episode-label">Solicitudes HTTP realmente enviadas; el texto exacto se abre en el visor cuando pertenece a la misma partida.</p>'+
+   (attempts.length?meta:'<p class="episode-empty">No hay solicitud HTTP archivada para este episodio.</p>')+
+   '</section>');
+ const responses=attempts.map(a=>{
+    const response=a.response;
+    const label='Intento '+safe(a.attempt_ordinal)+' · '+safe(a.provider)+' · '+safe(a.status);
+    return '<div class="episode-evidence"><strong>'+label+'</strong>'+
+      (response?'<p class="episode-label">Fase observada: '+safe(response.parse_phase)+' · '+
+      safe(response.capture_status==="captured"?"Texto original conservado":"Texto omitido por límite de tamaño")+'</p>':
+      '<p class="episode-empty">No se conserva la respuesta textual de este intento.</p>')+
+      (response?rawDetail("Verificación del texto original",{sha256:response.body_sha256,
+        bytes:response.body_bytes,phase:response.parse_phase,capture_status:response.capture_status}):'')+
+      (response&&response.text!==null?'<details><summary>Ver respuesta textual literal</summary><pre>'+safe(response.text)+'</pre></details>':'')+
+      '</div>';
+ }).join("");
+ cards.push('<section class="episode-card"><h3>2 · Decidió</h3>'+
+   '<p class="episode-label">La respuesta textual original y la decisión aceptada por el programa son registros distintos.</p>'+
+   (responses||'<p class="episode-empty">No se conserva una respuesta textual original del LLM.</p>')+
+   (decision?rawDetail("Decisión normalizada completa",decision)+
+    (decision.cuaderno?'<p class="episode-evidence">Cuaderno de Nilo (testimonio): '+safe(decision.cuaderno)+'</p>':''):
+    '<p class="episode-empty">No hay decisión normalizada atribuible a este episodio.</p>')+
+   '</section>');
+ const actions=linked.planned_actions||[];
+ let executed=actions.length?actions.map((a,i)=>
+   '<div class="episode-evidence"><b>'+(i+1)+'. '+safe(a.operation||"Acción")+'</b> · '+safe(a.label||"")+
+   '<p class="episode-label">Checkpoint '+safe(a.checkpoint_id)+' · vínculo exacto por '+safe(a.matched_by)+
+   '</p>'+rawDetail("Metadatos del checkpoint",a)+'</div>').join(""):
+   '<p class="episode-empty">Sin acciones del plan enlazadas mediante identificadores exactos. Esto no demuestra que no hubiera actividad.</p>';
+ if(original.kind==="action"){
+   executed='<p class="episode-label">Actividad registrada individualmente: no se atribuye a una deliberación por proximidad temporal.</p>'+
+     rawDetail("Operación original del checkpoint",original.command||{});
+ }
+ if(original.kind==="diagnostic"){
+   executed=rawDetail("Diagnóstico histórico original",original.historical||{});
+ }
+ cards.push('<section class="episode-card"><h3>3 · Ejecutó</h3>'+executed+'</section>');
+ const groups=[
+   ["Cuaderno archivado",related.journals||[]],
+   ["Mediciones",related.measurements||[]],
+   ["Diagnósticos",related.diagnostics||[]],
+   ["Experiencias",related.experiences||[]]
+ ];
+ const evidence=groups.map(([label,rows])=>
+   '<div class="episode-evidence"><strong>'+safe(label)+' · '+rows.length+'</strong>'+
+   (rows.length?rows.map((x,i)=>rawDetail(label+' #'+(i+1)+' · vínculo '+x.matched_by,x.record)).join(""):
+   '<p class="episode-empty">Sin registros con ID comprobado en esta categoría.</p>')+'</div>').join("");
+ const recorded=original.kind==="action"&&(original.related||[]).length?
+   '<details><summary>Diagnósticos próximos al checkpoint (atribución no comprobada)</summary>'+
+     '<p class="episode-label">La asociación temporal no equivale a evidencia causal.</p>'+
+     (original.related||[]).map((x,i)=>rawDetail("Registro próximo "+(i+1),x.payload)).join("")+
+   '</details>':'';
+ cards.push('<section class="episode-card"><h3>4 · Quedó registrado</h3>'+
+   '<p class="episode-label">Que una experiencia figure en el archivo no prueba que se haya incluido en el próximo prompt.</p>'+
+   evidence+recorded+'</section>');
+ let controls="";
+ if(original.replayable&&original.id?.startsWith("cp:")){
+   controls='<div class="episode-actions"><button id="episodeToReplay" type="button">Examinar este punto en Reproducción</button></div>';
+ }
+ const limitations=(data.limitations||[]).map(t=>'<li>'+safe(t)+'</li>').join("");
+ $("resultView").innerHTML=
+   '<div class="episode-breadcrumb">Episodio · '+safe(data.label||"Sin fecha")+
+   (data.trace_call_id?' · llamada '+safe(data.trace_call_id.slice(0,8))+'…':' · vínculo de llamada no disponible')+
+   '</div>'+
+   '<div class="episode-note">Los textos originales y los datos calculados se distinguen. Una secuencia temporal no demuestra por sí sola por qué el LLM tomó una decisión.</div>'+
+   '<div class="episode-chain">'+cards.join("")+'</div>'+
+   controls+
+   (limitations?'<details><summary>Datos ausentes y límites de atribución ('+(data.limitations||[]).length+')</summary><ul>'+limitations+'</ul></details>':'');
+ const switchToReplay=$("episodeToReplay");
+ if(switchToReplay)switchToReplay.onclick=()=>{
+   const wanted=original.id;setMode("moments");
+   const index=view.findIndex(e=>e.id===wanted);
+   if(index>=0)selectIndex(index);
+ };
 }
 function renderTrace(trace){
  if(!trace||!trace.length)return '<p class="muted">Sin funciones instrumentadas en esta etapa.</p>';
@@ -262,6 +421,22 @@ $("file").onchange=async e=>{
  }catch(err){if(requestToken===sourceToken)$("fileStatus").textContent=err.message}
 };
 $("defaultFile").onclick=loadLocal;
+function setMode(next){
+ if(next!== "episodes"&&next!=="moments")return;
+ mode=next;
+ $("episodesMode").classList.toggle("selected",mode==="episodes");
+ $("momentsMode").classList.toggle("selected",mode==="moments");
+ $("episodesMode").setAttribute("aria-pressed",String(mode==="episodes"));
+ $("momentsMode").setAttribute("aria-pressed",String(mode==="moments"));
+ $("replayControls").hidden=mode==="episodes";
+ $("originalCommandDetails").open=mode==="moments";
+ $("modeDescription").textContent=mode==="episodes"?
+ "Decisiones, acciones independientes y consultas incompletas. Solo se agrupan vínculos identificables.":
+ "Checkpoints y eventos, con reproducción aislada del motor instalado. El original no se modifica.";
+ filterEvents();
+}
+$("episodesMode").onclick=()=>setMode("episodes");
+$("momentsMode").onclick=()=>setMode("moments");
 $("filter").onchange=filterEvents;$("search").oninput=filterEvents;
 $("timeline").oninput=e=>selectIndex(Number(e.target.value));
 $("prev").onclick=()=>selectIndex(Number($("timeline").value)-1);
