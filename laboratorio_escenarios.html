@@ -233,6 +233,34 @@ function renderStage(stage,i){
   '<span><span class="status">'+escapeHTML(stage.estado||"")+'</span>'+helpButton(kind in HELP?kind:"recorrido")+'</span></summary>'+
   '<p class="small">'+escapeHTML(stage.descripcion||"")+'</p>'+details+'</details>';
 }
+function renderLiteralScenarioMessages(messages){
+ // Mismo índice de offsets que el visor HTTP real, pero sobre una solicitud
+ // calculada por el motor. Orden de texto y caracteres sin modificaciones.
+ let out="";
+ for(const message of messages||[]){
+  const role=message.role||"mensaje";
+  out+='<details class="report-section"><summary>'+escapeHTML(
+    role==="system"?"Instrucciones del sistema":role==="user"?"Mensaje de usuario":"Mensaje "+role)+
+    ' · '+(message.blocks||[]).length+' bloques literales</summary>';
+  out+='<p class="meta">El texto es literal. Los encabezados siguientes son solo guías del laboratorio.</p>';
+  let group="";
+  for(const block of message.blocks||[]){
+    const family=block.display_group||"otros";
+    if(group!==family){
+      if(group)out+='</div></details>';
+      out+='<details class="report-section"><summary>'+escapeHTML(block.display_group_title||"Campos del contexto")+
+          '</summary><p class="meta">'+escapeHTML(block.display_group_subtitle||"")+'</p><div>';
+      group=family;
+    }
+    out+='<details><summary>'+escapeHTML(block.title||"Texto original")+'</summary>'+
+      (block.subtitle?'<p class="meta">'+escapeHTML(block.subtitle)+'</p>':'')+
+      '<pre>'+escapeHTML(block.literal)+'</pre></details>';
+  }
+  if(group)out+='</div></details>';
+  out+='</details>';
+ }
+ return out||'<p class="meta">No hay mensajes textuales indexados.</p>';
+}
 function renderLLM(){
  if(!last)return;
  const moment=$("llmMoment").value,provider=$("llmProvider").value;
@@ -249,15 +277,19 @@ function renderLLM(){
  let html='<div class="status-note"><b>'+escapeHTML(req.proveedor.toUpperCase())+' · '+
   escapeHTML(req.modelo_configurado)+'</b> · '+req.bytes_solicitud+
   ' bytes del cuerpo JSON. <span class="meta">Solicitud calculada, no enviada a una API.</span></div>';
- html+='<details open><summary>Valores del mundo que recibe el modelo '+helpButton("llm")+'</summary>'+
-  '<p class="meta">Son los valores concretos que superaron los filtros: inventario, percepción, sensaciones, proyectos y registros. Las llaves entre comillas son nombres de campo JSON, sus contenidos aparecen a la derecha.</p>'+
+ html+='<details class="report-section" open><summary>Bloques literales del contexto que se enviaría '+helpButton("llm")+'</summary>'+
+  '<p class="meta">Esta es una PREVISUALIZACIÓN calculada; no se envió a Gemini ni a Groq. Los fragmentos provienen de los mensajes originales del constructor. Las familias y aclaraciones no forman parte del prompt.</p>'+
+  renderLiteralScenarioMessages(req.mensajes_literal_estructurado)+
+  '</details>';
+ html+='<details><summary>Campos interpretables del JSON (referencia técnica)</summary>'+
+  '<p class="meta">Copia estructurada para comparar valores. Los fragmentos literales se muestran arriba.</p>'+
   '<pre>'+escapeHTML(textJSON(req.datos_recibidos_con_valores))+'</pre></details>';
  html+='<details><summary>Instrucciones del sistema (texto literal)</summary>'+
   '<p class="meta">Instrucciones que establecen cómo decide Nilo y qué representa la simulación.</p>'+
   '<pre>'+escapeHTML(req.mensaje_sistema)+'</pre></details>';
  html+='<details><summary>Mensaje de usuario (texto literal, incluye contratos de acciones según proveedor)</summary>'+
   '<pre>'+escapeHTML(req.mensaje_usuario)+'</pre></details>';
- html+='<details><summary>Solicitud completa — cuerpo JSON exacto que se transmitiría</summary>'+
+ html+='<details><summary>Solicitud completa — cuerpo JSON exacto que se transmitiría (huella '+escapeHTML(req.huella_solicitud_calculada?.slice(0,12)||"no disponible")+')</summary>'+
   '<p class="meta">Incluye roles, instrucciones, acciones, valores, modelo y parámetros. Es el texto serializado por Python para el cuerpo HTTP. No incluye claves de API.</p>'+
   '<pre>'+escapeHTML(req.solicitud_serializada)+'</pre></details>';
  html+='<details><summary>Diferencias entre lo recibido antes y después ('+changed.length+' campos)</summary>'+
