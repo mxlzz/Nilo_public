@@ -77,14 +77,12 @@ def list_episodes(world, *, limit=_MAX_ITEMS):
         raise ValueError("Límite de episodios inválido")
     world = Path(world).resolve()
     original = catalog(world, limit=limit)
-    linked_action_ids = set()
+    action_links = []
     traced_calls = set()
     with closing(_readonly(world)) as db:
         if _table(db, "lab_action_links"):
-            linked_action_ids = {
-                row[0] for row in db.execute(
-                    "SELECT action_checkpoint_id FROM lab_action_links")
-            }
+            action_links = list(db.execute(
+                "SELECT action_checkpoint_id,trace_call_id FROM lab_action_links"))
         if _table(db, "timeline_checkpoints") and (
                 "trace_call_id" in _columns(db, "timeline_checkpoints")):
             traced_calls.update(
@@ -103,11 +101,16 @@ def list_episodes(world, *, limit=_MAX_ITEMS):
                         data.get("trace_call_id"), str):
                     traced_calls.add(data["trace_call_id"])
 
+    linked_action_ids = {int(row[0]) for row in action_links
+                         if row[1] in traced_calls}
     entries = []
     for item in original["entries"]:
         kind, number = item["id"].split(":", 1)
         if item["kind"] in ("decision", "llm_decision"):
-            entries.append({**item, "episode_kind": "deliberation",
+            is_llm = (item["kind"]=="llm_decision"
+                      or item.get("source")=="llm")
+            entries.append({**item,
+                            "episode_kind": "deliberation" if is_llm else "independent_decision",
                             "relation": "recorded_decision"})
         elif item["kind"] == "action":
             if int(number) in linked_action_ids:
@@ -143,6 +146,8 @@ def list_episodes(world, *, limit=_MAX_ITEMS):
             "replayable": False,
             "attempt_count": len(attempts),
             "timeline_position": "not_verified",
+            "failed": all(a["status"] not in ("accepted", "response_received")
+                          for a in attempts),
         })
 
     return {
