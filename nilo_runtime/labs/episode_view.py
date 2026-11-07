@@ -6,6 +6,7 @@ uniones *exactas* de etapa 02. La proximidad horaria jamás crea una relación.
 from __future__ import annotations
 
 from contextlib import closing
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -175,14 +176,18 @@ def _attempts_for(world, call_id):
             return result, False
         rows = db.execute(
             """SELECT attempt_id,attempt_ordinal,status,provider,model,
-                      body_sha256,body_bytes,started_utc,simulated_at
+                      body_sha256,body_bytes,body,started_utc,simulated_at
                FROM llm_requests WHERE purpose='deliberacion' AND call_id=?
                ORDER BY attempt_ordinal LIMIT ?""", (call_id, _MAX_ATTEMPTS + 1)
         ).fetchall()
     truncated = len(rows) > _MAX_ATTEMPTS
     store = RequestTraceStore.for_world(world)
     for row in rows[:_MAX_ATTEMPTS]:
-        item = dict(row)
+        body = row["body"]
+        if (hashlib.sha256(body).hexdigest() != row["body_sha256"]
+                or len(body) != row["body_bytes"]):
+            raise ValueError("La solicitud HTTP no supera su control de integridad")
+        item = {key:row[key] for key in row.keys() if key!="body"}
         response = store.response_for(item["attempt_id"])
         item["response"] = response
         item["matched_by"] = "call_id"
