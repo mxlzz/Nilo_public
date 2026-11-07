@@ -176,3 +176,20 @@ body[data-lab] .mapkey b,body[data-lab] .kv b,body[data-lab] .historyentry b{col
     animation-duration:.01ms!important;transition-duration:.01ms!important;
   }
 }
+
+
+/* Controles de auditoría visual, fuera de los textos literales del prompt. */
+.nilo-review-toolbar{padding:12px;margin:10px 0 18px;border:1px solid var(--lab-border,var(--line,#8b9690));border-radius:8px;background:var(--lab-surface,var(--panel,#fafafa));display:grid;gap:8px;min-width:0}
+.nilo-review-toolbar strong{font-size:13px}
+.nilo-review-hint{font-size:11px;line-height:1.5;color:var(--lab-muted,var(--muted,#65716a));margin:0}
+.nilo-review-overview,.nilo-review-note{width:100%;max-width:100%;box-sizing:border-box;font:12px/1.5 system-ui,sans-serif;padding:7px;resize:vertical;border:1px solid var(--lab-border,var(--line,#b8c4ba));color:var(--lab-text,var(--fg,#202c29));background:var(--lab-surface,var(--panel,#fff));border-radius:5px}
+.nilo-review-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.nilo-review-export{font:600 12px/1.4 system-ui,sans-serif;cursor:pointer;padding:8px 11px;background:var(--lab-surface,var(--panel,#fff));color:var(--lab-text,var(--fg,#202c29));border:1px solid var(--lab-focus,var(--focus,#276757));border-radius:6px}
+.nilo-review-export:disabled{opacity:.5;cursor:wait}
+.nilo-review-count,.nilo-review-feedback{font-size:11px;color:var(--lab-muted,var(--muted,#65716a))}
+.nilo-review-feedback{overflow-wrap:anywhere}
+.nilo-review-item{display:grid;gap:6px;margin:8px 0 12px;padding:9px 11px;border-left:2px solid var(--lab-focus,var(--focus,#276757));background:var(--lab-surface,var(--panel,#fff))}
+.nilo-review-check{display:flex!important;align-items:center!important;gap:8px!important;cursor:pointer;color:var(--lab-text,var(--fg,#202c29))!important;font:12px/1.4 system-ui,sans-serif!important}
+.nilo-review-check input{flex:none!important;width:15px!important;height:15px!important;margin:0!important}
+.nilo-review-group{padding:8px 10px;margin:4px 0 9px;border:1px dashed var(--lab-border,var(--line,#bec9c2));border-radius:5px}
+.nilo-review-note[hidden]{display:none!important}
