@@ -273,6 +273,10 @@ function historicalRuleMarkup(report){
   ref.required_fields.map(safe).join(", ")+'</p>';
  if(ref.verified_preconditions)out+='<p class="episode-evidence"><b>Condiciones documentadas:</b> '+safe(ref.verified_preconditions)+'</p>';
  if(ref.verified_postconditions)out+='<p class="episode-evidence"><b>Resultados esperables:</b> '+safe(ref.verified_postconditions)+'</p>';
+ if(!ref.verified_preconditions&&!ref.verified_postconditions)
+   out+='<p class="episode-label">Esta operación no tiene un contrato físico verificable específico en el registro.</p>';
+ if(shape?.missing_required_fields?.length)
+   out+='<p class="episode-label">Parámetros requeridos ausentes: '+shape.missing_required_fields.map(safe).join(", ")+'</p>';
  if(shape)out+='<p class="episode-label">Formato revalidado con el motor actual: '+safe(shape.valid?"válido":"inválido")+
   ' · '+safe(shape.code||"")+'. Esta revalidación no acredita el procesamiento histórico.</p>';
  if((report.adjacent_records||[]).length)
