@@ -271,8 +271,11 @@ class LocalLLMReadAPI:
             response = RequestTraceStore(self.sidecar).response_for(ident)
         except (ValueError,UnicodeError) as exc:
             raise ReadError("La respuesta capturada no supera la comprobación de integridad",409) from exc
+        # Capturas antiguas o sintéticas pueden tener IDs de otro formato.
+        # Seguir pudiendo ver su cuerpo literal sin inventar un episodio.
         episode = (inspect_episode(self.world,entry["call_id"])
-                   if entry["purpose"]=="deliberacion" else None)
+                   if (entry["purpose"]=="deliberacion"
+                       and _ATTEMPT.fullmatch(entry["call_id"])) else None)
         result.update({
             "body_utf8": body.decode("utf-8"),
             "messages": segments["messages"],
