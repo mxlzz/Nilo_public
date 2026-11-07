@@ -292,11 +292,14 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(contents)))
             self.end_headers()
             self.wfile.write(contents)
-        elif path in ("/assets/laboratorio.css", "/assets/laboratorio_ui.js"):
-            # Assets fijos del laboratorio: solo estos dos nombres, sin acceso a rutas arbitrarias.
+        elif path in ("/assets/laboratorio.css", "/assets/laboratorio_ui.js",
+                       "/assets/laboratorio_revision.css", "/assets/laboratorio_revision.js"):
+            # Assets permitidos explícitamente; no aceptar rutas del navegador.
             static_sources = {
                 "/assets/laboratorio.css": (HERE / "assets/laboratorio.css", "text/css; charset=utf-8"),
                 "/assets/laboratorio_ui.js": (HERE / "assets/laboratorio_ui.js", "text/javascript; charset=utf-8"),
+                "/assets/laboratorio_revision.css": (HERE / "assets/laboratorio_revision.css", "text/css; charset=utf-8"),
+                "/assets/laboratorio_revision.js": (HERE / "assets/laboratorio_revision.js", "text/javascript; charset=utf-8"),
             }
             source, mime = static_sources[path]
             contents = source.read_bytes()
@@ -307,6 +310,22 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(contents)))
             self.end_headers()
             self.wfile.write(contents)
+        elif path == "/api/lab/audit/info":
+            # Solo versión/contrato del motor instalado, sin acceder a la
+            # partida ni modificar configuración. Los commits de paquetes
+            # portátiles pueden no conocerse; no se inventa un hash Git.
+            if urlsplit(self.path).query:
+                self.json({"error":"Parámetros no permitidos"},400)
+            else:
+                from nilo_runtime.core.lab_settings import OPTIONAL_CONTEXT
+                self.json({
+                    "schema":"nilo.lab.context_review.v1",
+                    "engine_version":(HERE/"VERSION").read_text(encoding="utf-8").strip(),
+                    "commit":None,
+                    "commit_status":"not_recorded_in_portable_installation",
+                    "optional_context":list(OPTIONAL_CONTEXT),
+                    "writes_to_world":False,
+                })
         elif path in ("/api/lab/llm/attempts", "/api/lab/llm/attempt"):
             # Solo servidor del laboratorio: no sumar rutas crudas a la UI
             # principal. La base se determina desde la partida del LabHub;
