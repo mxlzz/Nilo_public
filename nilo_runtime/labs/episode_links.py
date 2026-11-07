@@ -12,7 +12,7 @@ from pathlib import Path
 import re
 import sqlite3
 
-_CALL_ID = re.compile(r"[0-9a-f]{32}\\Z")
+_CALL_ID = re.compile(r"[0-9a-f]{32}")
 _MAX_ACTIONS = 200
 
 
