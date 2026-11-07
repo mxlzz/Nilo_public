@@ -169,12 +169,14 @@ async function validate(model,selected){
 async function buildReview(model,selected,overview,policy){
  const catalog=await validate(model,selected);
  const notes=normNote(overview||"",MAX_OVERVIEW);
- const options=new Set(Array.isArray(policy?.optional_context)?policy.optional_context:[]);
+ const options=(Array.isArray(policy?.optional_context)
+  ?new Set(policy.optional_context):null);
  const proposals=[];
  for(const [id,marked] of selected){
    const {message,block}=catalog.get(id);
    const root=inferRoot(block.json_pointer);
-   const profileEligible=message.role==="user"&&block.kind==="field"&&options.has(root);
+   const profileEligible=options===null?null:
+     (message.role==="user"&&block.kind==="field"&&options.has(root));
    proposals.push({
      action:"propose_exclusion_only",
      message_path:message.path,role:message.role,
@@ -286,10 +288,11 @@ function controller(model,policy){
    const input=node("input");input.type="checkbox";
    const text=node("span","", "Proponer excluir este bloque");
    label.append(input,text);wrap.appendChild(label);
+   const policyLoaded=Array.isArray(policy?.optional_context);
    const optional=(message.role==="user"&&block.kind==="field"&&
-      Array.isArray(policy?.optional_context)&&
-      policy.optional_context.includes(inferRoot(block.json_pointer)));
+      policyLoaded&&policy.optional_context.includes(inferRoot(block.json_pointer)));
    wrap.appendChild(node("span","nilo-review-hint",
+     !policyLoaded?"Se verificará si el campo es opcional al exportar; ninguna exclusión se aplica automáticamente.":
      optional?"Campo opcional del perfil; requiere revisión antes de aplicar.":
               "Campo o instrucción fuera de las omisiones del perfil; revisión obligatoria."));
    const note=node("textarea","nilo-review-note");
