@@ -196,6 +196,11 @@ function rulesLens(report){
  if(ref.required_fields?.length)out+='<p class="small">Parámetros requeridos: '+ref.required_fields.map(esc).join(", ")+'</p>';
  if(ref.verified_preconditions)out+='<p class="small"><b>Condiciones documentadas:</b> '+esc(ref.verified_preconditions)+'</p>';
  if(ref.verified_postconditions)out+='<p class="small"><b>Consecuencias documentadas:</b> '+esc(ref.verified_postconditions)+'</p>';
+ if(!ref.verified_preconditions&&!ref.verified_postconditions)
+   out+='<p class="small">Esta operación no tiene un contrato físico verificable específico en el registro actual.</p>';
+ if(form?.missing_required_fields?.length)
+    out+='<p class="small"><b>Parámetros obligatorios ausentes:</b> '+form.missing_required_fields.map(esc).join(", ")+
+    ' (la compatibilidad actual puede admitir formas incompletas).</p>';
  if(form)out+='<p class="small"><b>Formato, recalculado ahora:</b> '+esc(form.valid?"válido":"inválido")+
  ' · '+esc(form.code)+(form.reason?" · "+esc(form.reason):"")+
  '. Esta validación es retrospectiva, no prueba lo ocurrido en la partida.</p>';
