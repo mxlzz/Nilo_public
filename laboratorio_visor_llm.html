@@ -109,6 +109,7 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 }
 </style>
 <link rel="stylesheet" href="/assets/laboratorio.css">
+
 </head>
 <body data-lab="visor_llm">
 <header>
@@ -163,12 +164,23 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 </div>
 </section>
 </main>
+
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
 const FIELDS=["provider","purpose","state","date","model","call","session","limit"];
 let attempts=[],nextBefore=null,current=null,activeId="",mode="simple";
 let listEpoch=0,detailEpoch=0;
+const auditPolicy={};let reviewController=null,reviewIdentity=null;
+// El script compartido se ejecuta con defer; no invocarlo antes de DOMContentLoaded.
+if(typeof document.addEventListener==="function")
+ document.addEventListener("DOMContentLoaded",()=>{
+   fetch("/api/lab/audit/info",{cache:"no-store",credentials:"same-origin"})
+    .then(r=>r.ok?r.json():{}).then(info=>Object.assign(auditPolicy,info)).catch(()=>{});
+   // El primer intento puede llegar antes de cargar el JS diferido.
+   // Volver a mostrar la misma ficha con el auditor ya disponible.
+   if(current&&typeof NiloReview!=="undefined")renderDetail(current);
+ },{once:true});
 const STATUS_LABELS={
  accepted:"Aceptado por el validador",rejected:"Rechazado por el validador",
  http_error:"Error HTTP",transport_error:"Error de transporte",
@@ -303,12 +315,13 @@ details.appendChild(box);out.appendChild(details);
 }
 return out
 }
-function renderBlock(block,meta,role){
+function renderBlock(block,meta,role,message){
 const details=N("details","block");const summary=N("summary");
 const lhs=N("span");append(lhs,N("div","title",block.title||"Contenido"),N("div","subtitle",block.subtitle||""));
 summary.appendChild(lhs);details.appendChild(summary);
 const body=N("div","block-body"),toolbar=N("div","block-controls");
 toolbar.appendChild(actionButton("Copiar bloque",block.literal));
+if(reviewController)reviewController.addBlock(body,message,block);
 append(body,toolbar,showText(N("div"),block.literal));
 const origin=N("details","extra");append(origin,N("summary","","Procedencia del campo"),fieldSources(block.json_pointer,meta,role));body.appendChild(origin);
 details.appendChild(body);return details
@@ -339,7 +352,8 @@ function renderMessages(data,container){
    const navGroup=N("div","block-index-group");
    navGroup.appendChild(N("strong","",message.role+" · "+entries.length+" bloques"));
    const navItems=N("div","block-index-items");
-   let family=null,contents=null,lastFamily=null,familyNumber=0;
+   let family=null,contents=null,lastFamily=null,familyNumber=0,familyBlocks=[];
+   function closeFamily(){if(reviewController&&contents&&familyBlocks.length)reviewController.addGroup(contents,message,familyBlocks)}
    for(const block of entries){
      const familyId=block.display_group||"otros";
      const familyTitle=block.display_group_title||"Bloques originales";
@@ -347,6 +361,7 @@ function renderMessages(data,container){
      // Nueva familia únicamente al cambiar en el texto original;
      // no se reordenan los campos para facilitar navegación visual.
      if(lastFamily!==familyId){
+       closeFamily();familyBlocks=[];
        family=N("details","context-family");
        if(familyNumber===0)family.open=true;
        const summ=N("summary");
@@ -357,13 +372,15 @@ function renderMessages(data,container){
        body.appendChild(family);
        lastFamily=familyId;familyNumber++;
      }
-     const target=renderBlock(block,data.provenance,message.role);
+     const target=renderBlock(block,data.provenance,message.role,message);
+     familyBlocks.push(block);
      contents.appendChild(target);
      const jump=N("button","",block.title||"Contenido");
      jump.type="button";
      jump.addEventListener("click",()=>focusBlock(target));
      navItems.appendChild(jump);
    }
+   closeFamily();
    if(!entries.length)body.appendChild(N("p","muted","Este mensaje no tiene bloques textuales."));
    navGroup.appendChild(navItems);indexList.appendChild(navGroup);
    append(section,heading,body);messageSections.push(section);
@@ -394,6 +411,31 @@ container.appendChild(trace);
 }
 function renderDetail(data){
 const root=$("detail");root.replaceChildren();
+if(typeof NiloReview!=="undefined"&&(reviewIdentity!==data.attempt_id||!reviewController)){
+ reviewIdentity=data.attempt_id;
+ reviewController=NiloReview.controller({
+  kind:"captured_http",sent_to_llm:true,
+  body_utf8:data.body_utf8,body_sha256:data.body_sha256,body_bytes:data.body_bytes,
+  provider:data.provider,model:data.model,purpose:data.purpose,
+  attempt_id:data.attempt_id,call_id:data.call_id,status:data.status,
+  simulated_at:data.simulated_at,messages:data.messages,
+  provenance:data.provenance,
+  // El exportador analiza el contexto. De un episodio solo se anexan
+  // identificadores de vínculo, no contenido adicional del mundo o cuaderno
+  // que quizá nunca formó parte de esta solicitud.
+  related_episode:data.episode?{
+   call_id:data.call_id,
+   decision_checkpoint_ids:(data.episode.decision_checkpoints||[]).map(x=>x.id),
+   action_checkpoint_ids:(data.episode.planned_actions||[]).map(x=>x.checkpoint_id),
+   archived_decision_count:(data.episode.archived_decisions||[]).length
+  }:null,
+  captured_engine_version:data.episode?.decision_checkpoints?.[0]?.engine_version||null
+ },auditPolicy);
+}
+if(reviewController){
+ reviewController.resetControls();
+ reviewController.addHeader(root,{title:"Revisión del contexto literal"});
+}
 const toolbar=N("div","detail-toolbar");
 append(toolbar,N("h2","",data.purpose==="chat"?"Conversación registrada":"Deliberación registrada"),actionButton("Copiar solicitud",data.body_utf8));
 root.appendChild(toolbar);

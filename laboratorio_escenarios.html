@@ -47,7 +47,8 @@ details summary{cursor:pointer;font-size:12px;font-weight:600}
 @media(max-width:730px){.shell{grid-template-columns:1fr;padding:8px}.panel-head{padding:10px}.op-grid{grid-template-columns:repeat(3,1fr)}.left-stack{grid-template-rows:260px auto}#result{max-height:none}}
 
 </style>
-<link rel="stylesheet" href="/assets/laboratorio.css"></head><body data-lab="escenarios">
+<link rel="stylesheet" href="/assets/laboratorio.css">
+</head><body data-lab="escenarios">
 <header>
  <div><h1>Pruebas del motor</h1><div class="meta">Simulación aislada con el motor real · Solicitudes calculadas, no enviadas al LLM</div></div>
  <div class="lab-navigation">
@@ -116,12 +117,20 @@ details summary{cursor:pointer;font-size:12px;font-weight:600}
 </div>
 <dialog id="helpDialog" class="help-dialog"><h2 id="helpTitle">Ayuda</h2><p id="helpText"></p><button id="helpClose" class="primary">Cerrar</button></dialog>
 <footer class="footer">La fuente de verdad es el motor ejecutado en una base SQLite temporal. Los rechazos son parte de la cobertura. No se consultan APIs de IA ni se modifica tu partida.</footer>
+
 <script>
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
 const escapeHTML=value=>String(value==null?"":value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let catalog=null,selected=null,last=null,manual=[],operation=null,draft={},preparations=new Set(["equipo"]);
+const reviewPolicy={};let scenarioReviews=new Map();
+// El script compartido se ejecuta con defer; no invocarlo antes de DOMContentLoaded.
+if(typeof document.addEventListener==="function")
+ document.addEventListener("DOMContentLoaded",()=>{
+   fetch("/api/lab/audit/info",{cache:"no-store",credentials:"same-origin"})
+    .then(r=>r.ok?r.json():{}).then(info=>Object.assign(reviewPolicy,info)).catch(()=>{});
+ },{once:true});
 const FIXTURES=[
  ["equipo","Materiales disponibles"],["sin_equipo","Sin materiales"],["roca_cerca","Roca próxima"],
  ["roca_lejana","Roca lejana"],["arbol_cerca","Árbol próximo"],["agua_cerca","Agua próxima"],
@@ -237,22 +246,23 @@ function renderLiteralScenarioMessages(messages){
  // Mismo índice de offsets que el visor HTTP real, pero sobre una solicitud
  // calculada por el motor. Orden de texto y caracteres sin modificaciones.
  let out="";
- for(const message of messages||[]){
+ for(const [messageIndex,message] of (messages||[]).entries()){
   const role=message.role||"mensaje";
   out+='<details class="report-section"><summary>'+escapeHTML(
     role==="system"?"Instrucciones del sistema":role==="user"?"Mensaje de usuario":"Mensaje "+role)+
     ' · '+(message.blocks||[]).length+' bloques literales</summary>';
   out+='<p class="meta">El texto es literal. Los encabezados siguientes son solo guías del laboratorio.</p>';
-  let group="";
-  for(const block of message.blocks||[]){
+  let group="",groupIndex=-1;
+  for(const [blockIndex,block] of (message.blocks||[]).entries()){
     const family=block.display_group||"otros";
     if(group!==family){
       if(group)out+='</div></details>';
-      out+='<details class="report-section"><summary>'+escapeHTML(block.display_group_title||"Campos del contexto")+
+      groupIndex++;
+      out+='<details class="report-section" data-review-family="'+groupIndex+'" data-review-message="'+messageIndex+'"><summary>'+escapeHTML(block.display_group_title||"Campos del contexto")+
           '</summary><p class="meta">'+escapeHTML(block.display_group_subtitle||"")+'</p><div>';
       group=family;
     }
-    out+='<details><summary>'+escapeHTML(block.title||"Texto original")+'</summary>'+
+    out+='<details data-review-message="'+messageIndex+'" data-review-block="'+blockIndex+'"><summary>'+escapeHTML(block.title||"Texto original")+'</summary>'+
       (block.subtitle?'<p class="meta">'+escapeHTML(block.subtitle)+'</p>':'')+
       '<pre>'+escapeHTML(block.literal)+'</pre></details>';
   }
@@ -301,9 +311,39 @@ function renderLLM(){
   '<pre>'+escapeHTML(textJSON(Object.fromEntries(req.campos_omitidos.map(k=>[
     k,view.contexto_previo_con_valores[k]]))))+'</pre></details>';
  $("llmBody").innerHTML=html;
+ const identity=(last.id||"escenario")+":"+last.semilla+":"+moment+":"+provider+":"+
+                req.huella_solicitud_calculada;
+ if(!scenarioReviews.has(identity)){
+   scenarioReviews.set(identity,NiloReview.controller({
+     kind:"calculated_preview",sent_to_llm:false,
+     body_utf8:req.solicitud_serializada,body_sha256:req.huella_solicitud_calculada,
+     body_bytes:req.bytes_solicitud,provider:req.proveedor,model:req.modelo_configurado,
+     purpose:"deliberacion",stage:moment,scenario:last.id,seed:last.semilla,
+     messages:req.mensajes_literal_estructurado,provenance:null
+   },reviewPolicy));
+ }
+ const audit=scenarioReviews.get(identity);
+ audit.resetControls();
+ audit.addHeader($("llmBody"),{title:"Revisión para exportar · "+provider+" / "+moment});
+ const messages=req.mensajes_literal_estructurado||[];
+ $("llmBody").querySelectorAll("[data-review-block]").forEach(el=>{
+   const msg=messages[Number(el.dataset.reviewMessage)];
+   const block=msg?.blocks?.[Number(el.dataset.reviewBlock)];
+   if(msg&&block)audit.addBlock(el,msg,block);
+ });
+ $("llmBody").querySelectorAll("[data-review-family]").forEach(el=>{
+   const mi=Number(el.dataset.reviewMessage),msg=messages[mi];
+   if(!msg)return;
+   const blocks=[...el.querySelectorAll("[data-review-block]")].map(child=>
+      msg.blocks?.[Number(child.dataset.reviewBlock)]).filter(Boolean);
+   const holder=document.createElement("div");
+   if(el.children.length>1)el.insertBefore(holder,el.children[1]);
+   else el.appendChild(holder);
+   audit.addGroup(holder,msg,blocks);
+ });
 }
 function renderResult(r){
- last=r;
+ last=r;scenarioReviews.clear();
  let output='<h2>'+escapeHTML(r.titulo)+'</h2><p class="meta">'+escapeHTML(r.advertencia)+'</p>';
  output+='<details class="report-section" open><summary>01 · Qué recibe el LLM '+helpButton("llm")+'</summary>'+
   '<div class="llm-controls">'+
