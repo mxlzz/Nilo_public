@@ -115,6 +115,75 @@ def inspect_episode(world_path, call_id):
         else:
             result["limitations"].append("exact_planned_action_links_unavailable")
 
+        # Las mediciones ya conservan journal_id; los diagnósticos tipados
+        # conservan physical_result.measurement_id. Unir SOLO por esos IDs.
+        # No unir por hora parecida, nombre de operación ni resultado textual.
+        evidence={"journals":[],"measurements":[],"diagnostics":[],"experiences":[]}
+        result["related_records"]=evidence
+        if (_table(db,"lab_journal_trace") and _table(db,"history")):
+            journals={row[0] for row in db.execute(
+                "SELECT journal_id FROM lab_journal_trace WHERE trace_call_id=?",
+                (call_id,))}
+            measurement_ids=set()
+            diagnostic_ids=set()
+            max_rows=100
+            def record(category,seq,value,by):
+                dest=evidence[category]
+                if len(dest)>=max_rows:
+                    limit_name=category+"_limit_reached"
+                    if limit_name not in result["limitations"]:
+                        result["limitations"].append(limit_name)
+                    return
+                dest.append({"seq":seq,"matched_by":by,"record":value})
+            if journals:
+                rows=db.execute("""SELECT seq,category,payload FROM history
+                    WHERE category IN ('journal','measurement') ORDER BY seq""")
+                for seq,category,payload in rows:
+                    try:
+                        value=json.loads(payload)
+                    except (ValueError,TypeError):
+                        continue
+                    if not isinstance(value,dict):
+                        continue
+                    if category=="journal" and value.get("id") in journals:
+                        record("journals",seq,value,"journal_id")
+                    elif category=="measurement" and value.get("journal_id") in journals:
+                        record("measurements",seq,value,"journal_id")
+                        if isinstance(value.get("id"),str):
+                            measurement_ids.add(value["id"])
+            if measurement_ids:
+                rows=db.execute("""SELECT seq,payload FROM history
+                    WHERE category='diagnostic' ORDER BY seq""")
+                for seq,payload in rows:
+                    try:
+                        value=json.loads(payload)
+                    except (ValueError,TypeError):
+                        continue
+                    if not isinstance(value,dict):
+                        continue
+                    physical=value.get("physical_result")
+                    if (isinstance(physical,dict)
+                            and physical.get("measurement_id") in measurement_ids):
+                        record("diagnostics",seq,value,"measurement_id")
+                        if isinstance(value.get("id"),str):
+                            diagnostic_ids.add(value["id"])
+            if measurement_ids or diagnostic_ids:
+                rows=db.execute("""SELECT seq,payload FROM history
+                    WHERE category='experience' ORDER BY seq""")
+                for seq,payload in rows:
+                    try:
+                        value=json.loads(payload)
+                    except (ValueError,TypeError):
+                        continue
+                    if not isinstance(value,dict):
+                        continue
+                    if value.get("measurement_id") in measurement_ids:
+                        record("experiences",seq,value,"measurement_id")
+                    elif value.get("action_id") in diagnostic_ids:
+                        record("experiences",seq,value,"action_id")
+        else:
+            result["limitations"].append("exact_memory_evidence_links_unavailable")
+
         if not result["archived_decisions"]:
             result["limitations"].append("archived_decision_not_found")
     return result
