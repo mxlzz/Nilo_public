@@ -109,7 +109,7 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 }
 </style>
 <link rel="stylesheet" href="/assets/laboratorio.css">
-<link rel="stylesheet" href="/assets/laboratorio_revision.css">
+
 </head>
 <body data-lab="visor_llm">
 <header>
@@ -164,7 +164,7 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 </div>
 </section>
 </main>
-<script src="/assets/laboratorio_revision.js"></script>
+
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -172,7 +172,12 @@ const FIELDS=["provider","purpose","state","date","model","call","session","limi
 let attempts=[],nextBefore=null,current=null,activeId="",mode="simple";
 let listEpoch=0,detailEpoch=0;
 const auditPolicy={};let reviewController=null,reviewIdentity=null;
-NiloReview.readPolicy().then(info=>Object.assign(auditPolicy,info)).catch(()=>{});
+// El script compartido se ejecuta con defer; no invocarlo antes de DOMContentLoaded.
+if(typeof document.addEventListener==="function")
+ document.addEventListener("DOMContentLoaded",()=>{
+   fetch("/api/lab/audit/info",{cache:"no-store",credentials:"same-origin"})
+    .then(r=>r.ok?r.json():{}).then(info=>Object.assign(auditPolicy,info)).catch(()=>{});
+ },{once:true});
 const STATUS_LABELS={
  accepted:"Aceptado por el validador",rejected:"Rechazado por el validador",
  http_error:"Error HTTP",transport_error:"Error de transporte",
