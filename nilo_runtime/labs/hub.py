@@ -60,6 +60,7 @@ def _request(profile,context,provider):
             "campos_omitidos_por_motor":sorted(set(context)-set(sent)),
             "datos_enviados":sent,
             "bytes":len(wire.encode("utf-8")),
+            "solicitud_serializada":wire,
             "huella_solicitud_calculada":index["body_sha256"],
             "mensaje_literal_por_rol":index["messages"],
             "segmentacion_verificada":all(
