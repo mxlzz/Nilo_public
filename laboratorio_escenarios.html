@@ -48,7 +48,7 @@ details summary{cursor:pointer;font-size:12px;font-weight:600}
 
 </style>
 <link rel="stylesheet" href="/assets/laboratorio.css">
-<link rel="stylesheet" href="/assets/laboratorio_revision.css"></head><body data-lab="escenarios">
+</head><body data-lab="escenarios">
 <header>
  <div><h1>Pruebas del motor</h1><div class="meta">Simulación aislada con el motor real · Solicitudes calculadas, no enviadas al LLM</div></div>
  <div class="lab-navigation">
@@ -117,7 +117,7 @@ details summary{cursor:pointer;font-size:12px;font-weight:600}
 </div>
 <dialog id="helpDialog" class="help-dialog"><h2 id="helpTitle">Ayuda</h2><p id="helpText"></p><button id="helpClose" class="primary">Cerrar</button></dialog>
 <footer class="footer">La fuente de verdad es el motor ejecutado en una base SQLite temporal. Los rechazos son parte de la cobertura. No se consultan APIs de IA ni se modifica tu partida.</footer>
-<script src="/assets/laboratorio_revision.js"></script>
+
 <script>
 (function(){
 "use strict";
@@ -125,7 +125,12 @@ const $=id=>document.getElementById(id);
 const escapeHTML=value=>String(value==null?"":value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let catalog=null,selected=null,last=null,manual=[],operation=null,draft={},preparations=new Set(["equipo"]);
 const reviewPolicy={};let scenarioReviews=new Map();
-NiloReview.readPolicy().then(info=>Object.assign(reviewPolicy,info)).catch(()=>{});
+// El script compartido se ejecuta con defer; no invocarlo antes de DOMContentLoaded.
+if(typeof document.addEventListener==="function")
+ document.addEventListener("DOMContentLoaded",()=>{
+   fetch("/api/lab/audit/info",{cache:"no-store",credentials:"same-origin"})
+    .then(r=>r.ok?r.json():{}).then(info=>Object.assign(reviewPolicy,info)).catch(()=>{});
+ },{once:true});
 const FIXTURES=[
  ["equipo","Materiales disponibles"],["sin_equipo","Sin materiales"],["roca_cerca","Roca próxima"],
  ["roca_lejana","Roca lejana"],["arbol_cerca","Árbol próximo"],["agua_cerca","Agua próxima"],
