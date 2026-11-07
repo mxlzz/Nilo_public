@@ -37,7 +37,7 @@ legend{color:var(--muted);font-size:12px;padding:0 6px}.check-grid{display:grid;
 
 </style>
 <link rel="stylesheet" href="/assets/laboratorio.css">
-<link rel="stylesheet" href="/assets/laboratorio_revision.css">
+
 </head><body data-lab="ajustes">
 <header><div><div class="meta">Nilo 0.7 · entorno de pruebas</div><h1>Centro de ajustes</h1><small>Configuración del motor · Solicitudes calculadas para comparar · Copias seguras de partidas</small></div>
 <nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
@@ -106,12 +106,17 @@ legend{color:var(--muted);font-size:12px;padding:0 6px}.check-grid{display:grid;
 </div>
 </section>
 </main>
-<script src="/assets/laboratorio_revision.js"></script>
+
 <script>
 const $=id=>document.getElementById(id);
 let catalog=null, currentProfile=null;
 const reviewPolicy={};
-NiloReview.readPolicy().then(info=>Object.assign(reviewPolicy,info)).catch(()=>{});
+// El script compartido se ejecuta con defer; no invocarlo antes de DOMContentLoaded.
+if(typeof document.addEventListener==="function")
+ document.addEventListener("DOMContentLoaded",()=>{
+   fetch("/api/lab/audit/info",{cache:"no-store",credentials:"same-origin"})
+    .then(r=>r.ok?r.json():{}).then(info=>Object.assign(reviewPolicy,info)).catch(()=>{});
+ },{once:true});
 const escapeText=value=>String(value??'');
 function setStatus(message,isError=false){$('status').textContent=message;$('status').style.color=isError?'#e0a58d':'var(--focus)';}
 function show(value){
