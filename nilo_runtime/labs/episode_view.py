@@ -80,27 +80,34 @@ def list_episodes(world, *, limit=_MAX_ITEMS):
     original = catalog(world, limit=limit)
     action_links = []
     traced_calls = set()
+    checkpoint_calls = set()
+    archived_decisions = []
     with closing(_readonly(world)) as db:
         if _table(db, "lab_action_links"):
             action_links = list(db.execute(
                 "SELECT action_checkpoint_id,trace_call_id FROM lab_action_links"))
         if _table(db, "timeline_checkpoints") and (
                 "trace_call_id" in _columns(db, "timeline_checkpoints")):
-            traced_calls.update(
+            checkpoint_calls.update(
                 row[0] for row in db.execute(
                     "SELECT trace_call_id FROM timeline_checkpoints "
                     "WHERE kind='decision' AND trace_call_id IS NOT NULL")
             )
+            traced_calls.update(checkpoint_calls)
         if _table(db, "history"):
             for row in db.execute(
-                    "SELECT payload FROM history WHERE category='llm_decision'"):
+                    "SELECT seq,simulated_at,payload FROM history "
+                    "WHERE category='llm_decision' ORDER BY seq"):
                 try:
-                    data = json.loads(row[0])
+                    data = json.loads(row[2])
                 except (TypeError, ValueError):
                     continue
-                if isinstance(data, dict) and isinstance(
-                        data.get("trace_call_id"), str):
-                    traced_calls.add(data["trace_call_id"])
+                if not isinstance(data,dict):
+                    continue
+                call = data.get("trace_call_id")
+                if isinstance(call,str):
+                    traced_calls.add(call)
+                archived_decisions.append((int(row[0]),row[1],data,call))
 
     linked_action_ids = {int(row[0]) for row in action_links
                          if row[1] in traced_calls}
@@ -123,6 +130,31 @@ def list_episodes(world, *, limit=_MAX_ITEMS):
             # anomalía por ausencia de infraestructura.
             entries.append({**item, "episode_kind": "legacy",
                             "relation": "legacy_record_without_checkpoint"})
+
+    # Algunos registros se archivan ANTES de crear el checkpoint; si la
+    # aplicación se interrumpe entre ambos commits la decisión es auténtica
+    # aunque el historial restaurable no tenga un punto equivalente.
+    # Mostrarla sin fingir que existe un snapshot anterior.
+    visible = {item["id"] for item in entries}
+    for seq,stamp,archive,call in archived_decisions:
+        ident = "hist:" + str(seq)
+        if ident in visible or (isinstance(call,str) and call in checkpoint_calls):
+            continue
+        decision = archive.get("decision")
+        title = (decision.get("objetivo") or decision.get("pregunta")
+                 or "Decisión archivada sin checkpoint") if isinstance(decision,dict) else (
+                 "Decisión archivada sin checkpoint")
+        entries.append({
+            "id":ident,
+            "kind":"llm_decision",
+            "episode_kind":"deliberation",
+            "relation":"archived_without_decision_checkpoint",
+            "op":"decisión LLM",
+            "title":str(title)[:110],
+            "label":stamp,
+            "replayable":False,
+            "timeline_position":"archive_sequence_verified",
+        })
 
     grouped = {}
     for attempt in _calls(world):
