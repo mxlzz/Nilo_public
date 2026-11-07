@@ -134,6 +134,9 @@ class RuleHttpTests(unittest.TestCase):
             root=Path(dirname)
             world=root/"world.sqlite3"
             with closing(sqlite3.connect(world)) as db:
+                db.execute("""CREATE TABLE history (
+                    seq INTEGER PRIMARY KEY, category TEXT,
+                    simulated_at TEXT, payload TEXT)""")
                 db.execute("""CREATE TABLE timeline_checkpoints (
                     id INTEGER PRIMARY KEY, kind TEXT,clock_minutes REAL,
                     day_label TEXT,source TEXT,operation TEXT, engine_version TEXT,
