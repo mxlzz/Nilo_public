@@ -51,7 +51,7 @@ def _request(profile,context,provider):
     else:
         sent=json.loads(payload["messages"][1]["content"])
         system=payload["messages"][0]["content"]
-    return {"provider":provider,"model":cfg["MODEL"],
+    return {"provider":provider,"model":cfg["MODEL"],"profile":p["name"],
             "prompt_sha256":hashlib.sha256(system.encode("utf-8")).hexdigest(),
             "mensaje_sistema":system,"solicitud_json":payload,
             "campos_enviados":sorted(sent),
@@ -100,13 +100,17 @@ class LabHub:
             finally:sim.conn.close()
 
     def preview(self,profile,*,provider="gemini",seed=7321):
-        return _request(profile,self._context(seed),provider)
+        result=_request(profile,self._context(seed),provider)
+        result["seed"]=seed
+        return result
 
     def compare(self,profile,*,provider="gemini",seed=7321,scenario=None):
         candidate=validate(profile)
         context=self._context(seed)
         before=_request(baseline(),context,provider)
         after=_request(candidate,context,provider)
+        before["seed"]=seed
+        after["seed"]=seed
         result={
             "profile":candidate["name"],"provider":provider,"seed":seed,
             "diff":self.store.diff(candidate),
