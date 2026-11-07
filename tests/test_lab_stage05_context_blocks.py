@@ -174,7 +174,7 @@ class PreviewBrowserTests(unittest.TestCase):
         self.assertIn("Reintentos",viewer.replace("reintentos","Reintentos"))
         self.assertIn("renderLiteralScenarioMessages",scenario)
         self.assertIn("mensajes_literal_estructurado",scenario)
-        self.assertIn("NO enviada",scenario)
+        self.assertIn("no se envió a Gemini ni a Groq",scenario)
         self.assertIn("structured-preview",profile)
         self.assertIn("showLiteralPreview",profile)
         self.assertIn("mensaje_literal_por_rol",profile)
