@@ -125,8 +125,9 @@ class TimelineStore:
             # del plan LLM, no las acciones de agenda/rutina/motor/espera.
             journal=action.get("_journal_id")
             origin=action.get("_origin","llm")
-            if isinstance(journal,str) and journal and origin not in (
-                    "agenda","rutina","motor","espera"):
+            if (isinstance(journal,str) and journal
+                    and origin not in ("agenda","rutina","motor","espera")
+                    and source not in ("agenda","rutina","motor","espera")):
                 self.conn.execute("""INSERT OR IGNORE INTO lab_action_links (
                     action_checkpoint_id,journal_id,trace_call_id)
                     SELECT ?,journal_id,trace_call_id FROM lab_journal_trace
