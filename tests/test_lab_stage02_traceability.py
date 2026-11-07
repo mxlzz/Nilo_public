@@ -134,6 +134,7 @@ class EpisodeLinkTests(unittest.TestCase):
         sim.think=lambda:None
         sim.s["paused"]=False
         sim.s["mode"]="demo"
+        sim.s["speed"]=60
         decision=normalize_decision({
             "cuaderno":"Voy a observar una acción",
             "accion_proyecto":"sin_proyecto",
@@ -145,10 +146,17 @@ class EpisodeLinkTests(unittest.TestCase):
             "decision":decision,"clock_minutes":0,
         })
         sim.plan_ready(decision,"llm",{},lab_trace_call_id=CALL)
-        for _ in range(5):
+        # Una acción previa puede estar pendiente desde el primer estado.
+        # Esperar el checkpoint de ESTE paso del plan; pending=True no prueba
+        # que la acción que investigamos ya se haya iniciado.
+        for _ in range(60):
             sim.tick(3.0)
-            if sim.s["person"].get("pending"):
+            recorded=sim.conn.execute(
+                "SELECT COUNT(*) FROM timeline_checkpoints WHERE kind='action'"
+            ).fetchone()[0]
+            if recorded:
                 break
+        self.assertGreater(recorded,0,"El paso del plan no llegó a iniciarse")
         sim.write()
         sim.conn.close()
         before=self.world.read_bytes()
@@ -157,19 +165,7 @@ class EpisodeLinkTests(unittest.TestCase):
         self.assertTrue(links["world_available"])
         self.assertEqual(len(links["archived_decisions"]),1)
         self.assertEqual(len(links["decision_checkpoints"]),1)
-        with closing(sqlite3.connect(self.world)) as diag_db:
-            trace = {
-                "journal":diag_db.execute(
-                    "SELECT journal_id, trace_call_id FROM lab_journal_trace").fetchall(),
-                "actions":diag_db.execute(
-                    "SELECT action_checkpoint_id,journal_id FROM lab_action_links").fetchall(),
-                "checkpoints":diag_db.execute(
-                    "SELECT id,kind,operation,source,decision_json FROM timeline_checkpoints"
-                ).fetchall(),
-                "plan":sim.s["person"].get("plan"),
-                "pending":sim.s["person"].get("pending") is not None,
-            }
-        self.assertEqual(len(links["planned_actions"]),1,repr(trace))
+        self.assertEqual(len(links["planned_actions"]),1)
         self.assertEqual(links["planned_actions"][0]["operation"],"wait")
         self.assertEqual(links["planned_actions"][0]["matched_by"],"journal_id")
         with closing(sqlite3.connect(self.world)) as db:
