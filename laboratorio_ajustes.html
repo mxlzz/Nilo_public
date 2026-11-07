@@ -138,7 +138,8 @@ function literalPreview(name, preview){
   body_utf8:preview.solicitud_serializada,
   body_sha256:preview.huella_solicitud_calculada,body_bytes:preview.bytes,
   provider:preview.provider,model:preview.model,purpose:"deliberacion",
-  profile:name,stage:"ajustes",messages:preview.mensaje_literal_por_rol,
+  profile:preview.profile||name,seed:preview.seed??null,stage:"ajustes",
+  messages:preview.mensaje_literal_por_rol,
   provenance:null
  },reviewPolicy);
  audit.addHeader(root,{title:"Revisión exportable de "+name});
