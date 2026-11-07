@@ -71,6 +71,17 @@ details.extra>summary{cursor:pointer;font-size:12px;color:var(--accent)}
 .attempt-group-title small{font:11px/1.45 var(--lab-mono);color:var(--lab-muted)}
 .attempt-group .item+.item{margin-top:5px}
 .attempt-group .item .tag{white-space:normal;text-align:right;max-width:60%}
+.context-family{margin:9px 0;border:1px solid var(--lab-border);border-radius:8px;background:var(--lab-surface)}
+.context-family>summary{padding:10px 12px;cursor:pointer;list-style:revert}
+.context-family>summary strong{display:block;font-size:12px}
+.context-family>summary small{display:block;font-size:11px;color:var(--lab-muted);margin-top:3px}
+.context-family .family-content{padding:9px 12px}
+.context-family .block{margin:7px 0}
+.context-source-note{font-size:11px;line-height:1.5;color:var(--lab-muted)}
+.episode-exact-links{margin:14px 0;border:1px solid var(--lab-border);border-radius:8px;padding:9px 12px}
+.episode-exact-links summary{font-size:12px;cursor:pointer}
+.episode-exact-links p{font-size:11px;color:var(--lab-muted);margin:8px 0}
+.episode-exact-links ul{padding-left:20px;font-size:12px}
 .block-index{margin:14px 0;border:1px solid var(--lab-border);border-radius:8px;background:var(--lab-surface)}
 .block-index>summary{padding:10px 12px;font-size:13px;font-weight:650}
 .block-index[open]>summary{border-bottom:1px solid var(--lab-border)}
@@ -303,43 +314,64 @@ const origin=N("details","extra");append(origin,N("summary","","Procedencia del 
 details.appendChild(body);return details
 }
 function focusBlock(details){
+ // Los bloques están dentro de grupos desplegables: abrir los antecesores.
+ for(let parent=details.parentElement;parent;parent=parent.parentElement){
+   if(parent.tagName==="DETAILS")parent.open=true;
+ }
  details.open=true;
  if(typeof details.scrollIntoView==="function")details.scrollIntoView({behavior:"auto",block:"start"});
  const heading=details.querySelector("summary");
  if(heading&&typeof heading.focus==="function")heading.focus({preventScroll:true});
 }
 function renderMessages(data,container){
-container.appendChild(N("p","caption","Los bloques muestran fragmentos textuales originales, agrupados por rol y por campo. El índice y sus subtítulos no forman parte de la solicitud."));
-const index=N("details","block-index");
-index.open=true;
-const count=(data.messages||[]).reduce((total,msg)=>total+(msg.blocks||[]).length,0);
-append(index,N("summary","","Índice de bloques · "+count+" fragmentos"));
-const links=N("div","block-index-list");
-const messageSections=[];
-for(const message of data.messages||[]){
- const section=N("section","role"),head=N("div","role-head");
- append(head,N("b","",message.role),N("span","path",message.path));
- const body=N("div","role-content"),group=N("div","block-index-group");
- const entries=message.blocks||[];
- append(group,N("strong","",message.role+" · "+entries.length+" bloques"));
- const items=N("div","block-index-items");
- for(const block of entries){
-  const target=renderBlock(block,data.provenance,message.role);
-  const button=N("button","",block.title||"Contenido");
-  button.type="button";
-  button.addEventListener("click",()=>focusBlock(target));
-  items.appendChild(button);
-  body.appendChild(target);
+ container.appendChild(N("p","caption",
+   "Cada bloque reproduce caracteres del mensaje enviado. Las familias, subtítulos y enlaces son una guía de lectura añadida por el laboratorio; no forman parte de la solicitud."));
+ const index=N("details","block-index");index.open=true;
+ const count=(data.messages||[]).reduce((total,msg)=>total+(msg.blocks||[]).length,0);
+ append(index,N("summary","","Índice de bloques · "+count+" fragmentos en orden original"));
+ const indexList=N("div","block-index-list");
+ const messageSections=[];
+ for(const message of data.messages||[]){
+   const section=N("section","role"),heading=N("div","role-head");
+   append(heading,N("b","",message.role),N("span","path",message.path));
+   const body=N("div","role-content");
+   const entries=message.blocks||[];
+   const navGroup=N("div","block-index-group");
+   navGroup.appendChild(N("strong","",message.role+" · "+entries.length+" bloques"));
+   const navItems=N("div","block-index-items");
+   let family=null,contents=null,lastFamily=null,familyNumber=0;
+   for(const block of entries){
+     const familyId=block.display_group||"otros";
+     const familyTitle=block.display_group_title||"Bloques originales";
+     const familySubtitle=block.display_group_subtitle||"Campos originales conservados.";
+     // Nueva familia únicamente al cambiar en el texto original;
+     // no se reordenan los campos para facilitar navegación visual.
+     if(lastFamily!==familyId){
+       family=N("details","context-family");
+       if(familyNumber===0)family.open=true;
+       const summ=N("summary");
+       append(summ,N("strong","",familyTitle),N("small","",familySubtitle));
+       family.appendChild(summ);
+       contents=N("div","family-content");
+       family.appendChild(contents);
+       body.appendChild(family);
+       lastFamily=familyId;familyNumber++;
+     }
+     const target=renderBlock(block,data.provenance,message.role);
+     contents.appendChild(target);
+     const jump=N("button","",block.title||"Contenido");
+     jump.type="button";
+     jump.addEventListener("click",()=>focusBlock(target));
+     navItems.appendChild(jump);
+   }
+   if(!entries.length)body.appendChild(N("p","muted","Este mensaje no tiene bloques textuales."));
+   navGroup.appendChild(navItems);indexList.appendChild(navGroup);
+   append(section,heading,body);messageSections.push(section);
  }
- if(!entries.length)body.appendChild(N("p","muted","Este mensaje no tiene bloques textuales."));
- group.appendChild(items);
- links.appendChild(group);
- append(section,head,body);
- messageSections.push(section);
-}
-index.appendChild(links);
-container.appendChild(index);
-for(const section of messageSections)container.appendChild(section);
+ index.appendChild(indexList);container.appendChild(index);
+ for(const section of messageSections)container.appendChild(section);
+ container.appendChild(N("p","context-source-note",
+   "La puntuación y los espacios del JSON están conservados en la solicitud original completa del modo Profesional. Los bloques se ordenan según los offsets del texto capturado."));
 }
 function renderProfessional(data,container){
 const intro=N("p","caption","Misma captura; incluye texto HTTP íntegro, trazas y referencias. Nunca se reconstruye desde el estado actual. Estado original del intento: "+data.status+". Una respuesta aceptada no acredita ejecución física.");container.appendChild(intro);
@@ -381,6 +413,33 @@ append(metadata,
  N("p","monospace","ID de intento: "+data.attempt_id),
  N("p","monospace","SHA-256 del cuerpo: "+data.body_sha256));
 if(data.linked_record)append(metadata,N("p","caption","Registro relacionado por ID: "+data.linked_record.category+" · secuencia "+data.linked_record.seq+". Este vínculo no demuestra que la acción se haya ejecutado."));
+if(data.episode){
+ const ep=data.episode;
+ const relation=N("details","episode-exact-links");
+ const acts=ep.planned_actions||[],dec=ep.archived_decisions||[],checkpoints=ep.decision_checkpoints||[];
+ append(relation,N("summary","","Episodio relacionado · "+dec.length+" decisiones archivadas, "+acts.length+" acciones del plan comprobadas"));
+ relation.appendChild(N("p","","Se muestran vínculos por identificadores archivados, no relaciones deducidas por cercanía temporal."));
+ if(dec.length){
+   const originals=N("details","extra");
+   append(originals,N("summary","","Decisión normalizada archivada"));
+   for(const item of dec.slice(0,6))showText(originals,JSON.stringify(item.decision??null,null,2));
+   relation.appendChild(originals);
+ }
+ const points=N("ul");
+ for(const item of checkpoints.slice(0,15))
+   points.appendChild(N("li","","Checkpoint de decisión "+item.id+" · "+(item.label||"sin hora")));
+ for(const action of acts.slice(0,60))
+   points.appendChild(N("li","",String(action.operation||"acción")+" · checkpoint "+action.checkpoint_id+" · "+action.matched_by));
+ if(!points.children.length)points.appendChild(N("li","","No hay enlaces de ejecución archivados para esta consulta."));
+ relation.appendChild(points);
+ if((ep.limitations||[]).length){
+   const limitations=N("details","extra");
+   append(limitations,N("summary","","Datos faltantes o no vinculables"));
+   for(const t of ep.limitations)limitations.appendChild(N("p","source",t));
+   relation.appendChild(limitations);
+ }
+ capture.after(relation);
+}
 capture.appendChild(metadata);root.appendChild(capture);
 const canvas=N("div");root.appendChild(canvas);
 if(mode==="simple")renderMessages(data,canvas);else renderProfessional(data,canvas);
