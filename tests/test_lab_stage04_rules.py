@@ -91,6 +91,20 @@ class RuleReferenceTests(unittest.TestCase):
         self.assertIsNone(r["actual"])
         self.assertTrue(any("otra operación" in t for t in r["limitations"]))
 
+    def test_missing_required_field_is_separate_from_backward_compatibility(self):
+        report=inspect_rule("gather",step={"op":"gather"},source="reference")
+        self.assertTrue(report["shape_check"]["valid"])
+        self.assertEqual(report["shape_check"]["missing_required_fields"],["target"])
+        self.assertIn("compatibilidad",report["shape_check"]["note"])
+
+    def test_synthetic_no_measurement_marker_is_not_physical_evidence(self):
+        result={"op":"wait","status":"sin_medicion","success":False,
+                "facts":["No hubo acción física instrumentada"]}
+        report=inspect_rule("wait",step={"op":"wait","minutes":30},
+                            result=result,source="simulation")
+        self.assertIsNone(report["actual"])
+        self.assertTrue(any("marcador del visor" in t for t in report["limitations"]))
+
     def test_missing_physical_details_are_explicit(self):
         r=inspect_rule("wait",step={"op":"wait","minutes":20},
                        result={"op":"wait","status":"completed","success":True},
