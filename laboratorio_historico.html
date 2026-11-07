@@ -259,6 +259,54 @@ function rawDetail(title,value){
  const encoded=safe(json(value));
  return '<details><summary>'+safe(title)+'</summary><pre>'+encoded+'</pre></details>';
 }
+function historyRuleButton(id){
+ if(!/^cp:[0-9]{1,14}$/.test(String(id||"")))return "";
+ return '<div class="episode-actions"><button type="button" data-rule-event="'+
+   safe(id)+'">Ver reglas de esta acción</button></div><div class="rule-detail"></div>';
+}
+function historicalRuleMarkup(report){
+ const ref=report.reference||{},shape=report.shape_check||null;
+ let out='<div class="episode-note"><b>Reglas del motor instalado.</b> '+
+ 'Son condiciones documentadas, no una reconstrucción de las ramas ejecutadas en esta partida.</div>';
+ out+='<p class="episode-evidence">'+safe(ref.description||"Sin documentación")+'</p>';
+ if(ref.required_fields?.length)out+='<p class="episode-label">Campos exigidos por el contrato: '+
+  ref.required_fields.map(safe).join(", ")+'</p>';
+ if(ref.verified_preconditions)out+='<p class="episode-evidence"><b>Condiciones documentadas:</b> '+safe(ref.verified_preconditions)+'</p>';
+ if(ref.verified_postconditions)out+='<p class="episode-evidence"><b>Resultados esperables:</b> '+safe(ref.verified_postconditions)+'</p>';
+ if(!ref.verified_preconditions&&!ref.verified_postconditions)
+   out+='<p class="episode-label">Esta operación no tiene un contrato físico verificable específico en el registro.</p>';
+ if(shape?.missing_required_fields?.length)
+   out+='<p class="episode-label">Parámetros requeridos ausentes: '+shape.missing_required_fields.map(safe).join(", ")+'</p>';
+ if(shape)out+='<p class="episode-label">Formato revalidado con el motor actual: '+safe(shape.valid?"válido":"inválido")+
+  ' · '+safe(shape.code||"")+'. Esta revalidación no acredita el procesamiento histórico.</p>';
+ if((report.adjacent_records||[]).length)
+   out+=rawDetail("Diagnósticos cercanos en el archivo (vínculo individual no comprobado)",report.adjacent_records);
+ if((report.limitations||[]).length)
+   out+='<details><summary>Qué no sabemos de esta ejecución</summary><ul>'+
+     report.limitations.map(x=>'<li>'+safe(x)+'</li>').join("")+'</ul></details>';
+ out+=rawDetail("Ficha técnica completa",report);
+ return out;
+}
+function connectRuleButtons(){
+ const token=detailToken;
+ $("resultView").querySelectorAll("button[data-rule-event]").forEach(b=>{
+   b.onclick=async ()=>{
+     const id=b.dataset.ruleEvent;
+     const holder=b.parentElement.nextElementSibling;
+     b.disabled=true;
+     holder.textContent="Consultando reglas…";
+     try{
+       const report=await ask("/api/history/rule?event="+encodeURIComponent(id));
+       if(token!==detailToken||mode!=="episodes")return;
+       holder.innerHTML=historicalRuleMarkup(report);
+     }catch(e){
+       if(token===detailToken&&mode==="episodes")holder.textContent=e.message;
+     }finally{
+       if(token===detailToken)b.disabled=false;
+     }
+   };
+ });
+}
 function renderEpisode(data){
  // Todo texto de partida o proveedor debe pasar por safe(). No usar HTML
  // de respuesta, mensajes ni notas como markup de la interfaz.
@@ -304,11 +352,12 @@ function renderEpisode(data){
  let executed=actions.length?actions.map((a,i)=>
    '<div class="episode-evidence"><b>'+(i+1)+'. '+safe(a.operation||"Acción")+'</b> · '+safe(a.label||"")+
    '<p class="episode-label">Checkpoint '+safe(a.checkpoint_id)+' · vínculo exacto por '+safe(a.matched_by)+
-   '</p>'+rawDetail("Metadatos del checkpoint",a)+'</div>').join(""):
+   '</p>'+rawDetail("Metadatos del checkpoint",a)+historyRuleButton("cp:"+a.checkpoint_id)+'</div>').join(""):
    '<p class="episode-empty">Sin acciones del plan enlazadas mediante identificadores exactos. Esto no demuestra que no hubiera actividad.</p>';
  if(original.kind==="action"){
    executed='<p class="episode-label">Actividad registrada individualmente: no se atribuye a una deliberación por proximidad temporal.</p>'+
-     rawDetail("Operación original del checkpoint",original.command||{});
+     rawDetail("Operación original del checkpoint",original.command||{})+
+     historyRuleButton(original.id);
  }
  if(original.kind==="diagnostic"){
    executed=rawDetail("Diagnóstico histórico original",original.historical||{});
@@ -345,6 +394,7 @@ function renderEpisode(data){
    '<div class="episode-chain">'+cards.join("")+'</div>'+
    controls+
    (limitations?'<details><summary>Datos ausentes y límites de atribución ('+(data.limitations||[]).length+')</summary><ul>'+limitations+'</ul></details>':'');
+ connectRuleButtons();
  const switchToReplay=$("episodeToReplay");
  if(switchToReplay)switchToReplay.onclick=()=>{
    const wanted=original.id;setMode("moments");

@@ -42,6 +42,10 @@ button{padding:10px 13px;border:1px solid #506261;background:#263332;color:var(-
   <div class="section">
    <h2>02 · Elegir acción</h2>
    <div class="field"><label for="operation">Operación que elegiría Nilo</label><select id="operation"></select></div>
+   <details id="operationRules" style="margin:10px 0 14px">
+    <summary class="small" style="cursor:pointer">Ver reglas y condiciones de esta operación</summary>
+    <div id="operationRuleInfo" style="margin-top:9px"><p class="small">Abrí esta sección para leer el contrato del motor.</p></div>
+   </details>
    <div id="fields"></div>
    <details style="margin:14px 0"><summary class="small" style="cursor:pointer">Entrada estructurada (opcional / avanzada)</summary>
     <p class="small" style="margin:7px 0">Los controles generan el comando. Si querés probar un contrato especial, podés reemplazarlo por JSON.</p>
@@ -183,6 +187,62 @@ function drawTrace(rows,target){
    '<p>'+esc(r.function)+'() · '+r.line_count+' líneas ejecutadas'+(r.count>1?' · '+r.count+' llamadas':'')+'</p></div>';
  }).join("")+'</div>';
 }
+function rulesLens(report){
+ if(!report)return '<p class="small">No se conserva una inspección de reglas para esta prueba.</p>';
+ var ref=report.reference||{},act=report.actual||null,form=report.shape_check;
+ var out='<p class="small"><b>Referencia vigente (no observación física).</b> '+esc(ref.description||"")+'</p>';
+ out+='<div class="statebox"><span>Ejecutor: '+esc(ref.executor||"no especificado")+'</span>'+
+ '<span>Duración prevista: '+esc(ref.planned_minutes)+" min"+'</span></div>';
+ if(ref.required_fields?.length)out+='<p class="small">Parámetros requeridos: '+ref.required_fields.map(esc).join(", ")+'</p>';
+ if(ref.verified_preconditions)out+='<p class="small"><b>Condiciones documentadas:</b> '+esc(ref.verified_preconditions)+'</p>';
+ if(ref.verified_postconditions)out+='<p class="small"><b>Consecuencias documentadas:</b> '+esc(ref.verified_postconditions)+'</p>';
+ if(!ref.verified_preconditions&&!ref.verified_postconditions)
+   out+='<p class="small">Esta operación no tiene un contrato físico verificable específico en el registro actual.</p>';
+ if(form?.missing_required_fields?.length)
+    out+='<p class="small"><b>Parámetros obligatorios ausentes:</b> '+form.missing_required_fields.map(esc).join(", ")+
+    ' (la compatibilidad actual puede admitir formas incompletas).</p>';
+ if(form)out+='<p class="small"><b>Formato, recalculado ahora:</b> '+esc(form.valid?"válido":"inválido")+
+ ' · '+esc(form.code)+(form.reason?" · "+esc(form.reason):"")+
+ '. Esta validación es retrospectiva, no prueba lo ocurrido en la partida.</p>';
+ if(act){
+    out+='<div class="divider"></div><p class="small"><b>Resultado efectivamente registrado por el sandbox:</b> '+
+    esc(act.status||"sin estado")+' · éxito: '+esc(act.success===true?"sí":act.success===false?"no":"no registrado")+'</p>';
+    if(act.contract_verifier){
+      var v=act.contract_verifier;
+      out+='<p class="small"><b>Verificador contractual:</b> '+esc(v.status||"sin clasificación")+
+      (v.code?" · "+esc(v.code):"")+'</p>'+
+      (v.expected?'<p class="small">Esperado por el verificador: '+esc(v.expected)+'</p>':'')+
+      (v.observed?'<p class="small">Observado por el verificador: '+esc(typeof v.observed==="string"?v.observed:JSON.stringify(v.observed))+'</p>':'');
+    }
+    if(act.physical_conditions)out+='<details><summary class="small">Condiciones físicas expuestas en el resultado</summary><pre class="jsonbox">'+
+       esc(JSON.stringify(act.physical_conditions,null,2))+'</pre></details>';
+    if(act.physical_result)out+='<details><summary class="small">Efectos físicos registrados</summary><pre class="jsonbox">'+
+       esc(JSON.stringify(act.physical_result,null,2))+'</pre></details>';
+ }else out+='<p class="small">No hay resultados físicos con atribución comprobada para esta operación.</p>';
+ if((report.instrumented_functions||[]).length){
+   out+='<details><summary class="small">Funciones recorridas en esta prueba ('+report.instrumented_functions.length+')</summary><pre class="jsonbox">'+
+      esc(JSON.stringify(report.instrumented_functions,null,2))+'</pre></details>';
+ }
+ if(report.adjacent_records?.length)out+='<details><summary class="small">Diagnósticos cercanos, sin vínculo individual verificado</summary><pre class="jsonbox">'+
+  esc(JSON.stringify(report.adjacent_records,null,2))+'</pre></details>';
+ if((report.limitations||[]).length)out+='<details><summary class="small">Alcance de la evidencia ('+report.limitations.length+')</summary><ul class="facts">'+
+  report.limitations.map(function(t){return "<li>"+esc(t)+"</li>"}).join("")+'</ul></details>';
+ return out;
+}
+var ruleReferenceEpoch=0;
+async function loadRuleReference(){
+ var op=el("operation").value,request=++ruleReferenceEpoch;
+ el("operationRuleInfo").innerHTML='<p class="small">Consultando contrato…</p>';
+ try{
+   var response=await fetch("/api/lab/rule?op="+encodeURIComponent(op));
+   var data=await response.json();
+   if(!response.ok)throw Error(data.error||"Contrato no disponible");
+   if(request!==ruleReferenceEpoch||el("operation").value!==op)return;
+   el("operationRuleInfo").innerHTML=rulesLens({reference:data,limitations:["Esta referencia no se ejecutó en el mundo de prueba."]});
+ }catch(e){
+   if(request===ruleReferenceEpoch)el("operationRuleInfo").textContent=e.message;
+ }
+}
 function renderResult(last){
  if(!last){el("result").innerHTML='<p class="small">Elegí una operación para ver su resultado y los pasos realmente ejecutados en el motor.</p>';return}
  var r=last.result,cls=r.success?"":"failed";
@@ -191,6 +251,8 @@ function renderResult(last){
  html+='<div class="label">Respuesta del motor</div><ul class="facts">'+(r.facts||[]).map(function(t){return '<li>'+esc(t)+'</li>'}).join("")+'</ul>';
  html+='<div class="statebox"><span>Duración: '+esc(r.duration_minutes)+' min</span><span>Contrato: '+esc((last.diagnostic||{}).code||"—")+'</span></div>';
  if(last.measurement)html+='<details style="margin:12px 0"><summary class="small" style="cursor:pointer">Efectos medidos</summary><pre class="jsonbox">'+esc(JSON.stringify(last.measurement,null,2))+'</pre></details>';
+ if(last.rule_inspection)html+='<details style="margin:14px 0" open><summary class="small">Reglas del motor · contrato y condiciones observadas</summary>'+
+ '<div style="margin-top:11px">'+rulesLens(last.rule_inspection)+'</div></details>';
  html+=drawTrace(last.trace);
  html+='<details style="margin-top:12px"><summary class="small" style="cursor:pointer">Acción estructurada y diagnóstico técnico</summary><pre class="jsonbox">'+esc(JSON.stringify({step:last.step,physical:r.physical,diagnostic:last.diagnostic},null,2))+'</pre></details>';
  el("result").innerHTML=html;
@@ -251,7 +313,15 @@ async function payload(provider){
  el("promptJSON").textContent=JSON.stringify(data.context,null,2);
  }catch(e){el("promptInfo").textContent="Error: "+String(e.message||e)}
 }
-el("operation").addEventListener("change",renderForm);
+el("operation").addEventListener("change",function(){
+ ruleReferenceEpoch++;
+ el("operationRuleInfo").textContent="Abrí para consultar el contrato de la acción seleccionada.";
+ el("operationRules").open=false;
+ renderForm();
+});
+el("operationRules").addEventListener("toggle",function(){
+ if(this.open)loadRuleReference();
+});
 el("run").addEventListener("click",run);el("reset").addEventListener("click",reset);
 el("originMode").addEventListener("change",function(){el("seed").disabled=this.value==="partida"});
 el("custom").addEventListener("change",function(){if(!this.checked)el("raw").value=JSON.stringify(makeStep(),null,2)});

@@ -220,6 +220,10 @@ function renderStage(stage,i){
   details+='<details><summary>Medición completa · '+escapeHTML(m.id||"sin ID")+'</summary><pre>'+
    escapeHTML(textJSON(m))+'</pre></details>';
  }
+ if(stage.operacion&&/^[a-z_]+$/.test(stage.operacion)){
+   details+='<div class="rule-context"><button type="button" data-rule-op="'+escapeHTML(stage.operacion)+
+      '">Ver reglas de '+escapeHTML(stage.operacion)+'</button><div class="rule-lens meta"></div></div>';
+ }
  if(stage.entrada)details+='<details><summary>Respuesta original de prueba (entrada)</summary><pre>'+escapeHTML(textJSON(stage.entrada))+'</pre></details>';
  if(stage.salida)details+='<details><summary>Decisión normalizada (salida)</summary><pre>'+escapeHTML(textJSON(stage.salida))+'</pre></details>';
  if(stage.aceptadas)details+='<details><summary>Plan admitido por el motor ('+stage.aceptadas.length+' pasos)</summary><pre>'+escapeHTML(textJSON(stage.aceptadas))+'</pre></details>';
@@ -294,6 +298,28 @@ function renderResult(r){
   '<pre>'+escapeHTML(textJSON({inicio:r.inicio,final:r.final,estados:r.estados,limites:r.reproduccion}))+
   '</pre></details>';
  $("result").innerHTML=output;
+ // Lente de referencia contextual. Las pruebas ejecutadas permanecen
+ // en los diagnósticos y trazas de esta misma etapa; este panel NO
+ // reconstruye retrospectivamente condiciones no instrumentadas.
+ $("result").querySelectorAll("button[data-rule-op]").forEach(button=>{
+   button.onclick=async()=>{
+     const op=button.dataset.ruleOp;
+     const holder=button.parentElement.querySelector(".rule-lens");
+     holder.textContent="Consultando contrato del motor…";
+     button.disabled=true;
+     try{
+       const response=await fetch("/api/lab/rule?op="+encodeURIComponent(op));
+       const rule=await response.json();
+       if(!response.ok)throw Error(rule.error||"Contrato no disponible");
+       if(last!==r)return;
+       holder.innerHTML='<p><b>Regla documentada:</b> '+escapeHTML(rule.description||"")+'</p>'+
+         (rule.verified_preconditions?'<p>Condiciones del contrato: '+escapeHTML(rule.verified_preconditions)+'</p>':'')+
+         (rule.verified_postconditions?'<p>Consecuencia documentada: '+escapeHTML(rule.verified_postconditions)+'</p>':'')+
+         '<p>Estas reglas son referencias del motor instalado; los resultados y funciones recorridas se registran arriba.</p>';
+     }catch(e){if(last===r)holder.textContent=e.message}
+     finally{button.disabled=false}
+   };
+ });
  $("llmMoment").onchange=renderLLM;
  $("llmProvider").onchange=renderLLM;
  renderLLM();

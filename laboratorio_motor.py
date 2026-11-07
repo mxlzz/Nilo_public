@@ -21,6 +21,7 @@ from urllib.parse import parse_qs, urlsplit
 from nilo_runtime.web.security import authorize, parse_body, RequestError
 from nilo_runtime.labs.hub import LabHub
 from nilo_runtime.labs.llm_read import LocalLLMReadAPI, ReadError
+from nilo_runtime.labs.rules_inspector import inspect_rule, operation_reference
 
 from action_contracts import ACTION_GUIDE, SUPPORTED_OPERATIONS, before as contract_before, classify
 from action_results import ActionResult
@@ -198,6 +199,19 @@ class MotorLab(SimulationSandbox):
         # Mantener la ruta histórica parcheable por los tests existentes.
         return super().reset(mode,seed,kit,source=DB)
 
+    def act(self,step):
+        # La acción se ejecuta SOLO por el sandbox existente. El inspector
+        # interpreta su salida, sin alterar el estado ni reejecutar física.
+        state=super().act(step)
+        last=state.get("last")
+        if isinstance(last,dict):
+            last["rule_inspection"]=inspect_rule(
+                last["step"]["op"],step=last["step"],
+                diagnostic=last.get("diagnostic"),result=last.get("result"),
+                measurement=last.get("measurement"),trace=last.get("trace"),
+                source="simulation")
+        return state
+
 
 class HistorySource:
     """Sólo administra un archivo de consulta. Nunca modifica la partida original."""
@@ -350,6 +364,41 @@ class Handler(BaseHTTPRequestHandler):
                         raise ValueError("Identificador de episodio inválido")
                     self.json(get_episode(source,query["id"][0],
                                           viewer_world=self.hub.world))
+            except (ValueError,TypeError,sqlite3.Error,OSError) as exc:
+                self.json({"error":str(exc)[:220]},400)
+        elif path in ("/api/lab/rule", "/api/history/rule"):
+            # Lente de reglas desde Pruebas o un checkpoint del historial.
+            # En ambos casos: mismo motor y partida seleccionada localmente;
+            # nunca leer rutas de archivo suministradas por el cliente.
+            try:
+                q=parse_qs(urlsplit(self.path).query,keep_blank_values=True,
+                           max_num_fields=2)
+                expected="op" if path=="/api/lab/rule" else "event"
+                if set(q)!={expected} or len(q[expected])!=1:
+                    raise ValueError("Parámetros de inspección inválidos")
+                value=q[expected][0]
+                if path=="/api/lab/rule":
+                    self.json(operation_reference(value))
+                else:
+                    from historical_lab import select_event
+                    historical=select_event(self.history.require(),value)
+                    step=historical.get("command")
+                    if historical.get("kind")!="action" or not isinstance(step,dict):
+                        raise ValueError("Elegí un checkpoint de acción válido")
+                    op=step.get("op")
+                    report=inspect_rule(op,step=step,source="historical")
+                    # Los diagnósticos por ventana temporal NO son uniones
+                    # exactas. Presentarlos como candidatos aparte.
+                    candidates=historical.get("related") or []
+                    report["adjacent_records"]=[
+                        {
+                            "association":"time_window_not_exact",
+                            "record":candidate.get("payload"),
+                        }
+                        for candidate in candidates[:12]
+                        if isinstance(candidate,dict)
+                    ]
+                    self.json(report)
             except (ValueError,TypeError,sqlite3.Error,OSError) as exc:
                 self.json({"error":str(exc)[:220]},400)
         elif path in ("/api/history/catalog", "/api/history/event", "/api/history/default"):
