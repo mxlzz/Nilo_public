@@ -60,8 +60,38 @@ async function validate(model,selected){
  if(originalHash!==model.body_sha256)throw Error("El SHA-256 de la solicitud no coincide con el cuerpo original.");
  if(model.body_bytes!==undefined&&model.body_bytes!==utf8(model.body_utf8).length)
     throw Error("Los bytes de la solicitud no coinciden con el cuerpo original.");
- const catalog=getBlocks(model);
+ // Además de los SHA, comprobar que cada texto del índice provenga de
+ // exactamente esa ruta del cuerpo HTTP (evita una ficha falsa o desfasada).
+ let payload;
+ try{payload=JSON.parse(model.body_utf8)}
+ catch(_){throw Error("El cuerpo original no contiene una solicitud JSON válida.")}
+ const at=(pointer)=>{
+   let value=payload;
+   for(const token of pointer.split("/").slice(1)){
+     const name=token.replace(/~1/g,"/").replace(/~0/g,"~");
+     if(value===null||typeof value!=="object"||!(name in value))
+       throw Error("Ruta de mensaje ajena al cuerpo original: "+pointer);
+     value=value[name];
+   }
+   return value;
+ };
+ const catalog=getBlocks(model),seenMessages=new Set();
  for(const message of model.messages){
+   if(seenMessages.has(message.path))throw Error("Mensajes duplicados en el índice");
+   seenMessages.add(message.path);
+   if(at(message.path)!==message.text)
+     throw Error("Mensaje no coincide con el texto HTTP: "+message.path);
+   const pieces=message.path.split("/");
+   if(pieces[1]==="messages"&&Array.isArray(payload.messages)){
+      if(payload.messages[Number(pieces[2])]?.role!==message.role)
+         throw Error("Rol incompatible con el cuerpo HTTP.");
+   }
+   if(pieces[1]==="contents"&&Array.isArray(payload.contents)){
+      if(payload.contents[Number(pieces[2])]?.role!==message.role)
+         throw Error("Rol Gemini incompatible con el cuerpo HTTP.");
+   }
+   if(pieces[1]==="systemInstruction"&&message.role!=="system")
+      throw Error("El rol de instrucciones del sistema no coincide.");
    if((await sha256(message.text))!==message.text_sha256)
       throw Error("El texto del rol no supera su SHA-256: "+message.path);
    let offset=0,joined="";
@@ -169,7 +199,13 @@ function download(name,payload){
  try{
    const link=node("a");link.href=objectUrl;link.download=name;
    document.body.appendChild(link);link.click();link.remove();
- }finally{global.URL.revokeObjectURL(objectUrl)}
+ }finally{
+   // Safari puede iniciar la descarga después del siguiente ciclo del UI;
+   // revocar inmediatamente puede cancelar la exportación del archivo.
+   if(typeof global.setTimeout==="function")
+     global.setTimeout(()=>global.URL.revokeObjectURL(objectUrl),15000);
+   else global.URL.revokeObjectURL(objectUrl);
+ }
 }
 function controller(model,policy){
  const source=snapshotModel(model),selected=new Map(),controls=new Map(),groupControls=[];
