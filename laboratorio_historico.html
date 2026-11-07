@@ -93,14 +93,14 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
     <p id="eventDescription" class="muted"></p>
     <span class="muted" id="eventVersion"></span>
   </div>
-  <h3>Decisión u operación registrada</h3><pre id="command">—</pre>
+  <details id="originalCommandDetails"><summary>Ver registro original de este momento</summary><pre id="command">—</pre></details>
   <div class="block" id="legacyWarning" hidden><div class="warn">Este momento no tiene estado anterior preservado. Podés consultar el registro auténtico, pero no reproducirlo con exactitud.</div></div>
   <details id="editContainer"><summary>Modificar la orden para una simulación alternativa</summary>
     <p class="muted">El estado inicial será el mismo; solo cambia la orden seleccionada. No se modifica la partida.</p>
     <textarea id="override" spellcheck="false" aria-label="Orden alternativa JSON"></textarea>
     <button id="resetOverride">Restaurar orden original</button>
   </details>
-  <div class="btnrow"><button id="replay" class="primary">Reproducir procesamiento</button></div>
+  <div class="btnrow" id="replayControls"><button id="replay" class="primary">Reproducir procesamiento</button></div>
   <p id="runStatus" class="muted"></p>
  </div>
 </section>
@@ -213,7 +213,9 @@ function selectIndex(index){
  $("eventVersion").textContent=selected.engine_version?"Motor registrado: "+selected.engine_version:"";
  $("legacyWarning").hidden=mode==="episodes"||selected.replayable;
  $("replay").disabled=mode==="episodes"||!selected.replayable;
+ $("replayControls").hidden=mode==="episodes";
  $("editContainer").hidden=mode==="episodes"||!selected.replayable;
+ $("originalCommandDetails").open=mode==="moments";
  $("rightHeading").textContent=mode==="episodes"?"03 · Ficha de episodio":"03 · Resultado, diferencias y código";
  $("command").textContent="Cargando registro…";
  $("override").value="";
@@ -412,6 +414,8 @@ function setMode(next){
  $("momentsMode").classList.toggle("selected",mode==="moments");
  $("episodesMode").setAttribute("aria-pressed",String(mode==="episodes"));
  $("momentsMode").setAttribute("aria-pressed",String(mode==="moments"));
+ $("replayControls").hidden=mode==="episodes";
+ $("originalCommandDetails").open=mode==="moments";
  $("modeDescription").textContent=mode==="episodes"?
  "Decisiones, acciones independientes y consultas incompletas. Solo se agrupan vínculos identificables.":
  "Checkpoints y eventos, con reproducción aislada del motor instalado. El original no se modifica.";
