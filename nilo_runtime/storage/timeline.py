@@ -64,6 +64,13 @@ class TimelineStore:
             trace_call_id TEXT NOT NULL,
             decision_checkpoint_id INTEGER
         )""")
+        self.conn.execute("""CREATE TABLE IF NOT EXISTS lab_action_links (
+            action_checkpoint_id INTEGER PRIMARY KEY,
+            journal_id TEXT NOT NULL,
+            trace_call_id TEXT NOT NULL
+        )""")
+        self.conn.execute("""CREATE INDEX IF NOT EXISTS lab_action_links_by_call
+            ON lab_action_links(trace_call_id,action_checkpoint_id)""")
 
     def link_journal(self, journal_id, trace_call_id, decision_checkpoint_id=None):
         """Vincular la nota real del plan con el intento LLM aceptado.
@@ -112,6 +119,18 @@ class TimelineStore:
             trace_call_id if kind=="decision" else None,
             packed, hashlib.sha256(packed).hexdigest(), time.time()
         ))
-        return int(c.lastrowid)
+        ident=int(c.lastrowid)
+        if kind=="action" and isinstance(action,dict):
+            # Solo las operaciones que pertenecen explícitamente al cuaderno
+            # del plan LLM, no las acciones de agenda/rutina/motor/espera.
+            journal=action.get("_journal_id")
+            origin=action.get("_origin","llm")
+            if isinstance(journal,str) and journal and origin not in (
+                    "agenda","rutina","motor","espera"):
+                self.conn.execute("""INSERT OR IGNORE INTO lab_action_links (
+                    action_checkpoint_id,journal_id,trace_call_id)
+                    SELECT ?,journal_id,trace_call_id FROM lab_journal_trace
+                    WHERE journal_id=?""",(ident,journal))
+        return ident
 
 
