@@ -18,6 +18,7 @@ from nilo_runtime.labs.profiles import (
     ProfileStore, validate, baseline, OPTIONAL_CONTEXT,
 )
 from nilo_runtime.storage.backups import backup_file, restore_as_copy
+from nilo_runtime.labs.literal_segments import index_request
 
 
 def _seed(value):
@@ -39,7 +40,10 @@ def _request(profile,context,provider):
     cfg["_LAB_OMIT_CONTEXT"]=tuple(p["omit_context"])
     cfg["_LAB_PROMPT_NOTE"]=p["prompt_note"]
     _,payload,_=build_deliberation_request(cfg,context)
-    wire=json.dumps(payload,ensure_ascii=False,separators=(",",":"))
+    # Misma serialización que gateway._post, aunque SIN enviar HTTP.
+    wire=json.dumps(payload,ensure_ascii=False)
+    index=index_request(wire.encode("utf-8"),provider=provider,
+                        purpose="deliberacion")
     if provider=="gemini":
         sent=json.loads(payload["contents"][0]["parts"][0]["text"].split(
             "SITUACIÓN REAL: ",1)[1])
@@ -56,6 +60,12 @@ def _request(profile,context,provider):
             "campos_omitidos_por_motor":sorted(set(context)-set(sent)),
             "datos_enviados":sent,
             "bytes":len(wire.encode("utf-8")),
+            "huella_solicitud_calculada":index["body_sha256"],
+            "mensaje_literal_por_rol":index["messages"],
+            "segmentacion_verificada":all(
+                "".join(part["literal"] for part in message["segments"])
+                == message["text"] for message in index["messages"]),
+            "procedencia":"previsualizacion_calculada_sin_red",
             "enviado_a_llm":False,
             "nota":"Constructor real del motor; ningún proveedor fue consultado."}
 
