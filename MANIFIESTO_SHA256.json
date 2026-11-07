@@ -9,6 +9,8 @@
     "archive.py": "sha256-calculated-during-packaging",
     "assets/actions.js": "sha256-calculated-during-packaging",
     "assets/feed.js": "sha256-calculated-during-packaging",
+    "assets/laboratorio_revision.css": "sha256-calculated-during-packaging",
+    "assets/laboratorio_revision.js": "sha256-calculated-during-packaging",
     "assets/laboratorio_ui.js": "sha256-calculated-during-packaging",
     "assets/laboratorio.css": "sha256-calculated-during-packaging",
     "assets/nilo.css": "sha256-calculated-during-packaging",
