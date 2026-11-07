@@ -177,6 +177,9 @@ if(typeof document.addEventListener==="function")
  document.addEventListener("DOMContentLoaded",()=>{
    fetch("/api/lab/audit/info",{cache:"no-store",credentials:"same-origin"})
     .then(r=>r.ok?r.json():{}).then(info=>Object.assign(auditPolicy,info)).catch(()=>{});
+   // El primer intento puede llegar antes de cargar el JS diferido.
+   // Volver a mostrar la misma ficha con el auditor ya disponible.
+   if(current&&typeof NiloReview!=="undefined")renderDetail(current);
  },{once:true});
 const STATUS_LABELS={
  accepted:"Aceptado por el validador",rejected:"Rechazado por el validador",
@@ -408,7 +411,7 @@ container.appendChild(trace);
 }
 function renderDetail(data){
 const root=$("detail");root.replaceChildren();
-if(reviewIdentity!==data.attempt_id||!reviewController){
+if(typeof NiloReview!=="undefined"&&(reviewIdentity!==data.attempt_id||!reviewController)){
  reviewIdentity=data.attempt_id;
  reviewController=NiloReview.controller({
   kind:"captured_http",sent_to_llm:true,
@@ -420,8 +423,10 @@ if(reviewIdentity!==data.attempt_id||!reviewController){
   captured_engine_version:data.episode?.decision_checkpoints?.[0]?.engine_version||null
  },auditPolicy);
 }
-reviewController.resetControls();
-reviewController.addHeader(root,{title:"Revisión del contexto literal"});
+if(reviewController){
+ reviewController.resetControls();
+ reviewController.addHeader(root,{title:"Revisión del contexto literal"});
+}
 const toolbar=N("div","detail-toolbar");
 append(toolbar,N("h2","",data.purpose==="chat"?"Conversación registrada":"Deliberación registrada"),actionButton("Copiar solicitud",data.body_utf8));
 root.appendChild(toolbar);
