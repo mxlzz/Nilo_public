@@ -58,6 +58,9 @@ def fake_world(path: pathlib.Path):
         hist(14,"diagnostic",{"id":"out-a","op":"wait","success":True,
                                    "physical_result":{"measurement_id":"med-a"}})
         hist(15,"experience",{"id":"exp-a","measurement_id":"med-a","text":"Esperé"})
+        hist(19,"llm_decision",{"id":"llm-no-checkpoint",
+                                   "trace_call_id":"d"*32,
+                                   "decision":{"cuaderno":"Decidí sin checkpoint","plan":[]}})
         for ident,kind,seq,source,op,trace,command in [
             (1,"decision",10,"llm",None,CALL,
              {"cuaderno":"Observaré","plan":[{"op":"wait","minutes":30}]}),
@@ -113,6 +116,9 @@ class EpisodeStage03Tests(unittest.TestCase):
         self.assertNotIn("cp:2",ids)  # Acción agrupada por vínculo exacto
         self.assertIn("cp:3",ids)   # Acción de agenda independiente
         self.assertIn("hist:1",ids) # Deliberación antigua sin checkpoint
+        self.assertIn("hist:19",ids)  # Archivada después de instrumentación, sin checkpoint
+        self.assertEqual(ids["hist:19"]["relation"],
+                         "archived_without_decision_checkpoint")
         self.assertIn("call:"+ORPHAN,ids)  # HTTP sin decisión archivada
         self.assertEqual(ids["cp:3"]["episode_kind"],"independent")
         self.assertEqual(ids["call:"+ORPHAN]["timeline_position"],"not_verified")
@@ -133,6 +139,14 @@ class EpisodeStage03Tests(unittest.TestCase):
                           result["related"]["experiences"]],["exp-a"])
         self.assertTrue(result["open_in_llm_viewer"])
         self.assertIn("next_turn",result["fidelity"])
+
+    def test_archived_decision_without_checkpoint_remains_visible(self):
+        result=get_episode(self.world,"hist:19",viewer_world=self.world)
+        self.assertEqual(result["decision"]["cuaderno"],"Decidí sin checkpoint")
+        self.assertEqual(result["linked"]["decision_checkpoints"],[])
+        self.assertFalse(result["recorded_event"]["replayable"])
+        self.assertIn("El cuerpo HTTP original no está disponible",
+                      result["limitations"][-1])
 
     def test_automatic_action_does_not_claim_llm_origin(self):
         result=get_episode(self.world,"cp:3",viewer_world=self.world)
@@ -183,7 +197,7 @@ class EpisodeStage03Tests(unittest.TestCase):
             with self.subTest(bad=bad),self.assertRaises(ValueError):
                 get_episode(self.world,bad)
         with self.assertRaises(ValueError):
-            get_episode(self.world,"call:"+"d"*32)
+            get_episode(self.world,"call:"+"e"*32)
         with self.assertRaises(ValueError):
             list_episodes(self.world,limit=100000)
 
