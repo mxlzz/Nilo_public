@@ -26,6 +26,26 @@ def _columns(db, table):
     return {row[1] for row in db.execute("PRAGMA table_info(" + table + ")")}
 
 
+_AUTOMATIC = frozenset(("agenda","espera","rutina","motor"))
+
+
+def valid_planned_action_checkpoint(source, raw_command, journal_id):
+    """Validar fuente Y paso archivado; una fila de enlace sola no alcanza.
+
+    Los saves heredados y las bases manualmente modificadas pueden contener
+    un enlace obsoleto. Nunca atribuir una acción automática a una decisión.
+    """
+    if source in _AUTOMATIC or not isinstance(journal_id,str) or not journal_id:
+        return False
+    try:
+        action = json.loads(raw_command) if isinstance(raw_command,str) else raw_command
+    except (ValueError,TypeError):
+        return False
+    return (isinstance(action,dict)
+            and action.get("_origin") not in _AUTOMATIC
+            and action.get("_journal_id")==journal_id)
+
+
 def inspect_episode(world_path, call_id):
     """Exponer relaciones exactas por ID, o ausencias explícitas.
 
@@ -95,7 +115,8 @@ def inspect_episode(world_path, call_id):
                 _table(db,"timeline_checkpoints")):
             rows = db.execute(
                 """SELECT l.action_checkpoint_id,l.journal_id,
-                          t.operation,t.source,t.day_label,t.history_seq
+                          t.operation,t.source,t.day_label,t.history_seq,
+                          t.decision_json
                    FROM lab_action_links l
                    JOIN timeline_checkpoints t ON t.id=l.action_checkpoint_id
                    WHERE l.trace_call_id=? AND t.kind='action'
@@ -103,15 +124,19 @@ def inspect_episode(world_path, call_id):
                 (call_id,_MAX_ACTIONS+1)).fetchall()
             if len(rows)>_MAX_ACTIONS:
                 result["limitations"].append("planned_actions_limit_reached")
+            # No creer una fila técnica si su checkpoint demuestra que la
+            # acción vino de agenda/rutina, o si difiere el journal_id.
             result["planned_actions"] = [{
-                "checkpoint_id":r["action_checkpoint_id"],
-                "journal_id":r["journal_id"],
-                "operation":r["operation"],
-                "source":r["source"],
-                "label":r["day_label"],
-                "history_seq":r["history_seq"],
+                "checkpoint_id":row["action_checkpoint_id"],
+                "journal_id":row["journal_id"],
+                "operation":row["operation"],
+                "source":row["source"],
+                "label":row["day_label"],
+                "history_seq":row["history_seq"],
                 "matched_by":"journal_id",
-            } for r in rows[:_MAX_ACTIONS]]
+            } for row in rows[:_MAX_ACTIONS]
+              if valid_planned_action_checkpoint(
+                  row["source"],row["decision_json"],row["journal_id"])]
         else:
             result["limitations"].append("exact_planned_action_links_unavailable")
 
