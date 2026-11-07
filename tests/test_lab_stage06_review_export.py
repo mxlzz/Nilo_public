@@ -150,6 +150,14 @@ const id=a.key(m.path,m.blocks[0]);
                 self.assertIsInstance(p["mensaje_literal_por_rol"],list)
                 self.assertGreater(len(p["mensaje_literal_por_rol"]),0)
 
+    def test_profile_preview_exposes_seed_and_exact_profile_name(self):
+        with tempfile.TemporaryDirectory(prefix="nilo-review-seed-") as folder:
+            hub=LabHub(Path(folder))
+            preview=hub.preview(baseline(),provider="gemini",seed=126)
+            self.assertEqual(preview["seed"],126)
+            self.assertEqual(preview["profile"],"baseline")
+            self.assertIs(preview["enviado_a_llm"],False)
+
     def test_viewer_profile_scenario_have_checks_and_safe_local_export(self):
         script=ASSET.read_text(encoding="utf-8")
         self.assertIn('nilo.lab.context_review.v1',script)
