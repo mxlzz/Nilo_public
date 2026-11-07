@@ -413,6 +413,8 @@ append(metadata,
  N("p","monospace","ID de intento: "+data.attempt_id),
  N("p","monospace","SHA-256 del cuerpo: "+data.body_sha256));
 if(data.linked_record)append(metadata,N("p","caption","Registro relacionado por ID: "+data.linked_record.category+" · secuencia "+data.linked_record.seq+". Este vínculo no demuestra que la acción se haya ejecutado."));
+
+capture.appendChild(metadata);root.appendChild(capture);
 if(data.episode){
  const ep=data.episode;
  const relation=N("details","episode-exact-links");
@@ -438,9 +440,8 @@ if(data.episode){
    for(const t of ep.limitations)limitations.appendChild(N("p","source",t));
    relation.appendChild(limitations);
  }
- capture.after(relation);
+ root.appendChild(relation);
 }
-capture.appendChild(metadata);root.appendChild(capture);
 const canvas=N("div");root.appendChild(canvas);
 if(mode==="simple")renderMessages(data,canvas);else renderProfessional(data,canvas);
 }
