@@ -49,8 +49,8 @@ Las etapas son **unidades de trabajo**, no once versiones/paquetes descargables.
 
 | Etapa | Estado |
 |---|---|
-| 01 | **Auditoría realizada; pendiente CI de PR #85**: inventario completo contra rama UI 04, 6 casos de referencia, manifest sin textos privados y 3 tests locales correctos. [Informe](https://github.com/mxlzz/Nilo_public/blob/work/0.7.1-lab-stage01-inventario/docs/laboratorio/AUDITORIA_ETAPA_01_2026-11-07.md) / [PR #85](https://github.com/mxlzz/Nilo_public/pull/85). |
-| 02 | Pendiente (infraestructura parcial: HTTP literal, provenance, checkpoints, decisión normalizada) |
+| 01 | **Implementada y validada**: auditoría contra rama UI 04, 6 casos de referencia, manifest sin textos privados y pruebas; CI de [PR #85](https://github.com/mxlzz/Nilo_public/pull/85) aprobada. [Informe](https://github.com/mxlzz/Nilo_public/blob/work/0.7.1-lab-stage01-inventario/docs/laboratorio/AUDITORIA_ETAPA_01_2026-11-07.md). Pendiente integración de PR apilado. |
+| 02 | **Implementada y validada en PR #86 (borrador)**: respuesta textual original con SHA y fases de validación, `trace_call_id` de checkpoint, vínculo de acciones por `journal_id`, evidencia por IDs exactos, lectura local compatible con registros antiguos. **CI aprobada: 1.116 tests (1 omitido), Windows exitoso.** [Informe](https://github.com/mxlzz/Nilo_public/blob/work/0.7.1-lab-stage02-trazabilidad/docs/laboratorio/TRAZABILIDAD_ETAPA_02_2026-11-07.md). Pendiente integración y prueba real de una partida con nueva instrumentación. |
 | 03 | Pendiente (historial básico ya existente) |
 | 04 | Pendiente (trazas y escenarios básicos ya existentes) |
 | 05 | Pendiente (visor literal existente, falta integración del recorrido) |
