@@ -152,7 +152,7 @@ class EpisodeLinkTests(unittest.TestCase):
         for _ in range(60):
             sim.tick(3.0)
             recorded=sim.conn.execute(
-                "SELECT COUNT(*) FROM timeline_checkpoints WHERE kind='action'"
+                "SELECT COUNT(*) FROM lab_action_links"
             ).fetchone()[0]
             if recorded:
                 break
