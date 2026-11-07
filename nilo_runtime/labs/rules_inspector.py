@@ -58,13 +58,17 @@ def inspect_rule(operation, *, step=None, diagnostic=None, result=None,
     syntax = None
     if step is not None:
         test = validate_operation(step, check_required=False)
+        missing = [field for field in ref["required_fields"]
+                   if not step.get(field)]
         syntax = {
             "valid": test.valid,
             "code": test.code,
             "reason": test.reason,
+            "missing_required_fields": missing,
             "evidence_level": "rechecked_now_not_original_validation",
-            "note": ("Se revalidó el formato con el código actual del motor; "
-                     "no prueba que ese mismo validador se utilizara en el run."),
+            "note": ("Se revalidó el tipo y forma con la compatibilidad actual; "
+                     "los campos requeridos faltantes se informan aparte. "
+                     "No demuestra la validación efectivamente usada en el run."),
         }
 
     report = {
@@ -101,6 +105,13 @@ def inspect_rule(operation, *, step=None, diagnostic=None, result=None,
         diag = None
         report["limitations"].append(
             "El diagnóstico disponible pertenece a otra operación; no se atribuyó.")
+    if act is not None and act.get("status") == "sin_medicion" and diag is None:
+        # SimulationSandbox prepara este placeholder cuando no existe salida
+        # instrumentada: no presentarlo como resultado físico del motor.
+        act = None
+        report["limitations"].append(
+            "El sandbox completó la prueba sin diagnóstico físico; "
+            "'sin_medicion' es un marcador del visor, no una evaluación de la operación.")
     if act is not None:
         physical = act.get("physical") or {}
         if not isinstance(physical, dict):
