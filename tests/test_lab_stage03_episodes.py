@@ -58,7 +58,7 @@ def fake_world(path: pathlib.Path):
         hist(14,"diagnostic",{"id":"out-a","op":"wait","success":True,
                                    "physical_result":{"measurement_id":"med-a"}})
         hist(15,"experience",{"id":"exp-a","measurement_id":"med-a","text":"Esperé"})
-        hist(19,"llm_decision",{"id":"llm-no-checkpoint",
+        hist(17,"llm_decision",{"id":"llm-no-checkpoint",
                                    "trace_call_id":"d"*32,
                                    "decision":{"cuaderno":"Decidí sin checkpoint","plan":[]}})
         for ident,kind,seq,source,op,trace,command in [
@@ -116,13 +116,16 @@ class EpisodeStage03Tests(unittest.TestCase):
         self.assertNotIn("cp:2",ids)  # Acción agrupada por vínculo exacto
         self.assertIn("cp:3",ids)   # Acción de agenda independiente
         self.assertIn("hist:1",ids) # Deliberación antigua sin checkpoint
-        self.assertIn("hist:19",ids)  # Archivada después de instrumentación, sin checkpoint
-        self.assertEqual(ids["hist:19"]["relation"],
+        self.assertIn("hist:17",ids)  # Archivada después de instrumentación, sin checkpoint
+        self.assertEqual(ids["hist:17"]["relation"],
                          "archived_without_decision_checkpoint")
         self.assertIn("call:"+ORPHAN,ids)  # HTTP sin decisión archivada
         self.assertEqual(ids["cp:3"]["episode_kind"],"independent")
         self.assertEqual(ids["call:"+ORPHAN]["timeline_position"],"not_verified")
         self.assertEqual(ids["call:"+ORPHAN]["attempt_count"],2)
+        order=[e["id"] for e in result["entries"]]
+        self.assertLess(order.index("hist:17"),order.index("cp:3"))
+        self.assertEqual(order[-1],"call:"+ORPHAN)
 
     def test_episode_four_stages_exact_and_literal(self):
         result=get_episode(self.world,"cp:1",viewer_world=self.world)
@@ -141,7 +144,7 @@ class EpisodeStage03Tests(unittest.TestCase):
         self.assertIn("next_turn",result["fidelity"])
 
     def test_archived_decision_without_checkpoint_remains_visible(self):
-        result=get_episode(self.world,"hist:19",viewer_world=self.world)
+        result=get_episode(self.world,"hist:17",viewer_world=self.world)
         self.assertEqual(result["decision"]["cuaderno"],"Decidí sin checkpoint")
         self.assertEqual(result["linked"]["decision_checkpoints"],[])
         self.assertFalse(result["recorded_event"]["replayable"])
