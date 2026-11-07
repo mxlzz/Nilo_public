@@ -9,6 +9,7 @@ import json
 
 from brain import build_deliberation_request, config
 from prompt_budget import context_stats
+from nilo_runtime.labs.literal_segments import index_request
 
 
 def contexto_de_deliberacion(sim):
@@ -57,7 +58,11 @@ def solicitud_completa(context, proveedor="gemini"):
         system=payload["messages"][0]["content"]
         user=payload["messages"][1]["content"]
         sent=json.loads(user)
+    # Mismas opciones de serialización que gateway._post. Este cuerpo es
+    # CALCULADO, no un transporte HTTP observado: nunca llamamos a la red.
     wire=json.dumps(payload,ensure_ascii=False)
+    literal=index_request(wire.encode("utf-8"),
+                          provider=proveedor,purpose="deliberacion")
     stats=context_stats(context,sent,proveedor,payload)
     return {
         "proveedor":proveedor,
@@ -68,6 +73,14 @@ def solicitud_completa(context, proveedor="gemini"):
         "solicitud_json":payload,
         "solicitud_serializada":wire,
         "bytes_solicitud":len(wire.encode("utf-8")),
+        "huella_solicitud_calculada":literal["body_sha256"],
+        # Indexación idéntica a la de la captura real, sobre la cadena
+        # transmitible. Solo metadatos editoriales; jamás reescribir contenido.
+        "mensajes_literal_estructurado":literal["messages"],
+        "segmentacion_verificada":all(
+            "".join(part["literal"] for part in message["segments"])
+            == message["text"] for message in literal["messages"]),
+        "procedencia": "previsualizacion_calculada_sin_red",
         "analitica_filtrado":stats,
         "campos_conservados":sorted(sent),
         "campos_omitidos":sorted(set(context)-set(sent)),
