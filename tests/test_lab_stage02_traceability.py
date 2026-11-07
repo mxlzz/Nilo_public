@@ -164,7 +164,6 @@ class EpisodeLinkTests(unittest.TestCase):
             row=db.execute("SELECT blob FROM timeline_checkpoints WHERE kind='decision'").fetchone()[0]
             import zlib
             self.assertNotIn(CALL,zlib.decompress(row).decode("utf-8"))
-            manual=dict(simulated=False)
             # El vínculo técnico no se incorpora a persona, mundo ni plan.
             self.assertNotIn("trace_call_id",sim.s["person"])
             self.assertNotIn("trace_call_id",sim.s["world"])
@@ -185,6 +184,48 @@ class EpisodeLinkTests(unittest.TestCase):
         sim.write()
         sim.conn.close()
         self.assertEqual(inspect_episode(self.world,CALL)["planned_actions"],[])
+
+    def test_evidence_relations_use_exact_ids_and_keep_originals(self):
+        with closing(sqlite3.connect(self.world)) as db:
+            db.execute("""CREATE TABLE history (
+                seq INTEGER PRIMARY KEY, category TEXT, simulated_at TEXT,payload TEXT)""")
+            db.execute("""CREATE TABLE timeline_checkpoints (
+                id INTEGER PRIMARY KEY,kind TEXT,history_seq INTEGER,
+                day_label TEXT,engine_version TEXT,source TEXT,operation TEXT,
+                trace_call_id TEXT)""")
+            db.execute("""CREATE TABLE lab_journal_trace (
+                journal_id TEXT PRIMARY KEY,trace_call_id TEXT,
+                decision_checkpoint_id INTEGER)""")
+            db.execute("""CREATE TABLE lab_action_links (
+                action_checkpoint_id INTEGER PRIMARY KEY,journal_id TEXT,trace_call_id TEXT)""")
+            db.execute("INSERT INTO lab_journal_trace VALUES (?,?,?)",("journal-1",CALL,1))
+            db.execute("""INSERT INTO timeline_checkpoints VALUES
+                (1,'decision',0,'Día 1','0.7.0','llm',NULL,?)""",(CALL,))
+            db.execute("""INSERT INTO timeline_checkpoints VALUES
+                (2,'action',2,'Día 1','0.7.0','llm','wait',NULL)""")
+            db.execute("INSERT INTO lab_action_links VALUES(2,'journal-1',?)",(CALL,))
+            records=[
+                (1,"journal",{"id":"journal-1","text":"Literal privado del cuaderno"}),
+                (2,"measurement",{"id":"measurement-1","journal_id":"journal-1","op":"wait"}),
+                (3,"measurement",{"id":"unrelated","journal_id":"journal-OTHER","op":"wait"}),
+                (4,"diagnostic",{"id":"diag-1","physical_result":{"measurement_id":"measurement-1"},"success":True}),
+                (5,"diagnostic",{"id":"diag-OTHER","physical_result":{"measurement_id":"unrelated"},"success":False}),
+                (6,"experience",{"id":"experience-1","measurement_id":"measurement-1"}),
+                (7,"journal",{"id":"journal-OTHER","text":"Not linked"}),
+            ]
+            db.executemany(
+                "INSERT INTO history(seq,category,simulated_at,payload) VALUES(?,?,?,?)",
+                [(seq,cat,"Día 1",json.dumps(value)) for seq,cat,value in records])
+            db.commit()
+        previous=self.world.read_bytes()
+        result=inspect_episode(self.world,CALL)
+        self.assertEqual(previous,self.world.read_bytes())
+        evidence=result["related_records"]
+        self.assertEqual([x["record"]["id"] for x in evidence["journals"]],["journal-1"])
+        self.assertEqual([x["record"]["id"] for x in evidence["measurements"]],["measurement-1"])
+        self.assertEqual([x["record"]["id"] for x in evidence["diagnostics"]],["diag-1"])
+        self.assertEqual([x["record"]["id"] for x in evidence["experiences"]],["experience-1"])
+        self.assertEqual(evidence["journals"][0]["record"]["text"],"Literal privado del cuaderno")
 
     def test_legacy_world_does_not_forge_missing_links(self):
         with closing(sqlite3.connect(self.world)) as db:
