@@ -104,6 +104,11 @@ async function validate(model,selected){
    if(joined!==message.text||offset!==Array.from(message.text).length)
       throw Error("La reconstrucción del mensaje no coincide: "+message.path);
    for(const block of message.blocks){
+     if(!message.segments.some(segment=>
+          segment.kind===block.kind &&
+          segment.start===block.start&&segment.end===block.end &&
+          segment.literal_sha256===block.literal_sha256))
+        throw Error("Bloque ajeno a los segmentos originales: "+message.path);
      if(cpSlice(message.text,block.start,block.end)!==block.literal
         ||(await sha256(block.literal))!==block.literal_sha256)
         throw Error("Un bloque cambió desde su captura: "+message.path);
@@ -182,7 +187,8 @@ async function buildReview(model,selected,overview,policy){
      "Proponer excluir un bloque no elimina automáticamente campos de la simulación ni modifica el prompt.",
      "Algunos campos e instrucciones no son opcionales y requieren examen del funcionamiento antes de considerar cambios.",
      "El archivo incluye la solicitud literal y puede contener información privada. Revisarlo antes de adjuntarlo.",
-     "Las secciones y títulos son editoriales; el texto original es la referencia."
+     "Las secciones y títulos son editoriales; el texto original es la referencia.",
+     "Una solicitud capturada en el límite de transporte no prueba que el proveedor remoto la haya recibido si hubo error de red."
    ]
  };
 }
@@ -234,6 +240,12 @@ function controller(model,policy){
    const input=node("input");input.type="checkbox";
    const text=node("span","", "Proponer excluir este bloque");
    label.append(input,text);wrap.appendChild(label);
+   const optional=(message.role==="user"&&block.kind==="field"&&
+      Array.isArray(policy?.optional_context)&&
+      policy.optional_context.includes(inferRoot(block.json_pointer)));
+   wrap.appendChild(node("span","nilo-review-hint",
+     optional?"Campo opcional del perfil; requiere revisión antes de aplicar.":
+              "Campo o instrucción fuera de las omisiones del perfil; revisión obligatoria."));
    const note=node("textarea","nilo-review-note");
    note.rows=2;note.maxLength=MAX_NOTE;
    note.placeholder="Observación opcional: por qué te parece innecesario o problemático";
