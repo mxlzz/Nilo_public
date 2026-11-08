@@ -174,6 +174,8 @@ def _live_branch(row):
             "observed_operation_states": dict(sorted(counts.items())),
             "recorded_successes": effect.get("recorded_successes"),
             "recorded_failures": effect.get("recorded_failures"),
+            "recorded_blocks": effect.get("recorded_blocks"),
+            "recorded_not_evaluable": effect.get("recorded_not_evaluable"),
         })
     successful = [s for s in signatures if s is not None]
     return {
@@ -186,6 +188,8 @@ def _live_branch(row):
                                              for name in row["operation_types"]}),
         "semantic_warnings": sum(row["semantic_warning_count"] for row in entries),
         "recorded_physical_failures": sum(row["recorded_failures"] or 0 for row in entries),
+        "recorded_precondition_blocks": sum(row["recorded_blocks"] or 0 for row in entries),
+        "recorded_not_evaluable": sum(row["recorded_not_evaluable"] or 0 for row in entries),
     }
 
 
