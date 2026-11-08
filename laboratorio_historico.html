@@ -68,9 +68,10 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
  <div class="heading">01 · Partida y recorrido</div>
  <div class="body">
   <p class="muted">Podés abrir la partida de la carpeta actual o seleccionar otra base SQLite. La original se consulta en modo lectura.</p>
-  <div class="btnrow"><button id="defaultFile">Usar partida actual</button></div>
-  <input id="file" type="file" accept=".sqlite3,.sqlite,.db" aria-label="Elegir archivo de partida" style="width:100%">
-  <p id="fileStatus" class="muted">Buscando partida local…</p>
+  <div class="btnrow"><button type="button" id="defaultFile">Usar partida de la carpeta</button><button type="button" id="chooseFile">Seleccionar archivo SQLite…</button></div>
+  <input id="file" type="file" accept=".sqlite3,.sqlite,.db" aria-label="Elegir archivo de partida" hidden>
+  <p id="fileStatus" class="muted" role="status" aria-live="polite">Consultando la partida seleccionada…</p>
+  <p class="muted">El archivo seleccionado se comparte con Experimentos A/B mientras el servidor del laboratorio siga abierto. La importación usa una copia temporal de lectura.</p>
   <div class="mode-switch" role="group" aria-label="Modo del historial">
     <button type="button" id="episodesMode" class="selected" aria-pressed="true">Recorrido</button>
     <button type="button" id="momentsMode" aria-pressed="false">Reproducción</button>
@@ -146,7 +147,11 @@ function clearSelection(message="Seleccioná un momento para consultar su regist
 function showData(data){
  clearSelection();
  events=data.entries||[];episodes=[];episodesLoading=true;
- $("fileStatus").textContent=data.source+" · "+events.length+" momentos · "+
+ const active=data.selection||{};
+ const label=active.available?("Partida activa: "+active.name+
+   (active.origin==="importada"?" · importada temporalmente":" · carpeta del laboratorio")):
+   ("Partida activa: "+(data.source||"desconocida"));
+ $("fileStatus").textContent=label+" · "+events.length+" momentos · "+
     data.checkpoint_count+" puntos restaurables";
  filterEvents();
  const token=sourceToken;
@@ -461,6 +466,7 @@ async function loadLocal(){
   if(requestToken===sourceToken)showData(data);
  }catch(err){if(requestToken===sourceToken)$("fileStatus").textContent=err.message}
 }
+$("chooseFile").onclick=()=>$("file").click();
 $("file").onchange=async e=>{
  const f=e.target.files?.[0];if(!f)return;
  const requestToken=++sourceToken;
@@ -468,7 +474,8 @@ $("file").onchange=async e=>{
  if(f.size>200*1024*1024){$("fileStatus").textContent="Máximo 200 MB por archivo.";return}
  try{
   const data=await ask("/api/history/upload",{method:"POST",
-    headers:{"Content-Type":"application/octet-stream"},body:f});
+    headers:{"Content-Type":"application/octet-stream",
+             "X-Nilo-Filename":encodeURIComponent(f.name)},body:f});
   if(requestToken===sourceToken)showData(data);
  }catch(err){if(requestToken===sourceToken)$("fileStatus").textContent=err.message}
 };
