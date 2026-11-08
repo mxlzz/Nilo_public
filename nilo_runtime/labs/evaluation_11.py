@@ -143,6 +143,10 @@ def _live_branch(row):
         plan = normalized.get("plan") if normalized else None
         signatures.append(_plan_signature(plan) if plan is not None else None)
         effect = turn.get("world_effect") if isinstance(turn.get("world_effect"), dict) else {}
+        warnings = response.get("validation_warnings") or []
+        operation_rows = effect.get("operation_results") or []
+        counts = Counter(row.get("state", "sin_estado") for row in operation_rows
+                         if isinstance(row, dict))
         entries.append({
             "turn": turn.get("turn"),
             "request_sha256": turn.get("sent_preview_sha256"),
@@ -151,6 +155,11 @@ def _live_branch(row):
             "transport_error_present": "transport_error" in turn,
             "response_invalid": bool(response.get("validation_error")) or (
                 bool(response) and normalized is None),
+            "semantic_warning_count": len(warnings),
+            "semantic_warning_codes": sorted({
+                row.get("code") for row in warnings
+                if isinstance(row, dict) and isinstance(row.get("code"), str)
+            }),
             "normalized_plan_actions": len(plan) if isinstance(plan, list) else None,
             "operation_types": sorted({s["op"] for s in plan
                                        if isinstance(s, dict) and isinstance(s.get("op"), str)})
@@ -160,6 +169,11 @@ def _live_branch(row):
             "reported_output_tokens": tokens.get("salida", tokens.get("completion_tokens")),
             "physical_execution_attempted": effect.get("applied") is True,
             "physical_plan_unfinished": effect.get("pending_or_unfinished"),
+            "submitted_operations": effect.get("submitted_operations"),
+            "admitted_operations": effect.get("admitted_operations"),
+            "observed_operation_states": dict(sorted(counts.items())),
+            "recorded_successes": effect.get("recorded_successes"),
+            "recorded_failures": effect.get("recorded_failures"),
         })
     successful = [s for s in signatures if s is not None]
     return {
@@ -170,6 +184,8 @@ def _live_branch(row):
             if x is not None and y is not None),
         "declared_operation_types": sorted({name for row in entries
                                              for name in row["operation_types"]}),
+        "semantic_warnings": sum(row["semantic_warning_count"] for row in entries),
+        "recorded_physical_failures": sum(row["recorded_failures"] or 0 for row in entries),
     }
 
 
