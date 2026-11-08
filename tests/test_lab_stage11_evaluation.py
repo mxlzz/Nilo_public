@@ -197,12 +197,21 @@ class CorrectionsStage11(unittest.TestCase):
         ]
         rows = _execution_results(submitted, admitted, outcomes)
         self.assertEqual([r["state"] for r in rows],
-                         ["completada", "fallida", "filtrada_antes_de_ejecutar"])
+                         ["completada", "bloqueada", "filtrada_antes_de_ejecutar"])
         self.assertEqual(rows[0]["action_id"], "act-1")
         self.assertEqual(rows[0]["measurement_id"], "med-1")
         self.assertFalse(rows[1]["success"])
         self.assertIn("No hay orilla", rows[1]["facts"][0])
         self.assertIsNone(rows[2]["action_id"])
+
+    def test_unmodeled_physics_is_not_a_failed_experiment(self):
+        row = {"id": "act-no-modelo", "op": "experiment", "successful": False,
+               "action_result": {"success": False, "status": "no_evaluable",
+                                 "facts": ["El modelo no representa esa física."]}}
+        result = _execution_results([{"op": "experiment"}],
+                                    [{"op": "experiment"}], [row])
+        self.assertEqual(result[0]["state"], "no_evaluable")
+        self.assertFalse(result[0]["success"])
 
     def test_real_simulation_records_operations_without_mutating_source(self):
         lab = SimulationSandbox(_SilentTrace)
