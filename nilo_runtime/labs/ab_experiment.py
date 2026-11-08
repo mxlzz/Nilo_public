@@ -386,7 +386,14 @@ def _drive_decision(lab,normalized):
     prior_feedback=list(sim.s["person"].get("strategy_feedback") or [])
     submitted=copy.deepcopy(normalized.get("plan") or [])
     sim.plan_ready(copy.deepcopy(normalized),"llm",{})
-    new_feedback=(sim.s["person"].get("strategy_feedback") or [])[len(prior_feedback):]
+    latest_feedback=list(sim.s["person"].get("strategy_feedback") or [])
+    # strategy_feedback es un anillo de 18 entradas: comparar longitudes
+    # falla cuando se elimina la más antigua. Encontrar el último marcador
+    # anterior conserva el delta también en partidas maduras.
+    marker=prior_feedback[-1] if prior_feedback else None
+    cut=next((i+1 for i in range(len(latest_feedback)-1,-1,-1)
+              if latest_feedback[i]==marker),0) if marker else 0
+    new_feedback=latest_feedback[cut:]
     admitted=copy.deepcopy(sim.s["person"].get("plan") or [])
     if sim.s["person"].get("pending"):
         admitted.insert(0,copy.deepcopy(sim.s["person"]["pending"]["step"]))
