@@ -174,7 +174,7 @@ class ProviderOptinTests(unittest.TestCase):
                 self.assertEqual(len(turns),2)
                 self.assertTrue(turns[0]["world_effect"]["applied"])
                 self.assertTrue(turns[1]["world_effect"]["applied"])
-            self.assertFalse(result["original_world_modified"])
+            self.assertFalse(result["modified_original_world"])
 
     def test_provider_failure_returns_partial_evidence_and_no_retry(self):
         with tempfile.TemporaryDirectory() as td:
