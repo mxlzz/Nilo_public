@@ -39,6 +39,7 @@ HTML_FILE = HERE / "laboratorio_motor.html"
 SCENARIO_HTML_FILE = HERE / "laboratorio_escenarios.html"
 HISTORY_HTML_FILE = HERE / "laboratorio_historico.html"
 LLM_VIEWER_HTML_FILE = HERE / "laboratorio_visor_llm.html"
+AB_EXPERIMENT_HTML_FILE = HERE / "laboratorio_experimentos.html"
 TRACE_TEXT = {
     "navigation.py:resolve_go": "Comprueba destino y accesibilidad conocida",
     "navigation.py:reachable_shores": "Busca orillas alcanzables",
@@ -278,8 +279,9 @@ class Handler(BaseHTTPRequestHandler):
         except RequestError as exc:
             return self.json({"error":str(exc)},exc.status)
         path = urlsplit(self.path).path
-        if path in ("/", "/index.html","/sandbox","/historico","/ajustes","/visor-llm"):
-            source = (LLM_VIEWER_HTML_FILE if path=="/visor-llm" else
+        if path in ("/", "/index.html","/sandbox","/historico","/ajustes","/visor-llm","/experimentos"):
+            source = (AB_EXPERIMENT_HTML_FILE if path=="/experimentos" else
+                      LLM_VIEWER_HTML_FILE if path=="/visor-llm" else
                       HERE/"laboratorio_ajustes.html" if path=="/ajustes" else
                       HTML_FILE if path=="/sandbox" else
                       HISTORY_HTML_FILE if path=="/historico" else SCENARIO_HTML_FILE)
@@ -448,6 +450,62 @@ class Handler(BaseHTTPRequestHandler):
         except RequestError as exc:
             return self.json({"error":str(exc)},exc.status)
         path = urlsplit(self.path).path
+        if path == "/api/lab/experiment":
+            # Solo POST local autorizado. No permitir IDs de archivo,
+            # URLs de proveedor ni cambio directo del perfil activo.
+            try:
+                body=parse_body(self.headers,self.rfile,maximum=65000)
+                if not isinstance(body,dict):
+                    raise ValueError("Se espera un objeto JSON")
+                mode=body.get("mode")
+                from nilo_runtime.labs.ab_experiment import (
+                    context_pair,physical_pair,live_pair)
+                from nilo_runtime.labs.hub import _seed
+                seed=_seed(body.get("seed",7321))
+                source=body.get("source","new")
+                kit=body.get("kit",False)
+                if source not in ("new","saved") or type(kit) is not bool:
+                    raise ValueError("Origen o configuración de referencia inválidos")
+                # Solo el servidor decide el archivo original. Nunca usar una
+                # ruta o contenido de credenciales proporcionados por cliente.
+                saved=self.hub.world if source=="saved" else None
+                if source=="saved" and (saved is None or not saved.is_file()):
+                    raise ValueError("No hay una partida guardada disponible")
+                if mode=="physical":
+                    if set(body)-{"mode","seed","source","kit","provider",
+                                  "profile","baseline_steps","variant_steps"}:
+                        raise ValueError("Parámetros físicos desconocidos")
+                    result=physical_pair(
+                        seed=seed,source=source,world_path=saved,kit=kit,
+                        baseline_steps=body.get("baseline_steps",[]),
+                        variant_steps=body.get("variant_steps",[]))
+                elif mode=="context":
+                    if set(body)-{"mode","seed","source","kit","provider","profile"}:
+                        raise ValueError("Parámetros de contexto desconocidos")
+                    result=context_pair(
+                        self.hub,body.get("profile"),provider=body.get("provider","gemini"),
+                        seed=seed,source=source,world_path=saved,kit=kit)
+                elif mode in ("live","evolution"):
+                    if set(body)-{"mode","seed","source","kit","provider","profile",
+                                  "confirm_live"}:
+                        raise ValueError("Parámetros de proveedor desconocidos")
+                    result=live_pair(
+                        self.hub,body.get("profile"),provider=body.get("provider","gemini"),
+                        seed=seed,source=source,world_path=saved,kit=kit,
+                        turns=1 if mode=="live" else 2,
+                        confirm=body.get("confirm_live") is True)
+                else:
+                    raise ValueError("Modalidad de experimento no disponible")
+                return self.json(result)
+            except RequestError as exc:
+                return self.json({"error":str(exc)},exc.status)
+            except (ValueError,TypeError,KeyError,OSError,sqlite3.Error) as exc:
+                return self.json({"error":str(exc)[:250]},400)
+            except Exception as exc:
+                from providers import ProviderFailure
+                if isinstance(exc,ProviderFailure):
+                    return self.json({"error":str(exc)[:230]},502)
+                return self.json({"error":"El experimento se interrumpió: "+type(exc).__name__},500)
         if path.startswith("/api/lab/profile/"):
             names={
                 "/api/lab/profile/save","/api/lab/profile/apply",
