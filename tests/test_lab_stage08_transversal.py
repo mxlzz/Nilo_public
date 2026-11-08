@@ -109,6 +109,29 @@ class CrossAnalysisTests(unittest.TestCase):
         self.assertGreater(fields["user:/necesidades"]["total_bytes"],0)
         self.assertEqual(result["invalid_attempts"],[])
 
+    def test_gemini_real_shaped_prompt_indexes_memory_after_operations_guide(self):
+        # La solicitud real de Gemini antepone texto de operaciones y termina
+        # con "SITUACIÓN REAL: {...}". No asumir JSON desde el primer carácter.
+        context={"momento":"Día 1", "necesidades":{"fatiga":"bien"},
+                 "memorias_relevantes":[{"id":"exp-01","evidence":"med-01"}],
+                 "resultados_de_acciones":[]}
+        prompt="Operaciones disponibles: explore, wait, gather.\\nSITUACIÓN REAL: "+json.dumps(
+            context,ensure_ascii=False)
+        raw=json.dumps({"model":"synthetic",
+            "systemInstruction":{"parts":[{"text":"Instrucciones."}]},
+            "contents":[{"role":"user","parts":[{"text":prompt}]}]},
+            ensure_ascii=False).encode("utf-8")
+        attempt=self.store.begin(body=raw,call_id=CALL_A,session_id=1,
+            purpose="deliberacion",source_id=None,simulated_at="Día 1",
+            ordinal=1,provider="gemini",model="synthetic")
+        self.store.finish(attempt,"accepted")
+        result=analyze(self.world)
+        fields={x["field"] for x in result["matrix"]}
+        self.assertIn("user:/memorias_relevantes",fields)
+        self.assertIn("user:/necesidades",fields)
+        self.assertEqual(result["memory"]["with_explicit_request_id"],1)
+        self.assertEqual(result["memory"]["experiences"][0]["in_requests"][0]["attempt_id"],attempt)
+
     def test_operation_footprints_are_diagnostics_not_all_actions(self):
         self._seed_requests()
         data=analyze(self.world,limit=3)
