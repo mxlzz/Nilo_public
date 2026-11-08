@@ -164,6 +164,21 @@ jobs:
               if delta: print('DIFERENCIAS',k,delta)
           assert a['fingerprint']==b['fingerprint'], 'Reproducción entre procesos diferente'
           PY
+      - name: Etapa 11 · matriz A/B Gemini/Groq sin API
+        run: |
+          python tools/evaluar_laboratorio_11.py --seeds 7321 315 2026 --providers gemini groq --output-json evaluacion_lab_11.json --output-md evaluacion_lab_11.md
+      - name: Etapa 11 · construir paquete de revisión sin publicar release
+        run: python empaquetar_version.py
+      - name: Etapa 11 · adjuntar informe y paquete experimental
+        uses: actions/upload-artifact@v4
+        with:
+          name: nilo-lab-etapa11-${{ github.run_id }}
+          path: |
+            evaluacion_lab_11.json
+            evaluacion_lab_11.md
+            dist/Nilo-*.zip
+          if-no-files-found: error
+          retention-days: 14
 
 
   evaluacion_real_23:
