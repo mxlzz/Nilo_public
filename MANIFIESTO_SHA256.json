@@ -180,7 +180,6 @@
     "strategy_review.py": "sha256-calculated-during-packaging",
     "structural_loads.py": "sha256-calculated-during-packaging",
     "survival.py": "sha256-calculated-during-packaging",
-    "tests/test_lab_stage08_transversal.py": "sha256-calculated-during-packaging",
     "timing.py": "sha256-calculated-during-packaging",
     "validar_escenarios.py": "sha256-calculated-during-packaging",
     "VERSION": "sha256-calculated-during-packaging",
