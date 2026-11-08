@@ -87,6 +87,49 @@ def _variant_context(lab, original, mode):
     return result
 
 
+
+# Un mismo mundo físico no garantiza idéntica evidencia recibida por el LLM:
+# los compactadores y la recuperación multifoco seleccionan datos distintos.
+_SENT_EVIDENCE_FIELDS = (
+    "memorias_relevantes", "mediciones_reales_recientes",
+    "resultados_de_acciones", "conclusiones_verificadas",
+    "antecedentes_relacionados", "investigaciones_pausadas_relacionadas",
+    "investigaciones_activas",
+)
+
+
+def _sent_evidence_differences(before, after):
+    """Comparación de items por ID y contenido; nunca infiere equivalencia causal."""
+    def rows(view, key):
+        data = view.get("datos_enviados") or {}
+        return data.get(key) if isinstance(data.get(key), list) else []
+
+    details = {}
+    for key in _SENT_EVIDENCE_FIELDS:
+        left = rows(before, key)
+        right = rows(after, key)
+        # Huella de cada registro: una misma ID con contenido cambiado cuenta
+        # como evidencia distinta. Conservar duplicados con igual ID y datos
+        # contradictorios; no convertirlos en una sola entidad.
+        def indices(values):
+            return [(str(v.get("id", "sin-id:"+str(i))) if isinstance(v, dict)
+                     else "sin-id:"+str(i), _sha(v))
+                    for i, v in enumerate(values)]
+        a, b = indices(left), indices(right)
+        if a == b:
+            continue
+        left_set, right_set = set(a), set(b)
+        details[key] = {
+            "baseline_count": len(a), "variant_count": len(b),
+            "only_baseline_ids": sorted({name for name, digest in a
+                                         if (name, digest) not in right_set}),
+            "only_variant_ids": sorted({name for name, digest in b
+                                        if (name, digest) not in left_set}),
+            "order_changed_only": left_set == right_set,
+        }
+    return details
+
+
 def context_pair(hub,profile,*,provider="gemini",seed=7321,
                  source="new",world_path=None,kit=False,context_mode="baseline"):
     """Una sola percepción congelada compartida; jamás consulta proveedores."""
@@ -115,6 +158,7 @@ def context_pair(hub,profile,*,provider="gemini",seed=7321,
     if before["enviado_a_llm"] or after["enviado_a_llm"]:
         raise ValueError("Una previsualización no puede marcarse como enviada")
     for view in (before,after):view["seed"]=seed
+    evidence_diff=_sent_evidence_differences(before,after)
     return {
         "experiment_type":"context_ab",
         "source":"readonly_copy_of_saved_world" if source=="saved" else "fresh_isolated_seed",
@@ -130,12 +174,15 @@ def context_pair(hub,profile,*,provider="gemini",seed=7321,
             "changed_request":before["huella_solicitud_calculada"]!=after["huella_solicitud_calculada"],
             "comparable_same_reference":True,
             "identical_cognitive_projections":identity==variant_identity,
+            "same_sent_evidence":not evidence_diff,
+            "sent_evidence_differences":evidence_diff,
             "actual_model_response":False
         },
         "llm_calls":0,"modified_original_world":False,
         "notes":[
             "Se comparan textos calculados desde el mismo estado, sin red.",
             "El tamaño menor no demuestra que Nilo decida mejor.",
+            "Mismo mundo inicial no implica idéntica evidencia seleccionada.",
             "Se aplican únicamente omisiones permitidas por el perfil."
         ]}
 
