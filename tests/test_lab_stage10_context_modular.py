@@ -158,8 +158,10 @@ class ModularSelection10(unittest.TestCase):
                        "action": "gather", "successful": True}]}
         world = {"sites": {}, "revealed": []}
         before = copy.deepcopy((person, world))
-        seen = recall_relevant(person, world)
+        baseline_seen = recall_relevant(person, world)
+        seen = recall_relevant(person, world, multi_focus=True)
         self.assertEqual({r["id"] for r in seen}, {"exp-1", "exp-2"})
+        self.assertFalse(baseline_seen)  # No cambiar el recuperador normal sin opt-in.
         self.assertEqual((person, world), before)
 
 
@@ -177,6 +179,12 @@ class ModularHub10(unittest.TestCase):
             self.assertNotEqual(before["solicitud_serializada"],
                                 after["solicitud_serializada"])
             self.assertEqual(validate(profile), profile)
+            pair = hub.compare(profile, provider="gemini", seed=7321,
+                               context_mode="modular")
+            self.assertEqual(pair["modo_baseline"], "baseline")
+            self.assertEqual(pair["modo_variante"], "modular")
+            self.assertEqual(pair["before"]["seed"], pair["after"]["seed"])
+            self.assertFalse(pair["after"]["enviado_a_llm"])
             with self.assertRaises(ValueError):
                 _request(profile, context, "gemini", context_mode="invalid")
             illegal = dict(profile, context_mode="modular")
