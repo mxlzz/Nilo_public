@@ -279,8 +279,9 @@ class Handler(BaseHTTPRequestHandler):
         except RequestError as exc:
             return self.json({"error":str(exc)},exc.status)
         path = urlsplit(self.path).path
-        if path in ("/", "/index.html","/sandbox","/historico","/ajustes","/visor-llm","/experimentos"):
-            source = (AB_EXPERIMENT_HTML_FILE if path=="/experimentos" else
+        if path in ("/", "/index.html","/sandbox","/historico","/ajustes","/visor-llm","/experimentos","/analisis"):
+            source = (HERE/"laboratorio_analisis.html" if path=="/analisis" else
+                      AB_EXPERIMENT_HTML_FILE if path=="/experimentos" else
                       LLM_VIEWER_HTML_FILE if path=="/visor-llm" else
                       HERE/"laboratorio_ajustes.html" if path=="/ajustes" else
                       HTML_FILE if path=="/sandbox" else
@@ -310,6 +311,21 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(contents)))
             self.end_headers()
             self.wfile.write(contents)
+        elif path == "/api/lab/analysis":
+            # Panorama transversal de la partida actual; nunca aceptar paths,
+            # nombres de DB o proveedores elegidos por el navegador.
+            try:
+                raw=parse_qs(urlsplit(self.path).query,
+                             keep_blank_values=True,max_num_fields=2)
+                if not set(raw)<= {"limit"} or any(len(v)!=1 for v in raw.values()):
+                    raise ValueError("Solo se admite el límite de turnos")
+                value=raw.get("limit",["24"])[0]
+                if not value.isascii() or not value.isdecimal() or len(value)>2:
+                    raise ValueError("Límite de turnos inválido")
+                from nilo_runtime.labs.cross_analysis import analyze
+                self.json(analyze(self.hub.world,limit=int(value)))
+            except (ValueError,TypeError,sqlite3.Error,OSError) as exc:
+                self.json({"error":str(exc)[:220]},400)
         elif path == "/api/lab/audit/info":
             # Solo versión/contrato del motor instalado, sin acceder a la
             # partida ni modificar configuración. Los commits de paquetes
