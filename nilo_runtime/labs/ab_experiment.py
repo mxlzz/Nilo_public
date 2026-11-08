@@ -301,13 +301,23 @@ def _execution_results(submitted, admitted, new_outcomes, *, unfinished=False):
         if type(success) is not bool:
             success = None
         proof = result.get("physical_result") or {}
+        engine_status = raw.get("status") or result.get("evaluation_status")
+        if engine_status == "no_evaluable":
+            state = "no_evaluable"
+        elif engine_status == "precondition_failed":
+            state = "bloqueada"
+        elif success is True:
+            state = "completada"
+        elif success is False:
+            state = "fallida"
+        else:
+            state = "resultado_no_clasificable"
         rows.append({
             "requested_step": index,
             "op": op,
-            "state": ("completada" if success is True else
-                      "fallida" if success is False else "resultado_no_clasificable"),
+            "state": state,
             "success": success,
-            "engine_status": raw.get("status") or result.get("evaluation_status"),
+            "engine_status": engine_status,
             "action_id": result.get("id"),
             "measurement_id": proof.get("measurement_id"),
             "contract_status": result.get("contract_status"),
@@ -398,6 +408,10 @@ def _drive_decision(lab,normalized):
                                      for row in operation_results),
             "recorded_failures":sum(row.get("state")=="fallida"
                                     for row in operation_results),
+            "recorded_blocks":sum(row.get("state")=="bloqueada"
+                                  for row in operation_results),
+            "recorded_not_evaluable":sum(row.get("state")=="no_evaluable"
+                                         for row in operation_results),
             "unattributed_engine_outcomes":sum(j not in {
                 k for k, result in enumerate(outcomes)
                 if result.get("id") in {r.get("action_id") for r in operation_results}}
