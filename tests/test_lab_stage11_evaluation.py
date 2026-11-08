@@ -233,6 +233,7 @@ class CorrectionsStage11(unittest.TestCase):
             self.assertTrue(report["applied"])
             self.assertTrue(report["plan_accepted"])
             self.assertEqual(report["submitted_operations"], 2)
+            self.assertLessEqual(report["admitted_operations"], 2)
             self.assertEqual(len(report["operation_results"]), 2)
             self.assertIn(report["operation_results"][0]["state"],
                           ("completada", "fallida"))
