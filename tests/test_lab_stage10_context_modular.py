@@ -134,15 +134,13 @@ class ModularSelection10(unittest.TestCase):
                     self.assertLessEqual(len(json.dumps(candidate, ensure_ascii=False).encode()), 14500)
                 else:
                     self.assertIn("SITUACIÓN REAL: ", candidate["contents"][0]["parts"][0]["text"])
-        for invalid in ("", "unknown", 123, True, None):
+        for invalid in ("", "unknown", 123, True, False, None):
             cfg = dict(PROVIDERS["gemini"], _LAB_CONTEXT_MODE=invalid)
-            if invalid is None or invalid == "":
-                # La ausencia y la cadena vacía mantienen el baseline antiguo.
-                self.assertEqual(build_deliberation_request(cfg, context)[1],
-                                 build_deliberation_request(PROVIDERS["gemini"], context)[1])
-            else:
-                with self.assertRaises(ValueError):
-                    build_deliberation_request(cfg, context)
+            with self.assertRaises(ValueError):
+                build_deliberation_request(cfg, context)
+        # Omitir el parámetro sigue usando exactamente el baseline.
+        self.assertEqual(build_deliberation_request(dict(PROVIDERS["gemini"]), context)[1],
+                         build_deliberation_request(PROVIDERS["gemini"], context)[1])
 
     def test_memory_retrieval_respects_simultaneous_open_topics(self):
         person = {"pos": [10, 10, 0],
