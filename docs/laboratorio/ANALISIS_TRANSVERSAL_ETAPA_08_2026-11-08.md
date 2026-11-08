@@ -52,7 +52,7 @@ El resultado transversal puede exportarse a JSON local. **No contiene las solici
 - `GET /api/lab/analysis?limit=...`: endpoint de solo lectura; exclusivamente partida actual de `LabHub`, no acepta rutas, IDs ajenos, nombres de bases ni URLs.
 - `laboratorio_analisis.html`: matriz de navegación, patrones y evidencia por IDs, con renderizado mediante `textContent` y creación de nodos, **sin usar HTML dinámico de registros archivados**. Usa el sistema de diseño compartido (`/assets/laboratorio.css` y `/assets/laboratorio_ui.js`), sin abrir rutas adicionales de assets.
 - Los seis visores reciben únicamente un enlace de navegación hacia Análisis. La navegación original de Pruebas, Historial y Solicitudes LLM permanece intacta.
-- `MANIFIESTO_SHA256.json`: añade el nuevo lector, la pantalla y sus pruebas para Windows portable.
+- `MANIFIESTO_SHA256.json`: incorpora el nuevo lector y la pantalla al paquete Windows; **las pruebas automatizadas permanecen fuera del ZIP distribuible**.
 
 ### Tests de aceptación
 
