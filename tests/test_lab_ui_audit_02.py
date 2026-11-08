@@ -16,6 +16,7 @@ PAGES = {
     "laboratorio_escenarios.html": "Pruebas",
     "laboratorio_motor.html": "Pruebas",
     "laboratorio_experimentos.html": "Experimentos A/B",
+    "laboratorio_analisis.html": "Análisis",
     "laboratorio_ajustes.html": "Ajustes",
 }
 PRIMARY = [
@@ -23,6 +24,7 @@ PRIMARY = [
     ("/historico", "Historial"),
     ("/", "Pruebas"),
     ("/experimentos", "Experimentos A/B"),
+    ("/analisis", "Análisis"),
     ("/ajustes", "Ajustes"),
 ]
 
@@ -69,7 +71,7 @@ class Stage02NavigationContract(unittest.TestCase):
     def setUp(self):
         self.pages = {name: page(name) for name in PAGES}
 
-    def test_six_pages_use_exact_same_primary_navigation(self):
+    def test_all_seven_pages_use_exact_same_primary_navigation(self):
         for filename, selected in PAGES.items():
             with self.subTest(page=filename):
                 p = NavParser()
