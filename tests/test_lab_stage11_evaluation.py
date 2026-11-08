@@ -9,7 +9,13 @@ import unittest
 from unittest.mock import patch
 
 from nilo_runtime.core.lab_settings import baseline
-from nilo_runtime.labs.ab_experiment import context_pair, live_pair
+from nilo_runtime.labs.ab_experiment import (
+    context_pair, live_pair, _response_warnings, _execution_results,
+    _drive_decision, _SilentTrace,
+)
+from nilo_runtime.agent.responses import normalize_decision
+from nilo_runtime.agent.context_modules import modular_instructions
+from nilo_runtime.labs.sandbox import SimulationSandbox
 from nilo_runtime.labs.evaluation_11 import (
     analyze_context_ab, analyze_live_ab, SCHEMA,
 )
@@ -153,6 +159,127 @@ class LiveStage11(unittest.TestCase):
                   "baseline": {"turns": []}, "variant": {"turns": []}}
         with self.assertRaises(ValueError):
             analyze_live_ab(report)
+
+
+class CorrectionsStage11(unittest.TestCase):
+    def test_detect_misspelled_hypothesis_without_rewriting_model_response(self):
+        decision = {
+            "cuaderno": "Estoy explorando.",
+            "pregunta": "¿Hay agua?",
+            "hipostesis": "La arboleda podría indicar agua.",
+            "objetivo": "Explorar cerca de los árboles.",
+            "motivo": "Reconocer el terreno.",
+            "accion_proyecto": "nuevo",
+            "plan": [{"op": "explore"}],
+        }
+        original = copy.deepcopy(decision)
+        normalized = normalize_decision(decision)
+        self.assertEqual(normalized["hipotesis"], "")
+        warnings = _response_warnings(decision, normalized)
+        self.assertIn({"code": "possible_misspelled_field",
+                       "field": "hipotesis", "received_key": "hipostesis"},
+                      warnings)
+        self.assertEqual(decision, original)
+        self.assertEqual(normalized["plan"][0]["op"], "explore")
+
+    def test_trace_stages_do_not_claim_plan_acceptance_is_execution_success(self):
+        submitted = [{"op": "explore"}, {"op": "go", "target": "agua"},
+                     {"op": "inspect", "target": "roca"}]
+        admitted = submitted[:2]
+        outcomes = [
+            {"id": "act-1", "op": "explore", "successful": True,
+             "action_result": {"success": True, "status": "verified_success",
+                               "facts": ["Recorrí cuatro tramos."]},
+             "physical_result": {"measurement_id": "med-1", "inventory_delta": {}}},
+            {"id": "act-2", "op": "go", "successful": False,
+             "action_result": {"success": False, "status": "precondition_failed",
+                               "facts": ["No hay orilla conocida."]}},
+        ]
+        rows = _execution_results(submitted, admitted, outcomes)
+        self.assertEqual([r["state"] for r in rows],
+                         ["completada", "fallida", "filtrada_antes_de_ejecutar"])
+        self.assertEqual(rows[0]["action_id"], "act-1")
+        self.assertEqual(rows[0]["measurement_id"], "med-1")
+        self.assertFalse(rows[1]["success"])
+        self.assertIn("No hay orilla", rows[1]["facts"][0])
+        self.assertIsNone(rows[2]["action_id"])
+
+    def test_real_simulation_records_operations_without_mutating_source(self):
+        lab = SimulationSandbox(_SilentTrace)
+        try:
+            lab.reset("nuevo", 7321, False)
+            plan = normalize_decision({
+                "cuaderno": "Exploro y busco agua.",
+                "objetivo": "Encontrar una orilla cercana.",
+                "motivo": "Conocer el entorno.",
+                "accion_proyecto": "nuevo",
+                "plan": [{"op": "explore"}, {"op": "go", "target": "agua"}],
+            })
+            report = _drive_decision(lab, plan)
+            self.assertTrue(report["applied"])
+            self.assertTrue(report["plan_accepted"])
+            self.assertEqual(report["submitted_operations"], 2)
+            self.assertEqual(len(report["operation_results"]), 2)
+            self.assertIn(report["operation_results"][0]["state"],
+                          ("completada", "fallida"))
+            self.assertNotEqual(report["operation_results"][1]["state"],
+                                "completada")
+            self.assertEqual(report["recorded_successes"],
+                             sum(s["state"] == "completada"
+                                 for s in report["operation_results"]))
+            self.assertEqual(report["recorded_failures"],
+                             sum(s["state"] == "fallida"
+                                 for s in report["operation_results"]))
+        finally:
+            lab.close()
+
+    def test_modular_start_has_full_navigation_contracts_both_providers(self):
+        context = {"momento": "Día 1 · 00:00", "posición": [15, 10, 0],
+                   "proyecto_actual": None, "investigaciones_activas": [],
+                   "resultados_de_acciones": []}
+        for provider in ("gemini", "groq"):
+            with self.subTest(provider=provider):
+                system, manual = modular_instructions(context, provider)
+                content = system + manual
+                self.assertIn('{"op":"explore","direction":', content)
+                self.assertIn('{"op":"go","target":"agua"}', content)
+                self.assertIn("frontera desconocida", content)
+
+    def test_live_summary_tracks_failures_and_warnings_without_response_text(self):
+        result = {
+            "experiment_type": "llm_two_branch_multiturn",
+            "explicit_live_consent": True, "modified_original_world": False,
+            "provider": "gemini", "seed": 7321, "reference_sha256": "a" * 64,
+            "context_mode": "modular", "llm_calls": 4, "max_llm_calls": 4,
+            "baseline": {"turns": [
+                {"turn": 1,
+                 "response": {"normalized": {"plan": [{"op": "explore"}]},
+                              "validation_warnings": [], "tokens": {}},
+                 "world_effect": {"applied": True, "submitted_operations": 1,
+                                  "admitted_operations": 1,
+                                  "operation_results": [{"state": "completada"}],
+                                  "recorded_successes": 1, "recorded_failures": 0}},
+            ]},
+            "variant": {"turns": [
+                {"turn": 1,
+                 "response": {"normalized": {"plan": [{"op": "go", "target": "agua"}]},
+                              "validation_warnings": [{"code": "possible_misspelled_field",
+                                                       "field": "hipotesis"}],
+                              "tokens": {}},
+                 "world_effect": {"applied": True, "submitted_operations": 1,
+                                  "admitted_operations": 1,
+                                  "operation_results": [{"state": "fallida",
+                                                         "facts": ["No hay agua"]}],
+                                  "recorded_successes": 0, "recorded_failures": 1}},
+            ]},
+        }
+        summary = analyze_live_ab(result)
+        self.assertEqual(summary["variant"]["semantic_warnings"], 1)
+        self.assertEqual(summary["variant"]["recorded_physical_failures"], 1)
+        self.assertEqual(summary["variant"]["turns"][0]["observed_operation_states"],
+                         {"fallida": 1})
+        self.assertNotIn("No hay agua", json.dumps(summary, ensure_ascii=False))
+        self.assertFalse(summary["causal_claim_allowed"])
 
 
 if __name__ == "__main__":
