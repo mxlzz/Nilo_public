@@ -14,7 +14,7 @@ _TRANSITIONS = {'descend', 'ascend'}
 _MAX_FACT = 210
 
 
-def recall_relevant(person, world, limit=6):
+def recall_relevant(person, world, limit=6, *, multi_focus=False):
     """Devuelve experiencias con procedencia, vinculadas al objetivo o lugar.
 
     La cercanía a una entrada reconocida basta para recordar una transición ya
@@ -29,12 +29,13 @@ def recall_relevant(person, world, limit=6):
         project.get('last_action'), project.get('last_result'),
         person.get('active_research'),
     ]
-    for row in (person.get('research') or [])[-5:]:
-        if isinstance(row, dict) and row.get('state') == 'abierta':
-            query_parts.extend((row.get('question'), row.get('hypothesis')))
-    for row in (person.get('action_outcomes') or [])[-3:]:
-        if isinstance(row, dict):
-            query_parts.append(row.get('target'))
+    if multi_focus:
+        for row in (person.get('research') or [])[-5:]:
+            if isinstance(row, dict) and row.get('state') == 'abierta':
+                query_parts.extend((row.get('question'), row.get('hypothesis')))
+        for row in (person.get('action_outcomes') or [])[-3:]:
+            if isinstance(row, dict):
+                query_parts.append(row.get('target'))
     query = ' '.join(str(value or '') for value in query_parts)
     keywords = terms(query) - _GENERIC
     project_id = project.get('id')
