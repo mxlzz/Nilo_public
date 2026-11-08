@@ -384,7 +384,9 @@ def _drive_decision(lab,normalized):
     unfinished=bool(sim.s["person"].get("pending") or sim.s["person"].get("plan"))
     outcomes=[row for row in sim.s["person"].get("action_outcomes",[])
               if isinstance(row,dict) and row.get("id") not in prior_ids
-              and row.get("origin") in ("llm",None)]
+              # El sandbox marca el entorno como demo aun cuando plan_ready
+              # recibe source='llm'; excluir demo ocultaría operaciones reales.
+              and row.get("origin") in ("llm", "demo", None)]
     operation_results=_execution_results(submitted,admitted,outcomes,
                                          unfinished=unfinished)
     return {"applied":True,"plan_accepted":accepted,
