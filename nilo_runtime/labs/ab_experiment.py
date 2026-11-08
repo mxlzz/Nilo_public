@@ -224,6 +224,105 @@ def physical_pair(*,seed=7321,baseline_steps=None,variant_steps=None,
         }
 
 
+_EXPECTED_LLM_KEYS = frozenset((
+    "cuaderno", "pregunta", "hipotesis", "objetivo", "motivo", "plan",
+    "subobjetivos", "proyecto_id", "accion_proyecto", "prueba_cierre",
+    "avance_estimado", "estado_actual", "revisar_en_minutos",
+))
+
+
+def _response_warnings(parsed, normalized):
+    """Advertir pérdidas semánticas sin reescribir la salida ni cambiar el motor."""
+    from difflib import get_close_matches
+
+    if not isinstance(parsed, dict):
+        return []
+    warnings = []
+    missing = sorted(_EXPECTED_LLM_KEYS - parsed.keys())
+    unexpected = [key for key in parsed if isinstance(key, str)
+                  and key not in _EXPECTED_LLM_KEYS and key != "agenda"
+                  and key != "actividades_en_espera"]
+    for key in missing:
+        candidates = [other for other in unexpected
+                      if key in get_close_matches(other, [key], n=1, cutoff=0.75)]
+        warnings.append({
+            "code": "possible_misspelled_field" if candidates else "missing_expected_field",
+            "field": key,
+            **({"received_key": candidates[0]} if candidates else {}),
+        })
+    if isinstance(normalized, dict):
+        for key in ("pregunta", "hipotesis", "objetivo", "motivo", "estado_actual"):
+            if key in parsed and isinstance(parsed[key], str) and parsed[key].strip() and not normalized.get(key):
+                warnings.append({"code": "nonempty_field_lost", "field": key})
+        if isinstance(parsed.get("plan"), list):
+            kept = len(normalized.get("plan") or [])
+            if kept < min(12, len(parsed["plan"])):
+                warnings.append({"code": "plan_steps_removed_by_normalizer",
+                                 "submitted": min(12, len(parsed["plan"])),
+                                 "normalized": kept})
+    return warnings
+
+
+def _execution_results(submitted, admitted, new_outcomes, *, unfinished=False):
+    """Relacionar pasos de esta deliberación con resultados reales, sin fabricar éxitos.
+
+    La secuencia aprobada es la cola resultante de plan_ready; los descartes
+    previos se distinguen de rechazos físicos. Los documentos sin diagnostic
+    no se cuentan como fallos ni como éxitos comprobados.
+    """
+    accepted = list(admitted)
+    rows = []
+    cursor = 0
+    consumed = set()
+    for index, step in enumerate(submitted, 1):
+        op = step.get("op") if isinstance(step, dict) else None
+        place = next((j for j in range(cursor, len(accepted))
+                      if accepted[j].get("op") == op), None)
+        if place is None:
+            rows.append({"requested_step": index, "op": op,
+                         "state": "filtrada_antes_de_ejecutar",
+                         "action_id": None, "measurement_id": None})
+            continue
+        cursor = place + 1
+        match = next((j for j, outcome in enumerate(new_outcomes)
+                      if j not in consumed and outcome.get("op") == op), None)
+        if match is None:
+            rows.append({"requested_step": index, "op": op,
+                         "state": ("pendiente_sin_resultado" if unfinished
+                                   else "sin_resultado_individual"),
+                         "action_id": None, "measurement_id": None})
+            continue
+        consumed.add(match)
+        result = new_outcomes[match]
+        raw = result.get("action_result") or {}
+        success = raw.get("success")
+        if type(success) is not bool:
+            success = result.get("successful")
+        if type(success) is not bool:
+            success = None
+        proof = result.get("physical_result") or {}
+        rows.append({
+            "requested_step": index,
+            "op": op,
+            "state": ("completada" if success is True else
+                      "fallida" if success is False else "resultado_no_clasificable"),
+            "success": success,
+            "engine_status": raw.get("status") or result.get("evaluation_status"),
+            "action_id": result.get("id"),
+            "measurement_id": proof.get("measurement_id"),
+            "contract_status": result.get("contract_status"),
+            "contract_code": result.get("contract_code"),
+            "facts": list(raw.get("facts") or result.get("facts") or [])[:4],
+            "changes": {
+                key: proof.get(key) for key in (
+                    "duration_minutes", "needs_delta", "inventory_delta",
+                    "object_delta", "structure_delta", "position_start",
+                    "position_end") if key in proof
+            },
+        })
+    return rows
+
+
 def _network_decision(preview,provider,*,poster=None):
     """Ejecutar exactamente el payload previsualizado, sin archivos ni reintentos."""
     cfg=dict(config())
@@ -243,14 +342,17 @@ def _network_decision(preview,provider,*,poster=None):
         "request_sha256":preview["huella_solicitud_calculada"],
         "request_body_utf8":preview["solicitud_serializada"],
         "response_text":text,"tokens":tokens,"parsed":None,
-        "normalized":None,"validation_error":None,"executed_in_world":False,
-        "request_count":1,
+        "normalized":None,"validation_error":None,"validation_warnings":[],
+        "executed_in_world":False,"request_count":1,
     }
     try:
         parsed=parse_json(text)
         report["parsed"]=parsed
         report["normalized"]=normalize_decision(parsed)
+        report["validation_warnings"]=_response_warnings(parsed,report["normalized"])
     except (ValueError,KeyError,TypeError,OverflowError) as exc:
+        if isinstance(report.get("parsed"),dict):
+            report["validation_warnings"]=_response_warnings(report["parsed"],None)
         report["validation_error"]=type(exc).__name__+": "+str(exc)[:350]
     return report
 
@@ -261,8 +363,14 @@ def _drive_decision(lab,normalized):
         return {"applied":False,"reason":"Respuesta LLM sin plan normalizado"}
     sim=lab.sim
     before=_projection(lab)
+    prior_ids={row.get("id") for row in sim.s["person"].get("action_outcomes",[])
+               if isinstance(row,dict)}
+    submitted=copy.deepcopy(normalized.get("plan") or [])
     sim.plan_ready(copy.deepcopy(normalized),"llm",{})
-    accepted=bool(sim.s["person"].get("plan") or sim.s["person"].get("pending"))
+    admitted=copy.deepcopy(sim.s["person"].get("plan") or [])
+    if sim.s["person"].get("pending"):
+        admitted.insert(0,copy.deepcopy(sim.s["person"]["pending"]["step"]))
+    accepted=bool(admitted)
     ticks=0
     if accepted:
         for _ in range(_MAX_TICKS):
@@ -274,7 +382,24 @@ def _drive_decision(lab,normalized):
     sim.write()
     after=_projection(lab)
     unfinished=bool(sim.s["person"].get("pending") or sim.s["person"].get("plan"))
+    outcomes=[row for row in sim.s["person"].get("action_outcomes",[])
+              if isinstance(row,dict) and row.get("id") not in prior_ids
+              and row.get("origin") in ("llm",None)]
+    operation_results=_execution_results(submitted,admitted,outcomes,
+                                         unfinished=unfinished)
     return {"applied":True,"plan_accepted":accepted,
+            "plan_accepted_means":"cola de acciones admitida; no éxito físico",
+            "submitted_operations":len(submitted),
+            "admitted_operations":len(admitted),
+            "operation_results":operation_results,
+            "recorded_successes":sum(row.get("state")=="completada"
+                                     for row in operation_results),
+            "recorded_failures":sum(row.get("state")=="fallida"
+                                    for row in operation_results),
+            "unattributed_engine_outcomes":sum(j not in {
+                k for k, result in enumerate(outcomes)
+                if result.get("id") in {r.get("action_id") for r in operation_results}}
+                for j in range(len(outcomes))),
             "ticks":ticks,"pending_or_unfinished":unfinished,
             "before_sha256":_sha(before),"after_sha256":_sha(after),
             "position":after["position"],"time_after":after["minute"],
