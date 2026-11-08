@@ -18,7 +18,7 @@
 <label class="field"><span>Semilla (mundo nuevo)</span><input id="seed" type="number" value="7321" min="0" max="1000000000" step="1"></label></div>
 <label class="option"><input type="checkbox" id="kit"> Añadir kit de materiales a ambas copias</label>
 <div id="provider-group"><label class="field"><span>Proveedor de comparación</span><select id="provider"><option value="gemini">Gemini</option><option value="groq">Groq</option></select></label>
-<p class="muted fine">Una ejecución real usa la clave API configurada en Nilo. Las respuestas pueden variar aun con el mismo contexto.</p></div>
+<p class="muted fine">Una ejecución real usa la clave API configurada en Nilo. Las respuestas pueden variar aun con el mismo contexto.</p><label class="field"><span>Contexto de la condición B</span><select id="context-mode"><option value="baseline">Actual · baseline</option><option value="modular">Experimental · modular/multifoco</option></select></label><p class="muted fine">A conserva el contexto actual. El modo modular solo cambia B en esta prueba, nunca la partida original ni el perfil activo.</p></div>
 <fieldset id="profile-fields"><legend>Condición B · Contexto alternativo</legend>
 <p class="muted fine">A usa el perfil de referencia. B puede omitir únicamente campos opcionales; no se ocultan necesidades, posición ni contratos esenciales.</p><div id="optional" class="checkgrid"></div>
 <label class="field"><span>Nota adicional al prompt B (opcional)</span><textarea id="note" maxlength="700" rows="3" placeholder="Hasta 700 caracteres; no cambia el núcleo de Nilo."></textarea></label></fieldset>
@@ -85,6 +85,7 @@ async function perform(){
  if(!Number.isInteger(seed)||seed<0||seed>1000000000)throw Error("Semilla fuera de rango");
  const body={mode,seed,source:$("source").value,kit:$("kit").checked,
    provider:$("provider").value,profile:makeProfile()};
+  if(mode!=="physical")body.context_mode=$("context-mode").value;
  if(mode==="physical"){
    try{body.baseline_steps=JSON.parse($("actions-a").value);
        body.variant_steps=JSON.parse($("actions-b").value)}
@@ -117,6 +118,7 @@ function render(result){
  const metrics=element("div","metrics");
  append(metrics,metric("Consultas LLM",result.llm_calls??0),
    metric("Tipo",result.experiment_type),
+    metric("Contexto B",result.context_mode||"baseline"),
    metric("Partida original",result.modified_original_world===true?"Modificada":"Sin cambios"));
  if(result.comparison&&"delta_bytes" in result.comparison)
    metrics.append(metric("Diferencia de bytes",result.comparison.delta_bytes));
