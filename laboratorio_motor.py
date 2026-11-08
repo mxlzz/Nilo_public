@@ -496,20 +496,22 @@ class Handler(BaseHTTPRequestHandler):
                         baseline_steps=body.get("baseline_steps",[]),
                         variant_steps=body.get("variant_steps",[]))
                 elif mode=="context":
-                    if set(body)-{"mode","seed","source","kit","provider","profile"}:
+                    if set(body)-{"mode","seed","source","kit","provider","profile","context_mode"}:
                         raise ValueError("Parámetros de contexto desconocidos")
                     result=context_pair(
                         self.hub,body.get("profile"),provider=body.get("provider","gemini"),
-                        seed=seed,source=source,world_path=saved,kit=kit)
+                        seed=seed,source=source,world_path=saved,kit=kit,
+                        context_mode=body.get("context_mode","baseline"))
                 elif mode in ("live","evolution"):
                     if set(body)-{"mode","seed","source","kit","provider","profile",
-                                  "confirm_live"}:
+                                  "confirm_live","context_mode"}:
                         raise ValueError("Parámetros de proveedor desconocidos")
                     result=live_pair(
                         self.hub,body.get("profile"),provider=body.get("provider","gemini"),
                         seed=seed,source=source,world_path=saved,kit=kit,
                         turns=1 if mode=="live" else 2,
-                        confirm=body.get("confirm_live") is True)
+                        confirm=body.get("confirm_live") is True,
+                        context_mode=body.get("context_mode","baseline"))
                 else:
                     raise ValueError("Modalidad de experimento no disponible")
                 return self.json(result)
