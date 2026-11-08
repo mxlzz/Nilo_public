@@ -145,6 +145,8 @@ function renderLiveEvidence(root,label,branch){
    if(operation.action_id||operation.measurement_id)
     row.append(element("p","muted fine","Acción: "+String(operation.action_id||"sin ID")+
      " · medición: "+String(operation.measurement_id||"sin medición")));
+   if(operation.reason)
+    row.append(element("p","muted","Motivo registrado por el motor: "+String(operation.reason)));
    if(Array.isArray(operation.facts)&&operation.facts.length)
     row.append(element("p","muted",operation.facts.join(" · ")));
    part.append(row);
