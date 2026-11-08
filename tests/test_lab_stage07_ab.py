@@ -299,5 +299,92 @@ class ExperimentHttpTests(unittest.TestCase):
                 self.assertEqual(proc.returncode,0,proc.stderr)
 
 
+class SharedSavedWorldHttpTests(unittest.TestCase):
+    def test_uploaded_sqlite_survives_navigation_and_is_used_by_ab(self):
+        """El selector HTML se destruye al navegar, la selección del servidor no."""
+        from laboratorio_motor import HistorySource
+
+        with tempfile.TemporaryDirectory(prefix="nilo-historial-ab-") as tmp:
+            root=Path(tmp)
+            source=root/"world-historical.sqlite3"
+            sim=Simulation(db_path=source,world_seed=1279,rng_seed=9821)
+            try:
+                sim.s["person"]["clock_minutes"]=5*1440+30
+                sim.write()
+            finally:
+                sim.conn.close()
+            original=source.read_bytes()
+            digest=hashlib.sha256(original).hexdigest()
+            history=HistorySource()
+            hub=LabHub(root,root/"sin-partida.sqlite3")
+            server=create_lab_server(0,history=history,hub=hub)
+            thread=threading.Thread(target=server.serve_forever,
+                                    kwargs={"poll_interval":0.02},daemon=True)
+            thread.start()
+
+            def request(method,url,body=None,headers=None):
+                conn=http.client.HTTPConnection("127.0.0.1",
+                    server.server_address[1],timeout=30)
+                try:
+                    content=(json.dumps(body).encode() if isinstance(body,dict)
+                             else body)
+                    actual=headers or ({"Content-Type":"application/json"}
+                                       if body is not None else {})
+                    conn.request(method,url,body=content,headers=actual)
+                    response=conn.getresponse()
+                    return response.status,json.loads(response.read())
+                finally:
+                    conn.close()
+
+            try:
+                status,selected=request("POST","/api/history/upload",original,
+                    {"Content-Type":"application/octet-stream",
+                     "X-Nilo-Filename":"mi_mundo_0.6.sqlite3"})
+                self.assertEqual(status,200,selected)
+                self.assertEqual(selected["selection"]["origin"],"importada")
+                self.assertEqual(selected["selection"]["name"],"mi_mundo_0.6.sqlite3")
+                self.assertEqual(selected["selection"]["size_bytes"],len(original))
+                for page in ("/historico","/experimentos","/historico"):
+                    conn=http.client.HTTPConnection("127.0.0.1",
+                        server.server_address[1],timeout=30)
+                    try:
+                        conn.request("GET",page)
+                        self.assertEqual(conn.getresponse().status,200)
+                    finally:
+                        conn.close()
+                code,current=request("GET","/api/history/catalog")
+                self.assertEqual(code,200)
+                self.assertEqual(current["selection"]["name"],"mi_mundo_0.6.sqlite3")
+                code,shared=request("GET","/api/lab/world-source")
+                self.assertEqual(code,200)
+                self.assertEqual(shared["origin"],"importada")
+                self.assertEqual(shared["name"],"mi_mundo_0.6.sqlite3")
+                code,pair=request("POST","/api/lab/experiment",{
+                    "mode":"context","seed":7321,"source":"saved",
+                    "provider":"gemini","profile":candidate(),
+                    "context_mode":"modular"})
+                self.assertEqual(code,200,str(pair)[:240])
+                self.assertEqual(pair["source"],"readonly_copy_of_saved_world")
+                self.assertEqual(pair["selected_world"]["name"],"mi_mundo_0.6.sqlite3")
+                self.assertIn("Día 6",pair["baseline"]["datos_enviados"]["momento"])
+                self.assertEqual(hashlib.sha256(history.require().read_bytes()).hexdigest(),
+                                 digest)
+                self.assertEqual(hashlib.sha256(source.read_bytes()).hexdigest(),digest)
+
+                # Una nueva carga inválida no debe borrar una partida válida.
+                code,invalid=request("POST","/api/history/upload",
+                    b"SQLite format 3\x00not-a-database",
+                    {"Content-Type":"application/octet-stream"})
+                self.assertEqual(code,400)
+                self.assertEqual(request("GET","/api/lab/world-source")[1]["name"],
+                                 "mi_mundo_0.6.sqlite3")
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=3)
+                server.RequestHandlerClass.lab.close()
+                history.temp_directory.cleanup()
+
+
 if __name__=="__main__":
     unittest.main()
