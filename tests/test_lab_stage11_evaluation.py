@@ -71,7 +71,7 @@ class OfflineStage11(unittest.TestCase):
             self.assertGreater(row["variant"]["bytes_request"], 0)
             self.assertTrue(len(row["baseline"]["request_sha256"]) == 64)
         doc = markdown(result)
-        self.assertIn("Gemini", doc) if False else self.assertIn("gemini", doc)
+        self.assertIn("gemini", doc)
         self.assertIn("groq", doc)
         self.assertNotIn("systemInstruction", json.dumps(result))
 
