@@ -27,7 +27,9 @@ def _seed(value):
     return value
 
 
-def _request(profile,context,provider):
+def _request(profile,context,provider,*,context_mode="baseline"):
+    if context_mode not in ("baseline","modular"):
+        raise ValueError("Modo de contexto experimental desconocido")
     if provider not in ("gemini","groq"):
         raise ValueError("Proveedor de vista previa no soportado")
     p=validate(profile)
@@ -39,6 +41,7 @@ def _request(profile,context,provider):
     cfg["GROQ_API_KEY"]="vista-previa-sin-red"
     cfg["_LAB_OMIT_CONTEXT"]=tuple(p["omit_context"])
     cfg["_LAB_PROMPT_NOTE"]=p["prompt_note"]
+    cfg["_LAB_CONTEXT_MODE"]=context_mode
     _,payload,_=build_deliberation_request(cfg,context)
     # Misma serialización que gateway._post, aunque SIN enviar HTTP.
     wire=json.dumps(payload,ensure_ascii=False)
@@ -52,6 +55,7 @@ def _request(profile,context,provider):
         sent=json.loads(payload["messages"][1]["content"])
         system=payload["messages"][0]["content"]
     return {"provider":provider,"model":cfg["MODEL"],"profile":p["name"],
+            "modo_contexto":context_mode,
             "prompt_sha256":hashlib.sha256(system.encode("utf-8")).hexdigest(),
             "mensaje_sistema":system,"solicitud_json":payload,
             "campos_enviados":sorted(sent),
@@ -99,20 +103,22 @@ class LabHub:
                 return contexto_de_deliberacion(sim)
             finally:sim.conn.close()
 
-    def preview(self,profile,*,provider="gemini",seed=7321):
-        result=_request(profile,self._context(seed),provider)
+    def preview(self,profile,*,provider="gemini",seed=7321,context_mode="baseline"):
+        result=_request(profile,self._context(seed),provider,context_mode=context_mode)
         result["seed"]=seed
         return result
 
-    def compare(self,profile,*,provider="gemini",seed=7321,scenario=None):
+    def compare(self,profile,*,provider="gemini",seed=7321,scenario=None,
+                context_mode="baseline"):
         candidate=validate(profile)
         context=self._context(seed)
         before=_request(baseline(),context,provider)
-        after=_request(candidate,context,provider)
+        after=_request(candidate,context,provider,context_mode=context_mode)
         before["seed"]=seed
         after["seed"]=seed
         result={
             "profile":candidate["name"],"provider":provider,"seed":seed,
+            "modo_baseline":"baseline","modo_variante":context_mode,
             "diff":self.store.diff(candidate),
             "baseline_bytes":before["bytes"],"variant_bytes":after["bytes"],
             "baseline_fields":before["campos_enviados"],
