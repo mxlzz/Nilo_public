@@ -15,12 +15,14 @@ PAGES = {
     "laboratorio_historico.html": "Historial",
     "laboratorio_escenarios.html": "Pruebas",
     "laboratorio_motor.html": "Pruebas",
+    "laboratorio_experimentos.html": "Experimentos A/B",
     "laboratorio_ajustes.html": "Ajustes",
 }
 PRIMARY = [
     ("/visor-llm", "Solicitudes LLM"),
     ("/historico", "Historial"),
     ("/", "Pruebas"),
+    ("/experimentos", "Experimentos A/B"),
     ("/ajustes", "Ajustes"),
 ]
 
@@ -67,7 +69,7 @@ class Stage02NavigationContract(unittest.TestCase):
     def setUp(self):
         self.pages = {name: page(name) for name in PAGES}
 
-    def test_five_pages_use_exact_same_primary_navigation(self):
+    def test_six_pages_use_exact_same_primary_navigation(self):
         for filename, selected in PAGES.items():
             with self.subTest(page=filename):
                 p = NavParser()
@@ -119,6 +121,8 @@ class Stage02NavigationContract(unittest.TestCase):
                       self.pages["laboratorio_visor_llm.html"])
         self.assertIn("Solicitudes calculadas para comparar",
                       self.pages["laboratorio_ajustes.html"])
+        self.assertIn("Comparar dos condiciones desde la misma referencia",
+                      self.pages["laboratorio_experimentos.html"])
 
     def test_experiment_mode_works_with_back_forward_navigation(self):
         node = shutil.which("node")

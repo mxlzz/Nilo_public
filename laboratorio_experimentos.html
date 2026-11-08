@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nilo · Laboratorio · Experimentos A/B</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:var(--lab-bg,#f2f4f2);color:var(--lab-text,#26352b);font-family:system-ui,sans-serif;font-size:13px}header{padding:20px 25px;display:flex;gap:20px;justify-content:space-between;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--lab-border,#cbd7d0)}h1{font-size:22px;margin:4px 0}h2{font-size:15px;margin:0 0 12px}h3{font-size:13px;margin:12px 0 7px}a{color:var(--lab-accent,#25654d)}nav{display:flex;gap:12px;flex-wrap:wrap;font-size:12px}.layout{max-width:1320px;margin:auto;padding:16px;display:grid;grid-template-columns:minmax(310px,405px) minmax(400px,1fr);gap:14px}.panel{background:var(--lab-surface,#fff);border:1px solid var(--lab-border,#cbd7d0);border-radius:10px;padding:18px;min-width:0}.muted{color:var(--lab-muted,#667c70);line-height:1.5}.fine{font-size:11px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:block;margin:11px 0 0}.field span{display:block;margin:0 0 5px;font-size:12px}input:not([type=checkbox]),select,textarea{background:var(--lab-surface,#fff);border:1px solid var(--lab-border,#b3c2b9);color:var(--lab-text,#26352b);border-radius:6px;padding:8px;width:100%;font:12px system-ui,sans-serif}textarea{min-height:80px;resize:vertical;font-family:ui-monospace,Consolas,monospace}fieldset{margin:13px 0;padding:12px;border:1px solid var(--lab-border,#b3c2b9);border-radius:7px}legend{font-size:12px;padding:0 6px}.option{display:flex;gap:8px;align-items:flex-start;margin:8px 0;font-size:12px}.option input{margin-top:2px}button{padding:9px 12px;border-radius:6px;border:1px solid var(--lab-border,#b3c2b9);background:var(--lab-raised,#edf2ef);color:var(--lab-text,#26352b);cursor:pointer;font-weight:600;font-size:12px}button:disabled{opacity:.5;cursor:wait}button.primary{background:var(--lab-accent,#25654d);color:var(--lab-accent-contrast,#fff)}.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}.details{margin:12px 0;border-top:1px solid var(--lab-border,#ccd9d2);padding-top:12px}details summary{cursor:pointer;font-weight:600;font-size:12px;padding:6px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:520px;overflow:auto;padding:11px;background:var(--lab-code,#f1f4f2);border-radius:7px;font:11px/1.5 ui-monospace,Consolas,monospace}#result{min-height:400px}#feedback{margin:8px 0;min-height:18px;color:var(--lab-muted,#667c70)}#feedback.error{color:var(--lab-bad,#a03835)}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin:12px 0}.metric{padding:10px;border:1px solid var(--lab-border,#cbd7d0);border-radius:8px}.metric strong{display:block;font-size:17px}.metric small{color:var(--lab-muted,#667c70)}.branch{margin:12px 0;border:1px solid var(--lab-border,#cbd7d0);padding:12px;border-radius:8px}.branch summary{font-weight:700}.warning{border-left:3px solid var(--lab-warn,#997327);padding:10px 12px;background:var(--lab-raised,#f3f5f3);font-size:12px;line-height:1.5}.checkgrid{display:grid;grid-template-columns:1fr;gap:4px}.hidden{display:none!important}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--lab-focus,#347e61);outline-offset:2px}@media(max-width:830px){.layout{grid-template-columns:1fr;padding:10px}.panel{padding:13px}.row{grid-template-columns:1fr}}
+</style><link rel="stylesheet" href="/assets/laboratorio.css"></head>
+<body data-lab="experimentos"><header><div><div class="muted fine">Nilo · laboratorio / etapa 07</div><h1>Experimentos A/B</h1><p class="muted">Comparar dos condiciones desde la misma referencia, sin modificar la partida original.</p></div>
+<nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
+<a href="/visor-llm">Solicitudes LLM</a><a href="/historico">Historial</a><a href="/">Pruebas</a><a href="/experimentos" aria-current="page">Experimentos A/B</a><a href="/ajustes">Ajustes</a>
+</nav><div class="lab-theme-control"><button id="lab-theme-toggle" type="button" aria-label="Cambiar tema">Tema: sistema</button></div></header>
+<main class="layout"><section class="panel"><h2>01 · Configurar la comparación</h2>
+<label class="field"><span>Modalidad de ensayo</span><select id="mode">
+<option value="context">Contexto calculado A/B · sin red</option>
+<option value="physical">Evolución física con acciones guionadas · sin red</option>
+<option value="live">Deliberación real A/B · 2 llamadas al LLM</option>
+<option value="evolution">Evolución con LLM · hasta 4 llamadas</option></select></label>
+<div class="row"><label class="field"><span>Origen del estado</span><select id="source"><option value="new">Mundo nuevo</option><option value="saved">Copia de partida guardada</option></select></label>
+<label class="field"><span>Semilla (mundo nuevo)</span><input id="seed" type="number" value="7321" min="0" max="1000000000" step="1"></label></div>
+<label class="option"><input type="checkbox" id="kit"> Añadir kit de materiales a ambas copias</label>
+<div id="provider-group"><label class="field"><span>Proveedor de comparación</span><select id="provider"><option value="gemini">Gemini</option><option value="groq">Groq</option></select></label>
+<p class="muted fine">Una ejecución real usa la clave API configurada en Nilo. Las respuestas pueden variar aun con el mismo contexto.</p></div>
+<fieldset id="profile-fields"><legend>Condición B · Contexto alternativo</legend>
+<p class="muted fine">A usa el perfil de referencia. B puede omitir únicamente campos opcionales; no se ocultan necesidades, posición ni contratos esenciales.</p><div id="optional" class="checkgrid"></div>
+<label class="field"><span>Nota adicional al prompt B (opcional)</span><textarea id="note" maxlength="700" rows="3" placeholder="Hasta 700 caracteres; no cambia el núcleo de Nilo."></textarea></label></fieldset>
+<details id="scripts"><summary>Guiones de acciones físicas · formato JSON</summary><p class="muted fine">Son acciones elegidas por el observador y ejecutadas en copias del motor, no decisiones de Nilo. Hasta 6 acciones por rama.</p>
+<label class="field"><span>Secuencia A</span><textarea id="actions-a" spellcheck="false">[{"op":"wait","minutes":20}]</textarea></label>
+<label class="field"><span>Secuencia B</span><textarea id="actions-b" spellcheck="false">[{"op":"rest","minutes":20}]</textarea></label></details>
+<p id="mode-note" class="warning">Las solicitudes se calcularán localmente. No se llamará a ningún proveedor.</p>
+<div class="actions"><button id="run" type="button" class="primary">Comparar sin red</button><span class="muted fine" id="cost"></span></div>
+<p id="feedback" role="status" aria-live="polite"></p>
+</section><section class="panel" id="result"><h2>02 · Resultados A/B</h2><p class="muted">Definí las condiciones y ejecutá un ensayo. Se mostrará qué estado se usó, qué cambió, qué ocurrió realmente y qué queda sin demostrar.</p></section>
+</main><script src="/assets/laboratorio_ui.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+let profileBase=null,lastResult=null;
+function element(tag,cls,text){
+ const n=document.createElement(tag);if(cls)n.className=cls;
+ if(text!==undefined)n.textContent=String(text);return n;
+}
+function append(parent,...elements){for(const e of elements)parent.appendChild(e);return parent}
+function metric(label,value){const n=element("div","metric");append(n,element("strong","",value),element("small","",label));return n}
+function showJson(parent,label,value){
+ const section=element("details","branch");append(section,element("summary","",label));
+ const pre=element("pre","",JSON.stringify(value,null,2));section.append(pre);parent.append(section);
+}
+function modeUi(){
+ const mode=$("mode").value,physical=mode==="physical";
+ $("scripts").classList.toggle("hidden",!physical);
+ $("provider-group").classList.toggle("hidden",physical);
+ $("profile-fields").classList.toggle("hidden",physical);
+ const online=mode==="live"||mode==="evolution";
+ $("run").textContent=online?"Consultar al LLM (confirmar costos)":"Comparar sin red";
+ $("cost").textContent=online?(mode==="live"?"2 consultas reales":"Hasta 4 consultas reales"):"0 consultas";
+ $("mode-note").textContent=mode==="context"?
+   "El motor construye dos solicitudes desde la misma percepción. No se consulta al LLM, por lo tanto no hay decisiones para comparar.":
+  mode==="physical"?
+   "Ambas secuencias se ejecutan con física real en mundos temporales. No se atribuyen diferencias al contexto ni a un LLM.":
+  mode==="live"?
+   "Se envían 2 solicitudes reales con el mismo estado inicial: baseline y variante. Se muestran respuestas originales, pero no se ejecutan acciones.":
+   "Hasta 4 consultas reales: dos rondas de deliberación por rama. Cada decisión se ejecuta solo en su propia copia temporal; el segundo contexto puede divergir.";
+}
+async function load(){
+ try{
+   const response=await fetch("/api/lab/profile/list",{cache:"no-store"});
+   const data=await response.json();if(!response.ok)throw Error(data.error||"No se pudo cargar el perfil");
+   profileBase=data.baseline;
+   const container=$("optional");container.replaceChildren();
+   for(const name of data.editable_optional_context||[]){
+     const label=element("label","option"),input=element("input");input.type="checkbox";input.value=name;
+     append(label,input,element("span","",name));container.append(label);
+   }
+ }catch(e){$("feedback").textContent=e.message;$("feedback").classList.add("error")}
+ modeUi();
+}
+function makeProfile(){
+ if(!profileBase)throw Error("El catálogo de campos opcionales no está disponible");
+ return {...profileBase,name:"experimento_ab",
+   omit_context:[...$("optional").querySelectorAll("input:checked")].map(x=>x.value),
+   prompt_note:$("note").value};
+}
+async function perform(){
+ if(!profileBase)throw Error("Perfil de referencia no cargado");
+ const mode=$("mode").value,seed=Number($("seed").value);
+ if(!Number.isInteger(seed)||seed<0||seed>1000000000)throw Error("Semilla fuera de rango");
+ const body={mode,seed,source:$("source").value,kit:$("kit").checked,
+   provider:$("provider").value,profile:makeProfile()};
+ if(mode==="physical"){
+   try{body.baseline_steps=JSON.parse($("actions-a").value);
+       body.variant_steps=JSON.parse($("actions-b").value)}
+   catch(e){throw Error("El guion contiene JSON inválido")}
+ }
+ if(mode==="live"||mode==="evolution"){
+   const calls=mode==="live"?2:4;
+   if(!confirm("¿Realizar "+calls+" consultas a "+body.provider+
+     "? Pueden consumir cuota o generar costos. La partida original no se modificará.")){
+     $("feedback").textContent="Consulta cancelada. No se envió ninguna solicitud.";
+     return;
+   }
+   body.confirm_live=true;
+ }
+ $("run").disabled=true;$("feedback").classList.remove("error");
+ $("feedback").textContent="Preparando copias y condiciones de referencia…";
+ try{
+   const response=await fetch("/api/lab/experiment",{method:"POST",
+     headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+   const data=await response.json();if(!response.ok)throw Error(data.error||"Falló el experimento");
+   lastResult=data;render(data);
+   $("feedback").textContent="Ensayo completo. Las copias temporales se cerraron.";
+ }finally{$("run").disabled=false}
+}
+function render(result){
+ const root=$("result");root.replaceChildren();
+ append(root,element("h2","","02 · Resultado del experimento"),
+   element("p","muted","Referencia: "+String(result.reference_sha256||"desconocida")+
+    " · "+String(result.source||"sin origen")+" · semilla "+String(result.seed)));
+ const metrics=element("div","metrics");
+ append(metrics,metric("Consultas LLM",result.llm_calls??0),
+   metric("Tipo",result.experiment_type),
+   metric("Partida original",result.modified_original_world===true?"Modificada":"Sin cambios"));
+ if(result.comparison&&"delta_bytes" in result.comparison)
+   metrics.append(metric("Diferencia de bytes",result.comparison.delta_bytes));
+ root.append(metrics);
+ const note=element("div","warning");
+ note.textContent=(result.notes||result.limitations||[]).join(" ");
+ root.append(note);
+ if(result.comparison)showJson(root,"Comparación de resultados",result.comparison);
+ const b=result.baseline,v=result.variant;
+ if(b)showJson(root,"A · Baseline / original",b);
+ if(v)showJson(root,"B · Variante",v);
+ const actions=element("div","actions");
+ const copy=element("button","","Copiar resultado completo");copy.type="button";
+ copy.addEventListener("click",async()=>{
+   try{await navigator.clipboard.writeText(JSON.stringify(result,null,2));
+       $("feedback").textContent="Resultado copiado."}
+   catch(_){$("feedback").textContent="No se pudo copiar; abrí los resultados."}
+ });
+ const exportButton=element("button","","Exportar experimento (.json)");exportButton.type="button";
+ exportButton.addEventListener("click",()=>{
+   const blob=new Blob([JSON.stringify(result,null,2)+"\n"],{type:"application/json;charset=utf-8"});
+   const url=URL.createObjectURL(blob),link=element("a");
+   link.href=url;link.download="nilo_experimento_ab_"+result.experiment_type+"_"+result.seed+".json";
+   document.body.appendChild(link);link.click();link.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),15000);
+ });
+ actions.append(copy,exportButton);root.append(actions);
+}
+$("mode").addEventListener("change",modeUi);
+$("run").addEventListener("click",()=>perform().catch(e=>{
+ $("run").disabled=false;$("feedback").classList.add("error");
+ $("feedback").textContent=e.message;
+}));
+load();
+</script></body></html>
