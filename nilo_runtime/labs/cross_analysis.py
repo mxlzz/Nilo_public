@@ -95,34 +95,50 @@ def _attempt_rows(sidecar,limit):
     with closing(_db(sidecar)) as db:
         if not _has_table(db,"llm_requests"):
             return [],False,0,["La sidecar no tiene la tabla de solicitudes."]
+        # Snapshot de lectura durante el recorte: el motor puede insertar
+        # intentos nuevos mientras el laboratorio observa la sidecar.
+        db.execute("BEGIN")
         total=db.execute(
             "SELECT COUNT(DISTINCT call_id) FROM llm_requests "
             "WHERE purpose='deliberacion'").fetchone()[0]
-        # La ventana se limita ANTES de indexar blobs; no cargar miles de
-        # solicitudes en memoria ni confundir reintentos con turnos distintos.
+        # Primero solo metadatos. NO cargar cientos de cuerpos HTTP BLOB
+        # para terminar mostrando 12-48 deliberaciones.
         rows=db.execute(
             """SELECT rowid AS ordinal_key,attempt_id,call_id,attempt_ordinal,
-                      provider,model,purpose,started_utc,simulated_at,status,
-                      body,body_sha256,body_bytes
+                      provider,model,purpose,started_utc,simulated_at,status
                FROM llm_requests WHERE purpose='deliberacion'
                ORDER BY rowid DESC LIMIT ?""",
             (_MAX_ATTEMPTS,)).fetchall()
-    seen=OrderedDict()
-    for row in rows:
-        call=row["call_id"]
-        if not isinstance(call,str) or not _CALL_ID.fullmatch(call):
-            continue
-        if call not in seen:
-            seen[call]=[]
-        seen[call].append(row)
-        if len(seen)>limit+4:
-            break
-    chosen=[]
-    for call,attempts in list(seen.items())[:limit]:
-        # Seleccionar un intento por decisión: preferir el aceptado.
-        # Un fallido se conserva como fallido, nunca se cuenta dos veces.
-        match=next((r for r in attempts if r["status"]=="accepted"),attempts[0])
-        chosen.append((match,len(attempts)))
+        seen=OrderedDict()
+        for row in rows:
+            call=row["call_id"]
+            if not isinstance(call,str) or not _CALL_ID.fullmatch(call):
+                continue
+            seen.setdefault(call,[]).append(row)
+            if len(seen)>limit+4:
+                break
+        chosen=[]
+        for _call,attempts in list(seen.items())[:limit]:
+            # Un aceptado prevalece sobre los reintentos fallidos (solo
+            # dentro del recorte observado), no se cuenta dos veces.
+            match=next((r for r in attempts if r["status"]=="accepted"),attempts[0])
+            chosen.append((dict(match),len(attempts)))
+        ids=[row["attempt_id"] for row,_ in chosen]
+        blobs={}
+        if ids:
+            placeholders=",".join("?" for _ in ids)
+            # Un BLOB > 1 MiB no se entrega: queda marcado como no
+            # indexable sin bloquear toda la matriz ni saturar RAM.
+            sql=("SELECT attempt_id,CASE WHEN body_bytes <= ? "
+                 "THEN body ELSE NULL END AS body,body_sha256,body_bytes "
+                 "FROM llm_requests WHERE attempt_id IN ("+placeholders+")")
+            for row in db.execute(sql,(_MAX_BODY,*ids)):
+                blobs[row["attempt_id"]]=dict(row)
+        for row,_count in chosen:
+            if row["attempt_id"] in blobs:
+                row.update(blobs[row["attempt_id"]])
+            else:
+                row.update({"body":None,"body_sha256":None,"body_bytes":None})
     chosen.reverse()
     return chosen,total>len(chosen),total,[]
 
