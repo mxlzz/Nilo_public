@@ -1,0 +1,223 @@
+{
+  "type": "OBJECT",
+  "propertyOrdering": [
+    "cuaderno", "pregunta", "hipotesis", "objetivo", "motivo",
+    "accion_proyecto", "proyecto_id", "subobjetivos", "plan",
+    "prueba_cierre", "avance_estimado", "estado_actual",
+    "revisar_en_minutos", "agenda", "actividades_en_espera"
+  ],
+  "required": ["cuaderno", "accion_proyecto", "plan", "estado_actual", "revisar_en_minutos"],
+  "properties": {
+    "cuaderno": { "type": "STRING", "description": "Nota privada en primera persona, máx. 350 caracteres." },
+    "pregunta": { "type": "STRING", "nullable": true },
+    "hipotesis": { "type": "STRING", "nullable": true },
+    "objetivo": { "type": "STRING", "nullable": true },
+    "motivo": { "type": "STRING", "nullable": true },
+    "accion_proyecto": {
+      "type": "STRING",
+      "enum": ["continuar", "nuevo", "completar", "abandonar", "pausar", "sin_proyecto"]
+    },
+    "proyecto_id": { "type": "STRING", "nullable": true },
+    "subobjetivos": { "type": "ARRAY", "maxItems": 6, "items": { "type": "STRING" } },
+    "plan": {
+      "type": "ARRAY",
+      "minItems": 0,
+      "maxItems": 12,
+      "description": "2-12 ops; [] solo si accion_proyecto es completar, abandonar o pausar.",
+      "items": {
+        "type": "OBJECT",
+        "required": ["op"],
+        "properties": {
+          "op": {
+            "type": "STRING",
+            "enum": [
+              "explore", "go", "inspect", "gather", "experiment", "combine", "build",
+              "modify", "dismantle", "craft", "use", "excavate", "descend", "ascend",
+              "assemble", "rest", "compare", "conclude", "forage", "drink", "eat",
+              "design", "propose", "report_issue", "interact", "wait"
+            ]
+          },
+          "direction": { "type": "STRING", "enum": ["north", "south", "east", "west"], "nullable": true },
+          "region": {
+            "type": "OBJECT", "nullable": true,
+            "properties": { "x": { "type": "INTEGER" }, "y": { "type": "INTEGER" } },
+            "required": ["x", "y"]
+          },
+          "x": { "type": "INTEGER", "nullable": true },
+          "y": { "type": "INTEGER", "nullable": true },
+          "target": { "type": "STRING", "nullable": true },
+          "item": { "type": "STRING", "nullable": true },
+          "method": { "type": "STRING", "nullable": true },
+          "materials": { "type": "ARRAY", "items": { "type": "STRING" } },
+          "material": { "type": "STRING", "nullable": true },
+          "name": { "type": "STRING", "nullable": true },
+          "purpose": { "type": "STRING", "nullable": true },
+          "form": { "type": "STRING", "enum": ["golpe", "punta", "filo", "palanca", "recipiente", "simple"], "nullable": true },
+          "geometry": {
+            "type": "OBJECT", "nullable": true,
+            "properties": {
+              "shape": { "type": "STRING", "enum": ["macizo", "hueco", "plataforma"] },
+              "size": { "type": "INTEGER" }
+            }
+          },
+          "layout": {
+            "type": "OBJECT", "nullable": true,
+            "properties": {
+              "width_m": { "type": "NUMBER" },
+              "length_m": { "type": "NUMBER" },
+              "height_m": { "type": "NUMBER" },
+              "entrance": { "type": "STRING", "enum": ["N", "S", "E", "W"] },
+              "zones": { "type": "ARRAY", "items": { "type": "STRING" } }
+            }
+          },
+          "mode": { "type": "STRING", "enum": ["add", "replace", "remove", "repair"], "nullable": true },
+          "component": { "type": "STRING", "nullable": true },
+          "all": { "type": "BOOLEAN", "nullable": true },
+          "minutes": { "type": "INTEGER", "nullable": true },
+          "quantity": { "type": "NUMBER", "nullable": true },
+          "source": { "type": "STRING", "nullable": true },
+          "destination": { "type": "STRING", "nullable": true },
+          "design_id": { "type": "STRING", "nullable": true },
+          "evidence_ids": { "type": "ARRAY", "items": { "type": "STRING" } },
+          "metric": { "type": "STRING", "nullable": true },
+          "topic": { "type": "STRING", "nullable": true },
+          "prediction": {
+            "type": "OBJECT", "nullable": true,
+            "properties": {
+              "hypothesis": { "type": "STRING" },
+              "expected_effect": { "type": "STRING" },
+              "metric": { "type": "STRING", "nullable": true },
+              "operator": { "type": "STRING", "enum": ["gte", "gt", "lte", "lt", "eq"], "nullable": true },
+              "threshold": { "type": "NUMBER", "nullable": true }
+            },
+            "required": ["hypothesis", "expected_effect"]
+          },
+          "parts": {
+            "type": "ARRAY",
+            "items": {
+              "type": "OBJECT",
+              "properties": {
+                "name": { "type": "STRING" },
+                "material": { "type": "STRING" },
+                "shape": { "type": "STRING", "enum": ["macizo", "hueco", "plataforma", "cilindro", "rueda", "eje", "lámina"] }
+              },
+              "required": ["name", "material", "shape"]
+            }
+          },
+          "joints": {
+            "type": "ARRAY",
+            "items": {
+              "type": "OBJECT",
+              "properties": {
+                "a": { "type": "INTEGER" },
+                "b": { "type": "INTEGER" },
+                "type": { "type": "STRING", "enum": ["fija", "articulada", "deslizante", "flexible"] }
+              },
+              "required": ["a", "b", "type"]
+            }
+          },
+          "principle": { "type": "STRING", "nullable": true },
+          "components": {
+            "type": "ARRAY",
+            "items": {
+              "type": "OBJECT",
+              "properties": {
+                "name": { "type": "STRING" },
+                "material": { "type": "STRING" },
+                "function": { "type": "STRING" },
+                "connection": { "type": "STRING" }
+              },
+              "required": ["name", "material"]
+            }
+          },
+          "procedure": { "type": "STRING", "nullable": true },
+          "design_prediction": { "type": "STRING", "nullable": true, "description": "Solo op=design. El harness lo remapea al campo 'prediction' (string) del motor." },
+          "expected_test": { "type": "STRING", "nullable": true },
+          "requirements": { "type": "STRING", "nullable": true },
+          "phenomenon": { "type": "STRING", "nullable": true },
+          "missing_capability": { "type": "STRING", "nullable": true },
+          "rationale": { "type": "STRING", "nullable": true },
+          "experiment": { "type": "STRING", "nullable": true },
+          "context": { "type": "STRING", "nullable": true },
+          "title": { "type": "STRING", "nullable": true },
+          "expected": { "type": "STRING", "nullable": true },
+          "observed": { "type": "STRING", "nullable": true },
+          "related_action": { "type": "STRING", "nullable": true }
+        }
+      }
+    },
+    "prueba_cierre": { "type": "STRING", "nullable": true, "description": "Cita textual de evidencia real, mín. 12 caracteres. Solo con accion_proyecto=completar." },
+    "avance_estimado": { "type": "INTEGER", "nullable": true, "minimum": 0, "maximum": 100 },
+    "estado_actual": { "type": "STRING" },
+    "revisar_en_minutos": { "type": "INTEGER", "minimum": 30, "maximum": 240 },
+    "agenda": {
+      "type": "ARRAY", "maxItems": 3,
+      "items": {
+        "type": "OBJECT",
+        "required": ["titulo", "motivo", "cuando"],
+        "properties": {
+          "titulo": { "type": "STRING" },
+          "motivo": { "type": "STRING" },
+          "modo": { "type": "STRING", "enum": ["tarea", "recordatorio"], "nullable": true },
+          "cuando": {
+            "type": "OBJECT",
+            "required": ["tipo"],
+            "properties": {
+              "tipo": { "type": "STRING", "enum": ["ahora", "despues_de_minutos", "cuando_haya_material", "cuando_necesidad"] },
+              "minutos": { "type": "INTEGER", "nullable": true },
+              "material": { "type": "STRING", "nullable": true },
+              "cantidad": { "type": "INTEGER", "nullable": true },
+              "necesidad": { "type": "STRING", "enum": ["hambre", "sed", "cansancio"], "nullable": true },
+              "nivel": { "type": "STRING", "enum": ["algo", "mucho"], "nullable": true }
+            }
+          },
+          "pasos": {
+            "type": "ARRAY", "maxItems": 5,
+            "items": {
+              "type": "OBJECT",
+              "required": ["op"],
+              "properties": {
+                "op": { "type": "STRING", "enum": ["inspect", "gather", "experiment", "use", "craft", "compare", "conclude", "go", "ascend", "forage", "drink", "eat", "rest"] },
+                "target": { "type": "STRING", "nullable": true },
+                "method": { "type": "STRING", "nullable": true },
+                "item": { "type": "STRING", "nullable": true },
+                "x": { "type": "INTEGER", "nullable": true },
+                "y": { "type": "INTEGER", "nullable": true },
+                "materials": { "type": "ARRAY", "items": { "type": "STRING" } },
+                "name": { "type": "STRING", "nullable": true },
+                "form": { "type": "STRING", "nullable": true },
+                "purpose": { "type": "STRING", "nullable": true },
+                "evidence_ids": { "type": "ARRAY", "items": { "type": "STRING" } },
+                "metric": { "type": "STRING", "nullable": true },
+                "topic": { "type": "STRING", "nullable": true },
+                "minutes": { "type": "INTEGER", "nullable": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "actividades_en_espera": {
+      "type": "ARRAY", "maxItems": 3,
+      "items": {
+        "type": "OBJECT",
+        "required": ["op"],
+        "properties": {
+          "op": { "type": "STRING", "enum": ["forage", "gather", "rest", "drink", "eat", "craft"] },
+          "target": { "type": "STRING", "nullable": true },
+          "hasta": { "type": "INTEGER", "nullable": true },
+          "radio": { "type": "INTEGER", "nullable": true },
+          "veces": { "type": "INTEGER", "nullable": true, "minimum": 1, "maximum": 8 },
+          "cuando": {
+            "type": "OBJECT", "nullable": true,
+            "properties": {
+              "necesidad": { "type": "STRING", "enum": ["hambre", "sed", "cansancio"] },
+              "nivel": { "type": "STRING", "enum": ["algo", "mucho"] }
+            }
+          },
+          "motivo": { "type": "STRING", "nullable": true }
+        }
+      }
+    }
+  }
+}
