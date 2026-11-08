@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import copy
 from pathlib import Path
 import tempfile
 from uuid import uuid4
@@ -27,7 +28,9 @@ def _seed(value):
     return value
 
 
-def _request(profile,context,provider):
+def _request(profile,context,provider,*,context_mode="baseline"):
+    if context_mode not in ("baseline","modular"):
+        raise ValueError("Modo de contexto experimental desconocido")
     if provider not in ("gemini","groq"):
         raise ValueError("Proveedor de vista previa no soportado")
     p=validate(profile)
@@ -39,6 +42,7 @@ def _request(profile,context,provider):
     cfg["GROQ_API_KEY"]="vista-previa-sin-red"
     cfg["_LAB_OMIT_CONTEXT"]=tuple(p["omit_context"])
     cfg["_LAB_PROMPT_NOTE"]=p["prompt_note"]
+    cfg["_LAB_CONTEXT_MODE"]=context_mode
     _,payload,_=build_deliberation_request(cfg,context)
     # Misma serialización que gateway._post, aunque SIN enviar HTTP.
     wire=json.dumps(payload,ensure_ascii=False)
@@ -52,6 +56,7 @@ def _request(profile,context,provider):
         sent=json.loads(payload["messages"][1]["content"])
         system=payload["messages"][0]["content"]
     return {"provider":provider,"model":cfg["MODEL"],"profile":p["name"],
+            "modo_contexto":context_mode,
             "prompt_sha256":hashlib.sha256(system.encode("utf-8")).hexdigest(),
             "mensaje_sistema":system,"solicitud_json":payload,
             "campos_enviados":sorted(sent),
@@ -89,30 +94,49 @@ class LabHub:
     def load(self,name):
         return self.store.load(name)
 
-    def _context(self,seed):
+    def _context(self,seed,*,include_modular=False):
         from laboratorio_contexto import contexto_de_deliberacion
         with tempfile.TemporaryDirectory(prefix="nilo-hub-21-") as td:
             sim=Simulation(db_path=Path(td)/"prueba.sqlite3",
                            world_seed=_seed(seed),rng_seed=9821)
             try:
                 sim.think=lambda:None
-                return contexto_de_deliberacion(sim)
+                original=contexto_de_deliberacion(sim)
+                if not include_modular:
+                    return original
+                # El mismo Simulation, estado, RNG y punto temporal generan
+                # dos representaciones; no se recrea otro mundo para la variante.
+                from nilo_runtime.cognition.memory import recall_relevant
+                candidate=copy.deepcopy(original)
+                candidate["memorias_relevantes"]=recall_relevant(
+                    sim.s["person"],sim.s["world"],limit=6,multi_focus=True)
+                return original,candidate
             finally:sim.conn.close()
 
-    def preview(self,profile,*,provider="gemini",seed=7321):
-        result=_request(profile,self._context(seed),provider)
+    def preview(self,profile,*,provider="gemini",seed=7321,context_mode="baseline"):
+        if context_mode == "modular":
+            context=self._context(seed,include_modular=True)[1]
+        else:
+            context=self._context(seed)
+        result=_request(profile,context,provider,context_mode=context_mode)
         result["seed"]=seed
         return result
 
-    def compare(self,profile,*,provider="gemini",seed=7321,scenario=None):
+    def compare(self,profile,*,provider="gemini",seed=7321,scenario=None,
+                context_mode="baseline"):
         candidate=validate(profile)
-        context=self._context(seed)
+        if context_mode == "modular":
+            context,variant_context=self._context(seed,include_modular=True)
+        else:
+            context=self._context(seed)
+            variant_context=context
         before=_request(baseline(),context,provider)
-        after=_request(candidate,context,provider)
+        after=_request(candidate,variant_context,provider,context_mode=context_mode)
         before["seed"]=seed
         after["seed"]=seed
         result={
             "profile":candidate["name"],"provider":provider,"seed":seed,
+            "modo_baseline":"baseline","modo_variante":context_mode,
             "diff":self.store.diff(candidate),
             "baseline_bytes":before["bytes"],"variant_bytes":after["bytes"],
             "baseline_fields":before["campos_enviados"],

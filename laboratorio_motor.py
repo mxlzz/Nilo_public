@@ -542,12 +542,14 @@ class Handler(BaseHTTPRequestHandler):
                 elif path=="/api/lab/profile/preview":
                     result=self.hub.preview(body.get("profile"),
                         provider=body.get("provider","gemini"),
-                        seed=body.get("seed",7321))
+                        seed=body.get("seed",7321),
+                        context_mode=body.get("context_mode","baseline"))
                 elif path=="/api/lab/profile/compare":
                     result=self.hub.compare(body.get("profile"),
                         provider=body.get("provider","gemini"),
                         seed=body.get("seed",7321),
-                        scenario=body.get("scenario"))
+                        scenario=body.get("scenario"),
+                        context_mode=body.get("context_mode","baseline"))
                 elif path=="/api/lab/profile/backup-world":
                     result=self.hub.backup_world(body.get("confirm"))
                 else:

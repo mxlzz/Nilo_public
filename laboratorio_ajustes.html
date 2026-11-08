@@ -73,6 +73,9 @@ legend{color:var(--muted);font-size:12px;padding:0 6px}.check-grid{display:grid;
 <label>Semilla de ensayo<input id="seed" type="number" min="0" max="1000000000" value="7321"></label>
 </div>
 <label>Escenario opcional para comparación física<select id="scenario"><option value="">Solo contexto (rápido)</option></select></label>
+<label>Constructor de contexto para previsualizar
+<select id="context-mode"><option value="baseline">Actual · baseline</option><option value="modular">Experimental · modular y multifoco</option></select></label>
+<p class="note">El modo modular solo afecta esta vista previa/comparación. No forma parte del perfil guardado ni se aplica al motor activo. Los bloques se muestran literalmente en los resultados.</p>
 <p class="note">Las comparaciones usan el constructor real de solicitudes, sin red ni consumo de API. Un escenario ejecuta el motor físico real dos veces con la misma semilla; la variante actual no modifica leyes físicas.</p>
 </section>
 <section class="panel" aria-label="Resultados y versiones">
@@ -231,13 +234,13 @@ function busy(button,promise){
  .finally(()=>button.disabled=false);
 }
 $('preview').onclick=()=>busy($('preview'),async()=>{
- const value=await post('/api/lab/profile/preview',{profile:getProfile(),provider:$('provider').value,seed:Number($('seed').value)});
+ const value=await post('/api/lab/profile/preview',{profile:getProfile(),provider:$('provider').value,seed:Number($('seed').value),context_mode:$('context-mode').value});
  show(value);showLiteralPreview(value);
  setStatus('Vista previa preparada localmente. No se envió ninguna consulta.');
 });
 $('compare').onclick=()=>busy($('compare'),async()=>{
  const value=await post('/api/lab/profile/compare',{profile:getProfile(),provider:$('provider').value,
- seed:Number($('seed').value),scenario:$('scenario').value||null});
+ seed:Number($('seed').value),scenario:$('scenario').value||null,context_mode:$('context-mode').value});
  show(value);showLiteralPreview(value);
  setStatus('Comparación terminada; ambas solicitudes fueron construidas sin red.');
 });
