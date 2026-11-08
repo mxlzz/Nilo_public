@@ -395,8 +395,11 @@ def _drive_decision(lab,normalized):
               if latest_feedback[i]==marker),0) if marker else 0
     new_feedback=latest_feedback[cut:]
     admitted=copy.deepcopy(sim.s["person"].get("plan") or [])
-    if sim.s["person"].get("pending"):
-        admitted.insert(0,copy.deepcopy(sim.s["person"]["pending"]["step"]))
+    pending=(sim.s["person"].get("pending") or {}).get("step") or {}
+    # journal() agenda una escritura interna antes de ejecutar el plan.
+    # No contabilizar esa actividad documental como operación pedida al LLM.
+    if pending.get("op") in {step.get("op") for step in submitted}:
+        admitted.insert(0,copy.deepcopy(pending))
     accepted=bool(admitted)
     ticks=0
     if accepted:
