@@ -19,6 +19,11 @@ def parse_json(text):
     return json.loads(text)
 
 
+def _optional_text(value, limit):
+    """Un null del proveedor es ausencia; no debe persistirse como 'None'."""
+    return str("" if value is None else value).strip()[:limit]
+
+
 def normalize_decision(raw,legacy_rest=False):
     if not isinstance(raw,dict):raise ValueError('La respuesta no es un objeto JSON.')
     ops=set(registered_operations())
@@ -57,16 +62,24 @@ def normalize_decision(raw,legacy_rest=False):
                 if minutes is None:continue
                 s['minutes']=minutes
             if "prediction" in s:
-                prediction=normalize_prediction(s.get("prediction"))
-                if prediction is None or s["op"] not in {"experiment","use","rest","craft","build","assemble","modify","combine","excavate"}:
-                    s.pop("prediction",None)
-                else:s["prediction"]=prediction
+                if s["op"] == "design":
+                    # La ficha documenta texto libre; no es un ensayo medible.
+                    prediction = s["prediction"]
+                    if not isinstance(prediction, str) or not prediction.strip():
+                        s.pop("prediction", None)
+                    else:
+                        s["prediction"] = prediction.strip()[:450]
+                else:
+                    prediction=normalize_prediction(s.get("prediction"))
+                    if prediction is None or s["op"] not in {"experiment","use","rest","craft","build","assemble","modify","combine","excavate"}:
+                        s.pop("prediction",None)
+                    else:s["prediction"]=prediction
             plan.append(s)
-    action=str(raw.get('accion_proyecto','nuevo')).lower()
+    action=_optional_text(raw.get('accion_proyecto') or 'nuevo', 40).lower()
     if action not in ('nuevo','continuar','completar','abandonar','pausar','sin_proyecto'):action='nuevo'
     if not plan and action not in ('completar','abandonar','pausar'):
         raise ValueError('El modelo no propuso acciones utilizables.')
-    note=str(raw.get('cuaderno','')).strip()[:500]
+    note=_optional_text(raw.get('cuaderno'), 350)
     if not note:raise ValueError('El modelo no redactó una nota.')
     try:advance=int(raw.get('avance_estimado',0))
     except (ValueError,TypeError):advance=0
@@ -75,11 +88,11 @@ def normalize_decision(raw,legacy_rest=False):
     subgoals=raw.get('subobjetivos',[])
     if not isinstance(subgoals,list):subgoals=[]
     subgoals=[str(q).strip()[:110] for q in subgoals[:6] if isinstance(q,str) and q.strip()]
-    return {"subobjetivos":subgoals,"cuaderno":note,"pregunta":str(raw.get('pregunta','')).strip()[:220],"hipotesis":str(raw.get('hipotesis','')).strip()[:240],
-            "objetivo":str(raw.get('objetivo','')).strip()[:240],"motivo":str(raw.get('motivo','')).strip()[:200],"plan":plan,
-            "revisar_en_minutos":max(30,min(240,review)),"proyecto_id":str(raw.get('proyecto_id','')).strip()[:50],
+    return {"subobjetivos":subgoals,"cuaderno":note,"pregunta":_optional_text(raw.get('pregunta'), 220),"hipotesis":_optional_text(raw.get('hipotesis'), 240),
+            "objetivo":_optional_text(raw.get('objetivo'), 240),"motivo":_optional_text(raw.get('motivo'), 200),"plan":plan,
+            "revisar_en_minutos":max(30,min(240,review)),"proyecto_id":_optional_text(raw.get('proyecto_id'), 50),
             "actividades_en_espera":raw.get("actividades_en_espera") if isinstance(raw.get("actividades_en_espera"),list) else None,
             "agenda":raw.get("agenda",[]) if isinstance(raw.get("agenda"),list) else [],
-            "accion_proyecto":action,"prueba_cierre":str(raw.get('prueba_cierre','')).strip()[:220],"avance_estimado":max(0,min(100,advance)),"estado_actual":str(raw.get('estado_actual','')).strip()[:240]}
+            "accion_proyecto":action,"prueba_cierre":_optional_text(raw.get('prueba_cierre'), 220),"avance_estimado":max(0,min(100,advance)),"estado_actual":_optional_text(raw.get('estado_actual'), 240)}
 
 
