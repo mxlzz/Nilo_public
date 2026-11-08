@@ -263,7 +263,8 @@ def _response_warnings(parsed, normalized):
     return warnings
 
 
-def _execution_results(submitted, admitted, new_outcomes, *, unfinished=False):
+def _execution_results(submitted, admitted, new_outcomes, *,
+                       unfinished=False, rejected_reasons=()):
     """Relacionar pasos de esta deliberación con resultados reales, sin fabricar éxitos.
 
     La secuencia aprobada es la cola resultante de plan_ready; los descartes
@@ -279,8 +280,15 @@ def _execution_results(submitted, admitted, new_outcomes, *, unfinished=False):
         place = next((j for j in range(cursor, len(accepted))
                       if accepted[j].get("op") == op), None)
         if place is None:
+            # La razón procede de la validación del motor, no del LLM.
+            # No inferir cuál de varias precondiciones hipotéticas falló.
+            reason = next((msg for msg in rejected_reasons
+                           if isinstance(msg,str) and
+                           msg.startswith("Plan validado: " + str(op) + ":")), None)
             rows.append({"requested_step": index, "op": op,
                          "state": "filtrada_antes_de_ejecutar",
+                         "reason": reason, "reason_source": (
+                             "motor.strategy_feedback" if reason else None),
                          "action_id": None, "measurement_id": None})
             continue
         cursor = place + 1
@@ -375,8 +383,10 @@ def _drive_decision(lab,normalized):
     before=_projection(lab)
     prior_ids={row.get("id") for row in sim.s["person"].get("action_outcomes",[])
                if isinstance(row,dict)}
+    prior_feedback=list(sim.s["person"].get("strategy_feedback") or [])
     submitted=copy.deepcopy(normalized.get("plan") or [])
     sim.plan_ready(copy.deepcopy(normalized),"llm",{})
+    new_feedback=(sim.s["person"].get("strategy_feedback") or [])[len(prior_feedback):]
     admitted=copy.deepcopy(sim.s["person"].get("plan") or [])
     if sim.s["person"].get("pending"):
         admitted.insert(0,copy.deepcopy(sim.s["person"]["pending"]["step"]))
@@ -398,7 +408,8 @@ def _drive_decision(lab,normalized):
               # recibe source='llm'; excluir demo ocultaría operaciones reales.
               and row.get("origin") in ("llm", "demo", None)]
     operation_results=_execution_results(submitted,admitted,outcomes,
-                                         unfinished=unfinished)
+                                         unfinished=unfinished,
+                                         rejected_reasons=new_feedback)
     return {"applied":True,"plan_accepted":accepted,
             "plan_accepted_means":"cola de acciones admitida; no éxito físico",
             "submitted_operations":len(submitted),
