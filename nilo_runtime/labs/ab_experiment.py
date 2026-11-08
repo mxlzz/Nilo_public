@@ -54,29 +54,6 @@ def _projection(lab):
              "structures","items","sites","map")}
 
 
-def _worlds(seed, *, source="new", world_path=None, kit=False):
-    """Abrir dos sandboxes sin red; copiar la partida fuente por SQLite backup."""
-    if source not in ("new","saved"):
-        raise ValueError("Origen de experimento desconocido")
-    if type(kit) is not bool:
-        raise ValueError("El kit debe ser booleano")
-    if source=="saved" and (world_path is None or not Path(world_path).is_file()):
-        raise ValueError("No hay partida guardada para usar como referencia")
-    with ExitStack() as stack:
-        labs=[]
-        for _ in range(2):
-            lab=SimulationSandbox(_SilentTrace)
-            stack.callback(lab.close)
-            lab.reset("partida" if source=="saved" else "nuevo",
-                      seed,kit,source=world_path if source=="saved" else None)
-            labs.append(lab)
-        a,b=labs
-        initial_a,initial_b=_projection(a),_projection(b)
-        if initial_a!=initial_b:
-            raise ValueError("Las copias del estado inicial no coinciden; ensayo cancelado")
-        yield a,b,_sha(initial_a)
-
-
 def _script(raw):
     if not isinstance(raw,list) or len(raw)>MAX_PHYSICAL_STEPS:
         raise ValueError("El guion debe tener de cero a seis operaciones")
@@ -93,11 +70,21 @@ def _script(raw):
     return out
 
 
-def context_pair(hub,profile,*,provider="gemini",seed=7321):
-    """Un solo estado observable para baseline y variante; sin proveedores."""
+def context_pair(hub,profile,*,provider="gemini",seed=7321,
+                 source="new",world_path=None,kit=False):
+    """Una sola percepción congelada compartida; jamás consulta proveedores."""
     _seed(seed)
     candidate=validate(profile)
-    context=hub._context(seed)
+    if source not in ("new","saved"):
+        raise ValueError("Origen de referencia desconocido")
+    if type(kit) is not bool:
+        raise ValueError("El kit debe ser booleano")
+    with ExitStack() as stack:
+        lab=SimulationSandbox(_SilentTrace)
+        stack.callback(lab.close)
+        lab.reset("partida" if source=="saved" else "nuevo",
+                  seed,kit,source=world_path if source=="saved" else None)
+        context=contexto_de_deliberacion(lab.sim)
     identity=_sha(context)
     before=_request(baseline(),context,provider)
     if _sha(context)!=identity:
@@ -109,8 +96,9 @@ def context_pair(hub,profile,*,provider="gemini",seed=7321):
         raise ValueError("Una previsualización no puede marcarse como enviada")
     for view in (before,after):view["seed"]=seed
     return {
-        "experiment_type":"context_ab","source":"fresh_isolated_seed",
-        "seed":seed,"provider":provider,"reference_sha256":identity,
+        "experiment_type":"context_ab",
+        "source":"readonly_copy_of_saved_world" if source=="saved" else "fresh_isolated_seed",
+        "seed":seed,"kit":kit,"provider":provider,"reference_sha256":identity,
         "reference_type":"one_identical_frozen_perception",
         "baseline":before,"variant":after,
         "comparison":{
