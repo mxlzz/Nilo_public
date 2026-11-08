@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import copy
 from pathlib import Path
 import tempfile
 from uuid import uuid4
@@ -93,27 +94,44 @@ class LabHub:
     def load(self,name):
         return self.store.load(name)
 
-    def _context(self,seed):
+    def _context(self,seed,*,include_modular=False):
         from laboratorio_contexto import contexto_de_deliberacion
         with tempfile.TemporaryDirectory(prefix="nilo-hub-21-") as td:
             sim=Simulation(db_path=Path(td)/"prueba.sqlite3",
                            world_seed=_seed(seed),rng_seed=9821)
             try:
                 sim.think=lambda:None
-                return contexto_de_deliberacion(sim)
+                original=contexto_de_deliberacion(sim)
+                if not include_modular:
+                    return original
+                # El mismo Simulation, estado, RNG y punto temporal generan
+                # dos representaciones; no se recrea otro mundo para la variante.
+                from nilo_runtime.cognition.memory import recall_relevant
+                candidate=copy.deepcopy(original)
+                candidate["memorias_relevantes"]=recall_relevant(
+                    sim.s["person"],sim.s["world"],limit=6,multi_focus=True)
+                return original,candidate
             finally:sim.conn.close()
 
     def preview(self,profile,*,provider="gemini",seed=7321,context_mode="baseline"):
-        result=_request(profile,self._context(seed),provider,context_mode=context_mode)
+        if context_mode == "modular":
+            context=self._context(seed,include_modular=True)[1]
+        else:
+            context=self._context(seed)
+        result=_request(profile,context,provider,context_mode=context_mode)
         result["seed"]=seed
         return result
 
     def compare(self,profile,*,provider="gemini",seed=7321,scenario=None,
                 context_mode="baseline"):
         candidate=validate(profile)
-        context=self._context(seed)
+        if context_mode == "modular":
+            context,variant_context=self._context(seed,include_modular=True)
+        else:
+            context=self._context(seed)
+            variant_context=context
         before=_request(baseline(),context,provider)
-        after=_request(candidate,context,provider,context_mode=context_mode)
+        after=_request(candidate,variant_context,provider,context_mode=context_mode)
         before["seed"]=seed
         after["seed"]=seed
         result={
