@@ -314,22 +314,44 @@ def live_pair(hub,profile,*,provider="gemini",seed=7321,turns=1,
                     preview=_request(p,ctx,provider)
                     # Pausa ENTRE solicitudes reales, no al construir JSON.
                     if total:pause(token_wait)
-                    response=_network_decision(preview,provider,poster=poster)
-                    total+=1
                     step={
                         "turn":round_i+1,"profile":p["name"],
                         "pre_context_sha256":_sha(ctx),
                         "sent_preview_sha256":preview["huella_solicitud_calculada"],
-                        "response":response,"world_effect":None,
+                        "response":None,"world_effect":None,
                     }
+                    try:
+                        response=_network_decision(preview,provider,poster=poster)
+                    except Exception as exc:
+                        # Con clave válida, el transporte pudo haber empezado.
+                        # Conservar el intento y los resultados ya obtenidos;
+                        # nunca reintentar automáticamente la solicitud fallida.
+                        from providers import ProviderFailure
+                        if not isinstance(exc,(ProviderFailure,OSError,TimeoutError)):
+                            raise
+                        total+=1
+                        step["transport_error"]=type(exc).__name__+": "+str(exc)[:200]
+                        step["attempted_request_sha256"]=preview["huella_solicitud_calculada"]
+                        blocked[name]=True
+                        rows[name].append(step)
+                        continue
+                    total+=1
+                    step["response"]=response
                     if turns>1:
-                        try:
-                            step["world_effect"]=_drive_decision(lab,response["normalized"])
-                        except (ValueError,KeyError,TypeError) as exc:
-                            step["execution_error"]=type(exc).__name__+": "+str(exc)[:250]
+                        if response["normalized"] is None:
+                            # Una respuesta inválida no autoriza otra consulta
+                            # automática bajo el pretexto de segunda ronda.
+                            step["world_effect"]={"applied":False,
+                                                  "reason":"Respuesta sin decisión válida"}
                             blocked[name]=True
-                        if step["world_effect"] and step["world_effect"].get("pending_or_unfinished"):
-                            blocked[name]=True
+                        else:
+                            try:
+                                step["world_effect"]=_drive_decision(lab,response["normalized"])
+                            except (ValueError,KeyError,TypeError) as exc:
+                                step["execution_error"]=type(exc).__name__+": "+str(exc)[:250]
+                                blocked[name]=True
+                            if step["world_effect"] and step["world_effect"].get("pending_or_unfinished"):
+                                blocked[name]=True
                     rows[name].append(step)
             return {
                 "experiment_type":"llm_two_branch_deliberation" if turns==1
