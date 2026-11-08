@@ -22,10 +22,20 @@ def recall_relevant(person, world, limit=6):
     propiedades del terreno que Nilo no haya experimentado.
     """
     project = person.get('project') or {}
-    query = ' '.join(str(v or '') for v in (
+    # Focos simultáneos: proyecto, preguntas abiertas y acciones recientes.
+    # Son temas documentados por Nilo, no sugerencias externas ni nuevas metas.
+    query_parts = [
         project.get('title'), project.get('reason'), project.get('state'),
         project.get('last_action'), project.get('last_result'),
-        person.get('active_research')))
+        person.get('active_research'),
+    ]
+    for row in (person.get('research') or [])[-5:]:
+        if isinstance(row, dict) and row.get('state') == 'abierta':
+            query_parts.extend((row.get('question'), row.get('hypothesis')))
+    for row in (person.get('action_outcomes') or [])[-3:]:
+        if isinstance(row, dict):
+            query_parts.append(row.get('target'))
+    query = ' '.join(str(value or '') for value in query_parts)
     keywords = terms(query) - _GENERIC
     project_id = project.get('id')
     # La referencia exacta a una entidad se prefiere a la coincidencia léxica.
