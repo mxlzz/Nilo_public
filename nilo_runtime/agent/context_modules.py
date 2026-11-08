@@ -199,7 +199,7 @@ def modular_instructions(context, provider):
     detailed = _detailed_operations(context)
     detail = "\n".join("- " + name + ": " + registry[name].description
                        for name in detailed)
-    manual = index + "\\nREGLAS GENERALES: " + COMMON_RULES
+    manual = index + "\nREGLAS GENERALES: " + COMMON_RULES
     if detail:
         manual += "\nDETALLES OPERATIVOS SEGÚN CONTEXTO (no son tareas):\n" + detail
     return system, manual
