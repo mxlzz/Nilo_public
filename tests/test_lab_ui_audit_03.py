@@ -26,6 +26,7 @@ PAGES = (
     "laboratorio_historico.html",
     "laboratorio_ajustes.html",
     "laboratorio_visor_llm.html",
+    "laboratorio_analisis.html",
 )
 
 
