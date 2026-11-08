@@ -197,6 +197,9 @@ function render(result){
    metrics.append(metric("Partida usada",result.selected_world.name));
  if(result.comparison&&"delta_bytes" in result.comparison)
    metrics.append(metric("Diferencia de bytes",result.comparison.delta_bytes));
+ if(result.comparison&&"same_sent_evidence" in result.comparison)
+   metrics.append(metric("Evidencia enviada a A/B",
+     result.comparison.same_sent_evidence?"Idéntica":"Distinta"));
  root.append(metrics);
  const note=element("div","warning");
  note.textContent=(result.notes||result.limitations||[]).join(" ");
