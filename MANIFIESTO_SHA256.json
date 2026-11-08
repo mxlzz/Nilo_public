@@ -62,6 +62,7 @@
     "laboratorio_casos.py": "sha256-calculated-during-packaging",
     "laboratorio_contexto.py": "sha256-calculated-during-packaging",
     "laboratorio_escenarios.html": "sha256-calculated-during-packaging",
+    "laboratorio_experimentos.html": "sha256-calculated-during-packaging",
     "laboratorio_historico.html": "sha256-calculated-during-packaging",
     "laboratorio_motor.html": "sha256-calculated-during-packaging",
     "laboratorio_motor.py": "sha256-calculated-during-packaging",
