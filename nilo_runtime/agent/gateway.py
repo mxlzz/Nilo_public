@@ -114,7 +114,17 @@ def build_deliberation_request(cfg,context):
 
     provider=cfg.get('PROVIDER','gemini')
     model=cfg.get('MODEL','gemini-3.1-flash-lite')
-    if provider=='groq':
+    # El modo modular es un ensayo explícito. La instalación sigue en baseline.
+    mode=cfg.get("_LAB_CONTEXT_MODE") or "baseline"
+    if mode not in ("baseline", "modular"):
+        raise ValueError("Modo de contexto experimental desconocido")
+    if mode == "modular":
+        from nilo_runtime.agent.context_modules import modular_context, modular_instructions
+        selected=modular_context(context,provider=provider)
+        observe_context("compactacion",selected)
+        system,manual=modular_instructions(context,provider)
+        system+=extra
+    elif provider=='groq':
         selected=compact_context(context,char_budget=18000)
         observe_context("compactacion",selected)
         selected=bounded_context(selected,4100)
@@ -140,8 +150,8 @@ def build_deliberation_request(cfg,context):
     data=json.dumps(selected,ensure_ascii=False,separators=(',',':'))
     if provider=='gemini':
         url=_endpoint(cfg)
-        payload={"systemInstruction":{"parts":[{"text":SYSTEM+extra}]},
-                 "contents":[{"role":"user","parts":[{"text":action_instructions()+'\nSITUACIÓN REAL: '+data}]}],
+        payload={"systemInstruction":{"parts":[{"text":system if mode=="modular" else SYSTEM+extra}]},
+                 "contents":[{"role":"user","parts":[{"text":(manual if mode=="modular" else action_instructions())+'\nSITUACIÓN REAL: '+data}]}],
                  "generationConfig":{"temperature":0.85,"maxOutputTokens":2300,"responseMimeType":"application/json"}}
         headers=_headers(cfg)
     elif provider in ('openai_compatible','groq'):
