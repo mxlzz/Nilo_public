@@ -241,7 +241,7 @@ class CorrectionsStage11(unittest.TestCase):
             with self.subTest(provider=provider):
                 system, manual = modular_instructions(context, provider)
                 content = system + manual
-                self.assertIn('{"op":"explore","direction":', content)
+                self.assertIn('{"direction":"north|south|east|west"}', content)
                 self.assertIn('{"op":"go","target":"agua"}', content)
                 self.assertIn("frontera desconocida", content)
 
