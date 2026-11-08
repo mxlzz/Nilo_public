@@ -60,7 +60,62 @@ El laboratorio ya contaba con:
 - Los tests usan respuestas sintéticas para verificar la lógica de comparación **sin hacer consultas API**.
 - El ZIP preliminar puede seguir mostrando la **versión nominal 0.7.0** heredada del manifiesto de la rama. Se identifica externamente como **preview de laboratorio 0.7.1**; no publicarlo como release ni reemplazar versiones estables.
 
-## 5. Cierre de etapa
+## 5. Validación real recibida y corrección de instrumentación (08/11/2026)
+
+Se recibieron dos exportaciones reales de Gemini con semilla 7321: una comparación de
+una deliberación por rama (2 solicitudes), y otra de dos deliberaciones por rama
+con ejecución física aislada (4 solicitudes). En la segunda comparación, los
+tokens de entrada reportados fueron **15.553 baseline** frente a **9.410 modular**
+(39,5 % menos). Los mundos divergen tras la primera decisión; no hay base causal
+para preferir una estrategia u otra.
+
+La rama modular propuso `explore` y luego `go target=agua` sin una orilla conocida.
+El segundo turno del experimento recibió una observación de rechazo del `go`
+y cambió a otra exploración. El reporte antiguo marcaba
+`applied=true, plan_accepted=true`, pero estas etiquetas solo registran la
+admisión del bloque, **no** el éxito de todos sus pasos. También se observó
+`hipostesis` en lugar de `hipotesis`; la normalización dejó la hipótesis
+vacía sin un error de validación.
+
+### Modificaciones correctivas en el mismo PR #95
+
+- `ab_experiment.py`: ahora registra `submitted_operations`,
+  `admitted_operations` y `operation_results` por paso, con estado,
+  ID de acción, ID de medición, clasificación del motor, hechos y cambios
+  medidos. Los resultados proceden de `person.action_outcomes` generado
+  por el **motor real** en un mundo temporal. La búsqueda por IDs distingue
+  registros previos de resultados nuevos. Una acción filtrada antes de ejecución
+  queda `filtrada_antes_de_ejecutar`; una sin evidencia individual queda
+  `sin_resultado_individual` o `pendiente_sin_resultado`. No se inventa éxito.
+- Los resultados instrumentados distinguen `completada`, `fallida`,
+  `bloqueada` (precondición incumplida), `no_evaluable` (física ausente)
+  y `resultado_no_clasificable`. `plan_accepted` se conserva por
+  compatibilidad, acompañado de su semántica explícita.
+- `_response_warnings`: registra claves esperadas omitidas, posibles
+  errores tipográficos y pasos eliminados por normalización, sin enmendar
+  ni reinterpretar el JSON original ni cambiar `normalize_decision` del motor.
+- `evaluation_11.py`: incluye conteos de advertencias y resultados físicos
+  por estado, excluyendo el texto del cuaderno, los prompts y los hechos.
+- `context_modules.py`: para una primera deliberación sin proyecto,
+  investigaciones ni acciones previas, incorpora contratos completos de
+  `explore`, `go` e `inspect` en Gemini y una selección acotada
+  de `explore`/`go` en Groq. En ambos casos se derivan del registro
+  único de operaciones; el catálogo de 26 capacidades se mantiene.
+- `laboratorio_experimentos.html`: vista resumida por rama, turno y
+  operación con advertencias, estado, motivo e IDs; el JSON completo
+  continúa disponible para auditoría literal y exportación.
+
+Se añadieron pruebas sin red para errores tipográficos, pasos bloqueados,
+fallos físicos, fenómenos no evaluables, una ejecución real del sandbox,
+los contratos de navegación iniciales y el resumen de resultados.
+
+**Límites:** estas alertas pertenecen al laboratorio; no introducen un
+corrector de respuestas LLM en el motor activo. La partida original sigue
+inalterada. La próxima evaluación representativa requiere un save con
+investigaciones y recuerdos acumulados, para observar recuperación
+multifoco, calidad de decisiones y no solo la escena inicial.
+
+## 6. Cierre de etapa
 
 La preparación técnica puede cerrarse tras aprobación de CI (suite general, matriz sin red, empaquetado e instalación Windows). **La evaluación conductual definitiva y la integración en main se mantienen abiertas** hasta las corridas reales y la revisión visual. La etapa 11 tiene por tanto un hito técnico y un hito de validación real; no declarar el segundo cumplido sin resultados de proveedores.
 
