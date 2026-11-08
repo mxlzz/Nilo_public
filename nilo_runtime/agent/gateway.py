@@ -115,8 +115,8 @@ def build_deliberation_request(cfg,context):
     provider=cfg.get('PROVIDER','gemini')
     model=cfg.get('MODEL','gemini-3.1-flash-lite')
     # El modo modular es un ensayo explícito. La instalación sigue en baseline.
-    mode=cfg.get("_LAB_CONTEXT_MODE") or "baseline"
-    if mode not in ("baseline", "modular"):
+    mode=cfg.get("_LAB_CONTEXT_MODE", "baseline")
+    if type(mode) is not str or mode not in ("baseline", "modular"):
         raise ValueError("Modo de contexto experimental desconocido")
     if mode == "modular":
         from nilo_runtime.agent.context_modules import modular_context, modular_instructions
