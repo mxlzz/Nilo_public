@@ -124,14 +124,12 @@ def analyze_context_ab(result):
 def _plan_signature(steps):
     if not isinstance(steps, list):
         return None
-    # Solo estructura operacional; los textos del cuaderno nunca se exportan.
-    parts = []
-    for step in steps:
-        if not isinstance(step, dict):
-            return None
-        parts.append({k: step[k] for k in ("op", "target", "method", "item", "x", "y")
-                      if k in step})
-    return _sha(json.dumps(parts, ensure_ascii=False, sort_keys=True, default=str))
+    # La huella incorpora el plan íntegro, incluidos los argumentos físicos.
+    # El contenido permanece privado: únicamente se retorna el SHA-256.
+    if any(not isinstance(step, dict) for step in steps):
+        return None
+    return _sha(json.dumps(steps, ensure_ascii=False, sort_keys=True,
+                           separators=(",", ":"), allow_nan=False))
 
 
 def _live_branch(row):
