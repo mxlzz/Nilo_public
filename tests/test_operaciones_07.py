@@ -121,8 +121,8 @@ class DecisionAndDispatcherContract(unittest.TestCase):
                              "function":"perforar","connection":"fija"}]}
         result=normalize_decision(decision(step))
         self.assertEqual(result["plan"][0]["op"],"design")
-        # Las predicciones textuales de design no son el esquema de un ensayo.
-        self.assertNotIn("prediction",result["plan"][0])
+        # La predicción de una ficha de diseño es texto; no es un ensayo físico.
+        self.assertEqual(result["plan"][0]["prediction"], "debería fracturar roca")
 
     def test_llm_invalid_schema_filtered_without_executing_world(self):
         s=decision(
