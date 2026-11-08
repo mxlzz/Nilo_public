@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nilo · Laboratorio · Análisis transversal</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:var(--lab-bg,#f3f5f3);color:var(--lab-text,#1e2c27);font:13px/1.5 system-ui,sans-serif}
+header{padding:18px 24px;border-bottom:1px solid var(--lab-border,#cbd7d0);display:flex;align-items:center;gap:18px;justify-content:space-between;flex-wrap:wrap}
+h1{font-size:21px;margin:1px 0}h2{font-size:15px;margin:0 0 6px}h3{font-size:13px;margin:0 0 6px}
+a{color:var(--lab-accent,#25654d);overflow-wrap:anywhere}nav{display:flex;flex-wrap:wrap;gap:11px;font-size:12px}
+.muted{color:var(--lab-muted,#52665b)}.small{font-size:11px}
+main{max-width:1500px;margin:0 auto;padding:15px;display:grid;gap:14px}
+.panel{border:1px solid var(--lab-border,#cbd7d0);background:var(--lab-surface,#fff);border-radius:10px;padding:16px;min-width:0}
+.controls{display:flex;align-items:end;gap:12px;flex-wrap:wrap}
+.controls label{display:grid;gap:5px;font-size:12px}
+button,select,input{font:12px system-ui,sans-serif;border:1px solid var(--lab-border,#b2c4b7);border-radius:6px;background:var(--lab-surface,#fff);color:var(--lab-text,#1e2c27);padding:8px;max-width:100%}
+button{cursor:pointer;padding:8px 13px;font-weight:600}button:disabled{opacity:.5;cursor:wait}
+p{margin:7px 0}details{margin:10px 0}details summary{cursor:pointer;font-weight:600;padding:5px 0}
+table{width:100%;border-collapse:collapse;font:12px/1.35 system-ui,sans-serif}
+th,td{border-bottom:1px solid var(--lab-border,#cbd7d0);padding:7px 8px;text-align:left;vertical-align:middle}
+thead th{position:sticky;top:0;background:var(--lab-surface,#fff);z-index:2}
+.table-scroll{overflow:auto;max-height:570px;border:1px solid var(--lab-border,#cbd7d0);border-radius:7px}
+.matrix th:first-child,.matrix td:first-child{position:sticky;left:0;background:var(--lab-surface,#fff);min-width:220px;max-width:310px;z-index:3;box-shadow:1px 0 var(--lab-border,#cbd7d0)}
+.matrix td:not(:first-child){min-width:78px;text-align:center}
+.matrix a{font:11px ui-monospace,monospace;text-decoration:none;display:block;padding:5px 3px}
+.matrix .missing{color:var(--lab-muted,#52665b);opacity:.6}
+.matrix .present{background:var(--lab-raised,#edf2ef)}
+.matrix .empty{background:var(--lab-warn-bg,#fff2dc)}
+.matrix .invalid{background:var(--lab-bad-bg,#fff0ed)}
+.metricrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px;margin:12px 0}
+.metric{border:1px solid var(--lab-border,#cbd7d0);border-radius:7px;padding:10px}
+.metric strong{display:block;font-size:18px}.metric span{font-size:11px;color:var(--lab-muted,#52665b)}
+.note{padding:10px 12px;border-left:3px solid var(--lab-border,#cbd7d0);background:var(--lab-raised,#edf2ef);font-size:12px;line-height:1.55}
+#status{min-height:20px}#status.error{color:var(--lab-bad,#a03835)}
+.list{margin:8px 0;padding-left:20px}.list li{margin:5px 0}
+.narrow{max-width:720px}.controls input{width:min(100%,260px)}
+@media(max-width:640px){header{padding:12px}main{padding:9px}.panel{padding:12px}.matrix th:first-child,.matrix td:first-child{min-width:150px;max-width:190px}}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--lab-focus,#347e61);outline-offset:2px}
+</style>
+<link rel="stylesheet" href="/assets/laboratorio.css"></head>
+<body data-lab="analisis">
+<header><div><div class="muted small">Nilo · Laboratorio / etapa 08</div><h1>Análisis entre decisiones</h1><p class="muted">Presencia del contexto, repeticiones operativas y trazabilidad de experiencias archivadas.</p></div>
+<nav aria-label="Secciones del laboratorio" data-lab-nav="primary">
+<a href="/visor-llm">Solicitudes LLM</a><a href="/historico">Historial</a><a href="/">Pruebas</a><a href="/experimentos">Experimentos A/B</a><a href="/analisis" aria-current="page">Análisis</a><a href="/ajustes">Ajustes</a>
+</nav><div class="lab-theme-control"><button id="lab-theme-toggle" type="button" aria-label="Cambiar tema">Tema: sistema</button></div></header>
+<main>
+<section class="panel">
+<h2>01 · Ventana de observación</h2>
+<p class="muted">Se lee la partida actual y su archivo de solicitudes asociado. Una columna es una deliberación; los reintentos se agrupan. La ventana de historial puede ser distinta.</p>
+<div class="controls"><label>Decisiones recientes<select id="limit"><option value="12">12</option><option value="24" selected>24</option><option value="48">48</option></select></label>
+<button type="button" id="refresh">Analizar registros</button><button type="button" id="export" disabled>Exportar diagnóstico JSON</button>
+</div><p id="status" role="status" aria-live="polite">Leyendo archivos locales…</p>
+<div id="metrics" class="metricrow"></div>
+</section>
+<section class="panel">
+<h2>02 · Matriz de información enviada</h2>
+<p class="muted">Filas: campos literales del prompt. Columnas: deliberaciones ordenadas por archivo. Valores: bytes UTF-8 del fragmento. Una celda abre la solicitud exacta. El color distingue campo presente, vacío o captura inválida.</p>
+<div class="controls"><label>Buscar campo<input type="search" id="field-filter" placeholder="Ej. memoria, proyectos, resultados"></label>
+<label>Filas<select id="family-filter"><option value="">Todas las familias</option></select></label>
+</div><div class="table-scroll" id="matrixWrap"><p class="muted">Cargando matriz…</p></div>
+<p class="small muted">«Idéntico» significa mismo SHA-256 en las apariciones registradas. No significa que el campo sea inútil. La comparación de tamaño no equivale a conteo de tokens.</p>
+</section>
+<section class="panel">
+<h2>03 · Huellas operativas</h2>
+<p class="muted">Agrupa diagnósticos archivados por operación, objetivo declarado y clasificación registrada. La racha se mide solo entre diagnósticos consecutivos en esta ventana, no entre todas las acciones de Nilo.</p>
+<div class="table-scroll"><table><thead><tr><th>Operación / objetivo</th><th>Resultado</th><th>Repeticiones</th><th>Racha en diagnósticos</th><th>Registros</th></tr></thead><tbody id="patterns"></tbody></table></div>
+</section>
+<section class="panel">
+<h2>04 · Experiencias que reaparecen en el contexto</h2>
+<p class="muted">Solo se registran coincidencias exactas de identificadores dentro de campos estructurados de memoria o evidencia. No se infiere recuperación semántica, interpretación o uso de la información por el LLM.</p>
+<div id="memory"></div>
+</section>
+<section class="panel">
+<h2>05 · Cómo investigar un caso</h2>
+<details><summary>Una decisión inesperada</summary><p>Elegí la solicitud del turno en la matriz, leé su contenido literal y después abrí la ficha del episodio desde Historial. Compará lo recibido con la respuesta, la ejecución y los registros siguientes. La declaración de Nilo sobre su motivo es un testimonio.</p></details>
+<details><summary>Una acción infructuosa que se repite</summary><p>Buscá la operación en Huellas operativas, inspeccioná los números de registro y abrí episodios relacionados en Historial. El agrupamiento sugiere dónde mirar, pero no asigna una causa a la repetición.</p></details>
+<details><summary>Un contexto demasiado extenso</summary><p>Revisá los campos con más bytes o contenido idéntico entre turnos, abrí el original y usá los checks del Visor LLM para proponer exclusiones. Antes de aplicarlas, compará variantes en Experimentos A/B.</p></details>
+<details><summary>Limitaciones y datos ausentes</summary><ul class="list" id="limitations"></ul></details>
+<p class="note">Esta pantalla es de diagnóstico. No modifica la partida, no reejecuta el LLM y no cambia los valores ni la disposición de las columnas de Pruebas, cuya revisión visual queda para evaluación con una partida real.</p>
+</section>
+</main>
+<script src="/assets/laboratorio_ui.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+let result=null,epoch=0;
+function node(tag,cls="",txt){
+ const n=document.createElement(tag);
+ if(cls)n.className=cls;
+ if(txt!==undefined)n.textContent=String(txt);
+ return n;
+}
+function add(parent,...children){children.forEach(child=>parent.appendChild(child));return parent}
+function cell(tr,tag,text,cls=""){
+ const el=node(tag,cls,text);tr.appendChild(el);return el;
+}
+function link(id,text){
+ const safe=/^[0-9a-f]{32}$/.test(id||"");
+ const n=node(safe?"a":"span","",text);
+ if(safe)n.href="/visor-llm?id="+encodeURIComponent(id);
+ return n;
+}
+function metric(label,value){
+ const card=node("div","metric");add(card,node("strong","",value),node("span","",label));return card;
+}
+function renderMatrix(){
+ const wrap=$("matrixWrap");wrap.replaceChildren();
+ if(!result)return;
+ const data=result.matrix.filter(row=>
+   (!$("#field-filter").value||row.field.toLowerCase().includes($("#field-filter").value.toLowerCase())) &&
+   (!$("#family-filter").value||row.family===$("#family-filter").value));
+ if(!result.turns.length){wrap.append(node("p","muted","No hay deliberaciones HTTP archivadas."));return}
+ if(!data.length){wrap.append(node("p","muted","No hay campos para este filtro."));return}
+ const table=node("table","matrix"),head=node("thead"),header=node("tr");
+ cell(header,"th","Campo · frecuencia");for(let i=0;i<result.turns.length;i++){
+  const turn=result.turns[i],th=cell(header,"th","");
+  add(th,link(turn.attempt_id,"T"+(i+1)));
+  th.title=(turn.simulated_at||"")+ " · "+turn.provider+
+    " · "+turn.status+" · "+turn.retry_count+" intento(s)";
+ }
+ head.append(header);table.append(head);
+ const tbody=node("tbody");
+ for(const row of data){
+   const tr=node("tr"),first=cell(tr,"td","");
+   add(first,node("strong","",row.title),node("div","small muted",
+       row.family+" · "+row.occurrences+"/"+result.turns.length+
+       (row.identical_when_present?" · idéntico cuando aparece":"")));
+   first.title=row.field+" · "+row.total_bytes+" bytes en esta ventana";
+   for(let i=0;i<result.turns.length;i++){
+      const item=row.cells[i],td=cell(tr,"td","");
+      if(!result.turns[i].indexed){
+         td.className="invalid";td.textContent="?";td.title="Captura ilegible";continue;
+      }
+      if(!item){td.className="missing";td.textContent="—";td.title="Campo ausente";continue}
+      td.className=item.empty===true?"empty":"present";
+      const a=link(result.turns[i].attempt_id,String(item.bytes));
+      td.append(a);
+      td.title=(item.empty===true?"Campo vacío · ":"")+"SHA "+item.sha256.slice(0,12)+
+        " · "+item.fragments+" fragmento(s)";
+   }
+   tbody.append(tr);
+ }
+ table.append(tbody);wrap.append(table);
+}
+function renderPatterns(){
+ const tb=$("patterns");tb.replaceChildren();
+ const pats=result?.operations?.patterns||[];
+ if(!pats.length){const tr=node("tr");cell(tr,"td","Sin diagnósticos de operación identificable").colSpan=5;tb.append(tr);return}
+ for(const p of pats){
+   const tr=node("tr"),name=cell(tr,"td","");
+   add(name,node("strong","",p.op),node("div","small muted",p.target||"Objetivo no archivado"));
+   cell(tr,"td",p.result);
+   cell(tr,"td",p.count);
+   cell(tr,"td",p.max_adjacent);
+   const trace=cell(tr,"td","");
+   const details=node("details"),summ=node("summary","","Registros archivados");
+   add(details,summ,node("p","small muted",p.sample_seq.join(", ")));
+   trace.append(details);tb.append(tr);
+ }
+}
+function renderMemory(){
+ const target=$("memory");target.replaceChildren();
+ const memory=result?.memory;
+ if(!memory)return;
+ add(target,node("p","muted",memory.with_explicit_request_id+
+   " experiencias con ID explícito en contexto, entre "+memory.experience_count_in_window+
+   " experiencias examinadas."));
+ if(!memory.experiences?.length){target.append(node("p","muted",
+  "No aparecen vínculos de ID explícitos en esta ventana. Esto no demuestra que la memoria no se haya enviado."));return;}
+ const table=node("table"),head=node("thead"),top=node("tr");
+ ["Experiencia","Evidencia archivada","Aparece en solicitud"].forEach(v=>cell(top,"th",v));
+ head.append(top);table.append(head);
+ const body=node("tbody");
+ for(const x of memory.experiences){
+   const tr=node("tr");
+   cell(tr,"td",x.id+" · historial "+x.history_seq);
+   cell(tr,"td","Medición: "+(x.measurement_id||"no indicada")+
+                      " · acción: "+(x.action_id||"no indicada"));
+   const dest=cell(tr,"td","");
+   x.in_requests.forEach((v,i)=>{
+     if(i)dest.append(node("span",""," · "));
+     dest.append(link(v.attempt_id,"T"+(v.turn_index+1)));
+   });
+   body.append(tr);
+ }
+ table.append(body);target.append(table);
+}
+function render(){
+ if(!result)return;
+ $("metrics").replaceChildren(
+  metric("Deliberaciones en ventana",result.window.visible_calls),
+  metric("Campos distintos",result.matrix.length),
+  metric("Diagnósticos con huella",result.operations.diagnostics_with_fingerprint),
+  metric("Experiencias con ID visible",result.memory.with_explicit_request_id));
+ const select=$("family-filter"),prev=select.value;
+ select.replaceChildren();
+ const any=node("option","", "Todas las familias");any.value="";select.append(any);
+ for(const family of [...new Set(result.matrix.map(x=>x.family))].sort()){
+   const opt=node("option","",family);opt.value=family;select.append(opt);
+ }
+ select.value=prev;
+ renderMatrix();renderPatterns();renderMemory();
+ const limitations=$("limitations");limitations.replaceChildren();
+ for(const text of [...result.limitations,...result.memory.limitations]){
+   limitations.append(node("li","",text));
+ }
+ const count=result.window.total_archived_calls;
+ $("status").textContent="Se analizaron "+result.window.visible_calls+
+   " deliberaciones de "+count+" archivadas. "+
+   (result.window.more_calls_exist?"La ventana no contiene todo el historial.":"");
+ $("export").disabled=false;
+}
+async function refresh(){
+ const req=++epoch;const button=$("refresh");
+ button.disabled=true;$("status").textContent="Leyendo la partida actual…";
+ try{
+   const response=await fetch("/api/lab/analysis?limit="+encodeURIComponent($("limit").value),
+     {cache:"no-store",credentials:"same-origin"});
+   const data=await response.json();if(!response.ok)throw Error(data.error||"Error de lectura");
+   if(req!==epoch)return;
+   result=data;render();$("status").classList.remove("error");
+ }catch(e){if(req===epoch){$("status").textContent=e.message;$("status").classList.add("error")}}
+ finally{if(req===epoch)button.disabled=false}
+}
+function exportReport(){
+ if(!result)return;
+ const blob=new Blob([JSON.stringify(result,null,2)+"\n"],{type:"application/json;charset=utf-8"});
+ const url=URL.createObjectURL(blob),a=node("a");
+ a.href=url;a.download="nilo_analisis_transversal.json";
+ document.body.append(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),15000);
+}
+$("refresh").addEventListener("click",refresh);
+$("field-filter").addEventListener("input",renderMatrix);
+$("family-filter").addEventListener("change",renderMatrix);
+$("export").addEventListener("click",exportReport);
+refresh();
+</script></body></html>
