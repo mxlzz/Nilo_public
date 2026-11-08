@@ -215,17 +215,53 @@ class MotorLab(SimulationSandbox):
 
 
 class HistorySource:
-    """Sólo administra un archivo de consulta. Nunca modifica la partida original."""
+    """Una selección local compartida por Historial y Experimentos A/B.
+
+    El navegador no puede conservar un input[type=file] entre páginas, por lo
+    que el servidor mantiene una copia temporal de solo lectura.
+    """
     def __init__(self):
         import tempfile
         self.lock = threading.RLock()
         self.path = DB if DB.is_file() else None
+        self.display_name = DB.name if self.path else None
+        self.origin = "carpeta" if self.path else None
         self.temp_directory = tempfile.TemporaryDirectory(prefix="nilo-historial-cargado-")
 
-    def load_bytes(self, data):
+    def describe(self, fallback=None):
+        """Metadatos públicos: nunca exponer rutas de archivos absolutas."""
+        with self.lock:
+            chosen = self.path if self.path is not None and self.path.is_file() else None
+            if chosen is not None:
+                name, origin = self.display_name or chosen.name, self.origin or "carpeta"
+            elif fallback is not None and Path(fallback).is_file():
+                chosen = Path(fallback)
+                name, origin = chosen.name, "carpeta"
+            else:
+                return {"available": False, "name": None,
+                        "origin": None, "size_bytes": None}
+            return {"available": True, "name": name, "origin": origin,
+                    "size_bytes": chosen.stat().st_size}
+
+    def selected_world(self, fallback=None):
+        """Retorna solo archivos seleccionados por el servidor local."""
+        with self.lock:
+            if self.path is not None and self.path.is_file():
+                return self.path
+            if fallback is not None and Path(fallback).is_file():
+                return Path(fallback)
+            raise ValueError("No hay una partida guardada disponible")
+
+    def load_bytes(self, data, *, name=None):
         if not data.startswith(b"SQLite format 3\x00"):
             raise ValueError("El archivo seleccionado no es una base SQLite válida.")
-        file = Path(self.temp_directory.name) / "partida_cargada.sqlite3"
+        import uuid
+        # El nombre que manda el navegador jamás define la ruta de escritura.
+        label = str(name or "partida_importada.sqlite3").replace(chr(92), "/").split("/")[-1]
+        label = "".join(c for c in label if c.isprintable())[:120]
+        if not label.lower().endswith((".sqlite3", ".sqlite", ".db")):
+            label = "partida_importada.sqlite3"
+        file = Path(self.temp_directory.name) / (uuid.uuid4().hex + ".sqlite3")
         with self.lock:
             file.write_bytes(data)
             from historical_lab import catalog
@@ -234,23 +270,32 @@ class HistorySource:
             except Exception:
                 file.unlink(missing_ok=True)
                 raise
+            # Copias anteriores pueden seguir usándose en un experimento A/B.
+            # El directorio completo se elimina al terminar este servidor.
             self.path = file
+            self.display_name = label
+            self.origin = "importada"
+            checked["source"] = label
+            checked["selection"] = self.describe()
             return checked
 
     def use_default(self):
         with self.lock:
             if not DB.is_file():
                 raise ValueError("No existe una partida en esta carpeta.")
-            self.path = DB
             from historical_lab import catalog
-            return catalog(self.path)
+            checked = catalog(DB)
+            self.path = DB
+            self.display_name = DB.name
+            self.origin = "carpeta"
+            checked["selection"] = self.describe()
+            return checked
 
     def require(self):
         with self.lock:
             if self.path is None or not self.path.is_file():
                 raise ValueError("No hay partida cargada. Elegí un archivo .sqlite3.")
             return self.path
-
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -326,6 +371,11 @@ class Handler(BaseHTTPRequestHandler):
                 self.json(analyze(self.hub.world,limit=int(value)))
             except (ValueError,TypeError,sqlite3.Error,OSError) as exc:
                 self.json({"error":str(exc)[:220]},400)
+        elif path == "/api/lab/world-source":
+            if urlsplit(self.path).query:
+                self.json({"error":"Esta consulta no admite parámetros"},400)
+            else:
+                self.json(self.history.describe(fallback=self.hub.world))
         elif path == "/api/lab/audit/info":
             # Solo versión/contrato del motor instalado, sin acceder a la
             # partida ni modificar configuración. Los commits de paquetes
@@ -444,6 +494,8 @@ class Handler(BaseHTTPRequestHandler):
                     result = self.history.use_default()
                 elif path.endswith("catalog"):
                     result = catalog(source)
+                    result["selection"] = self.history.describe()
+                    result["source"] = result["selection"]["name"]
                 else:
                     ids = parse_qs(urlsplit(self.path).query).get("id") or [""]
                     result = select_event(source, ids[0])
@@ -484,9 +536,10 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError("Origen o configuración de referencia inválidos")
                 # Solo el servidor decide el archivo original. Nunca usar una
                 # ruta o contenido de credenciales proporcionados por cliente.
-                saved=self.hub.world if source=="saved" else None
-                if source=="saved" and (saved is None or not saved.is_file()):
-                    raise ValueError("No hay una partida guardada disponible")
+                saved=(self.history.selected_world(fallback=self.hub.world)
+                       if source=="saved" else None)
+                source_info=(self.history.describe(fallback=self.hub.world)
+                             if source=="saved" else None)
                 if mode=="physical":
                     if set(body)-{"mode","seed","source","kit","provider",
                                   "profile","baseline_steps","variant_steps"}:
@@ -514,6 +567,8 @@ class Handler(BaseHTTPRequestHandler):
                         context_mode=body.get("context_mode","baseline"))
                 else:
                     raise ValueError("Modalidad de experimento no disponible")
+                if source_info is not None:
+                    result["selected_world"] = source_info
                 return self.json(result)
             except RequestError as exc:
                 return self.json({"error":str(exc)},exc.status)
@@ -572,7 +627,10 @@ class Handler(BaseHTTPRequestHandler):
                 data = self.rfile.read(size)
                 if len(data) != size:
                     raise ValueError("Carga incompleta.")
-                return self.json(self.history.load_bytes(data))
+                from urllib.parse import unquote
+                name=self.headers.get("X-Nilo-Filename","")
+                return self.json(self.history.load_bytes(
+                    data,name=unquote(name) if name else None))
             except (ValueError, OSError, sqlite3.Error) as exc:
                 return self.json({"error": str(exc)}, 400)
         if path not in ("/api/reset", "/api/act", "/api/manual", "/api/history/replay"):
