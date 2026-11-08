@@ -131,11 +131,18 @@ def physical_pair(*,seed=7321,baseline_steps=None,variant_steps=None,
     # No solicitar más allá del tiempo límite por rutina: no hay LLM.
     with ExitStack() as stack:
         labs=[]
-        for _ in range(2):
+        for i in range(2):
             lab=SimulationSandbox(_SilentTrace)
             stack.callback(lab.close)
-            lab.reset("partida" if source=="saved" else "nuevo",
-                      seed,kit,source=world_path if source=="saved" else None)
+            if i == 0:
+                lab.reset("partida" if source=="saved" else "nuevo",
+                          seed,kit,source=world_path if source=="saved" else None)
+            else:
+                # La segunda rama recibe un backup del MISMO snapshot que
+                # preparó la primera (incluyendo IDs, entropía y kit). Evita
+                # depender de que dos inicializaciones coincidan por azar.
+                reference=Path(labs[0]._temp.name)/"ensayo.sqlite3"
+                lab.reset("partida",seed,False,source=reference)
             labs.append(lab)
         if source not in ("new","saved"):
             raise ValueError("Origen de experimento desconocido")
@@ -280,11 +287,15 @@ def live_pair(hub,profile,*,provider="gemini",seed=7321,turns=1,
     try:
         with ExitStack() as stack:
             labs=[]
-            for _ in range(2):
+            for i in range(2):
                 lab=SimulationSandbox(_SilentTrace)
                 stack.callback(lab.close)
-                lab.reset("partida" if source=="saved" else "nuevo",
-                          seed,kit,source=world_path if source=="saved" else None)
+                if i == 0:
+                    lab.reset("partida" if source=="saved" else "nuevo",
+                              seed,kit,source=world_path if source=="saved" else None)
+                else:
+                    reference=Path(labs[0]._temp.name)/"ensayo.sqlite3"
+                    lab.reset("partida",seed,False,source=reference)
                 labs.append(lab)
             initial=[_projection(lab) for lab in labs]
             if initial[0]!=initial[1]:
@@ -330,7 +341,7 @@ def live_pair(hub,profile,*,provider="gemini",seed=7321,turns=1,
                 "baseline":{"profile":baseline()["name"],"turns":rows["baseline"]},
                 "variant":{"profile":candidate["name"],"turns":rows["variant"]},
                 "llm_calls":total,"max_llm_calls":2*turns,
-                "original_world_modified":False,
+                "modified_original_world":False,
                 "explicit_live_consent":True,
                 "limitations":[
                     "Se usaron el mismo mundo inicial y proveedor; las salidas del modelo son estocásticas.",
