@@ -14,6 +14,17 @@ SCHEMA = "nilo.lab.evaluation.v1"
 REQUIRED = frozenset(("posición", "necesidades", "proyecto_actual", "regla"))
 PROVIDERS = frozenset(("gemini", "groq"))
 
+from cognitive_projection import _INTERNAL_BODY_FIELDS
+
+
+def _contains_internal_reserves(value):
+    if isinstance(value, dict):
+        return (bool(_INTERNAL_BODY_FIELDS.intersection(value))
+                or any(_contains_internal_reserves(v) for v in value.values()))
+    if isinstance(value, list):
+        return any(_contains_internal_reserves(v) for v in value)
+    return False
+
 
 def _sha(text):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
@@ -62,6 +73,7 @@ def _branch(provider, view):
         "context_field_count": len(sent),
         "fields": sorted(sent),
         "absent_required_fields": absent,
+        "internal_body_measurements_exposed": _contains_internal_reserves(sent),
         "needs_numeric_reserve_exposed": (
             isinstance(sent.get("necesidades"), dict)
             and ("valores" in sent["necesidades"]
@@ -92,7 +104,9 @@ def analyze_context_ab(result):
         raise ValueError("Modo B incompatible con la solicitud")
     if a["model"] != b["model"]:
         raise ValueError("Comparación con modelos diferentes")
-    if a["needs_numeric_reserve_exposed"] or b["needs_numeric_reserve_exposed"]:
+    if (a["needs_numeric_reserve_exposed"] or b["needs_numeric_reserve_exposed"]
+            or a["internal_body_measurements_exposed"]
+            or b["internal_body_measurements_exposed"]):
         raise ValueError("Reservas corporales internas expuestas")
     a_fields, b_fields = set(a.pop("fields")), set(b.pop("fields"))
     return {
@@ -102,6 +116,8 @@ def analyze_context_ab(result):
         "variant_projection_sha256": result.get("variant_projection_sha256"),
         "same_initial_world": True,
         "same_cognitive_projection": comparison.get("identical_cognitive_projections", True),
+        "same_sent_evidence": comparison.get("same_sent_evidence"),
+        "sent_evidence_differences": comparison.get("sent_evidence_differences", {}),
         "baseline": a, "variant": b,
         "request_bytes_delta": b["bytes_request"] - a["bytes_request"],
         "request_bytes_change_pct": round(
@@ -117,6 +133,7 @@ def analyze_context_ab(result):
             "Las diferencias de tamaño son bytes UTF-8, no tokens del proveedor.",
             "La previsualización no incluye respuestas ni prueba autonomía o creatividad.",
             "La memoria recuperada puede variar entre proyecciones; comparar su SHA, no atribuir lectura al LLM.",
+            "Mismo estado inicial no implica igual evidencia efectivamente seleccionada para ambos prompts.",
         ],
     }
 
