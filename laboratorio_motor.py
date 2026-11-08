@@ -255,15 +255,19 @@ class HistorySource:
     def load_bytes(self, data, *, name=None):
         if not data.startswith(b"SQLite format 3\x00"):
             raise ValueError("El archivo seleccionado no es una base SQLite válida.")
-        import uuid
+        import tempfile
         # El nombre que manda el navegador jamás define la ruta de escritura.
         label = str(name or "partida_importada.sqlite3").replace(chr(92), "/").split("/")[-1]
         label = "".join(c for c in label if c.isprintable())[:120]
         if not label.lower().endswith((".sqlite3", ".sqlite", ".db")):
             label = "partida_importada.sqlite3"
-        file = Path(self.temp_directory.name) / (uuid.uuid4().hex + ".sqlite3")
         with self.lock:
-            file.write_bytes(data)
+            with tempfile.NamedTemporaryFile(
+                prefix="partida_", suffix=".sqlite3",
+                dir=self.temp_directory.name, delete=False,
+            ) as target:
+                target.write(data)
+                file = Path(target.name)
             from historical_lab import catalog
             try:
                 checked = catalog(file)
