@@ -11,7 +11,7 @@ import re
 
 from nilo_runtime.agent.budget import brief_actions, compact_context, bounded_context
 from nilo_runtime.agent.prompts import POLICY_RULES
-from nilo_runtime.core.operations import registered_operations
+from nilo_runtime.core.operations import registered_operations, COMMON_RULES
 
 
 # Una ausencia explícita sigue siendo informativa en el estado, la evidencia
@@ -170,7 +170,9 @@ def policy_sections(context, provider):
     # En ausencia de agenda o delegación, basta su síntesis, no recetas extensas.
     ids.update(("agenda", "delegacion"))
     compact = provider == "groq"
-    return [(key, short if compact else long)
+    # Aún no existe un adaptador de agenda cualitativa: el detalle antiguo
+    # expone un umbral interno de energía. Usar aquí su versión sin números.
+    return [(key, short if compact or key in ("agenda", "delegacion") else long)
             for key, long, short in POLICY_RULES if key in ids]
 
 
@@ -197,7 +199,7 @@ def modular_instructions(context, provider):
     detailed = _detailed_operations(context)
     detail = "\n".join("- " + name + ": " + registry[name].description
                        for name in detailed)
-    manual = index
+    manual = index + "\\nREGLAS GENERALES: " + COMMON_RULES
     if detail:
         manual += "\nDETALLES OPERATIVOS SEGÚN CONTEXTO (no son tareas):\n" + detail
     return system, manual
