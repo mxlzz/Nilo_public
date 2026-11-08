@@ -195,9 +195,14 @@ class CorrectionsStage11(unittest.TestCase):
              "action_result": {"success": False, "status": "precondition_failed",
                                "facts": ["No hay orilla conocida."]}},
         ]
-        rows = _execution_results(submitted, admitted, outcomes)
+        rows = _execution_results(
+            submitted, admitted, outcomes,
+            rejected_reasons=["Plan validado: inspect: Objetivo fuera de alcance."])
         self.assertEqual([r["state"] for r in rows],
                          ["completada", "bloqueada", "filtrada_antes_de_ejecutar"])
+        self.assertEqual(rows[2]["reason"],
+                         "Plan validado: inspect: Objetivo fuera de alcance.")
+        self.assertEqual(rows[2]["reason_source"], "motor.strategy_feedback")
         self.assertEqual(rows[0]["action_id"], "act-1")
         self.assertEqual(rows[0]["measurement_id"], "med-1")
         self.assertFalse(rows[1]["success"])
@@ -233,6 +238,9 @@ class CorrectionsStage11(unittest.TestCase):
                           ("completada", "fallida"))
             self.assertNotEqual(report["operation_results"][1]["state"],
                                 "completada")
+            if report["operation_results"][1]["state"] == "filtrada_antes_de_ejecutar":
+                self.assertEqual(report["operation_results"][1]["reason_source"],
+                                 "motor.strategy_feedback")
             self.assertEqual(report["recorded_successes"],
                              sum(s["state"] == "completada"
                                  for s in report["operation_results"]))
