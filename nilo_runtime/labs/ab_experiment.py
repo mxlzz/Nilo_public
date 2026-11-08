@@ -70,10 +70,28 @@ def _script(raw):
     return out
 
 
+def _context_mode(value):
+    if type(value) is not str or value not in ("baseline", "modular"):
+        raise ValueError("Modo de contexto experimental desconocido")
+    return value
+
+
+def _variant_context(lab, original, mode):
+    """La recuperación multifoco opera solo en la copia experimental."""
+    if mode == "baseline":
+        return original
+    from nilo_runtime.cognition.memory import recall_relevant
+    result = copy.deepcopy(original)
+    result["memorias_relevantes"] = recall_relevant(
+        lab.sim.s["person"], lab.sim.s["world"], limit=6, multi_focus=True)
+    return result
+
+
 def context_pair(hub,profile,*,provider="gemini",seed=7321,
-                 source="new",world_path=None,kit=False):
+                 source="new",world_path=None,kit=False,context_mode="baseline"):
     """Una sola percepción congelada compartida; jamás consulta proveedores."""
     _seed(seed)
+    context_mode=_context_mode(context_mode)
     candidate=validate(profile)
     if source not in ("new","saved"):
         raise ValueError("Origen de referencia desconocido")
@@ -85,13 +103,15 @@ def context_pair(hub,profile,*,provider="gemini",seed=7321,
         lab.reset("partida" if source=="saved" else "nuevo",
                   seed,kit,source=world_path if source=="saved" else None)
         context=contexto_de_deliberacion(lab.sim)
+        variant_context=_variant_context(lab,context,context_mode)
     identity=_sha(context)
+    variant_identity=_sha(variant_context)
     before=_request(baseline(),context,provider)
     if _sha(context)!=identity:
         raise ValueError("El constructor baseline modificó el contexto de referencia")
-    after=_request(candidate,context,provider)
-    if _sha(context)!=identity:
-        raise ValueError("El constructor variante modificó el contexto de referencia")
+    after=_request(candidate,variant_context,provider,context_mode=context_mode)
+    if _sha(context)!=identity or _sha(variant_context)!=variant_identity:
+        raise ValueError("El constructor modificó una percepción congelada")
     if before["enviado_a_llm"] or after["enviado_a_llm"]:
         raise ValueError("Una previsualización no puede marcarse como enviada")
     for view in (before,after):view["seed"]=seed
@@ -99,7 +119,8 @@ def context_pair(hub,profile,*,provider="gemini",seed=7321,
         "experiment_type":"context_ab",
         "source":"readonly_copy_of_saved_world" if source=="saved" else "fresh_isolated_seed",
         "seed":seed,"kit":kit,"provider":provider,"reference_sha256":identity,
-        "reference_type":"one_identical_frozen_perception",
+        "variant_projection_sha256":variant_identity,"context_mode":context_mode,
+        "reference_type":"one_frozen_world_two_explicit_cognitive_projections",
         "baseline":before,"variant":after,
         "comparison":{
             "baseline_bytes":before["bytes"],"variant_bytes":after["bytes"],
@@ -108,6 +129,7 @@ def context_pair(hub,profile,*,provider="gemini",seed=7321,
             "added_fields":sorted(set(after["campos_enviados"])-set(before["campos_enviados"])),
             "changed_request":before["huella_solicitud_calculada"]!=after["huella_solicitud_calculada"],
             "comparable_same_reference":True,
+            "identical_cognitive_projections":identity==variant_identity,
             "actual_model_response":False
         },
         "llm_calls":0,"modified_original_world":False,
@@ -261,7 +283,7 @@ def _drive_decision(lab,normalized):
 
 def live_pair(hub,profile,*,provider="gemini",seed=7321,turns=1,
               confirm=False,source="new",world_path=None,kit=False,
-              poster=None,sleep_fn=None):
+              poster=None,sleep_fn=None,context_mode="baseline"):
     """Llamadas reales sólo ante confirmación. Hasta dos deliberaciones por rama.
 
     En 1 turno: devuelve respuestas sin ejecutar. En 2 turnos: ejecuta cada
@@ -269,6 +291,7 @@ def live_pair(hub,profile,*,provider="gemini",seed=7321,turns=1,
     Modelos no deterministas: un A/B no prueba superioridad ni causalidad.
     """
     _seed(seed)
+    context_mode=_context_mode(context_mode)
     candidate=validate(profile)
     if provider not in ("gemini","groq"):
         raise ValueError("Proveedor no admitido")
@@ -311,12 +334,15 @@ def live_pair(hub,profile,*,provider="gemini",seed=7321,turns=1,
                 for name,lab,p in zip(("baseline","variant"),labs,(baseline(),candidate)):
                     if blocked[name]:continue
                     ctx=contexto_de_deliberacion(lab.sim)
-                    preview=_request(p,ctx,provider)
+                    candidate_ctx=_variant_context(lab,ctx,context_mode) if name=="variant" else ctx
+                    preview=_request(p,candidate_ctx,provider,
+                                     context_mode=context_mode if name=="variant" else "baseline")
                     # Pausa ENTRE solicitudes reales, no al construir JSON.
                     if total:pause(token_wait)
                     step={
                         "turn":round_i+1,"profile":p["name"],
                         "pre_context_sha256":_sha(ctx),
+                        "cognitive_projection_sha256":_sha(candidate_ctx),
                         "sent_preview_sha256":preview["huella_solicitud_calculada"],
                         "response":None,"world_effect":None,
                     }
@@ -358,7 +384,7 @@ def live_pair(hub,profile,*,provider="gemini",seed=7321,turns=1,
                     else "llm_two_branch_multiturn",
                 "source":"readonly_copy_of_saved_world" if source=="saved"
                     else "fresh_isolated_seed",
-                "seed":seed,"provider":provider,
+                "seed":seed,"provider":provider,"context_mode":context_mode,
                 "reference_sha256":fingerprint,
                 "baseline":{"profile":baseline()["name"],"turns":rows["baseline"]},
                 "variant":{"profile":candidate["name"],"turns":rows["variant"]},
