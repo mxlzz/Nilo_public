@@ -176,6 +176,46 @@ class ProviderOptinTests(unittest.TestCase):
                 self.assertTrue(turns[1]["world_effect"]["applied"])
             self.assertFalse(result["original_world_modified"])
 
+    def test_provider_failure_returns_partial_evidence_and_no_retry(self):
+        with tempfile.TemporaryDirectory() as td:
+            hub=LabHub(Path(td))
+            attempts=[]
+            def failing_first(url,payload,headers,provider):
+                attempts.append(provider)
+                if len(attempts)==1:raise OSError("fallo de conexión sintético")
+                return self.stub(url,payload,headers,provider)
+            with patch("nilo_runtime.labs.ab_experiment.config",
+                       return_value={"GROQ_API_KEY":"sintetica","MIN_REAL_SECONDS_BETWEEN_CALLS":"15"}):
+                result=live_pair(hub,candidate(),provider="groq",seed=7321,
+                                 confirm=True,turns=2,poster=failing_first,
+                                 sleep_fn=lambda _:None)
+            self.assertEqual(len(attempts),3)
+            self.assertEqual(result["llm_calls"],3)
+            self.assertIn("transport_error",result["baseline"]["turns"][0])
+            self.assertEqual(len(result["baseline"]["turns"]),1)
+            self.assertEqual(len(result["variant"]["turns"]),2)
+            self.assertFalse(result["modified_original_world"])
+
+    def test_invalid_llm_reply_does_not_trigger_second_round(self):
+        with tempfile.TemporaryDirectory() as td:
+            hub=LabHub(Path(td))
+            calls=[]
+            def invalid_first(url,payload,headers,provider):
+                calls.append(1)
+                if len(calls)==1:
+                    return {"choices":[{"message":{"content":"texto no JSON"}}],
+                            "usage":{"prompt_tokens":5,"completion_tokens":4}}
+                return self.stub(url,payload,headers,provider)
+            with patch("nilo_runtime.labs.ab_experiment.config",
+                       return_value={"GROQ_API_KEY":"sintetica","MIN_REAL_SECONDS_BETWEEN_CALLS":"15"}):
+                result=live_pair(hub,candidate(),provider="groq",seed=7321,
+                                 confirm=True,turns=2,poster=invalid_first,
+                                 sleep_fn=lambda _:None)
+            self.assertEqual(len(calls),3)
+            self.assertEqual(result["llm_calls"],3)
+            self.assertIsNotNone(result["baseline"]["turns"][0]["response"]["validation_error"])
+            self.assertEqual(len(result["baseline"]["turns"]),1)
+
     def test_missing_provider_key_fails_without_network(self):
         with tempfile.TemporaryDirectory() as td:
             hub=LabHub(Path(td))
