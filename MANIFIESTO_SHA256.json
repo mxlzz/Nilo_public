@@ -118,6 +118,7 @@
     "nilo_runtime/labs/cross_analysis.py": "sha256-calculated-during-packaging",
     "nilo_runtime/labs/episode_links.py": "sha256-calculated-during-packaging",
     "nilo_runtime/labs/episode_view.py": "sha256-calculated-during-packaging",
+    "nilo_runtime/labs/evaluation_11.py": "sha256-calculated-during-packaging",
     "nilo_runtime/labs/hub.py": "sha256-calculated-during-packaging",
     "nilo_runtime/labs/literal_segments.py": "sha256-calculated-during-packaging",
     "nilo_runtime/labs/llm_read.py": "sha256-calculated-during-packaging",
