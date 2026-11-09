@@ -182,6 +182,7 @@ def _live_branch(row):
                                        if isinstance(s, dict) and isinstance(s.get("op"), str)})
                                        if isinstance(plan, list) else [],
             "project_action_declared": normalized.get("accion_proyecto") if normalized else None,
+            "project_transition": effect.get("project_transition"),
             "reported_prompt_tokens": tokens.get("entrada", tokens.get("prompt_tokens")),
             "reported_output_tokens": tokens.get("salida", tokens.get("completion_tokens")),
             "physical_execution_attempted": effect.get("applied") is True,
@@ -204,6 +205,11 @@ def _live_branch(row):
         "declared_operation_types": sorted({name for row in entries
                                              for name in row["operation_types"]}),
         "semantic_warnings": sum(row["semantic_warning_count"] for row in entries),
+        "recorded_project_pauses": sum(
+            bool(isinstance(row.get("project_transition"),dict)
+                and row["project_transition"].get("previous_status_after")=="pausado"
+                and row["project_transition"].get("previous_status")=="activo")
+            for row in entries),
         "recorded_physical_failures": sum(row["recorded_failures"] or 0 for row in entries),
         "recorded_precondition_blocks": sum(row["recorded_blocks"] or 0 for row in entries),
         "recorded_not_evaluable": sum(row["recorded_not_evaluable"] or 0 for row in entries),
