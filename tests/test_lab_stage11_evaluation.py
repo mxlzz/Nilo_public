@@ -316,9 +316,42 @@ class CorrectionsStage11(unittest.TestCase):
             }))
             self.assertEqual(result["submitted_operations"], 0)
             self.assertFalse(result["plan_accepted"])
+            self.assertFalse(result["pending_or_unfinished"],
+                             "La escritura del cuaderno no es un plan físico inconcluso")
+            self.assertIsNone(lab.sim.s["person"]["pending"])
             self.assertIsNone(lab.sim.s["person"]["project"])
             self.assertEqual(lab.sim.s["person"]["projects"][-1]["status"], "pausado")
             self.assertIn("Pauso", lab.sim.s["journal"][-1]["text"])
+        finally:
+            lab.close()
+
+    def test_abandoning_without_physical_plan_does_not_block_next_llm_turn(self):
+        """Regresión de A/B real (día 4): plan=[] con abandono deja un write pendiente."""
+        lab = SimulationSandbox(_SilentTrace)
+        try:
+            lab.reset("nuevo", 7321, False)
+            _drive_decision(lab, normalize_decision({
+                "cuaderno": "Inicio una investigación.",
+                "objetivo": "Investigar ruinas",
+                "accion_proyecto": "nuevo",
+                "plan": [{"op": "wait", "minutes": 2}],
+            }))
+            project_id = lab.sim.s["person"]["project"]["id"]
+            result = _drive_decision(lab, normalize_decision({
+                "cuaderno": "Abandono esta búsqueda; no encontré un acceso.",
+                "objetivo": "Investigar ruinas",
+                "proyecto_id": project_id,
+                "accion_proyecto": "abandonar",
+                "plan": [],
+            }))
+            self.assertEqual(result["project_transition"]["previous_status_after"],"abandonado")
+            self.assertEqual(result["submitted_operations"],0)
+            self.assertEqual(result["admitted_operations"],0)
+            self.assertEqual(result["operation_results"],[])
+            self.assertFalse(result["pending_or_unfinished"],
+                             "Un cuaderno por terminar no debe bloquear la siguiente deliberación")
+            self.assertIsNone(lab.sim.s["person"]["pending"])
+            self.assertIsNone(lab.sim.s["person"]["project"])
         finally:
             lab.close()
 
