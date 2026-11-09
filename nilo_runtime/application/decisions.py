@@ -197,6 +197,7 @@ class DecisionUseCases:
                 p['research']=p['research'][-75:]
         record_decision_note(
             self,decision,source,project_id=chosen.get('id'),
+            owning_project_id=chosen.get('id'),
             research_id=research_entry.get('id') if research_entry else None,
             trace_link=_lab_link_note,tokens=tokens)
         saved[:]=saved[-55:]
