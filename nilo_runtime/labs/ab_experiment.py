@@ -449,14 +449,29 @@ def _drive_decision(lab,normalized):
     if pending.get("op") in {step.get("op") for step in submitted}:
         admitted.insert(0,copy.deepcopy(pending))
     accepted=bool(admitted)
+    # Un plan físico vacío es válido al pausar, abandonar o completar.
+    # journal() crea siempre un pending {op:write}; sin ejecutar el tiempo
+    # documental, el laboratorio lo trataba como una operación incompleta
+    # y bloqueaba injustificadamente la segunda deliberación del A/B.
+    journal_only=(not accepted and pending.get("op")=="write")
     ticks=0
-    if accepted:
-        for _ in range(_MAX_TICKS):
-            sim.tick(3.0)
-            ticks+=1
-            p=sim.s["person"]
-            if not p.get("pending") and not p.get("plan"):break
-            if p.get("unconscious"):break
+    if accepted or journal_only:
+        # En un turno sin acciones físicas, terminar solo la escritura.
+        # Evita que el tick desencadene una deliberación demo o una
+        # operación automática al vaciar el cuaderno en el sandbox.
+        prior_planning=sim.s.get("planning")
+        if journal_only:
+            sim.s["planning"]=True
+        try:
+            for _ in range(_MAX_TICKS):
+                sim.tick(3.0)
+                ticks+=1
+                p=sim.s["person"]
+                if not p.get("pending") and not p.get("plan"):break
+                if p.get("unconscious"):break
+        finally:
+            if journal_only:
+                sim.s["planning"]=prior_planning
     sim.write()
     after=_projection(lab)
     current_project=sim.s["person"].get("project")
@@ -504,6 +519,7 @@ def _drive_decision(lab,normalized):
                 if result.get("id") in {r.get("action_id") for r in operation_results}}
                 for j in range(len(outcomes))),
             "ticks":ticks,"pending_or_unfinished":unfinished,
+            "journal_only_completed":bool(journal_only and not unfinished),
             "before_sha256":_sha(before),"after_sha256":_sha(after),
             "position":after["position"],"time_after":after["minute"],
             "needs":after["needs"],"inventory":after["inventory"]}
