@@ -62,7 +62,8 @@ _POLICY_FOCUS = {
 }
 _POLICY_FIELD = {
     "continuidad": ("proyectos_reanudables", "antecedentes_relacionados",
-                    "ultimo_cierre_rechazado", "revision_de_estrategia",
+                    "ultimo_cierre_rechazado", "ultima_referencia_de_proyecto_rechazada",
+                     "revision_de_estrategia",
                     "investigaciones_pausadas_relacionadas"),
     "evaluacion-externa": ("evaluaciones_externas_recientes",
                            "diagnosticos_operativos_recientes"),
