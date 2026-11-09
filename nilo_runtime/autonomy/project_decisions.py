@@ -160,6 +160,7 @@ def apply_project_transition(sim, decision, source):
         target = selected if requested_id else (selected or current)
         if target is None:
             return _reject_project_reference(sim, action, requested_id)
+        person.pop("last_project_reference_rejection", None)
         if action == "completar":
             proof = (decision.get("prueba_cierre") or "").strip()
             evidence = completion_evidence(target, proof, person)
