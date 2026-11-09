@@ -480,8 +480,18 @@ def _drive_decision(lab,normalized):
                           sim.s["person"].get("projects", [])
                           if isinstance(item,dict)
                           and item.get("id")==prior_project_id),None)
+    reference_error=sim.s["person"].get("last_project_reference_rejection")
+    invalid_reference=(isinstance(reference_error,dict)
+        and reference_error.get("requested_action")==normalized.get("accion_proyecto")
+        and (reference_error.get("requested_id") or "")
+            ==(normalized.get("proyecto_id") or ""))
     project_transition={
         "requested_action":normalized.get("accion_proyecto"),
+        "requested_project_id":normalized.get("proyecto_id") or None,
+        "effective_action":("referencia_invalida" if invalid_reference
+                            else normalized.get("accion_proyecto")),
+        "reference_rejection":(copy.deepcopy(reference_error)
+                               if invalid_reference else None),
         "previous_project_id":prior_project_id,
         "previous_status":(previous_project or {}).get("status"),
         "previous_status_after":(
