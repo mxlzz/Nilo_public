@@ -153,6 +153,43 @@ class LiveStage11(unittest.TestCase):
         self.assertEqual(metric["variant"]["normalized_decisions"], 2)
         self.assertFalse(metric["causal_claim_allowed"])
 
+    def test_empty_plan_after_abandon_allows_both_llm_rounds(self):
+        """Reproduce el A/B real que cortó la rama B tras abandonar con plan=[]."""
+        calls = []
+        def abandoning_post(url, payload, headers, provider):
+            calls.append(copy.deepcopy(payload))
+            return {
+                "choices": [{"message": {"content": json.dumps({
+                    "cuaderno": "Dejo atrás esta búsqueda y consideraré otra idea.",
+                    "objetivo": "Investigar ruinas",
+                    "accion_proyecto": "abandonar",
+                    "plan": [],
+                })}}],
+                "usage": {"prompt_tokens": 200, "completion_tokens": 40},
+            }
+        with tempfile.TemporaryDirectory() as td:
+            with patch("nilo_runtime.labs.ab_experiment.config",
+                       return_value={"GROQ_API_KEY": "sintética",
+                                     "MIN_REAL_SECONDS_BETWEEN_CALLS": "15"}):
+                result = live_pair(LabHub(Path(td)), baseline(),
+                                   provider="groq", seed=7321, turns=2,
+                                   context_mode="modular", confirm=True,
+                                   poster=abandoning_post,
+                                   sleep_fn=lambda _: None)
+        self.assertEqual(result["llm_calls"], 4)
+        self.assertEqual(len(calls), 4)
+        for name in ("baseline", "variant"):
+            turns = result[name]["turns"]
+            self.assertEqual(len(turns), 2)
+            for turn in turns:
+                effect = turn["world_effect"]
+                self.assertFalse(effect["plan_accepted"])
+                self.assertFalse(effect["pending_or_unfinished"])
+                self.assertTrue(effect["journal_only_completed"])
+                self.assertEqual(effect["submitted_operations"], 0)
+                self.assertEqual(effect["admitted_operations"], 0)
+                self.assertEqual(effect["operation_results"], [])
+
     def test_live_report_rejects_missing_consent(self):
         report = {"experiment_type": "llm_two_branch_deliberation",
                   "explicit_live_consent": False,
