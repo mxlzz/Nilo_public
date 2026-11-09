@@ -156,6 +156,13 @@ function renderLiveEvidence(root,label,branch){
     (warning.received_key?" · recibido como "+String(warning.received_key):"")));
   }
   if(effect.applied){
+   const transition=effect.project_transition||{};
+   if(transition.requested_action==="pausar"){
+    const paused=transition.previous_status_after==="pausado";
+    part.append(element("p","muted","Pausa del proyecto: "+
+     (paused?"registrada en el mundo":"no confirmada")+
+     ". Las acciones posteriores se verifican por separado."));
+   }
    part.append(element("p","muted","Plan enviado: "+String(effect.submitted_operations??"?")+
     " pasos · admitidos: "+String(effect.admitted_operations??"?")+
     ". La aceptación no implica éxito físico."));
