@@ -251,6 +251,77 @@ class CorrectionsStage11(unittest.TestCase):
         finally:
             lab.close()
 
+    def test_pausing_project_does_not_discard_voluntary_rest(self):
+        """Caso real: Gemini pidió pausar el proyecto y descansar 120 min."""
+        lab = SimulationSandbox(_SilentTrace)
+        try:
+            lab.reset("nuevo", 7321, False)
+            first = normalize_decision({
+                "cuaderno": "Voy a reconocer el terreno.",
+                "objetivo": "Investigar si hay un acceso junto a las ruinas.",
+                "motivo": "Quiero orientarme.",
+                "accion_proyecto": "nuevo",
+                "plan": [{"op": "inspect", "x": 15, "y": 10}],
+            })
+            _drive_decision(lab, first)
+            original_project = lab.sim.s["person"]["project"]
+            self.assertIsNotNone(original_project)
+            project_id = original_project["id"]
+            t0 = lab.sim.s["person"]["clock_minutes"]
+            journal_count = len(lab.sim.s["journal"])
+            pause = normalize_decision({
+                "cuaderno": "Pausaré la investigación y descansaré.",
+                "objetivo": original_project["title"],
+                "motivo": "El procedimiento ya no aporta información.",
+                "proyecto_id": project_id,
+                "accion_proyecto": "pausar",
+                "revisar_en_minutos": 120,
+                "plan": [{"op": "rest", "minutes": 120}],
+            })
+            result = _drive_decision(lab, pause)
+            self.assertTrue(result["plan_accepted"])
+            self.assertEqual(result["submitted_operations"], 1)
+            self.assertEqual(result["admitted_operations"], 1)
+            self.assertEqual(result["operation_results"][0]["op"], "rest")
+            self.assertEqual(result["operation_results"][0]["state"], "completada")
+            self.assertGreater(result["time_after"] - t0, 110)
+            self.assertIsNone(lab.sim.s["person"]["project"])
+            archived = [p for p in lab.sim.s["person"]["projects"]
+                        if p["id"] == project_id]
+            self.assertEqual(len(archived), 1)
+            self.assertEqual(archived[0]["status"], "pausado")
+            self.assertGreater(len(lab.sim.s["journal"]), journal_count)
+            self.assertEqual(lab.sim.s["journal"][-1]["project_id"], project_id)
+            self.assertIn("Pausaré", lab.sim.s["journal"][-1]["text"])
+        finally:
+            lab.close()
+
+    def test_pausing_without_plan_still_archives_and_records_cuaderno(self):
+        lab = SimulationSandbox(_SilentTrace)
+        try:
+            lab.reset("nuevo", 7321, False)
+            _drive_decision(lab, normalize_decision({
+                "cuaderno": "Quiero averiguar si hay agua.",
+                "objetivo": "Buscar agua",
+                "accion_proyecto": "nuevo",
+                "plan": [{"op": "wait", "minutes": 2}],
+            }))
+            project_id = lab.sim.s["person"]["project"]["id"]
+            result = _drive_decision(lab, normalize_decision({
+                "cuaderno": "Pauso esta idea; todavía no tengo evidencia.",
+                "objetivo": "Buscar agua",
+                "proyecto_id": project_id,
+                "accion_proyecto": "pausar",
+                "plan": [],
+            }))
+            self.assertEqual(result["submitted_operations"], 0)
+            self.assertFalse(result["plan_accepted"])
+            self.assertIsNone(lab.sim.s["person"]["project"])
+            self.assertEqual(lab.sim.s["person"]["projects"][-1]["status"], "pausado")
+            self.assertIn("Pauso", lab.sim.s["journal"][-1]["text"])
+        finally:
+            lab.close()
+
     def test_modular_start_has_full_navigation_contracts_both_providers(self):
         context = {"momento": "Día 1 · 00:00", "posición": [15, 10, 0],
                    "proyecto_actual": None, "investigaciones_activas": [],
