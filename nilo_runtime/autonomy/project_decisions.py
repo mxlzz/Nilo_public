@@ -178,6 +178,12 @@ def apply_project_transition(sim, decision, source):
                 ". Revisar sus evidencias y motivo antes de considerar nueva una prueba repetida.")
         sim.event(["Me propuse: " + chosen["title"]], "decision", True)
     else:
+        if (current and current.get("id") != chosen.get("id")
+                and current.get("status") != "terminado"):
+            # Reanudar otro proyecto no puede dejar al anterior activo pero
+            # huérfano: siempre retirarlo con su agenda e investigaciones.
+            retire_project(person, current, "pausado", sim.stamp(),
+                           reason=current.get("state") or "Cambio de proyecto")
         if chosen.get("status") == "pausado":
             for task in person.get("agenda", []):
                 if (task.get("proyecto_id") == chosen.get("id")
