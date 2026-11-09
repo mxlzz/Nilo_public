@@ -172,6 +172,62 @@ class ProjectDecisionBoundaries(unittest.TestCase):
             True,True,["Observé otra roca."],stamp)
         self.assertEqual(self.person["life_history"][-1]["project_id"],project_id)
 
+    def test_research_id_cannot_reopen_or_silently_create_project(self):
+        # Reproduce el A/B real: tras abandonar, Gemini usa un ID de
+        # investigaciones_activas como si fuera proyecto_id.
+        research_id="f2418e2d"
+        self.person.setdefault("research",[]).append({
+            "id":research_id,"question":"¿Puedo recuperar energía?",
+            "hypothesis":"Descansar ayuda","state":"abierta",
+        })
+        self.assertIsNone(self.person.get("project"))
+        result=self.decide(
+            "continuar",[{"op":"rest","minutes":60}],
+            objetivo="Recuperar energía mediante descanso voluntario",
+            proyecto_id=research_id)
+        self.assertTrue(result["plan_accepted"])
+        self.assertEqual(result["operation_results"][0]["op"],"rest")
+        self.assertEqual(result["operation_results"][0]["state"],"completada")
+        self.assertIsNone(self.person.get("project"))
+        self.assertIsNone(result["project_transition"]["current_project_id"])
+        self.assertEqual(result["project_transition"]["effective_action"],
+                         "referencia_invalida")
+        self.assertEqual(self.person["last_project_reference_rejection"]
+                         ["requested_id"],research_id)
+        self.assertEqual(self.person["last_project_reference_rejection"]
+                         ["reason_code"],"id_de_investigacion")
+        self.assertNotIn("project_id",self.lab.sim.s["journal"][-1])
+        self.assertIsNone(self.person["action_outcomes"][-1].get("project_id"))
+        from laboratorio_contexto import contexto_de_deliberacion, solicitud_completa
+        msg=solicitud_completa(contexto_de_deliberacion(self.lab.sim),
+                               "gemini")["datos_recibidos_con_valores"]
+        self.assertEqual(msg["ultima_referencia_de_proyecto_rechazada"]
+                         ["reason_code"],"id_de_investigacion")
+
+    def test_invalid_project_id_cannot_close_a_different_active_project(self):
+        # El fallback de selección no puede archivar el proyecto equivocado.
+        active_id=self.start_project()
+        result=self.decide(
+            "abandonar",[{"op":"wait","minutes":4}],
+            proyecto_id="id-inexistente")
+        self.assertEqual(result["operation_results"][0]["state"],"completada")
+        self.assertEqual(self.person["project"]["id"],active_id)
+        self.assertEqual(self.person["project"]["status"],"activo")
+        self.assertEqual(result["project_transition"]["effective_action"],
+                         "referencia_invalida")
+        self.assertIsNone(self.archived(active_id))
+
+    def test_invalid_continue_does_not_reassign_to_current_project(self):
+        active_id=self.start_project()
+        steps=self.person["project"].get("steps_done",0)
+        result=self.decide(
+            "continuar",[{"op":"rest","minutes":20}],
+            proyecto_id="id-de-investigacion",objetivo="Descansar")
+        self.assertEqual(result["operation_results"][0]["state"],"completada")
+        self.assertEqual(self.person["project"]["id"],active_id)
+        self.assertEqual(self.person["project"]["steps_done"],steps)
+        self.assertIsNone(self.person["action_outcomes"][-1].get("project_id"))
+
     def test_legacy_steps_without_ownership_marker_keep_old_projection(self):
         active={"id":"hist","status":"activo"}
         p={"project":active}
