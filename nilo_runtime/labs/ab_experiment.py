@@ -428,6 +428,7 @@ def _drive_decision(lab,normalized):
         return {"applied":False,"reason":"Respuesta LLM sin plan normalizado"}
     sim=lab.sim
     before=_projection(lab)
+    previous_project=copy.deepcopy(sim.s["person"].get("project"))
     prior_ids={row.get("id") for row in sim.s["person"].get("action_outcomes",[])
                if isinstance(row,dict)}
     prior_feedback=list(sim.s["person"].get("strategy_feedback") or [])
@@ -458,6 +459,23 @@ def _drive_decision(lab,normalized):
             if p.get("unconscious"):break
     sim.write()
     after=_projection(lab)
+    current_project=sim.s["person"].get("project")
+    prior_project_id=(previous_project or {}).get("id")
+    previous_record=next((item for item in
+                          sim.s["person"].get("projects", [])
+                          if isinstance(item,dict)
+                          and item.get("id")==prior_project_id),None)
+    project_transition={
+        "requested_action":normalized.get("accion_proyecto"),
+        "previous_project_id":prior_project_id,
+        "previous_status":(previous_project or {}).get("status"),
+        "previous_status_after":(
+            (current_project or {}).get("status")
+            if (current_project or {}).get("id")==prior_project_id
+            else (previous_record or {}).get("status")),
+        "current_project_id":(current_project or {}).get("id"),
+        "current_status":(current_project or {}).get("status"),
+    }
     unfinished=bool(sim.s["person"].get("pending") or sim.s["person"].get("plan"))
     outcomes=[row for row in sim.s["person"].get("action_outcomes",[])
               if isinstance(row,dict) and row.get("id") not in prior_ids
@@ -468,6 +486,7 @@ def _drive_decision(lab,normalized):
                                          unfinished=unfinished,
                                          rejected_reasons=new_feedback)
     return {"applied":True,"plan_accepted":accepted,
+            "project_transition":project_transition,
             "plan_accepted_means":"cola de acciones admitida; no éxito físico",
             "submitted_operations":len(submitted),
             "admitted_operations":len(admitted),
