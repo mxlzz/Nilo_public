@@ -31,7 +31,7 @@ los tipos concretos de acción y de la formulación del proyecto.
    deliberada a su propia nota y a un **dueño explícito**:
    `_decision_project_id`, que puede valer `null`.
 5. `ClockUseCases` verifica las precondiciones y ejecuta operaciones en
-   el mundo. `active_project_for_action` registra sus efectos en el
+   el mundo. `nilo_runtime.core.action_ownership.active_project_for_action` registra sus efectos en el
    proyecto **solo si el dueño explícito coincide con el proyecto
    actualmente activo**. Las acciones históricas sin esa marca conservan
    compatibilidad con las partidas antiguas.
