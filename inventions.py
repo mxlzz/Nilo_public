@@ -384,7 +384,7 @@ def record_personal_experience(person,step,success,notable,facts,stamp,*,
         if isinstance(action_id,str) and action_id:
             entry['action_id']=action_id
         from nilo_runtime.autonomy.decision_intents import active_project_for_action
-    project_id=(active_project_for_action(person,step) or {}).get('id')
+        project_id=(active_project_for_action(person,step) or {}).get('id')
         if isinstance(project_id,str) and project_id:entry['project_id']=project_id
     person['experience_summary'].append(entry)
     person['life_history'].append(entry)  # Registro íntegro: no se trunca al reducir contexto LLM.
