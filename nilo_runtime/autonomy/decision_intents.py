@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from agenda import set_agenda
 from habits import set_wait_preferences
+from nilo_runtime.core.action_ownership import active_project_for_action
 
 
 def admit_immediate_actions(sim, decision, source, transition):
@@ -61,20 +62,6 @@ def admit_immediate_actions(sim, decision, source, transition):
         sim.event([f"Preparé {len(added)} tarea(s) para ejecutar más adelante, "
                    "si se cumplen las condiciones."], "decisión")
 
-
-def active_project_for_action(person, step):
-    """Resolver el propietario de CADA paso sin inferirlo del estado actual.
-
-    La marca ausente indica plan histórico o rutina y mantiene compatibilidad;
-    la marca explícita None significa acción independiente, incluso cuando
-    hay otro proyecto activo. Nunca se asocia a un proyecto ya archivado.
-    """
-    current = person.get("project")
-    if "_decision_project_id" not in step:
-        return current
-    if current and step["_decision_project_id"] == current.get("id"):
-        return current
-    return None
 
 
 def record_decision_note(sim, decision, source, project_id=None,
