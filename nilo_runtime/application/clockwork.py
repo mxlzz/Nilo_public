@@ -5,7 +5,7 @@ mantienen sus pasos, efectos y contratos originales.
 """
 from __future__ import annotations
 from .deps import *
-from nilo_runtime.autonomy.decision_intents import active_project_for_action
+from nilo_runtime.core.action_ownership import active_project_for_action
 
 class ClockUseCases:
     @entropy_scoped
