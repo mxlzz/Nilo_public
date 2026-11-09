@@ -141,6 +141,24 @@ class ProjectDecisionBoundaries(unittest.TestCase):
         self.assertEqual(self.person["project"]["status"],"activo")
         self.assertIsNone(self.archived(project_id))
 
+    def test_resume_other_project_formally_retires_current(self):
+        # Reanudar B mientras A está activo no puede dejar A huérfano.
+        id_a=self.start_project()
+        self.decide("pausar",[{"op":"wait","minutes":2}],
+                    proyecto_id=id_a)
+        self.decide("nuevo",[{"op":"wait","minutes":2}],
+                    objetivo="Investigación alternativa B")
+        id_b=self.person["project"]["id"]
+        self.assertNotEqual(id_a,id_b)
+        result=self.decide("continuar",[{"op":"wait","minutes":3}],
+                           proyecto_id=id_a,
+                           objetivo="Estudiar el territorio")
+        self.assertEqual(result["operation_results"][0]["state"],"completada")
+        self.assertEqual(self.person["project"]["id"],id_a)
+        self.assertEqual(self.person["project"]["status"],"activo")
+        self.assertEqual(self.archived(id_b)["status"],"pausado")
+        self.assertIsNone(self.archived(id_a))
+
     def test_legacy_steps_without_ownership_marker_keep_old_projection(self):
         active={"id":"hist","status":"activo"}
         p={"project":active}
