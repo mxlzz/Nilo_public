@@ -174,14 +174,35 @@ class DecisionUseCases:
                 retire_project(p,target,status,self.stamp(),
                                reason=decision.get('estado_actual') or decision.get('motivo'),
                                evidence=closure if status=='terminado' else None)
-                p['plan']=[]
-                p['review_at_minutes']=p.get('clock_minutes',0)
+                # Pausar el proyecto no revoca las decisiones personales del
+                # mismo turno. Por ejemplo, "pausar + rest(120)" debe conservar
+                # el descanso, pero sin reactivar ni atribuirle avance al
+                # proyecto archivado. Completar/abandonar mantienen su
+                # semántica anterior: cierre sin operaciones posteriores.
+                p['plan']=(self.validate_plan(self.improve_plan(decision['plan']))
+                           if status=='pausado' else [])
+                p['review_at_minutes']=(p.get('clock_minutes',0)
+                    +decision.get('revisar_en_minutos',90)
+                    if status=='pausado' and p['plan']
+                    else p.get('clock_minutes',0))
                 p['local_followups']=0
                 if (getattr(self,'legacy_replay_rules',False)
                         or getattr(self,'historical_replay',False)):
                     p['active_research']=None
                 if source=='llm':
                     set_wait_preferences(p,[],self.stamp())
+                if status=='pausado':
+                    # La pausa también es una decisión de Nilo: su cuaderno
+                    # debe conservarse aunque ya no exista proyecto activo.
+                    note=self.journal(
+                        decision['cuaderno'],decision.get('pregunta',''),
+                        decision.get('hipotesis',''),source,
+                        linked={'project_id':target.get('id')})
+                    _lab_link_note(note)
+                    for action in p['plan']:
+                        if action.get('_origin') not in ('agenda','espera','rutina','motor'):
+                            action['_journal_id']=note['id']
+                    if tokens:self.s['last_tokens']=tokens
                 message=(
                     'Di por terminado el proyecto con la evidencia registrada: '
                     if status=='terminado' else
