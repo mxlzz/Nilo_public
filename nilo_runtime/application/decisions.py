@@ -6,6 +6,10 @@ mantienen sus pasos, efectos y contratos originales.
 from __future__ import annotations
 from .deps import *
 from nilo_runtime.agent.trace_context import capture_call, response_phase
+from nilo_runtime.autonomy.project_decisions import apply_project_transition
+from nilo_runtime.autonomy.decision_intents import (
+    admit_immediate_actions, record_decision_note,
+)
 
 class DecisionUseCases:
     def validate_plan(self,steps):
@@ -87,196 +91,27 @@ class DecisionUseCases:
             except (ValueError,TypeError,KeyError,sqlite3.Error,AttributeError):
                 pass  # La observación nunca impide la vida de Nilo.
 
-        current=p.get('project');saved=p.setdefault('projects',[])
-        objective=decision['objetivo'] or 'Investigar el entorno'
-        selected_id=decision.get('proyecto_id') or ''
-        project_action=decision.get('accion_proyecto','nuevo')
-        if project_action=='sin_proyecto':
-            # Vivir, observar o descansar no crea un proyecto ficticio.
-            # Un proyecto existente se conserva intacto; esta deliberación
-            # no le atribuye avances que corresponden a otra actividad.
-            p['plan']=self.validate_plan(self.improve_plan(decision['plan']))
-            p['review_at_minutes']=p.get('clock_minutes',0)+decision.get('revisar_en_minutos',90)
-            p['local_followups']=0
-            self.s['last_reason']=decision.get('motivo','')
-            if source=='llm':
-                set_wait_preferences(p,decision.get('actividades_en_espera'),self.stamp())
-                set_agenda(p,decision.get('agenda',[]),p['clock_minutes'],None)
+        # Dominio de proyectos: solo continuidad, evidencia y archivo.
+        # Dominio de acciones: valida y admite el plan, independientemente de
+        # la transición; ninguna operación obtiene éxito sin el motor físico.
+        transition=apply_project_transition(self,decision,source)
+        chosen=transition.project
+        admit_immediate_actions(self,decision,source,transition)
+        if transition.kind!='active':
             research_entry=None
-            if decision.get('pregunta'):
+            if transition.kind=='unassigned' and decision.get('pregunta'):
                 research_entry,_=register_research(
                     p,decision['pregunta'],decision.get('hipotesis',''),
                     self.stamp(),str(new_uuid())[:8])
                 p['research']=p['research'][-75:]
-            note=self.journal(decision['cuaderno'],decision.get('pregunta',''),
-                              decision.get('hipotesis',''),source,
-                              linked={'research_id':research_entry.get('id') if research_entry else None})
-            _lab_link_note(note)
-            for action in p['plan']:
-                if action.get('_origin') not in ('agenda','espera','rutina','motor'):
-                    action['_journal_id']=note['id']
-            if tokens:self.s['last_tokens']=tokens
+            record_decision_note(
+                self,decision,source,project_id=transition.project_id,
+                research_id=research_entry.get('id') if research_entry else None,
+                trace_link=_lab_link_note,tokens=tokens)
             self.write()
             return
-        if project_action=='nuevo':selected_id=''  # Un proyecto nuevo jamás reutiliza un ID anterior.
-        chosen=None
-        if selected_id and current and selected_id==current.get('id'):chosen=current
-        if selected_id and not chosen:
-            found=next((r for r in saved if r.get('id')==selected_id and r.get('status')!='terminado'),None)
-            if found:
-                saved.remove(found);chosen=found
-        if not chosen and current and (project_action=='continuar' or (project_action!='nuevo' and difflib.SequenceMatcher(None,current.get('title','').lower(),objective.lower()).ratio()>.82)):
-            chosen=current
-        proof=decision.get('prueba_cierre','').strip()
-        closure=completion_evidence(chosen or current,proof,p)
-        proof_ok=bool(closure)
-        # Terminar, abandonar y pausar son decisiones diferentes; no crear un
-        # proyecto idéntico después de cerrar uno durante la misma deliberación.
-        if project_action in ('completar','abandonar','pausar'):
-            target=chosen or current
-            if project_action=='completar' and not proof_ok:
-                from goal_evidence import check_goal
-                valid_goal,goal_ids,reason=check_goal(target,p,proof) if target else (False,[],'No hay proyecto activo.')
-                if valid_goal:
-                    reason=('El objetivo tiene mediciones pertinentes, pero la prueba de cierre '
-                            'no cita una de ellas. ID verificable: '+', '.join(goal_ids[:5])+'.')
-                closure_fields={}
-                if not getattr(self,'historical_replay',False):
-                    diagnosis=closure_diagnostic(target,p,proof)
-                    closure_fields={'estado_verificacion':diagnosis['estado'],
-                                    'ids_evidencia_pertinente':diagnosis['ids_evidencia'][:6],
-                                    'limitacion_fisica':(diagnosis['motivo']
-                                        if diagnosis['estado']=='criterio_no_instrumentado' else None)}
-                p['last_closure_rejection']={
-                    **closure_fields,
-                    'project_id':(target or {}).get('id'),
-                    'objective':(target or {}).get('title'),
-                    'reason':reason,'when':self.stamp(),
-                    'not_a_completed_goal':True,
-                    'next_options':(['reformular el objetivo hacia una propiedad medible',
-                                      'pausar','abandonar']
-                                     if closure_fields.get('estado_verificacion')=='criterio_no_instrumentado'
-                                     else ['continuar con una evidencia pertinente','pausar','abandonar'])}
-                self.event(['No puedo declarar el objetivo cumplido: '+reason+
-                            ' Puedo continuar, pausarlo o abandonarlo sin simular un éxito.'],
-                           'evaluación')
-                if current:chosen=current
-            elif target is not None:
-                status={'completar':'terminado','abandonar':'abandonado',
-                        'pausar':'pausado'}[project_action]
-                if status=='pausado' and source=='llm':
-                    # Los recordatorios pueden mantenerse activos al suspender
-                    # una investigacion. No ejecutan tareas sin consentimiento.
-                    reminders=[a for a in decision.get('agenda',[])
-                               if isinstance(a,dict) and a.get('modo')=='recordatorio']
-                    registered=set_agenda(p,reminders,p['clock_minutes'],target.get('id'))
-                    if registered:self.event([f'Deje {len(registered)} recordatorio(s) para reconsiderar este proyecto al cumplirse sus condiciones.'],'agenda')
-                retire_project(p,target,status,self.stamp(),
-                               reason=decision.get('estado_actual') or decision.get('motivo'),
-                               evidence=closure if status=='terminado' else None)
-                # Pausar el proyecto no revoca las decisiones personales del
-                # mismo turno. Por ejemplo, "pausar + rest(120)" debe conservar
-                # el descanso, pero sin reactivar ni atribuirle avance al
-                # proyecto archivado. Completar/abandonar mantienen su
-                # semántica anterior: cierre sin operaciones posteriores.
-                p['plan']=(self.validate_plan(self.improve_plan(decision['plan']))
-                           if status=='pausado' else [])
-                p['review_at_minutes']=(p.get('clock_minutes',0)
-                    +decision.get('revisar_en_minutos',90)
-                    if status=='pausado' and p['plan']
-                    else p.get('clock_minutes',0))
-                p['local_followups']=0
-                if (getattr(self,'legacy_replay_rules',False)
-                        or getattr(self,'historical_replay',False)):
-                    p['active_research']=None
-                if source=='llm':
-                    set_wait_preferences(p,[],self.stamp())
-                if status=='pausado':
-                    # La pausa también es una decisión de Nilo: su cuaderno
-                    # debe conservarse aunque ya no exista proyecto activo.
-                    note=self.journal(
-                        decision['cuaderno'],decision.get('pregunta',''),
-                        decision.get('hipotesis',''),source,
-                        linked={'project_id':target.get('id')})
-                    _lab_link_note(note)
-                    for action in p['plan']:
-                        if action.get('_origin') not in ('agenda','espera','rutina','motor'):
-                            action['_journal_id']=note['id']
-                    if tokens:self.s['last_tokens']=tokens
-                message=(
-                    'Di por terminado el proyecto con la evidencia registrada: '
-                    if status=='terminado' else
-                    'Decidí abandonar esta investigación sin declarar el objetivo cumplido: '
-                    if status=='abandonado' else
-                    'Decidí pausar la investigación y conservar sus resultados: '
-                )+target.get('title','Proyecto')
-                self.event([message],'decision',True)
-                self.write()
-                return
-            else:
-                self.event(['No hay un proyecto identificado para cerrar o pausar.'],
-                           'evaluación')
-                p['plan']=[]
-                self.write()
-                return
-        if chosen is None:
-            # Al abrir un proyecto similar a otro pausado, conservar el motivo
-            # anterior. No bloquear la decisión de retomarlo ni inventar un éxito.
-            from cognition import same_research
-            precedent=next((old for old in reversed(saved)
-                if old.get('status') in ('pausado','abandonado')
-                and same_research(old.get('title',''),objective)),None)
-            if current and current.get('status')!='terminado':
-                current['status']='pausado';current['state']=current.get('state') or 'Pendiente de retomar'
-                if current not in saved:saved.append(current)
-            chosen={'id':str(new_uuid())[:8],'title':objective,'reason':decision['motivo'],
-                    'started':self.stamp(),'source':source,'status':'activo','progress':0,
-                    'steps_done':0,'failed_actions':0,'no_progress_steps':0,'verified_results':[],'subgoals':[],
-                    'deliberations':0,'deliberations_since_progress':0,
-                    'state':decision.get('estado_actual') or 'Definiendo los siguientes pasos'}
-            if precedent:
-                chosen['antecedente_pausado']={
-                    'id':precedent.get('id'),'titulo':precedent.get('title'),
-                    'estado':precedent.get('status'),
-                    'motivo':precedent.get('closure_reason'),
-                    'acciones_sin_avance':precedent.get('no_progress_steps',0)}
-                self.remember_strategy(
-                    'Este tema se parece a una investigación antes suspendida: '
-                    +str(precedent.get('title',''))[:95]+'. Revisar sus evidencias '
-                    'y motivo antes de considerar nueva una prueba repetida.')
-            self.event([f"Me propuse: {chosen['title']}"],'decision',True)
-        else:
-            if chosen.get('status')=='pausado':
-                for task in p.get('agenda',[]):
-                    if (task.get('proyecto_id')==chosen.get('id')
-                            and task.get('ultimo_motivo')=='Proyecto pausado'
-                            and task.get('estado')=='pospuesta'):
-                        task['reanudar_minuto']=p.get('clock_minutes',0)
-                        task['ultimo_motivo']='Proyecto retomado'
-            acknowledge_reminders(p,chosen.get('id'),self.stamp())
-            chosen['status']='activo';chosen['reason']=decision['motivo'] or chosen.get('reason','')
-            chosen['state']=decision.get('estado_actual') or chosen.get('state','Continuando la investigación')
-            self.event([f"Retomé el proyecto: {chosen['title']}"],'decision')
-        # El porcentaje lo estima el personaje; se presenta como estimación, nunca verificación automática.
-        chosen['progress']=min(95,max(0,int(decision.get('avance_estimado',0))))
-        chosen['deliberations']=chosen.get('deliberations',0)+1
-        chosen['deliberations_since_progress']=chosen.get('deliberations_since_progress',0)+1
-        if project_needs_review(chosen):
-            chosen['reconsideration_required']=True
-            chosen['state']='Objetivo prolongado sin nuevos resultados: revisar si conviene continuar, pausar o cambiar de proyecto.'
-            self.remember_strategy('Este proyecto lleva varias deliberaciones sin avances materiales. Elegí explícitamente continuar, iniciar otro o completar SOLO con evidencias.')
-        if decision.get('subobjetivos'):
-            chosen['subgoals']=decision['subobjetivos'][:6]
-        chosen['updated']=self.stamp()
-        chosen['reconsideration_required']=bool(chosen.get('reconsideration_required') and project_needs_review(chosen))
-        p['project']=chosen;p['plan']=self.validate_plan(self.improve_plan(decision['plan']))
-        if not p['plan']:
-            self.event(['El plan del modelo quedó sin pasos verificables; necesito reconsiderar.'], 'evaluación')
-        # Guardar intenciones para la próxima espera. Solo el LLM modifica preferencias.
-        if source=="llm":
-            set_wait_preferences(p,decision.get("actividades_en_espera"),self.stamp())
-            added=set_agenda(p,decision.get('agenda',[]),p['clock_minutes'],chosen.get('id'))
-            if added:self.event([f'Preparé {len(added)} tarea(s) para ejecutar más adelante, si se cumplen las condiciones.'],'decisión')
+        saved=p.setdefault('projects',[])
+        objective=decision.get('objetivo') or 'Investigar el entorno'
         # Si ya se comprobó el estancamiento de un método, no aceptar una nueva
         # variante de la misma operación sin cambio de estrategia real.
         blocked=chosen.get('estrategia_bloqueada')
@@ -349,9 +184,6 @@ class DecisionUseCases:
             self.remember_strategy(
                 'El plan repite el bloque anterior sin evidencia nueva; revisá si cambiaron las condiciones antes de insistir.')
             self.event(['El bloque propuesto coincide con el anterior sin nuevos resultados comprobados. Puedo reconsiderarlo o mantenerlo si hay razones.'],'evaluación')
-        p['review_at_minutes']=p['clock_minutes']+decision.get('revisar_en_minutos',90)
-        p['local_followups']=0
-        self.s['last_reason']=decision['motivo']
         research_entry=None
         if decision.get('pregunta'):
             subject=research_topic(' '.join((decision['pregunta'],decision.get('hipotesis',''),objective)))
@@ -363,16 +195,10 @@ class DecisionUseCases:
             else:
                 research_entry,_=register_research(p,decision['pregunta'],decision['hipotesis'],self.stamp(),str(new_uuid())[:8])
                 p['research']=p['research'][-75:]
-        note=self.journal(decision['cuaderno'],decision['pregunta'],decision['hipotesis'],source,
-            linked={'project_id':chosen.get('id'),
-                    'research_id':research_entry.get('id') if research_entry else None})
-        _lab_link_note(note)
-        # Solo el plan de esta deliberación procede de esta entrada. La agenda,
-        # los hábitos y las acciones automáticas NO se atribuyen al cuaderno.
-        for action in p['plan']:
-            if action.get('_origin') not in ('agenda','espera','rutina','motor'):
-                action['_journal_id']=note['id']
-        if tokens:self.s['last_tokens']=tokens
+        record_decision_note(
+            self,decision,source,project_id=chosen.get('id'),
+            research_id=research_entry.get('id') if research_entry else None,
+            trace_link=_lab_link_note,tokens=tokens)
         saved[:]=saved[-55:]
         self.write()
 
