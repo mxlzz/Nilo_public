@@ -86,7 +86,7 @@ def _record_rejected_closure(sim, target, proof):
               "evaluación")
 
 
-def apply_project_transition(sim, decision):
+def apply_project_transition(sim, decision, source):
     """Mutar solamente el ciclo de vida del proyecto; no tocar person.plan.
 
     Reglas:
@@ -158,7 +158,7 @@ def apply_project_transition(sim, decision):
         chosen = {
             "id": str(new_uuid())[:8], "title": objective,
             "reason": decision.get("motivo", ""),
-            "started": sim.stamp(), "source": decision.get("_source", "llm"),
+            "started": sim.stamp(), "source": source,
             "status": "activo", "progress": 0, "steps_done": 0,
             "failed_actions": 0, "no_progress_steps": 0,
             "verified_results": [], "subgoals": [],
