@@ -259,7 +259,8 @@ def submit_proposal(person,step,stamp,available_physics):
               'status':'pendiente','review':None,
               'engine_ready':phenomenon.casefold() in {x.casefold() for x in available_physics}}
     if isinstance(step.get('_journal_id'),str):proposal['journal_id']=step['_journal_id']
-    project_id=(person.get('project') or {}).get('id')
+    from nilo_runtime.autonomy.decision_intents import active_project_for_action
+    project_id=(active_project_for_action(person,step) or {}).get('id')
     if project_id:proposal['project_id']=project_id
     person['proposals'].append(proposal)
     return True,f"Presenté una propuesta fundamentada para estudiar '{phenomenon}'. Queda pendiente de evaluación; no altera la física."
@@ -331,7 +332,8 @@ def submit_debug_report(person, step, stamp):
             'evidence':[dict(e) for e in evidence], 'evidence_relation':association,
             'status':'pendiente', 'review':None}
     if isinstance(step.get('_journal_id'),str):report['journal_id']=step['_journal_id']
-    project_id=(person.get('project') or {}).get('id')
+    from nilo_runtime.autonomy.decision_intents import active_project_for_action
+    project_id=(active_project_for_action(person,step) or {}).get('id')
     if project_id:report['project_id']=project_id
     person['proposals'].append(report)
     found=f' con {len(evidence)} resultado(s) comprobable(s) asociado(s)' if evidence else ' sin acciones comprobables asociadas'
@@ -381,7 +383,8 @@ def record_personal_experience(person,step,success,notable,facts,stamp,*,
             entry['measurement_id']=measurement_id
         if isinstance(action_id,str) and action_id:
             entry['action_id']=action_id
-        project_id=(person.get('project') or {}).get('id')
+        from nilo_runtime.autonomy.decision_intents import active_project_for_action
+    project_id=(active_project_for_action(person,step) or {}).get('id')
         if isinstance(project_id,str) and project_id:entry['project_id']=project_id
     person['experience_summary'].append(entry)
     person['life_history'].append(entry)  # Registro íntegro: no se trunca al reducir contexto LLM.
