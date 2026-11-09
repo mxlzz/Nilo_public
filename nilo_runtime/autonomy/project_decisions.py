@@ -46,6 +46,9 @@ def _select_project(person, action, selected_id, objective):
                       and record.get("status") != "terminado"), None)
         if match is not None:
             return match
+        # Una referencia explícita inválida nunca autoriza tomar el proyecto
+        # actual por semejanza de título ni elegir otro proyecto por defecto.
+        return None
     if current and (action == "continuar" or
                     (action != "nuevo" and
                      SequenceMatcher(None, current.get("title", "").lower(),
@@ -86,6 +89,49 @@ def _record_rejected_closure(sim, target, proof):
               "evaluación")
 
 
+def _reject_project_reference(sim, action, requested_id):
+    """Rechazar una transición inválida sin tocar proyectos ni plan físico.
+
+    Los IDs de investigaciones y proyectos son dominios distintos. El error
+    se presenta como observación en la siguiente deliberación, con una
+    explicación específica y opciones voluntarias; nunca se convierte en
+    un proyecto inventado para salvar la solicitud.
+    """
+    person = sim.s["person"]
+    known = ([person["project"]] if person.get("project") else [])
+    known += [item for item in person.get("projects", [])
+              if isinstance(item, dict)]
+    research_ids = {item.get("id") for item in person.get("research", [])
+                    if isinstance(item, dict)}
+    if requested_id and requested_id in research_ids:
+        code = "id_de_investigacion"
+        reason = "Ese ID identifica una investigación, no un proyecto."
+    elif requested_id and any(item.get("id") == requested_id
+                              and item.get("status") == "terminado"
+                              for item in known):
+        code = "proyecto_terminado"
+        reason = "Ese proyecto ya está terminado; no puede continuarse ni cerrarse de nuevo."
+    elif requested_id:
+        code = "proyecto_no_encontrado"
+        reason = "No existe un proyecto disponible con ese ID."
+    else:
+        code = "sin_proyecto_para_continuar"
+        reason = "No hay un proyecto activo ni se indicó un ID de proyecto existente."
+    note = {
+        "requested_action": action,
+        "requested_id": requested_id or None,
+        "reason_code": code,
+        "reason": reason,
+        "when": sim.stamp(),
+        "allowed_choices": ["nuevo", "sin_proyecto",
+                            "continuar con ID de proyecto existente"],
+    }
+    person["last_project_reference_rejection"] = note
+    sim.event([reason + " La acción física independiente se evaluará por separado."],
+              "evaluación")
+    return ProjectTransition("missing", action, "referencia_invalida")
+
+
 def apply_project_transition(sim, decision, source):
     """Mutar solamente el ciclo de vida del proyecto; no tocar person.plan.
 
@@ -102,17 +148,18 @@ def apply_project_transition(sim, decision, source):
     current = person.get("project")
     action = decision.get("accion_proyecto", "nuevo")
     if action == "sin_proyecto":
+        person.pop("last_project_reference_rejection", None)
         return ProjectTransition("unassigned", action, action)
 
     objective = decision.get("objetivo") or "Investigar el entorno"
-    selected = _select_project(person, action, decision.get("proyecto_id") or "",
-                               objective)
+    requested_id = decision.get("proyecto_id") or ""
+    selected = _select_project(person, action, requested_id, objective)
     if action in _STATUS:
-        target = selected or current
+        # Solo un ID exacto puede identificar un proyecto cuando se
+        # especifica uno. Un error nunca debe cerrar al proyecto actual.
+        target = selected if requested_id else (selected or current)
         if target is None:
-            sim.event(["No hay un proyecto identificado para cerrar o pausar."],
-                      "evaluación")
-            return ProjectTransition("missing", action, action)
+            return _reject_project_reference(sim, action, requested_id)
         if action == "completar":
             proof = (decision.get("prueba_cierre") or "").strip()
             evidence = completion_evidence(target, proof, person)
@@ -145,6 +192,11 @@ def apply_project_transition(sim, decision, source):
             return ProjectTransition("retired", action, action,
                                      target.get("id"), retired_status=status)
 
+    # Continuar jamás crea un proyecto. Crear es una acción explícita
+    # independiente y conserva la elección de Nilo.
+    if action == "continuar" and selected is None:
+        return _reject_project_reference(sim, action, requested_id)
+    person.pop("last_project_reference_rejection", None)
     chosen = selected
     if chosen is None:
         precedent = next((old for old in reversed(saved)
