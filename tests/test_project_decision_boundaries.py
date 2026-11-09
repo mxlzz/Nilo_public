@@ -159,6 +159,19 @@ class ProjectDecisionBoundaries(unittest.TestCase):
         self.assertEqual(self.archived(id_b)["status"],"pausado")
         self.assertIsNone(self.archived(id_a))
 
+    def test_personal_experience_provenance_follows_the_action(self):
+        from inventions import record_personal_experience
+        project_id=self.start_project()
+        stamp=self.lab.sim.stamp()
+        record_personal_experience(
+            self.person,{"op":"inspect","_decision_project_id":None},
+            True,True,["Observé una roca."],stamp)
+        self.assertNotIn("project_id",self.person["life_history"][-1])
+        record_personal_experience(
+            self.person,{"op":"inspect","_decision_project_id":project_id},
+            True,True,["Observé otra roca."],stamp)
+        self.assertEqual(self.person["life_history"][-1]["project_id"],project_id)
+
     def test_legacy_steps_without_ownership_marker_keep_old_projection(self):
         active={"id":"hist","status":"activo"}
         p={"project":active}
