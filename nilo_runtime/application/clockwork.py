@@ -5,6 +5,7 @@ mantienen sus pasos, efectos y contratos originales.
 """
 from __future__ import annotations
 from .deps import *
+from nilo_runtime.autonomy.decision_intents import active_project_for_action
 
 class ClockUseCases:
     @entropy_scoped
@@ -233,7 +234,7 @@ class ClockUseCases:
                                     pending.get('physical_entities_start'),w,p,step,measurement)
                             if isinstance(step.get('_journal_id'),str):
                                 measurement['journal_id']=step['_journal_id']
-                                project_id=(p.get('project') or {}).get('id')
+                                project_id=(active_project_for_action(p,step) or {}).get('id')
                                 if project_id:measurement['project_id']=project_id
                             self.archive.add('measurement',measurement)
                             if step.get('op')=='rest':
@@ -286,7 +287,7 @@ class ClockUseCases:
                                 # No atribuir origen retroactivo a replays históricos.
                                 outcome['origin']=step.get('_origin') or (
                                     'demo' if self.s.get('mode')=='demo' else 'llm')
-                                outcome['project_id']=(p.get('project') or {}).get('id')
+                                outcome['project_id']=(active_project_for_action(p,step) or {}).get('id')
                                 if nav and nav.get('kind')=='explore':
                                     outcome['exploration_trace']={
                                         'requested_direction':nav.get('requested_direction'),
@@ -421,14 +422,14 @@ class ClockUseCases:
                             p['last_progress_evidence']={'when':self.stamp(),
                                 'op':step.get('op'),'motivos':observed['reasons'],
                                 'nuevas_casillas':tiles_new,
-                                'proyecto_id':(p.get('project') or {}).get('id'),
+                                'proyecto_id':(active_project_for_action(p,step) or {}).get('id'),
                                 'progreso':progress}
                         # Métricas observables, sin reconstrucción retroactiva de los históricos.
                         record_behavior(
                             p, op=step.get('op'), origin=step.get('_origin','llm'),
                             duration_minutes=measurement.get('duration_minutes') if measurement else None,
                             position_before=(start or {}).get('position',before[5]), position_after=after[5],
-                            project_id=(p.get('project') or {}).get('id'),
+                            project_id=(active_project_for_action(p,step) or {}).get('id'),
                             new_tiles=len(w['revealed'])-pending.get('behavior_revealed_at_start',before[3]),
                             new_knowledge=after[2]-before[2],
                             new_materials=[name for name,qty in p['inventory'].items()
@@ -443,7 +444,7 @@ class ClockUseCases:
                             action_id=causal_action,
                             measurement_id=(measurement.get('id') if causal_action
                                             and measurement else None))
-                        project=p.get('project')
+                        project=active_project_for_action(p,step)
                         if project and step.get('_origin') not in ('espera','rutina'):
                             project['steps_done']=project.get('steps_done',0)+1
                             project['last_action']=self.describe_action(step)
