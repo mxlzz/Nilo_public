@@ -62,8 +62,24 @@ def admit_immediate_actions(sim, decision, source, transition):
                    "si se cumplen las condiciones."], "decisión")
 
 
+def active_project_for_action(person, step):
+    """Resolver el propietario de CADA paso sin inferirlo del estado actual.
+
+    La marca ausente indica plan histórico o rutina y mantiene compatibilidad;
+    la marca explícita None significa acción independiente, incluso cuando
+    hay otro proyecto activo. Nunca se asocia a un proyecto ya archivado.
+    """
+    current = person.get("project")
+    if "_decision_project_id" not in step:
+        return current
+    if current and step["_decision_project_id"] == current.get("id"):
+        return current
+    return None
+
+
 def record_decision_note(sim, decision, source, project_id=None,
-                         research_id=None, trace_link=None, tokens=None):
+                         research_id=None, trace_link=None, tokens=None,
+                         owning_project_id=None):
     """Un solo cuaderno para continuar, pausar, completar o actuar sin proyecto.
 
     La nota se vincula con el ID histórico aun después de retirarlo. Solo las
@@ -77,6 +93,9 @@ def record_decision_note(sim, decision, source, project_id=None,
     for action in sim.s["person"].get("plan") or []:
         if action.get("_origin") not in ("agenda", "espera", "rutina", "motor"):
             action["_journal_id"] = note["id"]
+            if not (getattr(sim, "legacy_replay_rules", False)
+                    or getattr(sim, "historical_replay", False)):
+                action["_decision_project_id"] = owning_project_id
     if tokens:
         sim.s["last_tokens"] = tokens
     return note
