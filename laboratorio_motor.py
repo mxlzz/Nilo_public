@@ -295,6 +295,100 @@ class HistorySource:
             checked["selection"] = self.describe()
             return checked
 
+    def import_sidecar_bytes(self, data):
+        """Asociar capturas verificadas exclusivamente a una copia temporal importada.
+
+        No escribir una sidecar de la partida de la carpeta. Se exige al menos
+        una coincidencia de call_id exacta con un registro del mundo, sin
+        suponer que un nombre de archivo acredita la procedencia.
+        """
+        import hashlib
+        import tempfile
+        from nilo_runtime.storage.llm_requests import RequestTraceStore
+
+        if not data.startswith(b"SQLite format 3\x00"):
+            raise ValueError("El archivo de capturas no es una SQLite válida.")
+        with self.lock:
+            if self.origin != "importada" or self.path is None or not self.path.is_file():
+                raise ValueError("Primero importá una partida; no se modifican archivos originales.")
+            world = self.path
+            target = RequestTraceStore.for_world(world).path
+            if target.exists():
+                raise ValueError("Esta partida ya tiene capturas importadas; volvé a cargarla para reemplazarlas.")
+            with tempfile.NamedTemporaryFile(
+                prefix="capturas_", suffix=".sqlite3",
+                dir=self.temp_directory.name, delete=False
+            ) as stream:
+                stream.write(data)
+                staged = Path(stream.name)
+            try:
+                def read_only(path):
+                    db = sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=2)
+                    db.execute("PRAGMA query_only=ON")
+                    return db
+
+                from contextlib import closing
+                with closing(read_only(world)) as db:
+                    linked_ids = set()
+                    tables = {row[0] for row in db.execute(
+                        "SELECT name FROM sqlite_master WHERE type='table'"
+                    )}
+                    if "timeline_checkpoints" in tables:
+                        columns = {row[1] for row in db.execute(
+                            "PRAGMA table_info(timeline_checkpoints)"
+                        )}
+                        if "trace_call_id" in columns:
+                            linked_ids.update(value for (value,) in db.execute(
+                                "SELECT DISTINCT trace_call_id FROM timeline_checkpoints "
+                                "WHERE trace_call_id IS NOT NULL"
+                            ) if value)
+                    if "history" in tables:
+                        for (payload,) in db.execute(
+                            "SELECT payload FROM history WHERE category='llm_decision' "
+                            "ORDER BY seq DESC LIMIT 30000"
+                        ):
+                            try:
+                                record = json.loads(payload)
+                            except (TypeError, ValueError):
+                                continue
+                            if isinstance(record, dict) and isinstance(
+                                record.get("trace_call_id"), str
+                            ):
+                                linked_ids.add(record["trace_call_id"])
+                    if not linked_ids:
+                        raise ValueError("La partida no contiene IDs de deliberación para verificar las capturas.")
+
+                with closing(read_only(staged)) as db:
+                    if db.execute("PRAGMA quick_check").fetchone()[0] != "ok":
+                        raise ValueError("La SQLite de capturas no supera el control de integridad.")
+                    columns = {row[1] for row in db.execute("PRAGMA table_info(llm_requests)")}
+                    required = {"attempt_id", "call_id", "body", "body_sha256", "body_bytes"}
+                    if not required.issubset(columns):
+                        raise ValueError("El archivo no contiene solicitudes LLM con el formato esperado.")
+                    matches, attempts = set(), 0
+                    for call_id, body, digest, size in db.execute(
+                        "SELECT call_id,body,body_sha256,body_bytes FROM llm_requests"
+                    ):
+                        attempts += 1
+                        if not isinstance(body, bytes) or len(body) != size or (
+                            hashlib.sha256(body).hexdigest() != digest
+                        ):
+                            raise ValueError("Una captura tiene cuerpo o SHA256 inconsistentes.")
+                        if call_id in linked_ids:
+                            matches.add(call_id)
+                    if not attempts:
+                        raise ValueError("El archivo no contiene solicitudes LLM.")
+                    if not matches:
+                        raise ValueError("Las capturas no comparten ningún ID de deliberación con esta partida.")
+                os.replace(staged, target)
+                return {
+                    "imported": True, "attempts": attempts,
+                    "matched_calls": len(matches),
+                    "world": self.display_name, "source": "temporal_verificada"
+                }
+            finally:
+                staged.unlink(missing_ok=True)
+
     def use_default(self):
         with self.lock:
             if not DB.is_file():
@@ -465,7 +559,7 @@ class Handler(BaseHTTPRequestHandler):
                     if set(query)!={"id"} or len(query["id"])!=1:
                         raise ValueError("Identificador de episodio inválido")
                     self.json(get_episode(source,query["id"][0],
-                                          viewer_world=self.hub.world))
+                                          viewer_world=source))
             except (ValueError,TypeError,sqlite3.Error,OSError) as exc:
                 self.json({"error":str(exc)[:220]},400)
         elif path in ("/api/lab/rule", "/api/history/rule"):
@@ -636,6 +730,20 @@ class Handler(BaseHTTPRequestHandler):
                 return self.json({"error":str(exc)[:350]},400)
             except Exception:
                 return self.json({"error":"Error interno del laboratorio"},500)
+        if path == "/api/history/upload-sidecar":
+            # Solo copias temporales del mundo y coincidencias verificadas por ID.
+            try:
+                if urlsplit(self.path).query:
+                    raise ValueError("Esta carga no admite parámetros.")
+                size = int(self.headers.get("Content-Length", "0"))
+                if not 16 <= size <= 200 * 1024 * 1024:
+                    raise ValueError("Las capturas deben ocupar entre 16 bytes y 200 MB.")
+                data = self.rfile.read(size)
+                if len(data) != size:
+                    raise ValueError("Carga incompleta.")
+                return self.json(self.history.import_sidecar_bytes(data))
+            except (ValueError, OSError, sqlite3.Error) as exc:
+                return self.json({"error":str(exc)}, 400)
         if path == "/api/history/upload":
             try:
                 size = int(self.headers.get("Content-Length", "0"))
