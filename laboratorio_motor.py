@@ -361,7 +361,7 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(contents)
         elif path == "/api/lab/analysis":
-            # Panorama transversal de la partida actual; nunca aceptar paths,
+            # Panorama transversal de la partida seleccionada; nunca aceptar paths,
             # nombres de DB o proveedores elegidos por el navegador.
             try:
                 raw=parse_qs(urlsplit(self.path).query,
@@ -372,7 +372,8 @@ class Handler(BaseHTTPRequestHandler):
                 if not value.isascii() or not value.isdecimal() or len(value)>2:
                     raise ValueError("Límite de turnos inválido")
                 from nilo_runtime.labs.cross_analysis import analyze
-                self.json(analyze(self.hub.world,limit=int(value)))
+                self.json(analyze(self.history.selected_world(fallback=self.hub.world),
+                                  limit=int(value)))
             except (ValueError,TypeError,sqlite3.Error,OSError) as exc:
                 self.json({"error":str(exc)[:220]},400)
         elif path == "/api/lab/world-source":
@@ -398,10 +399,10 @@ class Handler(BaseHTTPRequestHandler):
                 })
         elif path in ("/api/lab/llm/attempts", "/api/lab/llm/attempt"):
             # Solo servidor del laboratorio: no sumar rutas crudas a la UI
-            # principal. La base se determina desde la partida del LabHub;
+            # principal. La base se determina desde la selección de HistorySource;
             # jamás desde un parámetro proporcionado por el navegador.
             try:
-                reader=LocalLLMReadAPI(self.hub.world)
+                reader=LocalLLMReadAPI(self.history.selected_world(fallback=self.hub.world))
                 raw_query=urlsplit(self.path).query
                 if path.endswith("/attempts"):
                     self.json(reader.list_attempts(raw_query))
