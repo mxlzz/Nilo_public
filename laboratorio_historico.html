@@ -70,6 +70,9 @@ details>summary{cursor:pointer;font-weight:600;font-size:12px}
   <p class="muted">Podés abrir la partida de la carpeta actual o seleccionar otra base SQLite. La original se consulta en modo lectura.</p>
   <div class="btnrow"><button type="button" id="defaultFile">Usar partida de la carpeta</button><button type="button" id="chooseFile">Seleccionar archivo SQLite…</button></div>
   <input id="file" type="file" accept=".sqlite3,.sqlite,.db" aria-label="Elegir archivo de partida" hidden>
+  <div class="btnrow"><button type="button" id="chooseSidecar" disabled>Importar capturas LLM…</button></div>
+  <input id="sidecarFile" type="file" accept=".sqlite3,.sqlite,.db" aria-label="Elegir el archivo .llm_requests.sqlite3 correspondiente a la partida" hidden>
+  <p class="muted">Opcional: después de importar una partida, elegí su archivo .llm_requests.sqlite3. Solo se acepta si coincide algún identificador de deliberación; los originales no se alteran.</p>
   <p id="fileStatus" class="muted" role="status" aria-live="polite">Consultando la partida seleccionada…</p>
   <p class="muted">El archivo seleccionado se comparte con Experimentos A/B mientras el servidor del laboratorio siga abierto. La importación usa una copia temporal de lectura.</p>
   <div class="mode-switch" role="group" aria-label="Modo del historial">
@@ -148,6 +151,7 @@ function showData(data){
  clearSelection();
  events=data.entries||[];episodes=[];episodesLoading=true;
  const active=data.selection||{};
+ $("chooseSidecar").disabled=active.origin!=="importada";
  const label=active.available?("Partida activa: "+active.name+
    (active.origin==="importada"?" · importada temporalmente":" · carpeta del laboratorio")):
    ("Partida activa: "+(data.source||"desconocida"));
@@ -477,6 +481,24 @@ $("file").onchange=async e=>{
     headers:{"Content-Type":"application/octet-stream",
              "X-Nilo-Filename":encodeURIComponent(f.name)},body:f});
   if(requestToken===sourceToken)showData(data);
+ }catch(err){if(requestToken===sourceToken)$("fileStatus").textContent=err.message}
+};
+$("chooseSidecar").onclick=()=>$("sidecarFile").click();
+$("sidecarFile").onchange=async e=>{
+ const f=e.target.files?.[0];if(!f)return;
+ e.target.value="";
+ const requestToken=++sourceToken;
+ $("fileStatus").textContent="Verificando capturas "+f.name+"…";
+ if(f.size>200*1024*1024){$("fileStatus").textContent="Máximo 200 MB por archivo.";return}
+ try{
+  const result=await ask("/api/history/upload-sidecar",{method:"POST",
+    headers:{"Content-Type":"application/octet-stream"},body:f});
+  if(requestToken!==sourceToken)return;
+  const data=await ask("/api/history/catalog");
+  if(requestToken!==sourceToken)return;
+  showData(data);
+  $("fileStatus").textContent+=" · "+result.attempts+" capturas, "+
+    result.matched_calls+" deliberaciones vinculadas por ID.";
  }catch(err){if(requestToken===sourceToken)$("fileStatus").textContent=err.message}
 };
 $("defaultFile").onclick=loadLocal;
