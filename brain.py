@@ -208,6 +208,7 @@ def context_for(w,p,recent,now,scenario=None):
             
             "estrategias_que_ya_no_funcionaron":p.get('strategy_feedback',[])[-10:],
             "ultimo_cierre_rechazado":p.get('last_closure_rejection'),
+            "ultima_referencia_de_proyecto_rechazada":p.get('last_project_reference_rejection'),
             "acciones_sin_avance_reciente":current.get('no_progress_steps',0) if current else 0,
             "estancamiento_detectado":bool(current and current.get("reconsideration_required")),
             "revision_de_estrategia":p.get('strategy_review'),

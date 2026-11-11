@@ -8,6 +8,29 @@ from __future__ import annotations
 from copy import deepcopy
 from nilo_runtime.perception.objects import desgaste_observable as _desgaste
 
+# Los balances internos del metabolismo son telemetría del motor, no
+# mediciones obtenidas por Nilo. Los IDs y resultados físicos se conservan.
+_INTERNAL_BODY_FIELDS = frozenset({
+    "energia_inicial", "energia_final", "energia_por_hora",
+    "hidratacion_inicial", "hidratacion_final",
+    "nutricion_inicial", "nutricion_final",
+    "alimentacion_inicial", "alimentacion_final",
+    "necesidades_antes", "necesidades_despues",
+    "needs_before", "needs_after",
+})
+
+
+def _without_internal_body_fields(value):
+    """Barrera común para todas las solicitudes; no altera el mundo guardado."""
+    if isinstance(value, dict):
+        return {key: _without_internal_body_fields(item)
+                for key, item in value.items()
+                if key not in _INTERNAL_BODY_FIELDS}
+    if isinstance(value, list):
+        return [_without_internal_body_fields(item) for item in value]
+    return value
+
+
 def _piezas(rows):
     result=[]
     for piece in rows if isinstance(rows,list) else []:
@@ -125,4 +148,6 @@ def project_context(context):
             structures.append(b)
         view['construcciones_fijas']=structures
 
-    return view
+    # Aplicar antes de ambos presupuestos, para evitar que una variante
+    # vuelva visibles reservas numéricas descartadas en la otra por tamaño.
+    return _without_internal_body_fields(view)

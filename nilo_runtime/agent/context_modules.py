@@ -62,7 +62,8 @@ _POLICY_FOCUS = {
 }
 _POLICY_FIELD = {
     "continuidad": ("proyectos_reanudables", "antecedentes_relacionados",
-                    "ultimo_cierre_rechazado", "revision_de_estrategia",
+                    "ultimo_cierre_rechazado", "ultima_referencia_de_proyecto_rechazada",
+                     "revision_de_estrategia",
                     "investigaciones_pausadas_relacionadas"),
     "evaluacion-externa": ("evaluaciones_externas_recientes",
                            "diagnosticos_operativos_recientes"),
@@ -179,6 +180,14 @@ def policy_sections(context, provider):
 def _detailed_operations(context):
     focus = detect_focuses(context)
     selected = []
+    # Primera deliberación: sin proyecto ni antecedentes, la orientación es
+    # razonable y el índice breve oculta parámetros esenciales de explore/go.
+    # Son capacidades, no objetivos impuestos al personaje.
+    if (focus == ("general",)
+            and not context.get("proyecto_actual")
+            and not context.get("investigaciones_activas")
+            and not context.get("resultados_de_acciones")):
+        selected.extend(("explore", "go", "inspect"))
     for tag in focus:
         for name in _OP_FOCUS.get(tag, ()):
             # Mantener orden determinista del registro; el set NO ordena.
@@ -193,10 +202,16 @@ def modular_instructions(context, provider):
     sections = policy_sections(context, provider)
     system = "\n".join(text for _, text in sections)
     index = brief_actions()
-    if provider == "groq":
-        return system + "\n" + index, ""
     registry = registered_operations()
     detailed = _detailed_operations(context)
+    if provider == "groq":
+        # Conservar el presupuesto más bajo de Groq: dar detalle de hasta
+        # dos operaciones relevantes, desde el mismo registro físico.
+        selected = detailed[:2]
+        extra = ("\nDETALLES OPERATIVOS SEGÚN CONTEXTO (no son tareas):\n" +
+                 "\n".join("- " + name + ": " + registry[name].description
+                           for name in selected)) if selected else ""
+        return system + "\n" + index + extra, ""
     detail = "\n".join("- " + name + ": " + registry[name].description
                        for name in detailed)
     manual = index + "\nREGLAS GENERALES: " + COMMON_RULES

@@ -65,8 +65,20 @@ def inspect():
         errors.append("El motor sigue inventando pruebas de herramientas sin deliberación")
     if "repeated_strategies(" not in use_cases:
         errors.append("Los bucles siguen agrupados solo por nombre de operación")
-    decisions=(ROOT/"nilo_runtime/application/decisions.py").read_text("utf-8")
-    if "or getattr(self,'historical_replay',False))" not in decisions:
+    # Verificar la invariante real del propietario de proyectos, no buscar
+    # una sentencia antigua en el orquestador que ya se modularizó.
+    person={"project":{"id":"p1","title":"Investigación 1","status":"activo"},
+            "projects":[],
+            "research":[
+                {"id":"r1","question":"Tema ligado","state":"abierta",
+                 "project_ids":["p1"]},
+                {"id":"r2","question":"Tema independiente","state":"abierta",
+                 "project_ids":["p2"]}],
+            "active_research":"Tema independiente","agenda":[]}
+    retire_project(person,person["project"],"pausado","Día 1 · 00:00")
+    if (person["research"][0]["state"]!="pausada"
+            or person["research"][1]["state"]!="abierta"
+            or person["active_research"]!="Tema independiente"):
         errors.append("No se preserva investigación externa a un proyecto al retirarlo")
     if not (ROOT/"tests/test_autonomia_17.py").exists():
         errors.append("Faltan pruebas específicas de la etapa")

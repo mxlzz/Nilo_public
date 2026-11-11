@@ -70,10 +70,71 @@ def _script(raw):
     return out
 
 
+def _context_mode(value):
+    if type(value) is not str or value not in ("baseline", "modular"):
+        raise ValueError("Modo de contexto experimental desconocido")
+    return value
+
+
+def _variant_context(lab, original, mode):
+    """La recuperación multifoco opera solo en la copia experimental."""
+    if mode == "baseline":
+        return original
+    from nilo_runtime.cognition.memory import recall_relevant
+    result = copy.deepcopy(original)
+    result["memorias_relevantes"] = recall_relevant(
+        lab.sim.s["person"], lab.sim.s["world"], limit=6, multi_focus=True)
+    return result
+
+
+
+# Un mismo mundo físico no garantiza idéntica evidencia recibida por el LLM:
+# los compactadores y la recuperación multifoco seleccionan datos distintos.
+_SENT_EVIDENCE_FIELDS = (
+    "memorias_relevantes", "mediciones_reales_recientes",
+    "resultados_de_acciones", "conclusiones_verificadas",
+    "antecedentes_relacionados", "investigaciones_pausadas_relacionadas",
+    "investigaciones_activas",
+)
+
+
+def _sent_evidence_differences(before, after):
+    """Comparación de items por ID y contenido; nunca infiere equivalencia causal."""
+    def rows(view, key):
+        data = view.get("datos_enviados") or {}
+        return data.get(key) if isinstance(data.get(key), list) else []
+
+    details = {}
+    for key in _SENT_EVIDENCE_FIELDS:
+        left = rows(before, key)
+        right = rows(after, key)
+        # Huella de cada registro: una misma ID con contenido cambiado cuenta
+        # como evidencia distinta. Conservar duplicados con igual ID y datos
+        # contradictorios; no convertirlos en una sola entidad.
+        def indices(values):
+            return [(str(v.get("id", "sin-id:"+str(i))) if isinstance(v, dict)
+                     else "sin-id:"+str(i), _sha(v))
+                    for i, v in enumerate(values)]
+        a, b = indices(left), indices(right)
+        if a == b:
+            continue
+        left_set, right_set = set(a), set(b)
+        details[key] = {
+            "baseline_count": len(a), "variant_count": len(b),
+            "only_baseline_ids": sorted({name for name, digest in a
+                                         if (name, digest) not in right_set}),
+            "only_variant_ids": sorted({name for name, digest in b
+                                        if (name, digest) not in left_set}),
+            "order_changed_only": left_set == right_set,
+        }
+    return details
+
+
 def context_pair(hub,profile,*,provider="gemini",seed=7321,
-                 source="new",world_path=None,kit=False):
+                 source="new",world_path=None,kit=False,context_mode="baseline"):
     """Una sola percepción congelada compartida; jamás consulta proveedores."""
     _seed(seed)
+    context_mode=_context_mode(context_mode)
     candidate=validate(profile)
     if source not in ("new","saved"):
         raise ValueError("Origen de referencia desconocido")
@@ -85,21 +146,25 @@ def context_pair(hub,profile,*,provider="gemini",seed=7321,
         lab.reset("partida" if source=="saved" else "nuevo",
                   seed,kit,source=world_path if source=="saved" else None)
         context=contexto_de_deliberacion(lab.sim)
+        variant_context=_variant_context(lab,context,context_mode)
     identity=_sha(context)
+    variant_identity=_sha(variant_context)
     before=_request(baseline(),context,provider)
     if _sha(context)!=identity:
         raise ValueError("El constructor baseline modificó el contexto de referencia")
-    after=_request(candidate,context,provider)
-    if _sha(context)!=identity:
-        raise ValueError("El constructor variante modificó el contexto de referencia")
+    after=_request(candidate,variant_context,provider,context_mode=context_mode)
+    if _sha(context)!=identity or _sha(variant_context)!=variant_identity:
+        raise ValueError("El constructor modificó una percepción congelada")
     if before["enviado_a_llm"] or after["enviado_a_llm"]:
         raise ValueError("Una previsualización no puede marcarse como enviada")
     for view in (before,after):view["seed"]=seed
+    evidence_diff=_sent_evidence_differences(before,after)
     return {
         "experiment_type":"context_ab",
         "source":"readonly_copy_of_saved_world" if source=="saved" else "fresh_isolated_seed",
         "seed":seed,"kit":kit,"provider":provider,"reference_sha256":identity,
-        "reference_type":"one_identical_frozen_perception",
+        "variant_projection_sha256":variant_identity,"context_mode":context_mode,
+        "reference_type":"one_frozen_world_two_explicit_cognitive_projections",
         "baseline":before,"variant":after,
         "comparison":{
             "baseline_bytes":before["bytes"],"variant_bytes":after["bytes"],
@@ -108,12 +173,16 @@ def context_pair(hub,profile,*,provider="gemini",seed=7321,
             "added_fields":sorted(set(after["campos_enviados"])-set(before["campos_enviados"])),
             "changed_request":before["huella_solicitud_calculada"]!=after["huella_solicitud_calculada"],
             "comparable_same_reference":True,
+            "identical_cognitive_projections":identity==variant_identity,
+            "same_sent_evidence":not evidence_diff,
+            "sent_evidence_differences":evidence_diff,
             "actual_model_response":False
         },
         "llm_calls":0,"modified_original_world":False,
         "notes":[
             "Se comparan textos calculados desde el mismo estado, sin red.",
             "El tamaño menor no demuestra que Nilo decida mejor.",
+            "Mismo mundo inicial no implica idéntica evidencia seleccionada.",
             "Se aplican únicamente omisiones permitidas por el perfil."
         ]}
 
@@ -202,6 +271,123 @@ def physical_pair(*,seed=7321,baseline_steps=None,variant_steps=None,
         }
 
 
+_EXPECTED_LLM_KEYS = frozenset((
+    "cuaderno", "pregunta", "hipotesis", "objetivo", "motivo", "plan",
+    "subobjetivos", "proyecto_id", "accion_proyecto", "prueba_cierre",
+    "avance_estimado", "estado_actual", "revisar_en_minutos",
+))
+
+
+def _response_warnings(parsed, normalized):
+    """Advertir pérdidas semánticas sin reescribir la salida ni cambiar el motor."""
+    from difflib import get_close_matches
+
+    if not isinstance(parsed, dict):
+        return []
+    warnings = []
+    missing = sorted(_EXPECTED_LLM_KEYS - parsed.keys())
+    unexpected = [key for key in parsed if isinstance(key, str)
+                  and key not in _EXPECTED_LLM_KEYS and key != "agenda"
+                  and key != "actividades_en_espera"]
+    for key in missing:
+        candidates = [other for other in unexpected
+                      if key in get_close_matches(other, [key], n=1, cutoff=0.75)]
+        warnings.append({
+            "code": "possible_misspelled_field" if candidates else "missing_expected_field",
+            "field": key,
+            **({"received_key": candidates[0]} if candidates else {}),
+        })
+    if isinstance(normalized, dict):
+        for key in ("pregunta", "hipotesis", "objetivo", "motivo", "estado_actual"):
+            if key in parsed and isinstance(parsed[key], str) and parsed[key].strip() and not normalized.get(key):
+                warnings.append({"code": "nonempty_field_lost", "field": key})
+        if isinstance(parsed.get("plan"), list):
+            kept = len(normalized.get("plan") or [])
+            if kept < min(12, len(parsed["plan"])):
+                warnings.append({"code": "plan_steps_removed_by_normalizer",
+                                 "submitted": min(12, len(parsed["plan"])),
+                                 "normalized": kept})
+    return warnings
+
+
+def _execution_results(submitted, admitted, new_outcomes, *,
+                       unfinished=False, rejected_reasons=()):
+    """Relacionar pasos de esta deliberación con resultados reales, sin fabricar éxitos.
+
+    La secuencia aprobada es la cola resultante de plan_ready; los descartes
+    previos se distinguen de rechazos físicos. Los documentos sin diagnostic
+    no se cuentan como fallos ni como éxitos comprobados.
+    """
+    accepted = list(admitted)
+    rows = []
+    cursor = 0
+    consumed = set()
+    for index, step in enumerate(submitted, 1):
+        op = step.get("op") if isinstance(step, dict) else None
+        place = next((j for j in range(cursor, len(accepted))
+                      if accepted[j].get("op") == op), None)
+        if place is None:
+            # La razón procede de la validación del motor, no del LLM.
+            # No inferir cuál de varias precondiciones hipotéticas falló.
+            reason = next((msg for msg in rejected_reasons
+                           if isinstance(msg,str) and
+                           msg.startswith("Plan validado: " + str(op) + ":")), None)
+            rows.append({"requested_step": index, "op": op,
+                         "state": "filtrada_antes_de_ejecutar",
+                         "reason": reason, "reason_source": (
+                             "motor.strategy_feedback" if reason else None),
+                         "action_id": None, "measurement_id": None})
+            continue
+        cursor = place + 1
+        match = next((j for j, outcome in enumerate(new_outcomes)
+                      if j not in consumed and outcome.get("op") == op), None)
+        if match is None:
+            rows.append({"requested_step": index, "op": op,
+                         "state": ("pendiente_sin_resultado" if unfinished
+                                   else "sin_resultado_individual"),
+                         "action_id": None, "measurement_id": None})
+            continue
+        consumed.add(match)
+        result = new_outcomes[match]
+        raw = result.get("action_result") or {}
+        success = raw.get("success")
+        if type(success) is not bool:
+            success = result.get("successful")
+        if type(success) is not bool:
+            success = None
+        proof = result.get("physical_result") or {}
+        engine_status = raw.get("status") or result.get("evaluation_status")
+        if engine_status == "no_evaluable":
+            state = "no_evaluable"
+        elif engine_status == "precondition_failed":
+            state = "bloqueada"
+        elif success is True:
+            state = "completada"
+        elif success is False:
+            state = "fallida"
+        else:
+            state = "resultado_no_clasificable"
+        rows.append({
+            "requested_step": index,
+            "op": op,
+            "state": state,
+            "success": success,
+            "engine_status": engine_status,
+            "action_id": result.get("id"),
+            "measurement_id": proof.get("measurement_id"),
+            "contract_status": result.get("contract_status"),
+            "contract_code": result.get("contract_code"),
+            "facts": list(raw.get("facts") or result.get("facts") or [])[:4],
+            "changes": {
+                key: proof.get(key) for key in (
+                    "duration_minutes", "needs_delta", "inventory_delta",
+                    "object_delta", "structure_delta", "position_start",
+                    "position_end") if key in proof
+            },
+        })
+    return rows
+
+
 def _network_decision(preview,provider,*,poster=None):
     """Ejecutar exactamente el payload previsualizado, sin archivos ni reintentos."""
     cfg=dict(config())
@@ -221,14 +407,17 @@ def _network_decision(preview,provider,*,poster=None):
         "request_sha256":preview["huella_solicitud_calculada"],
         "request_body_utf8":preview["solicitud_serializada"],
         "response_text":text,"tokens":tokens,"parsed":None,
-        "normalized":None,"validation_error":None,"executed_in_world":False,
-        "request_count":1,
+        "normalized":None,"validation_error":None,"validation_warnings":[],
+        "executed_in_world":False,"request_count":1,
     }
     try:
         parsed=parse_json(text)
         report["parsed"]=parsed
         report["normalized"]=normalize_decision(parsed)
+        report["validation_warnings"]=_response_warnings(parsed,report["normalized"])
     except (ValueError,KeyError,TypeError,OverflowError) as exc:
+        if isinstance(report.get("parsed"),dict):
+            report["validation_warnings"]=_response_warnings(report["parsed"],None)
         report["validation_error"]=type(exc).__name__+": "+str(exc)[:350]
     return report
 
@@ -239,21 +428,108 @@ def _drive_decision(lab,normalized):
         return {"applied":False,"reason":"Respuesta LLM sin plan normalizado"}
     sim=lab.sim
     before=_projection(lab)
+    previous_project=copy.deepcopy(sim.s["person"].get("project"))
+    prior_ids={row.get("id") for row in sim.s["person"].get("action_outcomes",[])
+               if isinstance(row,dict)}
+    prior_feedback=list(sim.s["person"].get("strategy_feedback") or [])
+    submitted=copy.deepcopy(normalized.get("plan") or [])
     sim.plan_ready(copy.deepcopy(normalized),"llm",{})
-    accepted=bool(sim.s["person"].get("plan") or sim.s["person"].get("pending"))
+    latest_feedback=list(sim.s["person"].get("strategy_feedback") or [])
+    # strategy_feedback es un anillo de 18 entradas: comparar longitudes
+    # falla cuando se elimina la más antigua. Encontrar el último marcador
+    # anterior conserva el delta también en partidas maduras.
+    marker=prior_feedback[-1] if prior_feedback else None
+    cut=next((i+1 for i in range(len(latest_feedback)-1,-1,-1)
+              if latest_feedback[i]==marker),0) if marker else 0
+    new_feedback=latest_feedback[cut:]
+    admitted=copy.deepcopy(sim.s["person"].get("plan") or [])
+    pending=(sim.s["person"].get("pending") or {}).get("step") or {}
+    # journal() agenda una escritura interna antes de ejecutar el plan.
+    # No contabilizar esa actividad documental como operación pedida al LLM.
+    if pending.get("op") in {step.get("op") for step in submitted}:
+        admitted.insert(0,copy.deepcopy(pending))
+    accepted=bool(admitted)
+    # Un plan físico vacío es válido al pausar, abandonar o completar.
+    # journal() crea siempre un pending {op:write}; sin ejecutar el tiempo
+    # documental, el laboratorio lo trataba como una operación incompleta
+    # y bloqueaba injustificadamente la segunda deliberación del A/B.
+    journal_only=(not accepted and pending.get("op")=="write")
     ticks=0
-    if accepted:
-        for _ in range(_MAX_TICKS):
-            sim.tick(3.0)
-            ticks+=1
-            p=sim.s["person"]
-            if not p.get("pending") and not p.get("plan"):break
-            if p.get("unconscious"):break
+    if accepted or journal_only:
+        # En un turno sin acciones físicas, terminar solo la escritura.
+        # Evita que el tick desencadene una deliberación demo o una
+        # operación automática al vaciar el cuaderno en el sandbox.
+        prior_planning=sim.s.get("planning")
+        if journal_only:
+            sim.s["planning"]=True
+        try:
+            for _ in range(_MAX_TICKS):
+                sim.tick(3.0)
+                ticks+=1
+                p=sim.s["person"]
+                if not p.get("pending") and not p.get("plan"):break
+                if p.get("unconscious"):break
+        finally:
+            if journal_only:
+                sim.s["planning"]=prior_planning
     sim.write()
     after=_projection(lab)
+    current_project=sim.s["person"].get("project")
+    prior_project_id=(previous_project or {}).get("id")
+    previous_record=next((item for item in
+                          sim.s["person"].get("projects", [])
+                          if isinstance(item,dict)
+                          and item.get("id")==prior_project_id),None)
+    reference_error=sim.s["person"].get("last_project_reference_rejection")
+    invalid_reference=(isinstance(reference_error,dict)
+        and reference_error.get("requested_action")==normalized.get("accion_proyecto")
+        and (reference_error.get("requested_id") or "")
+            ==(normalized.get("proyecto_id") or ""))
+    project_transition={
+        "requested_action":normalized.get("accion_proyecto"),
+        "requested_project_id":normalized.get("proyecto_id") or None,
+        "effective_action":("referencia_invalida" if invalid_reference
+                            else normalized.get("accion_proyecto")),
+        "reference_rejection":(copy.deepcopy(reference_error)
+                               if invalid_reference else None),
+        "previous_project_id":prior_project_id,
+        "previous_status":(previous_project or {}).get("status"),
+        "previous_status_after":(
+            (current_project or {}).get("status")
+            if (current_project or {}).get("id")==prior_project_id
+            else (previous_record or {}).get("status")),
+        "current_project_id":(current_project or {}).get("id"),
+        "current_status":(current_project or {}).get("status"),
+    }
     unfinished=bool(sim.s["person"].get("pending") or sim.s["person"].get("plan"))
+    outcomes=[row for row in sim.s["person"].get("action_outcomes",[])
+              if isinstance(row,dict) and row.get("id") not in prior_ids
+              # El sandbox marca el entorno como demo aun cuando plan_ready
+              # recibe source='llm'; excluir demo ocultaría operaciones reales.
+              and row.get("origin") in ("llm", "demo", None)]
+    operation_results=_execution_results(submitted,admitted,outcomes,
+                                         unfinished=unfinished,
+                                         rejected_reasons=new_feedback)
     return {"applied":True,"plan_accepted":accepted,
+            "project_transition":project_transition,
+            "plan_accepted_means":"cola de acciones admitida; no éxito físico",
+            "submitted_operations":len(submitted),
+            "admitted_operations":len(admitted),
+            "operation_results":operation_results,
+            "recorded_successes":sum(row.get("state")=="completada"
+                                     for row in operation_results),
+            "recorded_failures":sum(row.get("state")=="fallida"
+                                    for row in operation_results),
+            "recorded_blocks":sum(row.get("state")=="bloqueada"
+                                  for row in operation_results),
+            "recorded_not_evaluable":sum(row.get("state")=="no_evaluable"
+                                         for row in operation_results),
+            "unattributed_engine_outcomes":sum(j not in {
+                k for k, result in enumerate(outcomes)
+                if result.get("id") in {r.get("action_id") for r in operation_results}}
+                for j in range(len(outcomes))),
             "ticks":ticks,"pending_or_unfinished":unfinished,
+            "journal_only_completed":bool(journal_only and not unfinished),
             "before_sha256":_sha(before),"after_sha256":_sha(after),
             "position":after["position"],"time_after":after["minute"],
             "needs":after["needs"],"inventory":after["inventory"]}
@@ -261,7 +537,7 @@ def _drive_decision(lab,normalized):
 
 def live_pair(hub,profile,*,provider="gemini",seed=7321,turns=1,
               confirm=False,source="new",world_path=None,kit=False,
-              poster=None,sleep_fn=None):
+              poster=None,sleep_fn=None,context_mode="baseline"):
     """Llamadas reales sólo ante confirmación. Hasta dos deliberaciones por rama.
 
     En 1 turno: devuelve respuestas sin ejecutar. En 2 turnos: ejecuta cada
@@ -269,6 +545,7 @@ def live_pair(hub,profile,*,provider="gemini",seed=7321,turns=1,
     Modelos no deterministas: un A/B no prueba superioridad ni causalidad.
     """
     _seed(seed)
+    context_mode=_context_mode(context_mode)
     candidate=validate(profile)
     if provider not in ("gemini","groq"):
         raise ValueError("Proveedor no admitido")
@@ -311,12 +588,15 @@ def live_pair(hub,profile,*,provider="gemini",seed=7321,turns=1,
                 for name,lab,p in zip(("baseline","variant"),labs,(baseline(),candidate)):
                     if blocked[name]:continue
                     ctx=contexto_de_deliberacion(lab.sim)
-                    preview=_request(p,ctx,provider)
+                    candidate_ctx=_variant_context(lab,ctx,context_mode) if name=="variant" else ctx
+                    preview=_request(p,candidate_ctx,provider,
+                                     context_mode=context_mode if name=="variant" else "baseline")
                     # Pausa ENTRE solicitudes reales, no al construir JSON.
                     if total:pause(token_wait)
                     step={
                         "turn":round_i+1,"profile":p["name"],
                         "pre_context_sha256":_sha(ctx),
+                        "cognitive_projection_sha256":_sha(candidate_ctx),
                         "sent_preview_sha256":preview["huella_solicitud_calculada"],
                         "response":None,"world_effect":None,
                     }
@@ -358,7 +638,7 @@ def live_pair(hub,profile,*,provider="gemini",seed=7321,turns=1,
                     else "llm_two_branch_multiturn",
                 "source":"readonly_copy_of_saved_world" if source=="saved"
                     else "fresh_isolated_seed",
-                "seed":seed,"provider":provider,
+                "seed":seed,"provider":provider,"context_mode":context_mode,
                 "reference_sha256":fingerprint,
                 "baseline":{"profile":baseline()["name"],"turns":rows["baseline"]},
                 "variant":{"profile":candidate["name"],"turns":rows["variant"]},

@@ -62,7 +62,7 @@ def compact_context(context, char_budget=6800):
             ('propuestas_pendientes',3),('evaluaciones_externas_recientes',3),('inconsistencias_recoleccion_previas',4),('predicciones_contrastadas',3),('estrategias_que_ya_no_funcionaron',3),
             ('habilidades_verificadas',5),('comportamiento_medido',None),('preferencias_en_espera',5),
             ('agenda_diferida',3),('recordatorios_listos',5),('recordatorios_pendientes',5),('estrategia_bloqueada',None),('pistas_cierre_proyecto',None),
-             ('ultimo_cierre_rechazado',None),('estado_investigacion_descanso',None),('condiciones_de_ensayo_descanso',None),
+             ('ultimo_cierre_rechazado',None),('ultima_referencia_de_proyecto_rechazada',None),('estado_investigacion_descanso',None),('condiciones_de_ensayo_descanso',None),
             ('regla',None))
     selected={}
     for key,count in limits:
@@ -137,7 +137,8 @@ def _size(value):
 # El estado operativo y las delegaciones vigentes se preservan íntegros.
 # No se consideran instrucciones automáticas de autocuidado.
 _CORE=('momento','posición','necesidades','inventario_materiales',
-       'proyecto_actual','investigaciones_activas','ultimo_cierre_rechazado','proyectos_reanudables',
+       'proyecto_actual','investigaciones_activas','ultimo_cierre_rechazado',
+       'ultima_referencia_de_proyecto_rechazada','proyectos_reanudables',
        'antecedente_relevante','preferencias_en_espera','regla')
 _REDUCE_FIRST=('estrategias_que_ya_no_funcionaron','diagnosticos_operativos_recientes',
                'resultados_de_acciones','mediciones_reales_recientes','construcciones_fijas',

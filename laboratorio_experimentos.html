@@ -14,11 +14,12 @@
 <option value="physical">Evolución física con acciones guionadas · sin red</option>
 <option value="live">Deliberación real A/B · 2 llamadas al LLM</option>
 <option value="evolution">Evolución con LLM · hasta 4 llamadas</option></select></label>
-<div class="row"><label class="field"><span>Origen del estado</span><select id="source"><option value="new">Mundo nuevo</option><option value="saved">Copia de partida guardada</option></select></label>
+<div class="row"><label class="field"><span>Origen del estado</span><select id="source"><option value="new">Mundo nuevo</option><option value="saved">Copia de partida seleccionada en Historial</option></select></label>
 <label class="field"><span>Semilla (mundo nuevo)</span><input id="seed" type="number" value="7321" min="0" max="1000000000" step="1"></label></div>
+<p id="worldSource" class="muted" role="status" aria-live="polite">Consultando partida seleccionada…</p>
 <label class="option"><input type="checkbox" id="kit"> Añadir kit de materiales a ambas copias</label>
 <div id="provider-group"><label class="field"><span>Proveedor de comparación</span><select id="provider"><option value="gemini">Gemini</option><option value="groq">Groq</option></select></label>
-<p class="muted fine">Una ejecución real usa la clave API configurada en Nilo. Las respuestas pueden variar aun con el mismo contexto.</p></div>
+<p class="muted fine">Una ejecución real usa la clave API configurada en Nilo. Las respuestas pueden variar aun con el mismo contexto.</p><label class="field"><span>Contexto de la condición B</span><select id="context-mode"><option value="baseline">Actual · baseline</option><option value="modular">Experimental · modular/multifoco</option></select></label><p class="muted fine">A conserva el contexto actual. El modo modular solo cambia B en esta prueba, nunca la partida original ni el perfil activo.</p></div>
 <fieldset id="profile-fields"><legend>Condición B · Contexto alternativo</legend>
 <p class="muted fine">A usa el perfil de referencia. B puede omitir únicamente campos opcionales; no se ocultan necesidades, posición ni contratos esenciales.</p><div id="optional" class="checkgrid"></div>
 <label class="field"><span>Nota adicional al prompt B (opcional)</span><textarea id="note" maxlength="700" rows="3" placeholder="Hasta 700 caracteres; no cambia el núcleo de Nilo."></textarea></label></fieldset>
@@ -33,7 +34,7 @@
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-let profileBase=null,lastResult=null;
+let profileBase=null,lastResult=null,selectedWorldInfo=null;
 function element(tag,cls,text){
  const n=document.createElement(tag);if(cls)n.className=cls;
  if(text!==undefined)n.textContent=String(text);return n;
@@ -60,6 +61,27 @@ function modeUi(){
    "Se envían 2 solicitudes reales con el mismo estado inicial: baseline y variante. Se muestran respuestas originales, pero no se ejecutan acciones.":
    "Hasta 4 consultas reales: dos rondas de deliberación por rama. Cada decisión se ejecuta solo en su propia copia temporal; el segundo contexto puede divergir.";
 }
+async function loadWorldSource(){
+ try{
+  const response=await fetch("/api/lab/world-source",{cache:"no-store"});
+  const data=await response.json();
+  if(!response.ok)throw Error(data.error||"No se pudo consultar la partida");
+  selectedWorldInfo=data;
+  const status=$("worldSource");
+  if(!data.available){
+   status.textContent="No hay partida guardada seleccionada. Cargá una en Historial para usarla aquí.";
+  }else{
+   const mb=(data.size_bytes/1048576).toFixed(1);
+   status.textContent="Partida compartida: "+data.name+" · "+mb+" MB · "+
+    (data.origin==="importada"?"importada desde Historial":"carpeta del laboratorio")+
+    ". Las pruebas usan copias temporales.";
+   if(data.origin==="importada")$("source").value="saved";
+  }
+ }catch(e){
+  selectedWorldInfo=null;
+  $("worldSource").textContent="No se pudo comprobar la selección: "+e.message;
+ }
+}
 async function load(){
  try{
    const response=await fetch("/api/lab/profile/list",{cache:"no-store"});
@@ -72,6 +94,7 @@ async function load(){
    }
  }catch(e){$("feedback").textContent=e.message;$("feedback").classList.add("error")}
  modeUi();
+ await loadWorldSource();
 }
 function makeProfile(){
  if(!profileBase)throw Error("El catálogo de campos opcionales no está disponible");
@@ -85,6 +108,12 @@ async function perform(){
  if(!Number.isInteger(seed)||seed<0||seed>1000000000)throw Error("Semilla fuera de rango");
  const body={mode,seed,source:$("source").value,kit:$("kit").checked,
    provider:$("provider").value,profile:makeProfile()};
+ if(body.source==="saved"){
+  await loadWorldSource();
+  if(!selectedWorldInfo?.available)
+   throw Error("No hay una partida seleccionada. Abrí Historial y cargá un SQLite.");
+ }
+ if(mode!=="physical")body.context_mode=$("context-mode").value;
  if(mode==="physical"){
    try{body.baseline_steps=JSON.parse($("actions-a").value);
        body.variant_steps=JSON.parse($("actions-b").value)}
@@ -109,6 +138,58 @@ async function perform(){
    $("feedback").textContent="Ensayo completo. Las copias temporales se cerraron.";
  }finally{$("run").disabled=false}
 }
+function renderLiveEvidence(root,label,branch){
+ if(!branch||!Array.isArray(branch.turns))return;
+ const section=element("section","branch");
+ section.append(element("h3","",label+" · trazabilidad de decisiones"));
+ for(const turn of branch.turns){
+  const response=turn.response||{},effect=turn.world_effect||{};
+  const part=element("div","details");
+  const rows=Array.isArray(effect.operation_results)?effect.operation_results:[];
+  part.append(element("h3","","Turno "+String(turn.turn)+" · "+
+   (effect.applied?"simulación temporal":"sin ejecución física")));
+  const warnings=Array.isArray(response.validation_warnings)?
+   response.validation_warnings:[];
+  for(const warning of warnings){
+   part.append(element("p","muted","Advertencia: "+String(warning.code||"campo")+
+    " · campo "+String(warning.field||"?")+
+    (warning.received_key?" · recibido como "+String(warning.received_key):"")));
+  }
+  if(effect.applied){
+   const transition=effect.project_transition||{};
+   if(transition.requested_action==="pausar"){
+    const paused=transition.previous_status_after==="pausado";
+    part.append(element("p","muted","Pausa del proyecto: "+
+     (paused?"registrada en el mundo":"no confirmada")+
+     ". Las acciones posteriores se verifican por separado."));
+   }
+   part.append(element("p","muted","Plan enviado: "+String(effect.submitted_operations??"?")+
+    " pasos · admitidos: "+String(effect.admitted_operations??"?")+
+    ". La aceptación no implica éxito físico."));
+   if(!rows.length)part.append(element("p","muted","Sin resultados individuales registrados."));
+  }else if(response.normalized){
+   part.append(element("p","muted","Plan normalizado; en esta modalidad no se ejecutan operaciones."));
+  }
+  for(const operation of rows){
+   const row=element("div","metric");
+   row.append(element("strong","","Paso "+String(operation.requested_step)+
+    " · "+String(operation.op||"?")+" · "+String(operation.state||"sin estado")));
+   if(operation.engine_status||operation.contract_code)
+    row.append(element("small","","Motor: "+String(operation.engine_status||"sin clasificación")+
+     (operation.contract_code?" · contrato: "+String(operation.contract_code):"")));
+   if(operation.action_id||operation.measurement_id)
+    row.append(element("p","muted fine","Acción: "+String(operation.action_id||"sin ID")+
+     " · medición: "+String(operation.measurement_id||"sin medición")));
+   if(operation.reason)
+    row.append(element("p","muted","Motivo registrado por el motor: "+String(operation.reason)));
+   if(Array.isArray(operation.facts)&&operation.facts.length)
+    row.append(element("p","muted",operation.facts.join(" · ")));
+   part.append(row);
+  }
+  section.append(part);
+ }
+ root.append(section);
+}
 function render(result){
  const root=$("result");root.replaceChildren();
  append(root,element("h2","","02 · Resultado del experimento"),
@@ -117,15 +198,23 @@ function render(result){
  const metrics=element("div","metrics");
  append(metrics,metric("Consultas LLM",result.llm_calls??0),
    metric("Tipo",result.experiment_type),
+    metric("Contexto B",result.context_mode||"baseline"),
    metric("Partida original",result.modified_original_world===true?"Modificada":"Sin cambios"));
+ if(result.selected_world?.available)
+   metrics.append(metric("Partida usada",result.selected_world.name));
  if(result.comparison&&"delta_bytes" in result.comparison)
    metrics.append(metric("Diferencia de bytes",result.comparison.delta_bytes));
+ if(result.comparison&&"same_sent_evidence" in result.comparison)
+   metrics.append(metric("Evidencia enviada a A/B",
+     result.comparison.same_sent_evidence?"Idéntica":"Distinta"));
  root.append(metrics);
  const note=element("div","warning");
  note.textContent=(result.notes||result.limitations||[]).join(" ");
  root.append(note);
  if(result.comparison)showJson(root,"Comparación de resultados",result.comparison);
  const b=result.baseline,v=result.variant;
+ if(b)renderLiveEvidence(root,"A · Baseline / original",b);
+ if(v)renderLiveEvidence(root,"B · Variante",v);
  if(b)showJson(root,"A · Baseline / original",b);
  if(v)showJson(root,"B · Variante",v);
  const actions=element("div","actions");

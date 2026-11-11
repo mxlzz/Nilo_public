@@ -215,42 +215,197 @@ class MotorLab(SimulationSandbox):
 
 
 class HistorySource:
-    """Sólo administra un archivo de consulta. Nunca modifica la partida original."""
+    """Una selección local compartida por Historial y Experimentos A/B.
+
+    El navegador no puede conservar un input[type=file] entre páginas, por lo
+    que el servidor mantiene una copia temporal de solo lectura.
+    """
     def __init__(self):
         import tempfile
         self.lock = threading.RLock()
         self.path = DB if DB.is_file() else None
+        self.display_name = DB.name if self.path else None
+        self.origin = "carpeta" if self.path else None
         self.temp_directory = tempfile.TemporaryDirectory(prefix="nilo-historial-cargado-")
 
-    def load_bytes(self, data):
+    def describe(self, fallback=None):
+        """Metadatos públicos: nunca exponer rutas de archivos absolutas."""
+        with self.lock:
+            chosen = self.path if self.path is not None and self.path.is_file() else None
+            if chosen is not None:
+                name, origin = self.display_name or chosen.name, self.origin or "carpeta"
+            elif fallback is not None and Path(fallback).is_file():
+                chosen = Path(fallback)
+                name, origin = chosen.name, "carpeta"
+            else:
+                return {"available": False, "name": None,
+                        "origin": None, "size_bytes": None}
+            return {"available": True, "name": name, "origin": origin,
+                    "size_bytes": chosen.stat().st_size}
+
+    def selected_world(self, fallback=None):
+        """Retorna solo archivos seleccionados por el servidor local."""
+        with self.lock:
+            if self.path is not None and self.path.is_file():
+                return self.path
+            if fallback is not None and Path(fallback).is_file():
+                return Path(fallback)
+            raise ValueError("No hay una partida guardada disponible")
+
+    def world_for_read(self, fallback=None):
+        """Partida elegida o ruta configurada para capturas de solo lectura.
+
+        En instalaciones de prueba o legacy puede existir la sidecar LLM
+        aunque aún no exista la SQLite de mundo. No exigirla en este visor.
+        Las rutas siempre provienen del servidor, nunca del navegador.
+        """
+        with self.lock:
+            if self.path is not None and self.path.is_file():
+                return self.path
+            return Path(fallback) if fallback is not None else None
+
+    def load_bytes(self, data, *, name=None):
         if not data.startswith(b"SQLite format 3\x00"):
             raise ValueError("El archivo seleccionado no es una base SQLite válida.")
-        file = Path(self.temp_directory.name) / "partida_cargada.sqlite3"
+        import tempfile
+        # El nombre que manda el navegador jamás define la ruta de escritura.
+        label = str(name or "partida_importada.sqlite3").replace(chr(92), "/").split("/")[-1]
+        label = "".join(c for c in label if c.isprintable())[:120]
+        if not label.lower().endswith((".sqlite3", ".sqlite", ".db")):
+            label = "partida_importada.sqlite3"
         with self.lock:
-            file.write_bytes(data)
+            with tempfile.NamedTemporaryFile(
+                prefix="partida_", suffix=".sqlite3",
+                dir=self.temp_directory.name, delete=False,
+            ) as target:
+                target.write(data)
+                file = Path(target.name)
             from historical_lab import catalog
             try:
                 checked = catalog(file)
             except Exception:
                 file.unlink(missing_ok=True)
                 raise
+            # Copias anteriores pueden seguir usándose en un experimento A/B.
+            # El directorio completo se elimina al terminar este servidor.
             self.path = file
+            self.display_name = label
+            self.origin = "importada"
+            checked["source"] = label
+            checked["selection"] = self.describe()
             return checked
+
+    def import_sidecar_bytes(self, data):
+        """Asociar capturas verificadas exclusivamente a una copia temporal importada.
+
+        No escribir una sidecar de la partida de la carpeta. Se exige al menos
+        una coincidencia de call_id exacta con un registro del mundo, sin
+        suponer que un nombre de archivo acredita la procedencia.
+        """
+        import hashlib
+        import tempfile
+        from nilo_runtime.storage.llm_requests import RequestTraceStore
+
+        if not data.startswith(b"SQLite format 3\x00"):
+            raise ValueError("El archivo de capturas no es una SQLite válida.")
+        with self.lock:
+            if self.origin != "importada" or self.path is None or not self.path.is_file():
+                raise ValueError("Primero importá una partida; no se modifican archivos originales.")
+            world = self.path
+            target = RequestTraceStore.for_world(world).path
+            if target.exists():
+                raise ValueError("Esta partida ya tiene capturas importadas; volvé a cargarla para reemplazarlas.")
+            with tempfile.NamedTemporaryFile(
+                prefix="capturas_", suffix=".sqlite3",
+                dir=self.temp_directory.name, delete=False
+            ) as stream:
+                stream.write(data)
+                staged = Path(stream.name)
+            try:
+                def read_only(path):
+                    db = sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=2)
+                    db.execute("PRAGMA query_only=ON")
+                    return db
+
+                from contextlib import closing
+                with closing(read_only(world)) as db:
+                    linked_ids = set()
+                    tables = {row[0] for row in db.execute(
+                        "SELECT name FROM sqlite_master WHERE type='table'"
+                    )}
+                    if "timeline_checkpoints" in tables:
+                        columns = {row[1] for row in db.execute(
+                            "PRAGMA table_info(timeline_checkpoints)"
+                        )}
+                        if "trace_call_id" in columns:
+                            linked_ids.update(value for (value,) in db.execute(
+                                "SELECT DISTINCT trace_call_id FROM timeline_checkpoints "
+                                "WHERE trace_call_id IS NOT NULL"
+                            ) if value)
+                    if "history" in tables:
+                        for (payload,) in db.execute(
+                            "SELECT payload FROM history WHERE category='llm_decision' "
+                            "ORDER BY seq DESC LIMIT 30000"
+                        ):
+                            try:
+                                record = json.loads(payload)
+                            except (TypeError, ValueError):
+                                continue
+                            if isinstance(record, dict) and isinstance(
+                                record.get("trace_call_id"), str
+                            ):
+                                linked_ids.add(record["trace_call_id"])
+                    if not linked_ids:
+                        raise ValueError("La partida no contiene IDs de deliberación para verificar las capturas.")
+
+                with closing(read_only(staged)) as db:
+                    if db.execute("PRAGMA quick_check").fetchone()[0] != "ok":
+                        raise ValueError("La SQLite de capturas no supera el control de integridad.")
+                    columns = {row[1] for row in db.execute("PRAGMA table_info(llm_requests)")}
+                    required = {"attempt_id", "call_id", "body", "body_sha256", "body_bytes"}
+                    if not required.issubset(columns):
+                        raise ValueError("El archivo no contiene solicitudes LLM con el formato esperado.")
+                    matches, attempts = set(), 0
+                    for call_id, body, digest, size in db.execute(
+                        "SELECT call_id,body,body_sha256,body_bytes FROM llm_requests"
+                    ):
+                        attempts += 1
+                        if not isinstance(body, bytes) or len(body) != size or (
+                            hashlib.sha256(body).hexdigest() != digest
+                        ):
+                            raise ValueError("Una captura tiene cuerpo o SHA256 inconsistentes.")
+                        if call_id in linked_ids:
+                            matches.add(call_id)
+                    if not attempts:
+                        raise ValueError("El archivo no contiene solicitudes LLM.")
+                    if not matches:
+                        raise ValueError("Las capturas no comparten ningún ID de deliberación con esta partida.")
+                os.replace(staged, target)
+                return {
+                    "imported": True, "attempts": attempts,
+                    "matched_calls": len(matches),
+                    "world": self.display_name, "source": "temporal_verificada"
+                }
+            finally:
+                staged.unlink(missing_ok=True)
 
     def use_default(self):
         with self.lock:
             if not DB.is_file():
                 raise ValueError("No existe una partida en esta carpeta.")
-            self.path = DB
             from historical_lab import catalog
-            return catalog(self.path)
+            checked = catalog(DB)
+            self.path = DB
+            self.display_name = DB.name
+            self.origin = "carpeta"
+            checked["selection"] = self.describe()
+            return checked
 
     def require(self):
         with self.lock:
             if self.path is None or not self.path.is_file():
                 raise ValueError("No hay partida cargada. Elegí un archivo .sqlite3.")
             return self.path
-
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -312,7 +467,7 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(contents)
         elif path == "/api/lab/analysis":
-            # Panorama transversal de la partida actual; nunca aceptar paths,
+            # Panorama transversal de la partida seleccionada; nunca aceptar paths,
             # nombres de DB o proveedores elegidos por el navegador.
             try:
                 raw=parse_qs(urlsplit(self.path).query,
@@ -323,9 +478,15 @@ class Handler(BaseHTTPRequestHandler):
                 if not value.isascii() or not value.isdecimal() or len(value)>2:
                     raise ValueError("Límite de turnos inválido")
                 from nilo_runtime.labs.cross_analysis import analyze
-                self.json(analyze(self.hub.world,limit=int(value)))
+                self.json(analyze(self.history.world_for_read(fallback=self.hub.world),
+                                  limit=int(value)))
             except (ValueError,TypeError,sqlite3.Error,OSError) as exc:
                 self.json({"error":str(exc)[:220]},400)
+        elif path == "/api/lab/world-source":
+            if urlsplit(self.path).query:
+                self.json({"error":"Esta consulta no admite parámetros"},400)
+            else:
+                self.json(self.history.describe(fallback=self.hub.world))
         elif path == "/api/lab/audit/info":
             # Solo versión/contrato del motor instalado, sin acceder a la
             # partida ni modificar configuración. Los commits de paquetes
@@ -344,10 +505,10 @@ class Handler(BaseHTTPRequestHandler):
                 })
         elif path in ("/api/lab/llm/attempts", "/api/lab/llm/attempt"):
             # Solo servidor del laboratorio: no sumar rutas crudas a la UI
-            # principal. La base se determina desde la partida del LabHub;
+            # principal. La base se determina desde la selección de HistorySource;
             # jamás desde un parámetro proporcionado por el navegador.
             try:
-                reader=LocalLLMReadAPI(self.hub.world)
+                reader=LocalLLMReadAPI(self.history.world_for_read(fallback=self.hub.world))
                 raw_query=urlsplit(self.path).query
                 if path.endswith("/attempts"):
                     self.json(reader.list_attempts(raw_query))
@@ -398,7 +559,7 @@ class Handler(BaseHTTPRequestHandler):
                     if set(query)!={"id"} or len(query["id"])!=1:
                         raise ValueError("Identificador de episodio inválido")
                     self.json(get_episode(source,query["id"][0],
-                                          viewer_world=self.hub.world))
+                                          viewer_world=source))
             except (ValueError,TypeError,sqlite3.Error,OSError) as exc:
                 self.json({"error":str(exc)[:220]},400)
         elif path in ("/api/lab/rule", "/api/history/rule"):
@@ -444,6 +605,8 @@ class Handler(BaseHTTPRequestHandler):
                     result = self.history.use_default()
                 elif path.endswith("catalog"):
                     result = catalog(source)
+                    result["selection"] = self.history.describe()
+                    result["source"] = result["selection"]["name"]
                 else:
                     ids = parse_qs(urlsplit(self.path).query).get("id") or [""]
                     result = select_event(source, ids[0])
@@ -484,9 +647,10 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError("Origen o configuración de referencia inválidos")
                 # Solo el servidor decide el archivo original. Nunca usar una
                 # ruta o contenido de credenciales proporcionados por cliente.
-                saved=self.hub.world if source=="saved" else None
-                if source=="saved" and (saved is None or not saved.is_file()):
-                    raise ValueError("No hay una partida guardada disponible")
+                saved=(self.history.selected_world(fallback=self.hub.world)
+                       if source=="saved" else None)
+                source_info=(self.history.describe(fallback=self.hub.world)
+                             if source=="saved" else None)
                 if mode=="physical":
                     if set(body)-{"mode","seed","source","kit","provider",
                                   "profile","baseline_steps","variant_steps"}:
@@ -496,22 +660,26 @@ class Handler(BaseHTTPRequestHandler):
                         baseline_steps=body.get("baseline_steps",[]),
                         variant_steps=body.get("variant_steps",[]))
                 elif mode=="context":
-                    if set(body)-{"mode","seed","source","kit","provider","profile"}:
+                    if set(body)-{"mode","seed","source","kit","provider","profile","context_mode"}:
                         raise ValueError("Parámetros de contexto desconocidos")
                     result=context_pair(
                         self.hub,body.get("profile"),provider=body.get("provider","gemini"),
-                        seed=seed,source=source,world_path=saved,kit=kit)
+                        seed=seed,source=source,world_path=saved,kit=kit,
+                        context_mode=body.get("context_mode","baseline"))
                 elif mode in ("live","evolution"):
                     if set(body)-{"mode","seed","source","kit","provider","profile",
-                                  "confirm_live"}:
+                                  "confirm_live","context_mode"}:
                         raise ValueError("Parámetros de proveedor desconocidos")
                     result=live_pair(
                         self.hub,body.get("profile"),provider=body.get("provider","gemini"),
                         seed=seed,source=source,world_path=saved,kit=kit,
                         turns=1 if mode=="live" else 2,
-                        confirm=body.get("confirm_live") is True)
+                        confirm=body.get("confirm_live") is True,
+                        context_mode=body.get("context_mode","baseline"))
                 else:
                     raise ValueError("Modalidad de experimento no disponible")
+                if source_info is not None:
+                    result["selected_world"] = source_info
                 return self.json(result)
             except RequestError as exc:
                 return self.json({"error":str(exc)},exc.status)
@@ -562,6 +730,20 @@ class Handler(BaseHTTPRequestHandler):
                 return self.json({"error":str(exc)[:350]},400)
             except Exception:
                 return self.json({"error":"Error interno del laboratorio"},500)
+        if path == "/api/history/upload-sidecar":
+            # Solo copias temporales del mundo y coincidencias verificadas por ID.
+            try:
+                if urlsplit(self.path).query:
+                    raise ValueError("Esta carga no admite parámetros.")
+                size = int(self.headers.get("Content-Length", "0"))
+                if not 16 <= size <= 200 * 1024 * 1024:
+                    raise ValueError("Las capturas deben ocupar entre 16 bytes y 200 MB.")
+                data = self.rfile.read(size)
+                if len(data) != size:
+                    raise ValueError("Carga incompleta.")
+                return self.json(self.history.import_sidecar_bytes(data))
+            except (ValueError, OSError, sqlite3.Error) as exc:
+                return self.json({"error":str(exc)}, 400)
         if path == "/api/history/upload":
             try:
                 size = int(self.headers.get("Content-Length", "0"))
@@ -570,7 +752,10 @@ class Handler(BaseHTTPRequestHandler):
                 data = self.rfile.read(size)
                 if len(data) != size:
                     raise ValueError("Carga incompleta.")
-                return self.json(self.history.load_bytes(data))
+                from urllib.parse import unquote
+                name=self.headers.get("X-Nilo-Filename","")
+                return self.json(self.history.load_bytes(
+                    data,name=unquote(name) if name else None))
             except (ValueError, OSError, sqlite3.Error) as exc:
                 return self.json({"error": str(exc)}, 400)
         if path not in ("/api/reset", "/api/act", "/api/manual", "/api/history/replay"):
