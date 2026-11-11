@@ -252,6 +252,18 @@ class HistorySource:
                 return Path(fallback)
             raise ValueError("No hay una partida guardada disponible")
 
+    def world_for_read(self, fallback=None):
+        """Partida elegida o ruta configurada para capturas de solo lectura.
+
+        En instalaciones de prueba o legacy puede existir la sidecar LLM
+        aunque aún no exista la SQLite de mundo. No exigirla en este visor.
+        Las rutas siempre provienen del servidor, nunca del navegador.
+        """
+        with self.lock:
+            if self.path is not None and self.path.is_file():
+                return self.path
+            return Path(fallback) if fallback is not None else None
+
     def load_bytes(self, data, *, name=None):
         if not data.startswith(b"SQLite format 3\x00"):
             raise ValueError("El archivo seleccionado no es una base SQLite válida.")
@@ -372,7 +384,7 @@ class Handler(BaseHTTPRequestHandler):
                 if not value.isascii() or not value.isdecimal() or len(value)>2:
                     raise ValueError("Límite de turnos inválido")
                 from nilo_runtime.labs.cross_analysis import analyze
-                self.json(analyze(self.history.selected_world(fallback=self.hub.world),
+                self.json(analyze(self.history.world_for_read(fallback=self.hub.world),
                                   limit=int(value)))
             except (ValueError,TypeError,sqlite3.Error,OSError) as exc:
                 self.json({"error":str(exc)[:220]},400)
@@ -402,7 +414,7 @@ class Handler(BaseHTTPRequestHandler):
             # principal. La base se determina desde la selección de HistorySource;
             # jamás desde un parámetro proporcionado por el navegador.
             try:
-                reader=LocalLLMReadAPI(self.history.selected_world(fallback=self.hub.world))
+                reader=LocalLLMReadAPI(self.history.world_for_read(fallback=self.hub.world))
                 raw_query=urlsplit(self.path).query
                 if path.endswith("/attempts"):
                     self.json(reader.list_attempts(raw_query))

@@ -9,6 +9,9 @@ Registro principal de continuidad: [issue #97](https://github.com/mxlzz/Nilo_pub
 - La CI de la rama de etapa 11 (run #42553792750) concluyó correctamente. No equivale a validación longitudinal de memoria/autonomía.
 - Estudio A/B documentado en `docs/laboratorio/EVALUACION_ETAPA_11_2026-11-08.md`: hasta dos deliberaciones por variante; no hay evidencia de mejora cognitiva.
 
+## Antecedente recuperado de conversaciones del 08/11/2026
+El problema de selección compartida **Historial ↔ Experimentos A/B** ya se había corregido en etapa 11 (run #42512569088: 1.212 pruebas, 0 fallos). C1a no debe describirse como solución de ese problema previo: su alcance son exclusivamente **Visor LLM y Análisis transversal**. Hay un límite independiente de importación de la sidecar.
+
 ## C1a: coherencia de partida seleccionada
 **Defecto localizado:** `/api/history/episodes` lee `HistorySource`, pero `/api/lab/llm/attempts`, `/api/lab/llm/attempt` y `/api/lab/analysis` leían `LabHub.world`. Se mezclaban fuentes si el usuario elegía otra partida.
 
@@ -25,3 +28,9 @@ Registro principal de continuidad: [issue #97](https://github.com/mxlzz/Nilo_pub
 4. Registrar resultado y próximo paso en issue #97.
 
 **Siguiente investigación (C2):** reconstruir la cadena resultado físico → experiencia → recuperación → payload → decisión del bucle de ensayos de carga, con IDs verificables. No cambiar memoria ni autonomía hasta localizar la falla.
+
+## Verificación de CI posterior al primer commit C1a
+- [Run #43022795131](https://github.com/mxlzz/Nilo_public/actions/runs/43022795131): **falló** con 3 pruebas del visor LLM anterior (HTTP 500 por ausencia de SQLite mundo, aunque existe la sidecar). La nueva regresión de selección sí pasó.
+- Causa: `HistorySource.selected_world` exige que el mundo exista; algunos tests/instalaciones anteriores generan capturas LLM antes de crear la SQLite del mundo.
+- Corrección de compatibilidad: `HistorySource.world_for_read` prioriza partida seleccionada existente y, si no hay selección, permite la ruta local configurada sin exigir presencia de mundo. El lector del sidecar ya gestiona esa condición.
+- **La ejecución completa de CI del nuevo commit debe verificarse por separado.**
