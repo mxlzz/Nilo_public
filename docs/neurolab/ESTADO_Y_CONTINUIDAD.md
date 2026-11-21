@@ -1,9 +1,9 @@
 # NeuroLab — estado verificable y protocolo de continuidad
 
-**Estado actualizado:** 2026-11-20 (registro posterior al comienzo de ejecución).  
+**Estado actualizado:** 2026-11-21 (genoma original inspeccionado y experimento mínimo de STW/LTW).  
 **Línea base documentada:** protocolo v0.1.0 en rama `docs/neurolab-protocolo-20261120`, propuesto para revisión.  
-**Ejecución experimental:** E01–E04 y E06–E08 verificadas en prototipos aislados; E05 falla atribución causal; G09 sigue abierta.  
-**Código del cerebro:** módulos E01–E08 en experiments/neurolab/; aún no existe un cerebro que los integre todos.  
+**Ejecución experimental:** E01–E08 registrados; E05 sigue con fallo de crédito. E09.02a/b/c/d/e ejecutadas: c y d fallaron reversión, e la superó en 20/20 semillas bajo reglas experimentales STW/LTW. G09 global aún abierta.  
+**Código del cerebro:** módulos E01–E08 y microcircuito E09 de cinco unidades basado en reglas genéticas C1; prueba de aprendizaje E09e combina conceptos, decisión, recompensa y STW/LTW propios. Sin motor original ni mundo.  
 **Autorización vigente documentada:** el usuario autorizó continuar ejecución secuencial hasta necesitar intervención; ninguna integración con el motor Nilo 0.7 ni merge a main.
 
 ## 1. Marcador canónico de progreso
@@ -12,17 +12,17 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | E09 — evaluación integral pendiente; G00-H y G05 abiertas |
-| Siguiente subtarea exacta | **E09.02a — especificar núcleo de SVRules de Decision, Attention y Concept basado en los genes verificables; después implementar mínimo experimental y comparar con E02/E03** |
-| Última subtarea validada | E08 — circuitos recurrentes y controles; G09 abierta |
-| Experimentos ejecutados | E01–E02 unitarias, E03 experimento preregistrado (20 semillas, controles) |
-| Runs con evidencia | [E01+E02 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44850881701), [E03 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727), [E04 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622), [E05 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851485383) |
-| Última corrida del cerebro | Experimentos sintéticos E03 con aprendizaje local por refuerzo; sin cuerpo/mundo/LLM |
-| Estado de E00 | [Genoma y comparación binaria](E00_GENOMA_ORIGINAL_COMPARACION.md), [Mapa neuroquímico](E00_MAPA_NEUROQUIMICO_C1.md); estructura genética verificada, G00-H ejecutable aún abierta |
-| Estado del código | Módulos E01–E08; 85 métodos de test (E07 +10, E08 +8) |
+| Etapa actual | E09.02e validada experimentalmente; fidelidad C1 G00-H y G09 integral aún abiertas |
+| Siguiente subtarea exacta | **E09.02f — reconstruir actualización original de dendritas (susceptibilidad, STW, LTW, atrofia) con parámetros de dad1.gen y guías C1; comparar con prototipo E09e. Para fidelidad exacta se necesita analizar el ejecutable del juego** |
+| Última subtarea validada | **E09.02e:** cinco neuronas, STW/LTW, aprendizaje/reversión 20/20 semillas; [evidencia](E09_02E_RESULTADOS_STW_LTW.md), G09 global abierta |
+| Experimentos ejecutados | E01–E08; E09c/d/e comparados con 20 semillas cada uno y métricas por semilla preservadas |
+| Runs con evidencia | [E01–E08 conjunto](https://github.com/mxlzz/Nilo_public/actions/runs/44852299967); [genoma/lector CI](https://github.com/mxlzz/Nilo_public/actions/runs/44919429305); [E09c/d/e y JSON](https://github.com/mxlzz/Nilo_public/actions/runs/44920963462) |
+| Última corrida del cerebro | [E09c/d/e comparadas](E09_02E_RESULTADOS_STW_LTW.md), 20 semillas; resultados negativos preservados, E09e aprobada en este protocolo |
+| Estado de E00 | [Genoma CD vs parche](E00_GENOMA_ORIGINAL_COMPARACION.md), [receptores/emisores](E00_MAPA_NEUROQUIMICO_C1.md), [reacciones Reward/Punishment](E00_QUIMICA_REFUERZO_C1.md); faltan ecuaciones exactas del ejecutable |
+| Estado del código | Módulos E01–E08, inspectores GEN/reacciones C1, subset SVRule, microcircuito y variantes E09c/d/e. CI y JSON por semilla |
 | Integración con Nilo 0.7 | Ninguna |
 | Bloqueos | Genoma original aportado del CD decodificado y cotejado con actualizado (nueve lóbulos idénticos). Sigue abierta la verificación del ejecutable y de la interpretación exacta de sus ticks, SVRules y químicos |
-| Decisiones nuevas pendientes | Fidelidad C1 vs adaptación mínima tras E00 |
+| Decisiones nuevas pendientes | Interpretación fiel bit a bit de motor C1 aún no comprobada; E09e es alternativa NeuroLab inspirada, no reproducción. Buscar ejecutable auténtico si se decide exigir fidelidad histórica. |
 
 **Regla:** nunca actualizar `última subtarea validada` sin prueba enlazada al commit, log/fixture y criterio de aceptación. Si se hace un paso pero no se logra evidencia suficiente, permanece en curso/bloqueado. No marcar «terminada» una etapa porque se produjo un texto sobre ella.
 
@@ -225,3 +225,16 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - Código de inspección reproducible [c1_genome_inspector.py](../../experiments/neurolab/c1_genome_inspector.py) y [siete pruebas sintéticas](../../experiments/neurolab/tests/test_c1_genome_inspector.py): primer CI falló por tratar `gend` como parte de un gen terminal; causa documentada, corregida sin tocar datos. [CI corregida #44919429305](https://github.com/mxlzz/Nilo_public/actions/runs/44919429305): **success**, conjunto de tests de NeuroLab validado.
 - La estructura **genética** C1 queda muy bien especificada para este archivo aportado; G00-H **ejecutable** permanece abierta en cálculos hardcoded, reloj y parámetros/identidad química exacta. No atribuir fidelidad total a NeuroLab E01–E08.
 - Próximo paso: E09.02a definir microcircuito de prueba con las SVRules y conexiones históricas verificables, haciendo explícitas las convenciones temporales propias y controles necesarios.
+
+
+### 2026-11-21 — NL-LOG-0015 (E09.02a–e, línea experimental y evidencia)
+
+- **E09.02a**: tres SVRules originales `ANDTYPE0`, `STATE PLUS TYPE0 MINUS TYPE1`, `STATE PLUS TYPE0 PLUS TYPE1` decodificadas y probadas con oráculos; [especificación](E09_02A_PRE_REGISTRO_SVRULE_C1.md), [módulo](../../experiments/neurolab/c1_svrule_subset.py).
+- **E09.02b**: circuito mínimo de cinco unidades P0,P1,C,D0,D1, sin aprendizaje, con reglas neuronales C1; [protocolo](E09_02B_MICROCIRCUITO_PRE_REGISTRO.md), [código](../../experiments/neurolab/c1_microcircuit.py), tests CI verificados.
+- **E09.02c**: primer refuerzo fijo ±16, aprende primera preferencia con precisión1.0 pero **falla inversión** (precisión0.30, 6/20 semillas). [Registro negativo](E09_02C_RESULTADO_NEGATIVO.md).
+- **E09.02d**: con exploración ε=0.10, sube inversión a0.80 y16/20, pero **NO supera** criterio18/20. [Registro negativo](E09_02D_RESULTADO_NEGATIVO.md).
+- **E09.02e**: idénticas cinco unidades y política original, pero con 4 sinapsis STW/LTW (reglas NUMÉRICAS de E04, no ejecutable C1). Aprendizaje original1.0, reversión1.0, **20/20 semillas** superan ambas puertas. Control congelado media0.4925. [Reporte completo](E09_02E_RESULTADOS_STW_LTW.md).
+- **Corrida canónica:** [CI #44920963462](https://github.com/mxlzz/Nilo_public/actions/runs/44920963462), commit probado `7066bef28ff6788cb89b4dc85063238e40f0331b`, `success`; resultados íntegrales con pesos por semilla en [E09c](resultados/run-44920963462/e09c_negative.json), [E09d](resultados/run-44920963462/e09d_negative.json), [E09e](resultados/run-44920963462/e09e_stw_ltw.json). El job preserva ambos controles negativos sin alterar su criterio preregistrado; los tests se etiquetan `expectedFailure` para los resultados negativos conocidos, nunca aprobados como G09.
+- **Genética neuroquímica C1:** [químicos49/50/51/52/53/70](E00_MAPA_NEUROQUIMICO_C1.md) verificados con nombres históricos; [reacciones de drive y refuerzo](E00_QUIMICA_REFUERZO_C1.md) decodificadas de `dad1.gen`; [lector de genes de reacción](../../experiments/neurolab/c1_reaction_inspector.py) y tests agregados. No se subieron archivos del juego.
+- **Estado crítico:** una red pequeña con dos velocidades funciona en la tarea sintética, pero las tasas de relajación experimental NO son las de la máquina de 1996 verificadas; no se demostró una mente C1 fiel ni unificación E01–E08 en un solo sistema; crédito causal diferido E05 sigue fallando. **Siguiente E09.02f:** reproducción/supervisión de un tick sináptico C1 y comparación contra nuestro E09e; para equivalencia exacta se necesita inspección del ejecutable original del CD.
+
