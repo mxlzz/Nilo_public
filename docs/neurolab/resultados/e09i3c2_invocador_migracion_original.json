@@ -1,0 +1,30 @@
+{
+  "protocol": "E09_02I_I3C2_INVOCADOR_MIGRACION_PRE_REGISTRO-v1",
+  "original_exe": {
+    "sha256": "548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7",
+    "bytes": 387072
+  },
+  "verified_static": {
+    "instruction_signatures": 22,
+    "direct_calls": 2,
+    "type1": {
+      "class_gate": "0x404922",
+      "nonzero_output_check": "0x404939/0x40493e",
+      "call_va": "0x40494c",
+      "callee": "0x404a80",
+      "class_count": 2
+    },
+    "type2": {
+      "class_gate": "0x404992",
+      "selection_sentinel": "0x40499d negative one",
+      "record_stride": 16,
+      "call_va": "0x4049c2",
+      "callee": "0x404b90"
+    },
+    "precedes_migration": {
+      "wta_gate": "0x4048cc",
+      "output_zeroing": "0x4048f8"
+    }
+  },
+  "limits": "Only static direct call chain. Does not validate exhaustive scheduler, random source, runtime migration frequency, numerical rates or historical C1 autonomy."
+}
