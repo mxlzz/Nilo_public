@@ -4,7 +4,9 @@ from pathlib import Path
 import unittest
 
 from experiments.neurolab.e09_historical_receptor import Receptor
-from experiments.neurolab.e09_historical_locus import route_brain_chem_loci
+from experiments.neurolab.e09_historical_locus import (
+    route_brain_chem_loci, initialize_brain_chem_loci,
+)
 from experiments.neurolab.c1_svrule_runtime import C1SVTable, evaluate
 
 
@@ -49,6 +51,27 @@ class BrainChemicalLocusTests(unittest.TestCase):
         self.assertEqual(evaluate(bytes((7,0,0,0,0,0,0,0)),state),5)
         self.assertEqual(evaluate(bytes((8,0,0,0,0,0,0,0)),state),16)
         self.assertEqual(evaluate(bytes((18,22,5,22,19,0,0,0)),state),30)
+
+    def test_original_receptor_loading_uses_nominals(self):
+        _, genes, chemical_pool = fixtures()
+        decision_before = initialize_brain_chem_loci(genes, 6)
+        concept_before = initialize_brain_chem_loci(genes, 8)
+        self.assertEqual(decision_before, (0,0,16,16))
+        self.assertEqual(concept_before, (0,4,0,0))
+        self.assertEqual(route_brain_chem_loci(
+            genes, chemical_pool, 6, decision_before,
+        ), (11,11,5,16))
+        self.assertEqual(route_brain_chem_loci(
+            genes, chemical_pool, 8, concept_before,
+        ), (0,0,0,0))
+
+    def test_nominal_loader_rejects_duplicate_in_lab(self):
+        r1=Receptor(1,0,6,13,49,0,10,255,0)
+        r2=Receptor(2,0,6,13,50,0,20,255,0)
+        with self.assertRaisesRegex(ValueError, "duplicate nominal"):
+            initialize_brain_chem_loci((r1,r2),6)
+        with self.assertRaises(ValueError):
+            initialize_brain_chem_loci((r1,),6,(256,0,0,0))
 
     def test_concept_and_decision_channels_independent(self):
         _, genes, _ = fixtures()
