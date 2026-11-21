@@ -1,0 +1,54 @@
+name: NeuroLab I3c5a — preregistered delayed-credit forks
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c5a_credit_forks.py'
+      - 'experiments/neurolab/tests/test_e09_i3c5a_credit_forks.py'
+      - '.github/workflows/neurolab-i3c5a.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preregistered-credit-observation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify preregistered contracts on independent observer
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c5a_credit_forks
+      - name: Run fixed 20 seeds and archive full per-tick witnesses
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c5a_credit_forks --output metrics/e09i3c5a.json | tee metrics/summary.json
+          python - <<'PY'
+          import json
+          p = 'metrics/e09i3c5a.json'
+          r = json.load(open(p, encoding='utf-8'))
+          assert r['protocol'] == 'NL-EXP-I3c5a-v1'
+          assert r['seeds'] == list(range(1200, 1220))
+          assert r['n_trunks'] == 80 and r['n_branches'] == 400
+          assert len(r['per_seed_sha256']) == 20
+          assert r['G05_G09_G00H'].startswith('OPEN')
+          assert all(len(s['episodes']) == 4 for s in r['per_seed'])
+          print('SUMMARY:', {k:r[k] for k in (
+              'n_trunks','n_branches','missing_actions','timing_contrasts'
+          )})
+          PY
+          sha256sum metrics/e09i3c5a.json > metrics/artifact.sha256
+      - name: Preserve positive and negative per-seed outcomes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c5a-credit-forks
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn
