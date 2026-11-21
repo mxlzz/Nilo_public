@@ -31,7 +31,8 @@ class HistoricalReceptorTests(unittest.TestCase):
 
     def test_conash_nominal_four(self):
         rec=Receptor(126,0,8,14,52,0,4,255,1)
-        self.assertEqual(receptor_value(rec,pool(c52=5)),1)
+        # 5*255 >> 8 == 4, so nominal4 - effect4 == 0.
+        self.assertEqual(receptor_value(rec,pool(c52=5)),0)
 
     def test_flags_constant_effect_only_above_threshold(self):
         rec=Receptor(1,0,6,13,49,10,2,7,2)
