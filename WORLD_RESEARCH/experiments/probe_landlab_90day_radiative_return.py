@@ -162,7 +162,7 @@ def main():
         "topology_intervention":"+12m external bedrock and topography elevation at day 46",
         "topography_caches":"Recreate Radiation daily; no custom radiation law",
         "climatic_conditions":"Same rainfall 12mm every 5 days; time 1h storm 23h interstorm; PET base 10mm/day times topographic solar ratio",
-        "active_delta_PET_before_day46":max_delta(active_base,active_bump,"pet",0) if False else float(np.max(np.abs(active_base["pet"][:UPLIFT_DAY_INDEX]-active_bump["pet"][:UPLIFT_DAY_INDEX]))),
+        "active_delta_PET_before_day46":float(np.max(np.abs(active_base["pet"][:UPLIFT_DAY_INDEX]-active_bump["pet"][:UPLIFT_DAY_INDEX]))),
         "active_delta_PET_day46":float(np.max(np.abs(active_base["pet"][UPLIFT_DAY_INDEX]-active_bump["pet"][UPLIFT_DAY_INDEX]))),
         "active_delta_PET_after_day46":max_delta(active_base,active_bump,"pet",UPLIFT_DAY_INDEX),
         "active_delta_moisture_after_day46":max_delta(active_base,active_bump,"moisture",UPLIFT_DAY_INDEX),
