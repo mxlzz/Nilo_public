@@ -97,7 +97,10 @@ def scenario(uplift,geom_feedback):
             # Negative control: only topography->PET is disabled.
             g.at_cell["radiation__ratio_to_flat_surface"][:]=g_ref.at_cell[
                 "radiation__ratio_to_flat_surface"]
-        pet.current_time=current
+        # Landlab model clock setter requires strictly increasing values;
+        # PET was already initialized at START_YEAR for d=0.
+        if d>0:
+            pet.current_time=current
         pet.update()
         today_pet=g.at_cell["surface__potential_evapotranspiration_rate"].copy()
         pet_history.append(today_pet)
