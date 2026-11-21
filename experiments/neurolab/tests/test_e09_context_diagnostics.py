@@ -36,7 +36,6 @@ class TemporalDiagnosticsTests(unittest.TestCase):
         a=run_seed_diagnostic(2)
         b=run_seed_diagnostic(2)
         self.assertEqual(a,b)
-        self.assertEqual(a["first"]["steady"],.9895833333333334 if False else a["first"]["steady"])
         # All correctness is verified against original g5 evaluate_brain in the runner.
         self.assertTrue(0<=a["first"]["steady"]<=1)
         self.assertTrue(0<=a["reversed"]["steady"]<=1)
