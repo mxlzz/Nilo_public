@@ -1,33 +1,52 @@
-# E09h.4 — resultado parcial: tabla de loci CHEM y adaptador condicionado
+# E09h.4 — enlace receptor genético → CHEM → SVRule de C1 (verificación estática)
 
-**Fecha:** 2026-11-21. **Estado científico:** **PARCIAL**. El adaptador demuestra consistencia con dos referencias C1 independientes y con los genes originales ya extraídos, **NO** demuestra el enlace de punteros del ejecutable ni su scheduler.
+**Fecha:** 2026-11-21. **Estado:** G-H4-ADAPTER y G-H4-X86 verificadas en su alcance delimitado. G00-H/G05/G09 global siguen abiertas.
 
-## Evidencia separada y trazable
+## 1. Fuente primaria y procedencia
 
-1. **Genoma original (dato anterior E09h.3):** seis receptores cerebrales (88,89,126–129), ya presentes en [fixture derivado del CD](resultados/e09h3_receptores_genoma_original.json). GEN SHA256 `e2bb4ccf6a4081a128c6c9ffc6eb233452d416717ceef47e78820ca3a152ddd4`. En esta intervención no se releen los bytes originales.
-2. **Tabla de receptores C1 independiente:** [Creatures Development Network, `LCUS`, receptor type 0, organ 0 Brain](https://lisdude.com/cdn/76.html): locus **13/14/15/16** se denomina `LOCUS_CHEM0/1/2/3` respectivamente (también enumera CHEM4 y CHEM5 en 17/18, fuera de las cuatro entradas del intérprete ensayado).
-3. **Tabla de SVRule y transferencia lógica independiente:** [Home Sweet Albia, C1 Brain Guide](https://zenzoa.com/creatures/c1-brains.html): opcodes **5/6/7/8** leen `CHEM0/1/2/3`; al actualizar lóbulos de salida, la tabla de estado incluye los valores de las cuatro entradas químicas del lóbulo.
-4. **Arimética C1 de receptor (E09h.3, ya verificada):** `receptor_value` calcula byte desde concentración. El [adaptador H4](../../experiments/neurolab/e09_historical_locus.py) condiciona el destino del byte a la tabla anterior; [tests H4](../../experiments/neurolab/tests/test_e09_historical_locus.py) usan el fixture original archivado, sin binarios propietarios.
+El usuario adjuntó de nuevo el ejecutable original, leído **directamente** como PE32 x86 sin instalarlo ni ejecutarlo.
 
-## Resultado del caso reproducible
+- Tamaño: 387.072 bytes.
+- SHA-256: 548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7, **idéntico** al EXE de E09f/h.1–h.3.
+- Se verificaron frente a bytes reales **31 firmas de instrucciones x86**, una dirección de vtable y **cuatro entradas de tabla de saltos** con sus desplazamientos byte a byte. Inspección local: 31/31 firmas correctas.
+- [Verificador reproducible](../../experiments/neurolab/e09_historical_locus_audit.py), [tests sintéticos](../../experiments/neurolab/tests/test_e09_historical_locus_audit.py), [fixture derivado del original](resultados/e09h4_inspeccion_estatica_original.json). **No se publicó ni EXE ni desensamblado completo.**
+- Los **seis genes de receptor** proceden de [E09h.3](resultados/e09h3_receptores_genoma_original.json), previamente verificados contra el GEN original. No se volvió a recibir GEN en esta intervención.
 
-Usando el pool de ejemplo de E09h.3 `49=12,50=12,52=5,53=12` y estado químico inicial 0, el adaptador entrega:
-- **Decision (lóbulo 6):** `CHEM0..3=(11,11,5,16)`, correspondientes a Reward49, Punishment50, DecASH1=53 y DecASH2=70.
-- **Concept (lóbulo 8):** `CHEM0..3=(0,0,0,0)` con Reinforcement51=0 y ConASH52=5; el receptor invertido de ConASH retorna 0 (errata E09h.3 preservada).
-- En un ensayo distinto con química51=12 y 52=0, Concept produce CHEM0=11, CHEM1=4. Mismos números de locus en diferentes lóbulos permanecen independientes.
-- La lectura con `C1SVTable/evaluate` prueba que las variables del adaptador llegan a los operandos SVRule esperados en el **modelo condicionado**, no que C1 real tenga ese estado en un instante particular.
-- Los controles rechazan receptores duplicados para el mismo lóbulo+CHEM (precedencia real no verificada), tipos inválidos y pool fuera de rango; no mutan concentraciones ni amplían la microred.
+## 2. Cadena de punteros verificada en el ejecutable
 
-**Evidencia de ejecución:** [CI #44947076331](https://github.com/mxlzz/Nilo_public/actions/runs/44947076331) **success integral** para commit de tests `2ef85398502ff67b7a40f7106f6277394b989625`: **339 tests ejecutados, 2 expectedFailure históricos**; los experimentos de regresión posteriores también completaron sin errores. El CI no contiene binarios originales, y por tanto no cierra G-H4-X86.
+1. **Objeto cerebral:** en 0x40AF89 se almacena CBrain en Norn+0x2C18. CBrain instala una vtable de loci en brain+4 (0x401788, valor 0x43302C); su primera entrada apunta a **0x4030E0**.
+2. **Lectura de genes receptores:** 0x421970 carga los campos órgano/lóbulo/locus. Con órgano 0, 0x421A09..0x421A18 usa Norn→brain+4 y despacha por vtable con parámetros (kind=0, lobe, locus).
+3. **Resolver de lóbulo:** 0x4030E0..0x403103 reduce el lóbulo módulo el número de lóbulos y calcula brain+8+200*lobe (stride 0xC8). La tabla en 0x403128/0x40312E elige el caso por **número de locus genético**.
+4. **Desplazamientos exactos:** receptor loci **13,14,15,16** saltan a **0x403183, 0x40318B, 0x403193, 0x40319B**, respectivamente, y cada caso agrega el desplazamiento **+0xC3,+0xC4,+0xC5,+0xC6** relativo al inicio del lóbulo. Estos cuatro bytes son CHEM0..CHEM3 de ese lóbulo, no concentraciones del pool global.
+5. **Enlace de escritura:** 0x421A6F guarda el puntero resuelto dentro del registro de receptor (campo +8); 0x42200C..0x42200F obtiene el puntero y escribe el byte receptor. **No recalcula el locus genético en cada tick.**
+6. **Lectura por SVRule:** 0x403E2C/0x403E38/0x403E42/0x403E4C leen las cuatro variables del lóbulo al crear la tabla local; se copian en stack +0x45..+0x48. El intérprete 0x403FD1 usa stack[0x40+opcode], por lo que **opcode5=CHEM0, 6=CHEM1, 7=CHEM2, 8=CHEM3**.
 
-## Limitaciones y siguiente subtarea
+Se verifica el destino efectivo del byte receptor y su lectura por SVRule **en el flujo estático de esta versión exacta**. Corrobora [CDN/LCUS](https://lisdude.com/cdn/76.html) y [C1 Brain Guide](https://zenzoa.com/creatures/c1-brains.html), pero ya no depende exclusivamente de esas fuentes secundarias.
 
-**G-H4-ADAPTER:** pruebas de compatibilidad con la documentación completadas. **G-H4-X86: ABIERTA** porque no se pudo acceder a los bytes del ejecutable PE32 desde este chat; los archivos binarios están listados en la Biblioteca pero la materialización de bytes devolvió «This Project file does not have an authorized raw-byte materialization path» para dos copias. No confundir visibilidad de metadatos con acceso a bytes. No se inspeccionaron nuevas instrucciones x86 en esta intervención.
+## 3. Hallazgo adicional: inicialización con valor nominal
 
-Para cerrar **E09h.4** hace falta, sobre EXE SHA256 `548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7`:
-1. Decodificar en `0x4032E0..0x4034B9` o su subrutina correspondiente la carga del receptor y el cálculo del puntero `(organ,lobe,locus)`.
-2. Verificar offsets estructurales concretos para loci 13–16, evitando asumir que equivalen al índice del opcode 5–8.
-3. Rastrear desde la escritura de `0x42200F` hasta la lectura/instantánea de CHEM en `0x403BB0/0x403FC2`, indicando rutas condicionales.
-4. Comparar las seis entradas y controles de duplicación/cambios de fase contra oráculos independientes; corregir cualquier divergencia preservando esta hipótesis inicial.
+En 0x421AC6..0x421ACF, si se obtiene un locus válido, el cargador de receptores escribe **nominal** en el destino antes de ejecutar las fases de química. Esto es diferente de la posterior transferencia desde concentración.
 
-**No cerrar G00-H/G05/G09, no integrar el cerebro con Nilo, no fusionar PR.** No ejecutar ni instalar Creatures ni redistribuir GEN/EXE. Siguiente paso solo inspección estática h.4 pendiente.
+Con los seis genes originales de E09h.3 y un estado inicial de ceros, el enlace de genes deja:
+
+- **Decision, lóbulo 6:** CHEM0..3 = (0,0,16,16).
+- **Concept, lóbulo 8:** CHEM0..3 = (0,4,0,0).
+
+Tras el pool artificial de E09h.3 (49=12,50=12,52=5,53=12), los receptores dejan Decision=(11,11,5,16) y Concept=(0,0,0,0). **Son oráculos estáticos y sintéticos, no valores observados durante el juego.** Se agregó [inicialización de nominales](../../experiments/neurolab/e09_historical_locus.py) y sus tests.
+
+**Duplicados:** 0x421A26..0x421A5D busca un registro con el mismo puntero resuelto y lo reutiliza; los genes posteriores sobrescriben campos. Nuestro adaptador sigue **rechazando deliberadamente colisiones** como convención conservadora de laboratorio: no se demostraron todas las rutas de conflictos ni hay colisiones entre estos seis receptores.
+
+## 4. Puertas y limitaciones
+
+- **G-H4-ADAPTER:** mapeo y tests sobre seis genes, aislamiento de lóbulos, valores nominales y SVRules.
+- **G-H4-X86:** **verificada estáticamente** para el SHA del EXE recibido: resolver, saltos, inicialización, escritura de receptor y lectura SVRule.
+- **CI previo:** [run 44947076331](https://github.com/mxlzz/Nilo_public/actions/runs/44947076331), 339 tests y dos expectedFailure históricos; los nuevos tests de auditor y nominales requieren una nueva CI para finalizar.
+- **Sin extrapolaciones:** todavía no hay Norn ejecutado ni trazas de concentraciones en tiempo real, reloj global exhaustivo, emisores completos, cruce de todas las rutas condicionales, ni aprendizaje neuronal integrado. **G00-H/G05/G09 siguen abiertas**.
+
+El primer intento de leer el EXE desde la Biblioteca fracasó por permisos, pero **el bloqueo desapareció** al adjuntarse de nuevo el archivo con bytes accesibles. Se conserva este antecedente para trazabilidad.
+
+## 5. Próximo eslabón del plan
+
+**E09h.4 se cierra solo en su alcance de enlace estático.** Para completar el camino químico histórico antes de volver al problema de crédito causal, el paso siguiente será preregistrar y verificar **emisiones genéticas** hacia el pool químico, incluyendo valores iniciales, muestreo y condición de escritura, sin añadir neuronas ni tunear g.10.
+
+**PR #103 draft; no merge a main ni cambios a Nilo 0.7.**
