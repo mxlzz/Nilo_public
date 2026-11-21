@@ -92,6 +92,9 @@ jobs:
       - name: E09g8 paired suppression of mistimed chemistry vs temporal sham
         run: python -m experiments.neurolab.e09_paired_pulse_protocol | tee metrics/e09g8.json
 
+      - name: E09g9 independent replication on unseen seeds 20 through 99
+        run: python -m experiments.neurolab.e09_oos_replicate | tee metrics/e09g9.json
+
       - name: Preserve per-seed results and benchmark
         if: always()
         uses: actions/upload-artifact@v4
