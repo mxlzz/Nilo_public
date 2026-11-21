@@ -40,7 +40,7 @@ Tras el pool artificial de E09h.3 (49=12,50=12,52=5,53=12), los receptores dejan
 
 - **G-H4-ADAPTER:** mapeo y tests sobre seis genes, aislamiento de lóbulos, valores nominales y SVRules.
 - **G-H4-X86:** **verificada estáticamente** para el SHA del EXE recibido: resolver, saltos, inicialización, escritura de receptor y lectura SVRule.
-- **CI previo:** [run 44947076331](https://github.com/mxlzz/Nilo_public/actions/runs/44947076331), 339 tests y dos expectedFailure históricos; los nuevos tests de auditor y nominales requieren una nueva CI para finalizar.
+- **CI final para cambios x86 + nominales:** [run 44947923270](https://github.com/mxlzz/Nilo_public/actions/runs/44947923270), **success integral: 348 tests y dos expectedFailure históricos**. Se probaron las firmas contra memoria **sintética** en CI y el resto de NeuroLab contra sus benchmarks; el EXE auténtico se examinó localmente de manera estática. [Run previo](https://github.com/mxlzz/Nilo_public/actions/runs/44947076331): 339 tests.
 - **Sin extrapolaciones:** todavía no hay Norn ejecutado ni trazas de concentraciones en tiempo real, reloj global exhaustivo, emisores completos, cruce de todas las rutas condicionales, ni aprendizaje neuronal integrado. **G00-H/G05/G09 siguen abiertas**.
 
 El primer intento de leer el EXE desde la Biblioteca fracasó por permisos, pero **el bloqueo desapareció** al adjuntarse de nuevo el archivo con bytes accesibles. Se conserva este antecedente para trazabilidad.
