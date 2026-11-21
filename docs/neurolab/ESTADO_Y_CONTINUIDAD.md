@@ -13,7 +13,7 @@
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
 | Etapa actual | E09 — evaluación integral pendiente; G00-H y G05 abiertas |
-| Siguiente subtarea exacta | **E09.01 — congelar versiones y resultados reproducibles; integrar componentes luego de la auditoría** |
+| Siguiente subtarea exacta | **E09.02 — diseñar integración neuronal unificada; pendiente verificar un genoma C1 real o decidir explícitamente continuar solo como modelo experimental inspirado** |
 | Última subtarea validada | E08 — circuitos recurrentes y controles; G09 abierta |
 | Experimentos ejecutados | E01–E02 unitarias, E03 experimento preregistrado (20 semillas, controles) |
 | Runs con evidencia | [E01+E02 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44850881701), [E03 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727), [E04 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622), [E05 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851485383) |
@@ -39,7 +39,7 @@
 | E06 | Validada: invariancia contextual, no creación de conceptos | — | CI 44851722169 |
 | E07 | Verificada en modelo experimental | — | [CI E07](https://github.com/mxlzz/Nilo_public/actions/runs/44852027094), sin ventaja demostrada frente a LRU |
 | E08 | Verificada dinámica matemática | — | [CI E08](https://github.com/mxlzz/Nilo_public/actions/runs/44852126108) |
-| E09 | Auditoría intermedia, sin integración | E09.01 | [Informe](E09_AUDITORIA_INTERMEDIA.md), G09 abierta |
+| E09 | E09.01 resultados conservados, integración sin iniciar | E09.02 | [Métricas reales](E09_EVIDENCE_INDEX.md); G09 abierta |
 
 No avanzar en una fase solo porque exista su definición en este archivo.
 
@@ -197,3 +197,11 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - [E09_AUDITORIA_INTERMEDIA.md](E09_AUDITORIA_INTERMEDIA.md): capacidades parciales comprobadas, sin unificación bajo un cerebro/tick común.
 - **G09 abierta**; G05 abierta por atribución equivocada; G00-H abierta por genoma original y reglas históricas contradictorias.
 - Próximo trabajo técnico: E09.01 exportar resultados agregados, congelar configuraciones y luego investigar integración con controles.
+
+### 2026-11-20 — NL-LOG-0012 (E09.01 — evidencia congelada)
+- Corrida canónica preintegración: [GitHub Actions #44852299967](https://github.com/mxlzz/Nilo_public/actions/runs/44852299967), job `136686250858`, commit ensayado `56cb2e7456103eee7a65cdadc275da01a1869720`, `success`.
+- Artefacto Actions `neurolab-metrics` confirmado (ID `14686047092`, retención temporal). Sus cinco resultados JSON se recuperaron del log y están **guardados permanentemente como documentos versionados en GitHub** bajo [resultados/run-44852299967](resultados/run-44852299967/).
+- Índice canónico con métricas exactas por fase: [E09_EVIDENCE_INDEX.md](E09_EVIDENCE_INDEX.md).
+- E03 exactitud media=1.0, control congelado=0.425, reversión=1.0; E06 conceptos=1.0 vs singleton=0.5375 y memorizador=0.5; E07 migración=1.0 vs fixed=0.5 **y LRU=1.0**, olvido antiguo medio=0.5.
+- Se ha cumplido **E09.01 (conservación reproducible de evidencia)**, no E09.02–09.10 ni G09.
+- **Intervención necesaria para fidelidad histórica:** obtener `dad1.gen` auténtico de Creatures 1 (o un genoma C1 equivalente con procedencia verificable). Si el usuario prefiere continuar sin ese archivo, el siguiente trabajo debe reconocer que la mente será una variante propia basada en principios documentados, no reconstrucción fiel. Esa decisión no está asumida aquí.
