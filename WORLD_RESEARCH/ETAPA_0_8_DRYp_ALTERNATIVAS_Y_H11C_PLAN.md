@@ -59,3 +59,9 @@ CUWALID guía de instalación https://cuwalid.github.io/tutorials/pip-installati
 - **Criterio positivo:** descargable con hash correcto, estructura inspeccionable y sintaxis compatible con Python 3.13. **No equivale** a que funcione con dependencias, que sus ecuaciones sean adecuadas al mundo, ni autoriza redistribución.
 - Si falla descarga, no inventar resultado; conservar fallo como bloqueo de infraestructura y mantener fuentes bibliográficas.
 - **Gate:** no instalar ni acoplar DRYP2 hasta ver estructura, licencia y requisitos; revisar luego pruebas upstream/documentación como caja negra, sin mezclarlo con NeuroLab.
+
+## H12b — Dependencias y ABI de DRYP 2.0 (plan, sin ejecución de código de terceros)
+Tras H12a, el archivo oficial verificado contiene **46 módulos Python sintácticamente válidos** y numerosas extensiones compiladas (`.pyd`, `.dll`, `.so`, fuentes Fortran/Cython). Esto permite formular una inspección más precisa antes de intentar ejecutar un programa externo en la CI.
+**Hipótesis:** la distribución puede requerir módulos específicos y binarios no portables a Python 3.13/Linux, que cambian el costo y la conveniencia frente a Landlab 2.11 probado.
+**Método**: mismo ZIP y MD5 de Zenodo, abrir en modo solo lectura, analizar importaciones mediante AST (sin importar), listar nombres de librerías compiladas y posibles etiquetas `cpython-XY`; identificar entry points y módulos de test, dependencias declaradas en paquetes estándar sin ejecutar setup. Validar que los archivos de test y un driver identificable existen y reportar posibles incompatibilidades. **No** ejecutar binarios ajenos, no publicar archivos ZIP ni licencia, ni asumir que sintaxis compatible equivale a ABI compatible.
+**Criterio:** manifiesto completo y hashes verificados; resultado informativo (puede mostrar incompatibilidad). Si aparecen dependencias nativas no verificables, DRYP2 queda como comparación académica y candidato de caja negra, no núcleo ya adoptado.
