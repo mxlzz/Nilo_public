@@ -1,6 +1,6 @@
 # Mundo autónomo — fundamentos y hoja de ruta experimental
 
-**Estado:** investigación conceptual; sin implementación del mundo.
+**Estado:** investigación conceptual con spike técnico aislado y auditable; **desarrollo del motor propio suspendido** hasta decisión de reutilización. Ver [auditoría](PROCEDIMIENTO_Y_AUDITORIA.md) y [ADR-0001](DECISIONES/ADR-0001_REUTILIZACION.md).
 **Fecha de registro:** 2026-11-21.
 **Ubicación provisional:** rama `research/world-foundations-2026-11` de `mxlzz/Nilo_public`.
 **Alcance:** mundo físico/ambiental generativo. **Excluye** cerebro, genética neuronal, Norns, NeuroLab, LLM y control cognitivo de agentes.
@@ -47,7 +47,7 @@ Registrar por experimento un archivo pequeño de configuración y resultados rep
 
 ## 5. Hipótesis inicial: propiedades físicas compartidas
 
-**Esquema mínimo a ensayar**, no física fundamental exacta:
+**Esquema inicial propuesto, no aprobado y sujeto a revisión tras evaluación de motores existentes**; no física fundamental exacta:
 - **Espacio y cantidad:** posición/región, cantidad de materia, masa, volumen; densidad es derivada, no una propiedad arbitraria adicional.
 - **Composición y estado:** componentes materiales y estado (por ejemplo sólido, granular o fluido), sin imponer catálogos completos de objetos finales.
 - **Energía térmica:** cantidad de energía y capacidad para intercambiarla; temperatura se calcula bajo un modelo explícito.
@@ -61,7 +61,7 @@ Modelo candidato para el primer laboratorio: región cerrada muy pequeña, repre
 ## 6. Hoja de ruta por hitos verificables
 
 ### Etapa 0 — Baseline y alternativas
-**Entregable:** especificación de 2–3 fenómenos iniciales, invariantes, formato de resultados y evaluación de soluciones existentes (por ejemplo simuladores celulares, erosión y materiales). Evitar desarrollar una capacidad que ya existe con licencia e integración adecuadas.
+**Entregable:** especificación de 2–3 fenómenos iniciales, invariantes, formato de resultados y evaluación **ejecutada** de soluciones existentes (incluyendo Sandspiel y The Powder Toy para materiales, WorldEngine para generación). Registrar evidencia, licencias y costo de adaptación; ver ADR-0001. Evitar desarrollar una capacidad que ya existe con licencia e integración adecuadas. **Gate obligatorio: cierre documentado de alternativas antes de implementar nuevas leyes físicas.**
 **Prueba:** cada propiedad y mecanismo debe asociarse con un fenómeno observable y un test; descartar variables sin utilidad demostrable.
 
 ### Etapa 1 — Materia compartida, sin paisaje
@@ -110,11 +110,13 @@ Modelo candidato para el primer laboratorio: región cerrada muy pequeña, repre
 
 No comenzar por biomas, gráficos, árboles, personajes ni ecosistemas completos.
 
-**Primer experimento propuesto:** «caja cerrada de materia»: demostrar conservación, acumulación/transporte local, comportamiento diferente de dos componentes simples y reproducibilidad. Debe poder ejecutarse sin interfaz visual y fallar de manera explicable. Los umbrales numéricos se definirán junto con el método de cálculo antes de correr la prueba.
+**Primer ensayo exploratorio ya realizado:** «caja cerrada de materia» verifica únicamente balances de materia, capacidad y reproducibilidad del estado bajo transferencias manuales. 8 pruebas verificadas en [GitHub Actions](https://github.com/mxlzz/Nilo_public/actions/runs/44942005067). **No** demostró transporte espontáneo, estructuras, gravedad ni emergencia. Está en cuarentena arquitectónica hasta cierre de etapa 0. Próxima actividad: ensayos de reutilización descritos en ADR-0001, no ampliar el motor propio.
 
 ## 8. Estado y próximas decisiones
 
 - **Confirmado:** las cinco orientaciones del apartado 2 y la separación del trabajo cognitivo.
 - **Propuesto, no aprobado todavía:** representación discreta inicial, variables del apartado 5, primer experimento y secuencia detallada del apartado 6.
-- **No hecho:** implementación, ejecución de ensayos, benchmarking y validación de emergencia.
-- **Próxima conversación:** revisar el conjunto mínimo de propiedades compartidas, reducirlo si es posible y aprobar el primer experimento.
+- **Implementado fuera de secuencia:** prototipo aislado de invariantes de materia, con 8 pruebas aprobadas por CI; no se adopta como motor.
+- **No hecho:** benchmarks comparativos de motores, simulación física autónoma, generación ambiental ni validación de emergencia.
+- **Estado de gates:** etapa 0 ABIERTA; etapa 1 SPIKE NO ADOPTADO; etapas 2–8 SIN INICIAR.
+- **Próxima actividad prevista:** evaluar alternativas y medir pruebas de encaje conforme al [ADR-0001](DECISIONES/ADR-0001_REUTILIZACION.md); utilizar [controles auditables](PROCEDIMIENTO_Y_AUDITORIA.md).
