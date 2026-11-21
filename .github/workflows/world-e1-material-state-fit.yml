@@ -5,6 +5,7 @@ on:
       - research/world-foundations-2026-11
     paths:
       - WORLD_RESEARCH/experiments/probe_e1_state_representations.py
+      - WORLD_RESEARCH/experiments/probe_e1_shared_state_views.py
       - .github/workflows/world-e1-material-state-fit.yml
   workflow_dispatch:
 permissions:
@@ -27,3 +28,5 @@ jobs:
         run: python -m unittest -v test_matter_v0.py
       - name: Test lossless projections, multi-layer separation, rejection and NetCDF
         run: python WORLD_RESEARCH/experiments/probe_e1_state_representations.py
+      - name: E1 H2 zero-copy bidirectional ownership, corruption and rebind controls
+        run: python WORLD_RESEARCH/experiments/probe_e1_shared_state_views.py
