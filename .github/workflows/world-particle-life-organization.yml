@@ -1,0 +1,50 @@
+name: World research - H17 Particle Life organization
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_particle_life_ephemeral.py
+      - .github/workflows/world-particle-life-organization.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  organization:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    env:
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+      PYGAME_HIDE_SUPPORT_PROMPT: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: research
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pygame for original upstream Python demo
+        run: python -m pip install pygame==2.6.1
+      - name: Checkout original open-source Particle Life
+        run: |
+          git clone --depth 1 https://github.com/hunar4321/particle-life.git upstream
+          echo "PARTICLE_LIFE_UPSTREAM_SHA=$(git -C upstream rev-parse HEAD)"
+      - name: Add deterministic seed and counters ONLY to ephemeral upstream checkout
+        run: python research/WORLD_RESEARCH/experiments/probe_particle_life_ephemeral.py patch upstream
+      - name: Run published physics with original self-attraction
+        run: |
+          H17_YELLOW_SELF_G=-0.1 python upstream/particle_life.py > /tmp/h17_active.log
+          grep 'WORLD_EVAL_JSON' /tmp/h17_active.log
+      - name: Run ablation with no self-attraction, same initial state
+        run: |
+          H17_YELLOW_SELF_G=0.0 python upstream/particle_life.py > /tmp/h17_control.log
+          grep 'WORLD_EVAL_JSON' /tmp/h17_control.log
+      - name: Repeat active case independently to verify deterministic replay
+        run: |
+          H17_YELLOW_SELF_G=-0.1 python upstream/particle_life.py > /tmp/h17_replay.log
+          grep 'WORLD_EVAL_JSON' /tmp/h17_replay.log
+      - name: Compare close pairs and nearest neighbor metrics against preregistered criteria
+        run: |
+          python research/WORLD_RESEARCH/experiments/probe_particle_life_ephemeral.py check \
+            /tmp/h17_active.log /tmp/h17_control.log /tmp/h17_replay.log
