@@ -1,0 +1,50 @@
+name: NeuroLab I3 metabolic learning — preregistered comparison
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3_metabolic_protocol.py'
+      - 'experiments/neurolab/tests/test_e09_i3_metabolic_protocol.py'
+      - '.github/workflows/neurolab-i3.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preregistered-i3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Reproduce frozen cohort and all four baselines
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3_metabolic_protocol --output metrics/e09i3.json > metrics/runner_stdout.json
+          python - <<'PY'
+          import json
+          result=json.load(open("metrics/e09i3.json",encoding="utf-8"))
+          assert result["seeds"]==list(range(200,220))
+          assert result["lab_rate_per_chemical"]==40
+          assert result["precursor_dose"]==80
+          assert result["reactions"]==[57,71,111,112]
+          assert len(result["per_seed"])==20
+          print("I3 gate (experimental; failures allowed):",result["gate_M_exploratory"])
+          print("Mean holdout target accuracy:",json.dumps(result["mean_holdout_target_accuracy"],sort_keys=True))
+          print("M-F advantage:",result["mean_M_minus_F_all_phases"])
+          print("Joint >=0.90 A/B:",json.dumps(result["joint_ge_0_90"],sort_keys=True))
+          PY
+      - name: Save full per-seed evidence even for negative result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3-metabolic-preregistered
+          path: metrics/
+          if-no-files-found: warn
+          retention-days: 90
