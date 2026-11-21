@@ -1,0 +1,33 @@
+name: NeuroLab E01 isolated neuron kernel
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/**'
+      - '.github/workflows/neurolab-e01.yml'
+  pull_request:
+    paths:
+      - 'experiments/neurolab/**'
+      - '.github/workflows/neurolab-e01.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  kernel-unit-tests:
+    name: Pure Python neuron tests (E01)
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile neuron kernel and test code
+        run: python -m py_compile experiments/neurolab/kernel.py experiments/neurolab/tests/test_kernel.py
+      - name: E01 deterministic numerical oracles and state replay
+        run: python -m unittest discover -s experiments/neurolab/tests -v
