@@ -1,0 +1,26 @@
+name: World research - H11a surface water budget
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_landlab_overland_water.py
+      - .github/workflows/world-landlab-water-budget.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  water:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install published Landlab wheels
+        run: |
+          python -m pip install --only-binary=:all: landlab numpy
+          python -m pip show landlab
+      - name: Run H11a closed-basin volume and topology controls
+        run: python WORLD_RESEARCH/experiments/probe_landlab_overland_water.py
