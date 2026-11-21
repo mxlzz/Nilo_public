@@ -39,3 +39,14 @@
 Antes de programar feedback propio: revisar ejemplos y bibliografía de acoplamiento existentes dentro del ecosistema Landlab, particularmente `Space` y componentes ecohidrológicos; formular experimento conjunto con *ablación de cobertura vegetal*, conservación y tiempo. Registrar diseño y métricas antes del próximo cambio.
 
 **Regla de continuidad:** cualquier agente debe comenzar por ADR-0002, protocolo E0 y este dictamen. No reactivar `matter_v0.py`, no portar Shanhai por inercia y no añadir NeuroLab a este repo experimental.
+
+## Comprobación adicional de material nativo de Landlab
+
+Se inspeccionaron los tutoriales oficiales de ecohidrología de su repositorio:
+- https://github.com/landlab/landlab/tree/master/docs/source/tutorials/ecohydrology/cellular_automaton_vegetation_DEM
+- https://github.com/landlab/landlab/tree/master/docs/source/tutorials/ecohydrology/cellular_automaton_vegetation_flat_surface
+- https://github.com/landlab/landlab/tree/master/docs/source/tutorials/landscape_evolution/space
+
+Los notebooks de ecohidrología documentan combinaciones de radiación, humedad de suelo, vegetación y VegCA. **Sin embargo, importan módulos auxiliares `Ecohyd_functions_DEM` / `Ecohyd_functions_flat` que no están presentes en los directorios examinados**; no se los considera ejecutables autónomamente ni como prueba de ciclo completo. Se deberá ubicar el origen de esos auxiliares o elegir ejemplos completos antes de reutilizar.
+
+El tutorial `SPACE_user_guide_and_examples.ipynb` describe `FlowAccumulator`+ `DepressionFinderAndRouter`+ `Space`, con parámetros de referencia documentados y registro de sedimento. Es una base reproducible más adecuada que inventar funciones de deposición. **No se ejecutó todavía** este notebook en nuestra CI; se propone como prueba siguiente.
