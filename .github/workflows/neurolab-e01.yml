@@ -1,4 +1,4 @@
-name: NeuroLab isolated brain E01-E06
+name: NeuroLab isolated brain E01-E07
 
 on:
   push:
@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   kernel-unit-tests:
-    name: Neuronal experiments E01-E06
+    name: Neuronal experiments E01-E07
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -40,3 +40,6 @@ jobs:
 
       - name: E06 preregistered XOR context generalization
         run: python -m experiments.neurolab.e06_protocol
+
+      - name: E07 preregistered rewiring vs fixed and LRU
+        run: python -m experiments.neurolab.e07_protocol
