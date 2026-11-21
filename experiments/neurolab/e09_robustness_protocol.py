@@ -132,6 +132,7 @@ def run_all()->dict:
             ]
             n_initial=sum(x["train"]>=.90 for x in rows)
             n_reversal=sum(x["reversal"]>=.90 for x in rows)
+            n_both=sum(x["train"]>=.90 and x["reversal"]>=.90 for x in rows)
             advantage=statistics.mean(x["train"]-x["frozen"] for x in rows)
             conditions[key]={
                 "order":f"{first}->{second}",
@@ -139,11 +140,11 @@ def run_all()->dict:
                 "mean_train":statistics.mean(x["train"] for x in rows),
                 "mean_frozen":statistics.mean(x["frozen"] for x in rows),
                 "mean_reversal":statistics.mean(x["reversal"] for x in rows),
-                "good_train":n_initial,"good_reversal":n_reversal,
+                "good_train":n_initial,"good_reversal":n_reversal,"good_both":n_both,
                 "advantage_vs_frozen":advantage,
                 "total_flipped_pulses_learned":sum(
                     x["flipped_pulses_learned"] for x in rows),
-                "passed":n_initial>=18 and n_reversal>=18 and advantage>=.30,
+                "passed":n_both>=18 and advantage>=.30,
                 "per_seed":rows,
             }
     for first,second in ORDERS:
