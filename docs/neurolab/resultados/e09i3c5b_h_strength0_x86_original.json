@@ -1,0 +1,75 @@
+{
+  "protocol": "NL-EXP-I3c5b-H-v1",
+  "source": "User-provided Creatures.exe and dad1.gen, authenticated from configured neurolab Drive folder; source files not redistributed",
+  "exe_sha256": "548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7",
+  "exe_size": 387072,
+  "gen_sha256": "e2bb4ccf6a4081a128c6c9ffc6eb233452d416717ceef47e78820ca3a152ddd4",
+  "gen_size": 10001,
+  "image_base": "0x400000",
+  "text_va": "0x401000",
+  "pe32": true,
+  "anchors": [
+    {
+      "name": "signal_loop",
+      "va": "0x403f2f",
+      "byte_length": 30,
+      "sha256": "f657053f6a1919c734306007110de1f40ba9d7b99dd8615445c44bddde688710",
+      "matched": true
+    },
+    {
+      "name": "zero_strength_entry",
+      "va": "0x4041a1",
+      "byte_length": 27,
+      "sha256": "79aa411e104cf5115156d43ec36c90863fe95aa7bff53ed31b5e78f20c548f0c",
+      "matched": true
+    },
+    {
+      "name": "susceptibility_rule_entry",
+      "va": "0x4041bc",
+      "byte_length": 9,
+      "sha256": "0aeaa4bf7266f93ad0a0272fd94285b026b06a6d7d9b151ac68bf0fbf96bd781",
+      "matched": true
+    },
+    {
+      "name": "plasticity_susceptibility_gate",
+      "va": "0x404306",
+      "byte_length": 14,
+      "sha256": "66a53ad3feb37e0346e79dfbf98acc69ee10718880ed6564532f6f98d42745dd",
+      "matched": true
+    },
+    {
+      "name": "plasticity_stw_ltw",
+      "va": "0x404451",
+      "byte_length": 10,
+      "sha256": "92beffc7f4bad5acec3ba68aa3eead2044aec5f1c6260581a8e72c1bdc1dadd7",
+      "matched": true
+    },
+    {
+      "name": "strength_reaches_zero_cleanup",
+      "va": "0x4047b9",
+      "byte_length": 37,
+      "sha256": "c46edd66bc81e98475be9a9de7bfd2a5ad8b74ab9d92d16d222c10a8e97c91e6",
+      "matched": true
+    },
+    {
+      "name": "post_wta_type1_caller",
+      "va": "0x404939",
+      "byte_length": 24,
+      "sha256": "605b422c52478812d4ca288973874153b58aaec29e86e658dba679377ffca5de",
+      "matched": true
+    }
+  ],
+  "anchors_verified_count": 7,
+  "historical_observation": "Local static x86 original confirms STW signal loop has no strength test; strength-zero path counts exhaustion and falls through susceptibility rule; after decrement to strength-zero clear susceptibility/STW/LTW. Migration gate is post-WTA.",
+  "strength0_mechanism": "A strength-zero slot can contribute if STW later becomes nonzero and source output remains nonzero; no unconditional strength exclusion in inspected signal loop.",
+  "exe_executed": false,
+  "runtime_replay": "NOT_PERFORMED",
+  "general_historical_fidelity": "NOT_PROVEN",
+  "gates": {
+    "I3c5b_H_local_flow": "VERIFIED_STATIC",
+    "G05": "OPEN",
+    "G09": "OPEN",
+    "G00_H_complete": "OPEN"
+  },
+  "notes": "Independent local PE32 header/SHA/7 block signature verification with GNU objdump disassembly; original third-party binary omitted from GitHub"
+}
