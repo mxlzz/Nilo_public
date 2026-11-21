@@ -1,0 +1,80 @@
+{
+  "source_sha256": "e2bb4ccf6a4081a128c6c9ffc6eb233452d416717ceef47e78820ca3a152ddd4",
+  "reaction_count": 58,
+  "sample_original_genes": {
+    "57": {
+      "qa": 1,
+      "ca": 17,
+      "qb": 1,
+      "cb": 0,
+      "qc": 1,
+      "cc": 1,
+      "qd": 1,
+      "cd": 50,
+      "rate": 8
+    },
+    "71": {
+      "qa": 1,
+      "ca": 33,
+      "qb": 1,
+      "cb": 1,
+      "qc": 1,
+      "cc": 49,
+      "qd": 1,
+      "cd": 0,
+      "rate": 8
+    },
+    "111": {
+      "qa": 1,
+      "ca": 49,
+      "qb": 1,
+      "cb": 0,
+      "qc": 1,
+      "cc": 51,
+      "qd": 1,
+      "cd": 54,
+      "rate": 16
+    },
+    "112": {
+      "qa": 1,
+      "ca": 50,
+      "qb": 1,
+      "cb": 0,
+      "qc": 1,
+      "cc": 51,
+      "qd": 1,
+      "cd": 55,
+      "rate": 16
+    }
+  },
+  "reaction_71": {
+    "extent": 9,
+    "remaining_need_decrease_33": 1,
+    "remaining_pain_1": 6,
+    "reward_49": 9
+  },
+  "reaction_111": {
+    "extent": 12,
+    "reward_49": 8,
+    "reinforcement_51": 12,
+    "reward_echo_54": 12
+  },
+  "same_tick_71_then_111": {
+    "extents": [
+      9,
+      5
+    ],
+    "reward_49": 4,
+    "reinforcement_51": 5,
+    "reward_echo_54": 5
+  },
+  "same_tick_111_then_71": {
+    "extents": [
+      0,
+      9
+    ],
+    "reward_49": 9,
+    "reinforcement_51": 0,
+    "reward_echo_54": 0
+  }
+}
