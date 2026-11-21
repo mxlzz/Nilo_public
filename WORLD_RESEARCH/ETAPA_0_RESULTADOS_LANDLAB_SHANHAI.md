@@ -62,6 +62,21 @@ Protocolo extendido antes de implementar: `ETAPA_0_PROTOCOLO_LANDLAB_SHANHAI.md`
 
 **Preferir evaluar soluciones nativas Landlab frente a la integración heterogénea Landlab–Shanhai**. Shanhai queda como benchmark funcional y de mecanismos ecológicos; no adaptar un motor de alturas categóricas a geomorfología dinámica sin una prueba que demuestre la conveniencia. No adoptar ninguno definitivamente hasta completar H4/H5 y el análisis de condiciones iniciales.
 
-## H6 — Generación inicial -> evolución geológica (trabajo en curso)
+## H6 — Estado inicial generado con WorldEngine -> evolución con Landlab
 
-La prueba está documentada **antes** de su implementación en `ETAPA_0_PROTOCOLO_LANDLAB_SHANHAI.md`. Usa WorldEngine en Python 3.11 y Landlab en Python 3.13 con un artefacto de altura intercambiado, sin vincular códigos de motores. Comprueba cuantización y pérdida de relieve al simular alturas categóricas 0..4 de Shanhai. Se detectó un fallo al validar la primera versión del workflow de integración **sin iniciar jobs**, en proceso de aislamiento mediante smoke; no atribuir ese error a ninguna incompatibilidad de motores.
+**PRUEBA EJECUTADA CON ÉXITO:** https://github.com/mxlzz/Nilo_public/actions/runs/44948883527 .
+
+- Pipeline aislado: WorldEngine en Python 3.11 genera `NPZ`, otro job en Python 3.13 descarga el mismo archivo y ejecuta Landlab 2.11.0. No se copian/unen motores.
+- WorldEngine semilla 7321 y NumPy RNG global 1234 producen la elevación 16×32 de hash SHA-256 `495e97c24477e68e0cffcab8f485481630d4425d31a01442c7ad1cbb0daa170d`, el mismo que en el ensayo previo de WorldEngine.
+- Las alturas originales se normalizaron **deliberadamente** al intervalo experimental [0,50] metros sobre malla 100 m por celda/nodo. Esta elección NO calibra física real: WorldEngine no documenta estas alturas como metros; el array de elevaciones representa celdas y aquí se utilizó experimentalmente como alturas nodales de Landlab.
+- Landlab produjo erosión efectiva en 406 nodos con pérdida máxima de altura de ~1.291 unidades adoptadas en el ensayo; el control sin eroder dejó elevaciones idénticas.
+- **Pérdida significativa de información con Shanhai 0..4:** cuantizar a cinco categorías dio ~1.725 m de error cuadrático medio de reconstrucción bajo esta escala experimental. En ~99.5 % de los nodos erosionados, la categoría de altura no cambió aunque sí cambió la elevación continua. Por tanto **no es viable usar la representación original categórica como intercambio fiel de la evolución topográfica** sin un rediseño amplio del estado.
+- **Estado válido:** factibilidad de transferencia de datos, no acoplamiento físico multiescala ni simulación ecohidrológica completa. Pendiente contratos de nodos vs celdas, resolución, fronteras, unidades, tiempo y conservación.
+- Evidencia en código: `experiments/export_worldengine_height.py`, `experiments/probe_worldengine_to_landlab.py` y workflow `world-worldengine-landlab-bridge.yml`. El flujo está configurado para publicar archivos de entrada y salida como artifacts.
+- Infraestructura: primera versión de workflow falló sin jobs por YAML mal formado: `run: python -m pip install --only-binary=:all: landlab numpy` contenía `: ` sin comillas en valor simple. Se corrigió convirtiendo el comando a escalar de bloque. Esta falla era **del arnés CI**, no del generador ni del modelo geológico.
+
+## Estado de selección
+
+1. **Confirmado mediante ejecución:** WorldEngine como fuente técnica de elevaciones iniciales; Landlab como fuente de escorrentía simplificada, erosión, transporte sedimentario y componentes de humedad/vegetación; Shanhai como baseline ecológico con terreno de cinco niveles.
+2. **No demostrado:** que convenga unir Landlab y Shanhai (de hecho, hay pérdida medible de resolución), retroalimentación completa clima-vegetación-erosión, balance de sedimentos con condiciones de borde, desempeño a escala del mundo objetivo y características visuales.
+3. **Recomendación condicionada:** para el siguiente experimento **priorizar Landlab en un único núcleo**, importar alturas iniciales de WorldEngine por datos, conservar Shanhai como benchmark sin copiar su formato de terreno. Abrir ADR de decisión experimental reversible. **No cerrar la etapa 0 como selección definitiva** hasta ensayos de acoplamiento interno y evaluación de costo/alternativas.
