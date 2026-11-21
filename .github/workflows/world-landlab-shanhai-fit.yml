@@ -6,6 +6,7 @@ on:
     paths:
       - 'WORLD_RESEARCH/experiments/probe_landlab_upstream.py'
       - 'WORLD_RESEARCH/experiments/probe_landlab_native_sediment_ecology.py'
+      - 'WORLD_RESEARCH/experiments/probe_landlab_sediment_budget.py'
       - 'WORLD_RESEARCH/experiments/probe_shanhai_upstream.test.ts'
       - '.github/workflows/world-landlab-shanhai-fit.yml'
   workflow_dispatch:
@@ -31,6 +32,8 @@ jobs:
         run: python WORLD_RESEARCH/experiments/probe_landlab_upstream.py
       - name: Test native sediment and vegetation components
         run: python WORLD_RESEARCH/experiments/probe_landlab_native_sediment_ecology.py
+      - name: Validate explicit sediment deposition and control-volume budget
+        run: python WORLD_RESEARCH/experiments/probe_landlab_sediment_budget.py
 
   shanhai:
     runs-on: ubuntu-24.04
