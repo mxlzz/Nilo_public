@@ -69,6 +69,8 @@ class DelayedDistractorTests(unittest.TestCase):
                                             seed=120, choice_tick=0)
         self.assertEqual(tick, 1)
         self.assertEqual(log["updates"], 1)
+        self.assertEqual(log["delivery_ticks"], [(4, 8)])
+        self.assertEqual(log["emulated_ticks"], 8)
         self.assertEqual(log["causal_provenance"][0][:3], (0, 3, 0))
         self.assertEqual(after[1], [0, 0])
         self.assertEqual(sum(x != 0 for x in after[0]), 1)
