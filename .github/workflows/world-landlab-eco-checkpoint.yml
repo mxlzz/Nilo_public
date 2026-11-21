@@ -1,0 +1,30 @@
+name: World research - H14 ecology checkpoint and replay
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_landlab_eco_checkpoint.py
+      - .github/workflows/world-landlab-eco-checkpoint.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  eco_replay:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install published Landlab version
+        run: |
+          python -m pip install --only-binary=:all: landlab numpy
+          python -m pip show landlab
+      - name: Run unmodified H9 reference to day 90
+        run: python WORLD_RESEARCH/experiments/probe_landlab_eco_checkpoint.py baseline /tmp/h14
+      - name: Prepare independent ecology checkpoint on day 45
+        run: python WORLD_RESEARCH/experiments/probe_landlab_eco_checkpoint.py prepare /tmp/h14
+      - name: Resume from own checkpoint in a new process and compare all
+        run: python WORLD_RESEARCH/experiments/probe_landlab_eco_checkpoint.py resume /tmp/h14
