@@ -104,8 +104,14 @@ def neural_phase(
         raise AssertionError("F always uses frozen synapses; learn flag is only environment signal")
     return state, {
         "overall": sum(correct.values()) / len(seq),
-        "by_delay": {str(d): correct[d] / counts[d] for d in DELAYS},
-        "by_context": [by_context[c] / by_context_counts[c] for c in (0, 1)],
+        "by_delay": {
+            str(d): correct[d] / counts[d] if counts[d] else None
+            for d in DELAYS
+        },
+        "by_context": [
+            by_context[c] / by_context_counts[c] if by_context_counts[c] else None
+            for c in (0, 1)
+        ],
         "target_choices": len(seq),
         "target_missing": missing_actions,
         "delivered_nonzero_pulses": sent if learn else 0,
