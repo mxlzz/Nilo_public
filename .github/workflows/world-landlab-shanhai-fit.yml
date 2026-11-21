@@ -1,0 +1,59 @@
+name: World research - Landlab Shanhai fit (stage 0)
+
+on:
+  push:
+    branches: [research/world-foundations-2026-11]
+    paths:
+      - 'WORLD_RESEARCH/experiments/probe_landlab_upstream.py'
+      - 'WORLD_RESEARCH/experiments/probe_shanhai_upstream.test.ts'
+      - '.github/workflows/world-landlab-shanhai-fit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  landlab:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install published Landlab from wheel (provenance in pip)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --only-binary=:all: landlab numpy
+          python -m pip show landlab numpy
+      - name: Execute controls, erosion and checkpoint replay
+        run: python WORLD_RESEARCH/experiments/probe_landlab_upstream.py
+
+  shanhai:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: research
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Checkout original Shanhai
+        run: |
+          git clone --depth 1 https://github.com/aruis/Shanhai.git upstream
+          echo "SHANHAI_UPSTREAM_COMMIT=$(git -C upstream rev-parse HEAD)"
+      - name: Install locked dependencies
+        working-directory: upstream
+        run: npm ci --no-audit --no-fund
+      - name: Run original tests
+        working-directory: upstream
+        run: npm test -- --run
+      - name: Type-check and build original project
+        working-directory: upstream
+        run: npm run build
+      - name: Copy independent test into temporary upstream checkout
+        run: cp research/WORLD_RESEARCH/experiments/probe_shanhai_upstream.test.ts upstream/tests/sim/world-research-fit.test.ts
+      - name: Run causal and state-alias probes
+        working-directory: upstream
+        run: npx vitest run tests/sim/world-research-fit.test.ts --reporter=verbose
