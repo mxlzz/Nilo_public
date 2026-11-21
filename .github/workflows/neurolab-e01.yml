@@ -95,6 +95,9 @@ jobs:
       - name: E09g9 independent replication on unseen seeds 20 through 99
         run: python -m experiments.neurolab.e09_oos_replicate | tee metrics/e09g9.json
 
+      - name: E09g10a internal-only two-byte source memory equivalence vs G
+        run: python -m experiments.neurolab.e09_intrinsic_gate | tee metrics/e09g10a.json
+
       - name: Preserve per-seed results and benchmark
         if: always()
         uses: actions/upload-artifact@v4
