@@ -1,0 +1,46 @@
+{
+  "protocol": "E09_02I_I3C3A_TRAYECTORIA_PRE_REGISTRO-v1",
+  "source": {
+    "run_id": 44959905616,
+    "conclusion": "success",
+    "artifact_id": 14729381171,
+    "artifact_name": "neurolab-i3c3a-no-reward-migration-traces",
+    "expires": "2027-02-19"
+  },
+  "cohort": {
+    "seeds": "800..819",
+    "count": 20,
+    "ticks_per_condition": 256,
+    "conditions": [
+      "B",
+      "B+"
+    ],
+    "chem": "CHEM0/1 24 alternating 8 ticks",
+    "feedback": false
+  },
+  "totals": {
+    "B": {
+      "D0": 2576,
+      "D1": 2544,
+      "accepted": 0,
+      "draws": 0,
+      "exhausted_final": 0
+    },
+    "Bplus": {
+      "D0": 2576,
+      "D1": 2544,
+      "accepted": 0,
+      "draws": 0,
+      "exhausted_final": 0,
+      "inactive_recipient": 10240,
+      "no_disconnected_dendrite": 10240
+    }
+  },
+  "conclusion": "No exhausted dendrites and hence no migration in fixed no-feedback stress; checkpoint replay exact.",
+  "gates": {
+    "stress_trace": true,
+    "checkpoint": true,
+    "G05": "open",
+    "G09": "open"
+  }
+}
