@@ -37,3 +37,12 @@ Comparar primero el suelo no saturado de DRYP 1/2 y los modelos documentados (La
 Cualquier puente necesita espesor y porosidad root zone, estado de almacenamiento (volumen, no solo fracción), evapotranspiración/leakage, límites y no duplicar lluvia/ET. Registrar esquema y casos sintéticos antes de implementar.
 
 **Gate de etapa**: H11c ejecutable ya en rama experimental. H12 arquitectura detenida hasta verificación técnica de modelos existentes. Toda decisión reversible, sin cambios a main ni NeuroLab.
+
+## Addendum H11c-1 — anomalía del indicador en control de aporte nulo
+Primer workflow H11c: https://github.com/mxlzz/Nilo_public/actions/runs/44956774655 (**FAIL**). `Kinwave` falló con `relative_error_vs_rain=0.0086597`; el script dividía `abs(residual)` por `max(rain_volume,1e-12)`. Si el caso fallido fue el control `rain_volume=0`, el denominador 1e-12 crea un porcentaje artificialmente enorme incluso ante residuo de pocos femtómetros cúbicos. Hay que diagnosticar el caso exacto: la prueba original imprimía resultados al final, **después de las aserciones**; no permite todavía adjudicar el fallo a conservación ni confirmar definitivamente el origen del ratio.
+
+**Enmienda del criterio antes de reintentar (no relajar la tolerancia original):**
+- Con `rain_volume>0`: `abs(residual)/rain_volume<0.001` (0.1%, igual que plan).
+- Con `rain_volume=0`: exigir `abs(residual)<1e-9m³`, e informar ese residual **absoluto**. No dividir entre 1e-12 ni fabricar un cociente sin significado.
+- Emitir los diagnósticos de cuatro escenarios antes de las aserciones, para poder auditar un fallo real sin editar repetidamente el ensayo.
+- Si el fallo >0.1% ocurre en un escenario **con lluvia**, detener selección de solver y cuantificar masa de frontera/numérica. La enmienda no permite aprobar ese escenario.
