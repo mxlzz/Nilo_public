@@ -84,6 +84,9 @@ int main(int argc, char *argv[])
 '''
     if '#include <stdexcept>' not in s:
         s=s.replace('#include <vector>','#include <vector>\n#include <string>\n#include <stdexcept>')
+    if '#include "simulation/ElementClasses.h"' not in s:
+        s=s.replace('#include "simulation/Simulation.h"',
+                    '#include "simulation/Simulation.h"\n#include "simulation/ElementClasses.h"')
     path.write_text(s.replace(marker,inject,1),encoding="utf-8")
     print("H15 instrumented original render-only TPT source in temporary checkout; no upstream code copied to own repo",flush=True)
 
