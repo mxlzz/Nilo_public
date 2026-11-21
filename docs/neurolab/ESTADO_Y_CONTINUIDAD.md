@@ -2,7 +2,7 @@
 
 **Estado actualizado:** 2026-11-20 (registro posterior al comienzo de ejecución).  
 **Línea base documentada:** protocolo v0.1.0 en rama `docs/neurolab-protocolo-20261120`, propuesto para revisión.  
-**Ejecución experimental:** E01–E04 con pruebas automatizadas reales; E05 pendiente.  
+**Ejecución experimental:** E01–E04 probadas; E05 ensayada con funcionamiento temporal y atribución causal deficiente. E06 puede estudiarse independientemente sin usar E05.  
 **Código del cerebro:** núcleo E01 y circuito E02 en experiments/neurolab/; sin aprendizaje hasta E03.  
 **Autorización vigente documentada:** el usuario autorizó continuar ejecución secuencial hasta necesitar intervención; ninguna integración con el motor Nilo 0.7 ni merge a main.
 
@@ -12,14 +12,14 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | E05 — crédito y refuerzo diferido; arqueología H aún abierta |
-| Siguiente subtarea exacta | **E05.01 — especificar elegibilidad/susceptibilidad temporal** |
-| Última subtarea validada | E04 — sinapsis aislada STW/LTW, oráculos y choque/reversión temporal en CI; integración cerebral pendiente |
+| Etapa actual | E05 crédito causal (limitación abierta); E06 independiente solo después de preregistro |
+| Siguiente subtarea exacta | **E05 — analizar crédito espurio y E06.01 — preregistrar conceptos independientes** |
+| Última subtarea validada | E05: tests numéricos de elegibilidad correctos, **G05 no superada** por distractor correlacionado |
 | Experimentos ejecutados | E01–E02 unitarias, E03 experimento preregistrado (20 semillas, controles) |
-| Runs con evidencia | [E01+E02 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44850881701), [E03 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727), [E04 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622) |
+| Runs con evidencia | [E01+E02 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44850881701), [E03 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727), [E04 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622), [E05 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851485383) |
 | Última corrida del cerebro | Experimentos sintéticos E03 con aprendizaje local por refuerzo; sin cuerpo/mundo/LLM |
 | Estado de E00 | [Informe histórico inicial](E00_INFORME_HISTORICO_01.md): G00-H abierto por incertidumbres; G00-N habilita variante propia E01 |
-| Estado del código | E01 kernel, E02 circuito, E03 plasticidad, E04 sinapsis doble; tests 19 + 8 + 10 + 10 = 47 métodos |
+| Estado del código | E01 kernel, E02 circuito, E03 plasticidad, E04 doble peso, E05 elegibilidad; tests 19+8+10+10+10=57 métodos |
 | Integración con Nilo 0.7 | Ninguna |
 | Bloqueos | E00.02 exactitud del genoma y discrepancia histórica salida=state vs state-threshold; no bloquean experimento N rotulado como propio |
 | Decisiones nuevas pendientes | Fidelidad C1 vs adaptación mínima tras E00 |
@@ -35,7 +35,7 @@
 | E02 | Validación automatizada | — | CI E02, 8 tests; sin aprendizaje |
 | E03 | Validada N | — | [G03 CI verde](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727); no replica C1 |
 | E04 | Validada como dinámica sináptica aislada | — | [CI E04](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622); no integrado al selector aún |
-| E05 | Pendiente | E05.01 | G05 efecto del refuerzo retrasado |
+| E05 | **Parcial / límite negativo confirmado** | Revisar crédito causal | G05 no superada; refuerzo espurio en distractor correlacionado |
 | E06 | No iniciada | E06.01 | G06 generalización a holdouts |
 | E07 | No iniciada | E07.01 | G07 utilidad de migración sináptica |
 | E08 | No iniciada | E08.01 | G08 dinámica interna caracterizada |
@@ -154,3 +154,13 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - [CI #44851265622](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622), SHA `9b0960667fa27bbc2ba9e0dcf7f0896dcf246151`: `success`. Tests manuales, saturación, recuperación, memoria lenta, inversión sostenida y checkpoint superados.
 - **G04 validada solo para la dinámica aislada de STW/LTW de NeuroLab.** No se ha medido todavía si un cerebro que utiliza ese mecanismo generaliza mejor ni se lo presenta como reproducción histórica exacta.
 - Siguiente: E05.01 — elegibilidad temporal para una asociación ya existente.
+
+### 2026-11-20 — NL-LOG-0006 (E05)
+- Pre-registro previo al código: [E05_PRE_REGISTRO.md](E05_PRE_REGISTRO.md); ecuación propia elegibilidad=floor(3e/4), peso posterior condicionado por floor(32e/255).
+- Código: [eligibility.py](../../experiments/neurolab/eligibility.py), [10 tests E05](../../experiments/neurolab/tests/test_eligibility.py).
+- [CI #44851485383](https://github.com/mxlzz/Nilo_public/actions/runs/44851485383) para SHA `c24a6c6a21ae4ff313b18cfb0c1dca06dbdfb31b`: `success` (57 métodos de prueba, y evaluación prereg E03 todavía verde).
+- Refuerzo sin uso previo: 0; refuerzo inmediato: +32; retraso temporal discreto reduce influencia; elegibilidad y checkpoint deterministas.
+- **Caso negativo confirmatorio:** A causa refuerzo, B distrae y se activa después; elegibilidad A=107, B=191; ante premio +1, A termina peso 141 y B peso 151 (ambos desde128). El algoritmo refuerza **más a B**, pese a que B no causó la consecuencia.
+- Diferenciar **tests del cálculo esperable: éxito**, de **hipótesis de crédito causal correcto: NO VERIFICADA / FALLA EN ESTE CASO**. **Puerta G05 permanece abierta**, no aprobar hasta abordar limitación por diseño o delimitar el escenario de uso.
+- **Trabajo permitido independiente:** E06 solo evaluará detectores de patrones y transferencia con refuerzo inmediato de E03; no integrará ni dependerá de la elegibilidad E05. Registrar antes el diseño y no afirmar que se saltó la puerta G05.
+- La elección histórica vs nueva regla correctiva queda abierta para una decisión posterior basada en ensayos, sin imponer una respuesta por comodidad.
