@@ -1,0 +1,51 @@
+name: World research - upstream fit smoke (stage 0)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [research/world-foundations-2026-11]
+    paths:
+      - 'WORLD_RESEARCH/experiments/*candidate*'
+      - 'WORLD_RESEARCH/experiments/sandspiel_smoke.rs'
+      - '.github/workflows/world-upstream-fit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sandspiel:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: project
+      - name: Get upstream Sandspiel
+        run: |
+          git clone --depth 1 https://github.com/MaxBittker/sandspiel.git upstream
+          echo "UPSTREAM_SANDSPIEL_SHA=$(git -C upstream rev-parse HEAD)"
+          rustc --version
+      - name: Append instrumentation to copied upstream source
+        run: cat project/WORLD_RESEARCH/experiments/sandspiel_smoke.rs >> upstream/crate/src/lib.rs
+      - name: Execute native behavioral smoke of upstream engine
+        working-directory: upstream/crate
+        run: cargo test --release --target x86_64-unknown-linux-gnu candidate_eval -- --nocapture
+
+  worldengine:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: project
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Get upstream WorldEngine
+        run: |
+          git clone --depth 1 https://github.com/Mindwerks/worldengine.git upstream
+          echo "UPSTREAM_WORLDENGINE_SHA=$(git -C upstream rev-parse HEAD)"
+      - name: Install upstream project
+        run: python -m pip install --no-cache-dir ./upstream
+      - name: Execute reproducibility and data roundtrip tests
+        run: python project/WORLD_RESEARCH/experiments/test_worldengine_candidate.py
