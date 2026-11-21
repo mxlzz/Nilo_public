@@ -5,6 +5,7 @@ on:
       - research/world-foundations-2026-11
     paths:
       - WORLD_RESEARCH/experiments/probe_landlab_overland_water.py
+      - WORLD_RESEARCH/experiments/probe_landlab_kinwave_greenampt_budget.py
       - .github/workflows/world-landlab-water-budget.yml
   workflow_dispatch:
 permissions:
@@ -24,3 +25,5 @@ jobs:
           python -m pip show landlab
       - name: Run H11a closed-basin volume and topology controls
         run: python WORLD_RESEARCH/experiments/probe_landlab_overland_water.py
+      - name: Run H11b Kinwave and Green Ampt two-compartment budget
+        run: python WORLD_RESEARCH/experiments/probe_landlab_kinwave_greenampt_budget.py
