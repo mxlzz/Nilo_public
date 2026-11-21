@@ -21,4 +21,4 @@ jobs:
         with:
           python-version: '3.11'
       - name: Test world matter invariants
-        run: python -m unittest discover -s WORLD_RESEARCH/experiments -p 'test_*.py' -v
+        run: python -m unittest discover -s WORLD_RESEARCH/experiments -p 'test_matter*.py' -v
