@@ -38,7 +38,7 @@ Prueba con mundo 32x16, semilla del generador 7321 y estado inicial global NumPy
 
 Primera prueba real: https://github.com/mxlzz/Nilo_public/actions/runs/44943949457
 Job `sandspiel`: código Rust compiló; 2/3 pruebas iniciales pasaron.
-- Repetición determinista de dos mundos con el mismo estado durante 20 ticks: **PASS**.
+- Repetición determinista de dos mundos con el mismo estado durante 20 ticks: **PASS**. El estado inicial usa semilla fija, por lo que todavía no demuestra control de semillas arbitrarias.
 - Barrera que no deja pasar arena hacia abajo: **PASS**.
 - Arena cayendo: **FAIL**. No atribuir aún a un defecto físico general.
 
@@ -46,7 +46,8 @@ Prueba diagnóstica: https://github.com/mxlzz/Nilo_public/actions/runs/449440590
 - Con el campo de viento inicial del constructor original, la arena pasó de (12,4) a (11,3), (10,2), (9,1) y avanzó hacia x=0, sin descender.
 - La inspección del código explica la condición: `Universe::new` inicializa campos de viento en cero, pero `blow_wind` interpreta desplazamientos como `dx-126` y `dy-126`, por lo que cero no significa ausencia de viento.
 - Esto indica una **dependencia externa de inicialización** al ejecutar el núcleo aislado. No demostraría por sí solo que el juego completo tiene ese defecto.
-- Se añadió test con viento neutral (126,126) y control de inicialización sin corregir, en un checkout temporal de upstream. **Resultado pendiente de registrar hasta que termine el workflow**.
+- Segunda ejecución real con viento neutral (126,126), en copia temporal de upstream: https://github.com/mxlzz/Nilo_public/actions/runs/44944136887, job `sandspiel` **SUCCESS: 4/4 pruebas**. Con viento neutral, la partícula avanzó de (12,4) a (12,16) en 12 ticks; mantuvo su identidad y masa discreta de una partícula; fue bloqueada por una barrera en y=10; dos ejecuciones iguales dieron estados idénticos. El control sin normalizar corroboró desplazamiento inmediato a (11,3).  
+- **Interpretación:** la caída básica funciona; usar el núcleo sin inicializar viento requiere adaptación explícita. El test inyecta instrumentación en un checkout temporal porque `Species` y `get_cell` no son expuestos directamente para un ensayo externo puro. Esta prueba no acredita API pública suficiente, balance de materiales que reaccionan, generalidad ni persistencia.
 
 Limitaciones de arquitectura verificadas por lectura:
 - Los tipos de materia son variantes enumeradas `Species` y su comportamiento depende de funciones `update_*` concretas.
@@ -78,3 +79,9 @@ Limitaciones de arquitectura verificadas por lectura:
 2. Probar The Powder Toy u otra solución de comportamiento material como segundo candidato, en un caso de alcance equivalente.
 3. Evaluar módulo WorldEngine como generador bajo encapsulamiento completo del RNG.
 4. Elaborar ADR-0002 con recomendación explícita de usar / adaptar / combinar / desarrollar, apoyada en pruebas y costo de integración. **No avanzar a etapa 1 antes del dictamen.**
+
+## Registro de segunda corrida
+
+- https://github.com/mxlzz/Nilo_public/actions/runs/44944136887 — WorldEngine **PASS**; Sandspiel (cuatro pruebas con control de viento neutral) **PASS**.
+- https://github.com/mxlzz/Nilo_public/actions/runs/44943929557 — fallo de CI **propio del arnés**: el descubrimiento de pruebas incluyó `test_worldengine_candidate.py` sin NumPy instalado. Se corrigió el patrón de pruebas del módulo de materia a `test_matter*.py`, sin modificar su núcleo. Este fallo no debe atribuirse a una incapacidad del candidato.
+- Próxima prueba externa: The Powder Toy u otra segunda base material con criterios equivalentes. No se aprueba adopción de Sandspiel como motor definitivo con cuatro pruebas básicas.
