@@ -77,6 +77,9 @@ jobs:
       - name: E09.02g.4 counterbalanced targets, noise and 3-tick delay
         run: python -m experiments.neurolab.e09_robustness_protocol | tee metrics/e09g4.json
 
+      - name: E09.02g.5 two concepts with frozen, blind and tabular baselines
+        run: python -m experiments.neurolab.e09_context_protocol | tee metrics/e09g5.json
+
       - name: Preserve per-seed results and benchmark
         if: always()
         uses: actions/upload-artifact@v4
