@@ -49,6 +49,25 @@ jobs:
       - name: E08 preregistered recurrent dynamics
         run: python -m experiments.neurolab.recurrent | tee metrics/e08.json
 
+      - name: E09.02c negative baseline, metrics only (gate failed)
+        run: |
+          python - <<'PY' | tee metrics/e09c_negative.json
+          import json
+          from experiments.neurolab.e09_microlearn_protocol import run_all
+          print(json.dumps(run_all(),indent=2,sort_keys=True))
+          PY
+
+      - name: E09.02d epsilon=0.10 negative variant, metrics only (gate failed)
+        run: |
+          python - <<'PY' | tee metrics/e09d_negative.json
+          import json
+          from experiments.neurolab.e09_exploration_protocol import run_all
+          print(json.dumps(run_all(),indent=2,sort_keys=True))
+          PY
+
+      - name: E09.02e preregistered two-speed synapse reversal
+        run: python -m experiments.neurolab.e09_twinbrain_protocol | tee metrics/e09e_twinsynapse.json
+
       - name: Preserve per-seed results and benchmark
         if: always()
         uses: actions/upload-artifact@v4
