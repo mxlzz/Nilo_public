@@ -71,6 +71,9 @@ jobs:
       - name: E09.02g.2 genetic C1 microbrain preregistered 2x2
         run: python -m experiments.neurolab.e09_microbrain_genetic_protocol | tee metrics/e09g2.json
 
+      - name: E09.02g.3 continuous C1 brain prior-WTA clock
+        run: python -m experiments.neurolab.e09_continuous_protocol | tee metrics/e09g3.json
+
       - name: Preserve per-seed results and benchmark
         if: always()
         uses: actions/upload-artifact@v4
