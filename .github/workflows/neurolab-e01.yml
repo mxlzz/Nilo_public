@@ -27,22 +27,33 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Prepare results directory
+        run: mkdir -p metrics
       - name: Compile neuron kernel and test code
         run: python -m py_compile experiments/neurolab/kernel.py experiments/neurolab/tests/test_kernel.py
       - name: E01 deterministic numerical oracles and state replay
         run: python -m unittest discover -s experiments/neurolab/tests -v
 
       - name: E01 benchmark 100k ticks
-        run: python -m experiments.neurolab.bench
+        run: python -m experiments.neurolab.bench | tee metrics/e01_bench.json
 
       - name: E03 preregistered 20-seed learning and reversal
-        run: python -m experiments.neurolab.e03_protocol
+        run: python -m experiments.neurolab.e03_protocol | tee metrics/e03.json
 
       - name: E06 preregistered XOR context generalization
-        run: python -m experiments.neurolab.e06_protocol
+        run: python -m experiments.neurolab.e06_protocol | tee metrics/e06.json
 
       - name: E07 preregistered rewiring vs fixed and LRU
-        run: python -m experiments.neurolab.e07_protocol
+        run: python -m experiments.neurolab.e07_protocol | tee metrics/e07.json
 
       - name: E08 preregistered recurrent dynamics
-        run: python -m experiments.neurolab.recurrent
+        run: python -m experiments.neurolab.recurrent | tee metrics/e08.json
+
+      - name: Preserve per-seed results and benchmark
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-metrics
+          path: metrics/
+          if-no-files-found: warn
+          retention-days: 90
