@@ -1,0 +1,24 @@
+name: World research - isolated matter tests
+
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - 'WORLD_RESEARCH/**'
+      - '.github/workflows/world-research-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  matter-invariants:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test world matter invariants
+        run: python -m unittest discover -s WORLD_RESEARCH/experiments -p 'test_*.py' -v
