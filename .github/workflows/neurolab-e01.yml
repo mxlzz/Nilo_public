@@ -86,6 +86,9 @@ jobs:
       - name: E09g6 preregistered holdout-only perceptual latency and decision state ablations
         run: python -m experiments.neurolab.e09_context_reset_diagnostics | tee metrics/e09g6.json
 
+      - name: E09g7 observational causal credit audit preserving tick ledger
+        run: python -m experiments.neurolab.e09_causal_ledger --output metrics/e09g7_causal_ledger.json | tee metrics/e09g7_summary.json
+
       - name: Preserve per-seed results and benchmark
         if: always()
         uses: actions/upload-artifact@v4
