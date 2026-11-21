@@ -1,8 +1,8 @@
 # NeuroLab — estado verificable y protocolo de continuidad
 
-**Estado actualizado:** 2026-11-21 (E09h.1–h.3: orden cerebral/químico, cinética de reacciones y transferencia de receptores C1 verificadas por análisis estático del EXE y genes CD; no integración Nilo).  
+**Estado actualizado:** 2026-11-21 (E09h.4 ADAPTADOR documental y experimental verificable contra fuentes C1/fixture CD; la comprobación binaria de punteros queda abierta; h.1–h.3 preservadas, sin integración Nilo).
 **Línea base documentada:** protocolo v0.1.0 en rama `docs/neurolab-protocolo-20261120`, propuesto para revisión.  
-**Ejecución experimental:** E01–E09g.10c conservadas y E09h.1–h.3 realizadas sobre archivos originales verificados (EXE/GEN idénticos a los de E09f/E00); prueba CI más reciente de h.3: 332 tests y 2 expectedFailure. E09g.10b neuronal negativa y susceptibilidad C1 observada; G00-H/G05/G09 global abiertas.  
+**Ejecución experimental:** E01–E09g.10c y E09h.1–h.3 previas conservadas. **E09h.4 parcial**: preregistro y adaptador con controles sobre seis receptores; el paso unittest de [CI h.4](https://github.com/mxlzz/Nilo_public/actions/runs/44947076331) completó con success; no equivale a CI integral ni fidelidad del EXE. G00-H/G05/G09 global abiertas.
 **Código del cerebro:** inspección estática del ejecutable y genoma C1 alimenta módulos E09f (SVRule, sinapsis, strength, migración) y microredes E09g de cinco y seis unidades; sin motor Nilo, cuerpo, mundo ni LLM.  
 **Autorización vigente documentada:** el usuario autorizó continuar ejecución secuencial hasta necesitar intervención; ninguna integración con el motor Nilo 0.7 ni merge a main.
 
@@ -12,16 +12,16 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | **E09h.3 validada parcialmente:** transferencia aislada del receptor desde concentración a byte de locus, y E09h.2 cinética de reacciones secuenciales; límites explícitos de reconstrucción histórica completa |
-| Siguiente subtarea exacta | **E09h.4 — verificar el enlace receptor del genoma → ubicación de locus neuronal → variable CHEM0..3 en SVRule** con inspección estática del EXE original; evaluar antes de crear más módulos; NO sumar neuronas ni ampliar S0/S1 |
-| Última subtarea validada | **E09h.3 aislada, [CI 332 tests + 2 expectedFailure, success](https://github.com/mxlzz/Nilo_public/actions/runs/44945435224)**, [informe con errata de redondeo](E09_H_03_RESULTADO_RECEPTORES.md) y [JSON de seis receptores originales](resultados/e09h3_receptores_genoma_original.json). H2 [CI 325 tests](https://github.com/mxlzz/Nilo_public/actions/runs/44945152541), [informe](E09_H_02_RESULTADO_REACCIONES_QUIMICAS.md). G00-H no cerrado |
+| Etapa actual | **E09h.4 PARCIAL**: receptor de E09h.3 → locus13..16 → CHEM0..3 corroborado en documentación C1 y probado como adaptador condicionado; **punteros x86 no comprobados** en esta intervención |
+| Siguiente subtarea exacta | **E09h.4-G-H4-X86**: inspeccionar bytes originales EXE para enlazar triplete organ/lobe/locus a puntero de CHEM por lóbulo y lectura en SVRule. No pasar a h.5 ni agregar neuronas mientras siga abierta |
+| Última subtarea validada | **E09h.4-G-H4-ADAPTER (compatibilidad lógica)**: [preregistro](E09_H_04_ENLACE_LOCI_PRE_REGISTRO.md), [resultado parcial](E09_H_04_RESULTADO_ENLACE_LOCI.md), [CI unittest success](https://github.com/mxlzz/Nilo_public/actions/runs/44947076331) en commit de tests `2ef85398502ff67b7a40f7106f6277394b989625`. **E09h.3** continúa como última evidencia original EXE+GEN; H4-X86 sigue abierta |
 | Experimentos ejecutados | E01–E09g.10c en red reducida; E09h.1 inspección de calls y fases químicas con EXE/GEN auténticos; E09h.2 cinética de 58 reacciones aisladas; E09h.3 transformación de 43 receptores y seis cerebrales, sin modificar las redes |
 | Runs con evidencia | [g.10b](https://github.com/mxlzz/Nilo_public/actions/runs/44942700990), [g.10c](https://github.com/mxlzz/Nilo_public/actions/runs/44943178871), [h.1](https://github.com/mxlzz/Nilo_public/actions/runs/44944783092), [h.2](https://github.com/mxlzz/Nilo_public/actions/runs/44945152541), [h.3](https://github.com/mxlzz/Nilo_public/actions/runs/44945435224); resultados anteriores conservados en logs y archivos |
 | Última corrida del cerebro | **No se ejecutó un nuevo cerebro integrado:** últimas pruebas de la microred permanecen [g.10b](E09_02G_10B_RESULTADO_DEMORA_DISTRACTORES.md) y [g.10c](E09_02G_10C_RESULTADO_ELEGIBILIDAD.md). H.1–H.3 verifican partes aisladas del motor histórico, no aptitud autónoma |
 | Estado de E00 | [Genoma CD vs parche](E00_GENOMA_ORIGINAL_COMPARACION.md), [receptores/emisores](E00_MAPA_NEUROQUIMICO_C1.md), [reacciones Reward/Punishment](E00_QUIMICA_REFUERZO_C1.md). E09h.2 verifica aritmética de reacción aislada y E09h.3 transferencia de receptor; conexión a loci CHEM y dinámica global pendientes |
-| Estado del código | E01–E09g conservadas, E09h.1–h.3 añadidas en módulos aislados sin binarios propietarios. CI más reciente 332 tests success y 2 expectedFailure históricos; oráculo H.3 de receptor126 corregido, preregistro original preservado con errata |
+| Estado del código | E01–E09g, h.1–h.3 y **adaptador aislado h.4** más siete tests H4, sin binarios propietarios; último unittest CI h.4 success, ejecución integral del workflow a revisar. No se cambia la microred ni Nilo |
 | Integración con Nilo 0.7 | Ninguna |
-| Bloqueos | **EXE y GEN CD recibidos nuevamente y hashes verificados**: inspección estática disponible, sin bloqueo por falta de archivos. Falta cerrar en C1 real enlace receptor→locus/CHEM, todos los caminos del scheduler, emisiones y química global; no se ejecutó juego para contrastar concentraciones reales |
+| Bloqueos | EXE/GEN originales existen como metadatos de Biblioteca, pero **no fueron accesibles en bytes en este chat** (materialización denegada para ambas copias). E09h.4-X86 requiere acceso real al EXE; otras lagunas: scheduler global, emisores, química integrada. No inferir bytes ni claim de equivalencia histórica |
 | Decisiones nuevas pendientes | Interpretación fiel bit a bit de motor C1 aún no comprobada; E09e es alternativa NeuroLab inspirada, no reproducción. Buscar ejecutable auténtico si se decide exigir fidelidad histórica. |
 
 **Regla:** nunca actualizar `última subtarea validada` sin prueba enlazada al commit, log/fixture y criterio de aceptación. Si se hace un paso pero no se logra evidencia suficiente, permanece en curso/bloqueado. No marcar «terminada» una etapa porque se produjo un texto sobre ella.
@@ -39,7 +39,7 @@
 | E06 | Validada: invariancia contextual, no creación de conceptos | — | CI 44851722169 |
 | E07 | Verificada en modelo experimental | — | [CI E07](https://github.com/mxlzz/Nilo_public/actions/runs/44852027094), sin ventaja demostrada frente a LRU |
 | E08 | Verificada dinámica matemática | — | [CI E08](https://github.com/mxlzz/Nilo_public/actions/runs/44852126108) |
-| E09 | E09f/g exploradas; g.10b gate neuronal negativa, g.10c elegibilidad local; **h.1–h.3 verificación estática y aritmética/receptores aislados** (no fidelidad integral) | E09h.4 verificar mapping receptor a locus y CHEM por EXE CD; si procede, observar scheduler y química completa sin inventar | [h.1](E09_H_01_RESULTADO_ORDEN_CEREBRO_QUIMICA.md), [h.2](E09_H_02_RESULTADO_REACCIONES_QUIMICAS.md), [h.3](E09_H_03_RESULTADO_RECEPTORES.md); G00-H/G05/G09 abiertas |
+| E09 | E09f/g aisladas y h.1–h.3 históricas; **h.4 adaptador documental/test condicional**, puerta de punteros binarios abierta | E09h.4-X86: comprobar mapeo de punteros y snapshot sin inventar campos | [h.1](E09_H_01_RESULTADO_ORDEN_CEREBRO_QUIMICA.md), [h.2](E09_H_02_RESULTADO_REACCIONES_QUIMICAS.md), [h.3](E09_H_03_RESULTADO_RECEPTORES.md), [h.4 parcial](E09_H_04_RESULTADO_ENLACE_LOCI.md); G00-H/G05/G09 abiertas |
 
 No avanzar en una fase solo porque exista su definición en este archivo.
 
@@ -333,3 +333,11 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - 43 receptores originales y seis cerebrales, incluido Reward49/Punishment50 de Decision. El efecto `(available*gain)>>8` produce para concentración12 y gain255 el byte11. **Errata**: prereg E09h.3 esperaba receptor126 output1 con pool52=5, pero el resultado correcto es0; [CI inicial fallida](https://github.com/mxlzz/Nilo_public/actions/runs/44945392755) detectó el error, se corrigió fixture sin alterar fórmula ni prereg.
 - Resultado: etapa de transferencia de receptor verificada **sin probar aún que el locus esté correctamente vinculado a CHEM0..3**. Mantener E09h.4 como próximo paso, sin modificar Nilo ni fusionar PR#103.
 
+
+### 2026-11-21 — NL-LOG-0031 (E09h.4, enlace de receptor a CHEM; PARCIAL)
+- [Preregistro](E09_H_04_ENLACE_LOCI_PRE_REGISTRO.md) se guardó **antes** del código, commit `ed66c8ab482d3d55d342fd4a98671a784d82abb2`.
+- Fuente [CDN/LCUS](https://lisdude.com/cdn/76.html) confirma receptor locus13–16 = CHEM0–3 por lóbulo; guía [C1 Brain](https://zenzoa.com/creatures/c1-brains.html) confirma operandos SVRule5–8 y carga de los cuatro CHEM de ese lóbulo.
+- [Adaptador](../../experiments/neurolab/e09_historical_locus.py), [tests](../../experiments/neurolab/tests/test_e09_historical_locus.py), [resultado condicionado](E09_H_04_RESULTADO_ENLACE_LOCI.md), commit de tests `2ef85398502ff67b7a40f7106f6277394b989625`; [workflow](https://github.com/mxlzz/Nilo_public/actions/runs/44947076331) con paso unittest `success`, **sin reclamar aún conclusión del workflow entero**.
+- Oráculos del fixture CD h.3: Decision6 CHEM=(11,11,5,16), Concept8 CHEM=(0,0,0,0), con pool de ejemplo; controles de aislamiento, canales ausentes, duplicados y no mutación. Son verificaciones de **compatibilidad documental**, no memoria física C1.
+- Acceso a binarios: Biblioteca localizó ambas copias originales por metadatos, pero falló la materialización de bytes. No se realizaron nuevas lecturas x86, y por eso la **puerta G-H4-X86 sigue abierta**. Siguiente tarea exacta: inspeccionar asignación de puntero receptor→lobe CHEM y su snapshot de SVRule cuando exista acceso real al ejecutable original.
+- PR #103 sigue draft; main/Nilo 0.7/G00-H/G05/G09 intactos.
