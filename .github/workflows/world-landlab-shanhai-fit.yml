@@ -5,6 +5,7 @@ on:
     branches: [research/world-foundations-2026-11]
     paths:
       - 'WORLD_RESEARCH/experiments/probe_landlab_upstream.py'
+      - 'WORLD_RESEARCH/experiments/probe_landlab_native_sediment_ecology.py'
       - 'WORLD_RESEARCH/experiments/probe_shanhai_upstream.test.ts'
       - '.github/workflows/world-landlab-shanhai-fit.yml'
   workflow_dispatch:
@@ -28,6 +29,8 @@ jobs:
           python -m pip show landlab numpy
       - name: Execute controls, erosion and checkpoint replay
         run: python WORLD_RESEARCH/experiments/probe_landlab_upstream.py
+      - name: Test native sediment and vegetation components
+        run: python WORLD_RESEARCH/experiments/probe_landlab_native_sediment_ecology.py
 
   shanhai:
     runs-on: ubuntu-24.04
