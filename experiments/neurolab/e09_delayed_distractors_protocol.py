@@ -120,22 +120,36 @@ def train_tabular_q(
 ) -> tuple[list[list[float]], int, dict]:
     updates = 0
     causal_provenance = []
+    elapsed = 0
+    delivery_ticks = []
     for target, delay in seq:
+        # Four target ticks precede the scored choice. The Q policy acts
+        # only once and does not process intervening sensory stimuli.
+        elapsed += TARGET_TICKS
+        action_at = elapsed
         choice_tick += 1
         action = tabular_step_choice(q, target, seed=seed, tick=choice_tick, explore=True)
         action_index = 0 if action == "D0" else 1
-        # The record is made at the scored choice; it is used ONLY after
-        # the delay and the feedback tick (where C1 receives its chemical).
         stored = (target, action_index)
         reward = 1 if action == mapping[target] else -1
+        # Hold the causal (context, action) token throughout the distractor
+        # interval. Apply learning ONLY at the later feedback-arrival tick.
+        elapsed += delay
+        elapsed += 1
+        received_at = elapsed
+        if received_at - action_at != delay + 1:
+            raise AssertionError("incorrect Q feedback delay")
         source_target, source_action = stored
         prior = q[source_target][source_action]
         q[source_target][source_action] = prior + .2 * (reward - prior)
         updates += 1
+        delivery_ticks.append((action_at, received_at))
         causal_provenance.append((target, delay, source_target, source_action, reward))
     return q, choice_tick, {
         "updates": updates,
         "causal_provenance": causal_provenance,
+        "delivery_ticks": delivery_ticks,
+        "emulated_ticks": elapsed,
     }
 
 
