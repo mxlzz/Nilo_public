@@ -51,8 +51,11 @@ def eco_pair(rain):
     grid.at_cell["vegetation__plant_functional_type"]=np.zeros(n,dtype=int)
     grid.at_cell["vegetation__cover_fraction"]=np.full(n,0.45)
     grid.at_cell["vegetation__live_leaf_area_index"]=np.full(n,0.85)
-    grid.at_cell["surface__potential_evapotranspiration_rate"]=np.full(n,0.25)
-    grid.at_cell["surface__potential_evapotranspiration_30day_mean"]=np.full(n,0.25)
+    # Growth is conditional on PET30 > threshold (6.8 by default).
+    # Earlier exploratory PET=0.25 tested senescence, where biomass did
+    # not respond to water stress; switch to a growing-season condition.
+    grid.at_cell["surface__potential_evapotranspiration_rate"]=np.full(n,8.0)
+    grid.at_cell["surface__potential_evapotranspiration_30day_mean"]=np.full(n,8.0)
     grid.at_cell["soil_moisture__initial_saturation_fraction"]=np.full(n,0.25)
     grid.at_cell["rainfall__daily_depth"]=np.full(n,float(rain))
     soil=SoilMoisture(grid)
@@ -83,6 +86,7 @@ def main():
     r=eco_pair(rain=25.0)
     d=eco_pair(rain=0.0)
     assert r["mean_saturation"]>d["mean_saturation"],"H5: rain did not change moisture"
+    assert r["mean_live_biomass_after_update"]>d["mean_live_biomass_after_update"],"H5: growing-season biomass did not respond to moisture"
     print("WORLD_EVAL_JSON "+json.dumps({
         "candidate":"Landlab native sediment/ecology",
         "sediment_active":{k:v for k,v in active.items() if k!="topography"},
