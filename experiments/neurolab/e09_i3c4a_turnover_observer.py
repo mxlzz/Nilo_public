@@ -140,7 +140,16 @@ def observe_seed(seed,golden):
                 b-a for ticks in histories.values()
                 for a,b in zip(ticks,ticks[1:])
             ]
-            last=obj.train_states[phase]
+            if obj.mode=="F":
+                # F is frozen during BOTH training and holdout, so it never
+                # invokes step(learn=True). Its four links remain identical
+                # to the initial state; original I3c4 enforces this.
+                last=obj.initial(
+                    wiring=original.explicit_wiring(seed),
+                    random_draws=(),
+                )
+            else:
+                last=obj.train_states[phase]
             outcomes[phase]={
                 "accepted_contact_events":len(entries),
                 "migration_active_ticks":len(set(e["tick"] for e in entries)),
