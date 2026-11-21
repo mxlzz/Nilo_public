@@ -45,3 +45,7 @@ jobs:
           path: bridge
       - name: Validate cross-environment artifact
         run: ls -la bridge
+      - name: Install Landlab on the consumer runner
+        run: python -m pip install --only-binary=:all: landlab numpy
+      - name: Evolve generated terrain
+        run: python WORLD_RESEARCH/experiments/probe_worldengine_to_landlab.py bridge/worldengine_height.npz bridge/terrain_after_landlab.npz
