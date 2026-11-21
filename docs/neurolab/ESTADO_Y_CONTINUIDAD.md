@@ -2,7 +2,7 @@
 
 **Estado actualizado:** 2026-11-20 (registro posterior al comienzo de ejecución).  
 **Línea base documentada:** protocolo v0.1.0 en rama `docs/neurolab-protocolo-20261120`, propuesto para revisión.  
-**Ejecución experimental:** E01–E03 con pruebas automatizadas reales; la fase E04 comienza con su pre-registro.  
+**Ejecución experimental:** E01–E04 con pruebas automatizadas reales; E05 pendiente.  
 **Código del cerebro:** núcleo E01 y circuito E02 en experiments/neurolab/; sin aprendizaje hasta E03.  
 **Autorización vigente documentada:** el usuario autorizó continuar ejecución secuencial hasta necesitar intervención; ninguna integración con el motor Nilo 0.7 ni merge a main.
 
@@ -12,14 +12,14 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | E04 — memoria de dos velocidades; arqueología H aún abierta |
-| Siguiente subtarea exacta | **E04.01 — especificar y contrastar STW/LTW** |
-| Última subtarea validada | E03.10 — aprendizaje asociativo y reversión en 20 semillas, prueba preregistrada superada |
+| Etapa actual | E05 — crédito y refuerzo diferido; arqueología H aún abierta |
+| Siguiente subtarea exacta | **E05.01 — especificar elegibilidad/susceptibilidad temporal** |
+| Última subtarea validada | E04 — sinapsis aislada STW/LTW, oráculos y choque/reversión temporal en CI; integración cerebral pendiente |
 | Experimentos ejecutados | E01–E02 unitarias, E03 experimento preregistrado (20 semillas, controles) |
-| Runs con evidencia | [E01+E02 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44850881701), [E03 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727) |
+| Runs con evidencia | [E01+E02 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44850881701), [E03 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727), [E04 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622) |
 | Última corrida del cerebro | Experimentos sintéticos E03 con aprendizaje local por refuerzo; sin cuerpo/mundo/LLM |
 | Estado de E00 | [Informe histórico inicial](E00_INFORME_HISTORICO_01.md): G00-H abierto por incertidumbres; G00-N habilita variante propia E01 |
-| Estado del código | E01 kernel, E02 circuito, E03 plasticidad y evaluador; tests 19 + 8 + 10 = 37 métodos |
+| Estado del código | E01 kernel, E02 circuito, E03 plasticidad, E04 sinapsis doble; tests 19 + 8 + 10 + 10 = 47 métodos |
 | Integración con Nilo 0.7 | Ninguna |
 | Bloqueos | E00.02 exactitud del genoma y discrepancia histórica salida=state vs state-threshold; no bloquean experimento N rotulado como propio |
 | Decisiones nuevas pendientes | Fidelidad C1 vs adaptación mínima tras E00 |
@@ -34,8 +34,8 @@
 | E01 | Validación automatizada | — | CI E01, 19 tests; benchmark en workflow |
 | E02 | Validación automatizada | — | CI E02, 8 tests; sin aprendizaje |
 | E03 | Validada N | — | [G03 CI verde](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727); no replica C1 |
-| E04 | Pendiente | E04.01 | G04 memoria STW/LTW contrastada |
-| E05 | No iniciada | E05.01 | G05 efecto del refuerzo retrasado |
+| E04 | Validada como dinámica sináptica aislada | — | [CI E04](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622); no integrado al selector aún |
+| E05 | Pendiente | E05.01 | G05 efecto del refuerzo retrasado |
 | E06 | No iniciada | E06.01 | G06 generalización a holdouts |
 | E07 | No iniciada | E07.01 | G07 utilidad de migración sináptica |
 | E08 | No iniciada | E08.01 | G08 dinámica interna caracterizada |
@@ -147,3 +147,10 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - El runner `run_all` sale con error si no se cumplen simultáneamente ≥18/20 semillas con exactitud ≥0.90 tras aprendizaje, ≥18/20 tras inversión y mejora media ≥0.30 frente al control congelado. Al completarse el paso con `success`, **los tres umbrales preregistrados se alcanzaron**, pero aquí no se inventan valores exactos que no se recuperaron del stdout.
 - Resultado: G03 **VALIDADA para el modelo experimental N**, no es aprendizaje químico de C1 ni una mente autónoma general.
 - Siguiente: E04.01 (STW/LTW de dos tiempos).
+
+### 2026-11-20 — NL-LOG-0005 (E04)
+- Pre-registro previo al código: [E04_PRE_REGISTRO.md](E04_PRE_REGISTRO.md): STW/LTW de modelo propio, refuerzo breve y prolongado, reposo sin recompensa y control de un peso.
+- Código: [twin_weight.py](../../experiments/neurolab/twin_weight.py), [tests E04](../../experiments/neurolab/tests/test_twin_weight.py).
+- [CI #44851265622](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622), SHA `9b0960667fa27bbc2ba9e0dcf7f0896dcf246151`: `success`. Tests manuales, saturación, recuperación, memoria lenta, inversión sostenida y checkpoint superados.
+- **G04 validada solo para la dinámica aislada de STW/LTW de NeuroLab.** No se ha medido todavía si un cerebro que utiliza ese mecanismo generaliza mejor ni se lo presenta como reproducción histórica exacta.
+- Siguiente: E05.01 — elegibilidad temporal para una asociación ya existente.
