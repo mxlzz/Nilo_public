@@ -19,7 +19,7 @@
 ## Puertas y restricciones
 
 - G-I1b-X86: correspondencia del bucle y helper **verificada estáticamente para ese build**.
-- G-I1b-MATH: pruebas unitarias de matemática y orden completadas; confirmar run CI integral antes de marcar formalmente validada.
+- **G-I1b-MATH validada en su alcance técnico**: [CI #44951833784](https://github.com/mxlzz/Nilo_public/actions/runs/44951833784) **success integral: 401 tests, 2 expectedFailure históricos**. CI verifica códigos y oráculos sintéticos; los bytes EXE auténticos se inspeccionaron localmente.
 - **G-I1b-RATES ABIERTA:** los valores por sustancia para el GEN original no se recuperaron todavía. Las tasas usadas en tests son sintéticas.
 - **G05/G09/G00-H ABIERTAS:** el puente no es un Norn fiel; una prueba de aprendizaje sin tasas identificadas históricamente sería un experimento N con parámetros declarados, no evidencia histórica.
 
