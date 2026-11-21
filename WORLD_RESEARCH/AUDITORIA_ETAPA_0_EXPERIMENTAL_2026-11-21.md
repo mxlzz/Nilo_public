@@ -63,3 +63,12 @@ El tutorial `SPACE_user_guide_and_examples.ipynb` describe `FlowAccumulator`+ `D
 - La **etapa 0 sigue ABIERTA**: un bucle de radiación no equivale a hidrología de cauce, dinámica de cuenca con presupuesto acuoso y sólidos, calibración, persistencia integral, escala o emergencia abierta. Prohibido fusionar `SPACE` y `DepthDependentDiffuser` por conveniencia sin plan de doble conteo; prohibido adoptar un motor definitivo sin gate y decisión fundada.
 
 **Próxima comparación autorizada:** caracterizar `OverlandFlow` vs `FlowAccumulator` para estado/flujo/conservación de agua y acoplamiento con suelo. Primero diseñar pruebas con unidad/tiempo/frontera y ablation; luego ejecutar sin desarrollar física propia. También realizar pruebas de escalabilidad, checkpoint/replay de todo el estado y referencia funcional de Ecosystem Explorer (solo caja negra y respetando derechos).
+
+## Addendum H11a — modelo hídrico de almacenamiento (21-11-2026)
+- Protocolo antes de prueba: `ETAPA_0_7_PROTOCOLO_H11_AGUA.md`.
+- `OverlandFlow` native Landlab, 12×12, cerrado, lluvia 2e-5m/s por 60s. Volumen inicial 0.001m³, lluvia 0.12m³, volumen final 0.121m³, residual de redondeo nulo. Rutas cambiaron tras alterar relieve +0.2m; volumen global sin cambios. Control sin lluvia conserva película inicial. Replay exacto.
+- CI **SUCCESS**: https://github.com/mxlzz/Nilo_public/actions/runs/44953015600
+- Informe reproducible: `ETAPA_0_7_RESULTADOS_H11A.md`.
+- **Dictamen:** H11a apta como evidencia de almacenamiento hídrico conservativo sin sumideros; no acoplada todavía a `SoilMoisture`, flujo subsuperficial, borde abierto ni `SPACE`. El usuario pidió un mundo físico autónomo, no un software donde una prueba aislada de agua se presente como completa. Mantener los límites.
+- **Gate E0/H11b**: antes de integrar modelos, verificar si ya existen acopladores ecohidrológicos o adaptadores BMI con entradas/salidas y presupuesto compartido de agua; luego comparar costo e implementar solo un conector mínimo con pruebas. El agua de lluvia no puede entrar por duplicado.
+- **Estado global:** etapa 0 ABIERTA, decisiones ADR-0001/2 reversibles, ningún motor definitivo adoptado; no se cambió `main` ni se introdujo NeuroLab.
