@@ -27,3 +27,21 @@ Si H11a pasa, buscar antes de desarrollar un adaptador existente para combinar `
 No conectar `SpaceLargeScaleEroder` a estos solvers hasta que el caudal tenga unidades y geometría compatibles (los módulos `SPACE` utilizan caudal acumulado bajo otro esquema), y la materia sólida conserve inventario.
 
 **No hay intervención del usuario requerida para H11a; H11b exige decisión técnica fundamentada, no implementación automática de un modelo hídrico nuevo.**
+
+## H11b — Reutilización inmediata de acoplamiento nativo de flujo + infiltración (plan antes de código)
+
+**Antecedente descubierto después de H11a:** Landlab tiene `SoilInfiltrationGreenAmpt`, componente que consume directamente `surface_water__depth` y actualiza `soil_water_infiltration__depth` en los mismos nodos; tutorial oficial: https://github.com/landlab/landlab/blob/master/docs/source/tutorials/overland_flow/soil_infiltration_green_ampt/infilt_green_ampt_with_overland_flow.ipynb . **Precisión crítica**: el tutorial enlaza `KinwaveImplicitOverlandFlow` con Green-Ampt, **NO** el de Almeida `OverlandFlow` de H11a; los modelos de escorrentía no son equivalentes. La fuente del modelo de onda cinemática `generate_overland_flow_implicit_kinwave.py` acepta `runoff_rate` **en mm/h** y `dt` **en segundos**, a diferencia de `OverlandFlow` de Almeida, que acepta `rainfall_intensity` **en m/s**. `KinwaveImplicitOverlandFlow` tiene además `changing_topo=True` para rerutear cuando el relieve cambia.
+
+**Objetivo concreto:** evaluar primero el **par nativo documentado** sin inventar nuevo adaptador de infiltración. El estado acuoso compartido se limita a *agua superficial* + *columna de agua infiltrada*; aún **NO** representa humedad de raíces de `SoilMoisture`.
+
+**Pruebas predefinidas:**
+1. Malla cerrada 12×12, 1m spacing, pendiente moderada; `surface_water__depth=0` al empezar y `soil_water_infiltration__depth=0.01m` inicial para evitar frente húmedo singular; `runoff_rate=72mm/h`, `dt=0.5s`, 120 pasos (=60s). K de Green-Ampt `1e-6m/s`, tipo de suelo `sandy loam` (parámetros de biblioteca); ningún flujo externo de salida.
+2. Control lluvia cero; sin aporte ni agua superficial inicial, el acumulado de infiltración no debería aumentar más allá de tolerancia del modelo.
+3. Control de infiltración `K=0`: con lluvia el agua debe permanecer superficial (salvo redistribución horizontal); el inventario conjunto no cambia.
+4. Escenario activo K>0: `soil_water_infiltration__depth` aumenta y `surface_water__depth` muestra volumen inferior al control K=0 al finalizar; el total `V_surface + V_infiltrated` aumenta exactamente según lluvia×área×tiempo, dentro de tolerancia de 0.1%.
+5. Intervención topográfica +0.2m en un nodo ANTES de simular; activa `changing_topo=True`, distribuciones de superficie distintas, mismo presupuesto conjunto. Replay exacto con parámetros iguales.
+6. Registrar coste CPU, formatos de entrada, conservación por límites y campos: no clasificar infiltración acumulada como saturación de zona radicular.
+
+**Si pasa:** autorizar elección de un solver de agua/infiltración del conjunto Landlab para un nuevo experimento de acoplamiento ecológico, **sin** copiar agua infiltrada directamente a `SoilMoisture` (distinto estado y ecuaciones). Si falla: comparar componente o método del tutorial, cuantificar piso de agua y condiciones de borde antes de concluir.
+
+**Próximo gate H11c:** comparar este esquema frente al par `OverlandFlow` + Green-Ampt (ambos leen el mismo nombre `surface_water__depth` pero con diferente time step; no afirmar interoperabilidad por nombres), y con otras soluciones comunitarias existentes; seleccionar según balance, costo y capacidad de topografía mutable. Mantener arquitectura reversible.
