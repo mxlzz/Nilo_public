@@ -12,8 +12,8 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | **E09.02f.4** completada como fragmentos estáticos del motor C1; migración f.5 abierta; G00-H/G05/G09 aún abiertas |
-| Siguiente subtarea exacta | **E09.02f.5 — decodificar las dos rutinas de migración del ejecutable (VA 0x404A80 y 0x404B90), preregistrar oráculos y solo después integrar microcerebro C1 histórico** |
+| Etapa actual | **E09.02f.5** identificación y mapeo preliminar de migración, pruebas de f.4 completas; G00-H/G05/G09 aún abiertas |
+| Siguiente subtarea exacta | **E09.02f.5a — especificación operacional de dos rutas de migración x86, PRNG, reglas de duplicación y condiciones de fallo; preregistrar oráculos antes de implementar f.5b** |
 | Última subtarea validada | **E09.02f.4:** aritmética, decay/relax, transición parcial de dendrita y fortaleza históricas, [CI 188 tests](https://github.com/mxlzz/Nilo_public/actions/runs/44930221183) y [auditoría](E09_02F_INFORME_EJECUTABLE.md). No es una mente C1 integrada |
 | Experimentos ejecutados | E01–E08; E09c/d/e comparados con 20 semillas cada uno y métricas por semilla preservadas |
 | Runs con evidencia | [E01–E08 conjunto](https://github.com/mxlzz/Nilo_public/actions/runs/44852299967); [genoma/lector CI](https://github.com/mxlzz/Nilo_public/actions/runs/44919429305); [E09c/d/e y JSON](https://github.com/mxlzz/Nilo_public/actions/runs/44920963462) |
@@ -253,3 +253,12 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - **Próximo E09.02f.5**: caracterizar migración desde los dos bloques x86 y diseñar test falsable. Después E09.02g microcerebro C1 con reglas numéricas/temporales corregidas; no saltar a 952 unidades sin justificación.
 - G00-H (fidelidad completa), G05 (crédito causal) y G09 (mente mínima integrada) permanecen ABIERTAS.
 
+
+
+### 2026-11-21 — NL-LOG-0017 (E09.02f.5 — mapeo preliminar de migración)
+
+- [Mapa de migración](E09_02F_05_MIGRACION_ANALISIS.md) redactado a partir de inspección de las direcciones x86 **0x404A80** (tipo1, Decision-style) y **0x404B90** (tipo2, Concept-style).
+- Tipo1 reutiliza slot con strength0 y elige fuente entre neuronas candidatas; evita fuentes duplicadas, reinicia LTW/STW y strength en rangos genéticos y puede no reconectar.
+- Tipo2 reordena candidatos y verifica combinaciones de fuentes, con criterios internos de firmas suma/producto y reglas para evitar ciertas duplicaciones; en casos de fallo los pesos/fortaleza permanecen sin conexión.
+- **No se implementaron aún esas rutas** porque falta reconstruir sus firmas, PRNG y condiciones específicas. No confundir esto con el recableado experimental E07, que no aventajó a LRU.
+- Próxima subtarea f.5a: especificación completa verificada y oráculos; f.5b: implementación por tipo. Ninguna intervención del usuario requerida para continuar inspección estática.
