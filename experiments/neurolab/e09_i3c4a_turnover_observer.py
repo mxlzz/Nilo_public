@@ -91,7 +91,7 @@ class WitnessBrain(DynamicContextBrain):
 
 def golden_hashes():
     data=json.loads(HASHES_PATH.read_text(encoding="utf-8"))
-    if (data["source"]["run_id"]!=44960526007
+    if (data["source"]["workflow_id"]!=44960526007
             or data["source"]["artifact_id"]!=14729775966
             or data["hash_canonicalization"]!=
                "sha256(json.dumps(row,sort_keys=True,separators=(',',':'),ensure_ascii=True).encode('utf-8'))"
