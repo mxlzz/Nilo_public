@@ -35,3 +35,11 @@ Objetivo vigente: territorio inicialmente generado y autónomamente cambiante; i
 - H8 **bloqueado a investigación y especificación** hasta verificar fuente, parámetros y compatibilidad de mallas/tiempo.
 - Si H7 falla: inspeccionar límites del modelo/arnés sin manipular las aserciones para 'hacer pasar' un resultado; registrar medidas de diagnóstico y fallo.
 - Tras H7: informe de evidencia y ADR de continuidad actualizado. **No** declarar etapa 0 cerrada sin H8 y reproducción del ciclo completo.
+
+## H7b — Plan de control adicional de acreción neta (añadido ANTES de la prueba)
+
+**Motivo:** H7 mostró `deposition_flux>0` y presupuesto de sedimentos consistente a precisión de máquina, pero en el paisaje con capa inicial homogénea **ninguna celda ganó suelo neto**. Una deposición local positiva no equivale a acreción cuando simultáneamente se erosiona más material.
+
+**Intervención delimitada:** misma cuenca, mismos parámetros del solver, pero una zona receptora inicialmente sin aluvión (capa móvil inicial 0 en el tercio inferior del terreno) y una zona emisora con espesor 0.6 m aguas arriba. No se habilita erosión de roca (`K_br=0`). El modelo ya existente debe transportar suelo desde arriba y depositar una fracción en nodos originalmente desnudos; no se codifica una regla ad hoc de deposición.
+
+**Control negativo:** repetir el perfil de suelo inicial con `K_sed=0` y demás condiciones iguales: no debe haber transporte, deposición ni acreción. **Criterio de éxito:** al menos un nodo receptor gana espesor neto, hay flujo deposicional positivo, y el balance (almacenado + exportado) cierra dentro de 1%. Si no ocurre, conservar el resultado como límite/falsación del escenario, no forzar el valor.
