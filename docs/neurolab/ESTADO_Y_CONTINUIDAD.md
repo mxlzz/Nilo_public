@@ -1,8 +1,8 @@
 # NeuroLab — estado verificable y protocolo de continuidad
 
-**Estado actualizado:** 2026-11-21 (genoma/exe C1 documentados; E09g.5a–g.10a probadas en microred aislada; g.9 replicación externa, g.10a compuerta interna sin oráculo contextual; Nilo intacto).  
+**Estado actualizado:** 2026-11-21 (genoma y ejecutable C1 analizados parcialmente; E09g.10b/10c ejecutadas y documentadas; próximo paso E09h.1 fidelidad de reloj/química, sin integración en Nilo).  
 **Línea base documentada:** protocolo v0.1.0 en rama `docs/neurolab-protocolo-20261120`, propuesto para revisión.  
-**Ejecución experimental:** E01–E08 y E09f/g en banco aislado; g.5 NO supera gate 12/20; g.6 oráculos permiten aislar arrastre y latencia; g.7 registra 652 desalineaciones; g.8 NO supera su gate; g.9 replica ventaja externa en 80 semillas; g.10a reproduce G usando memoria experimental interna en 20/20 semillas nuevas. G00-H/G05/G09 siguen abiertas.  
+**Ejecución experimental:** E01–E09g.10c en banco aislado. G10b: C16/40, IG6/40, Q40/40 cumplen precisión ≥0.90 ambas fases; las dos redes no superan gate. G10c: susceptibilidad objetivo presente en todas las llegadas de recompensa, pero el crédito químico pierde selectividad con la demora. G00-H/G05/G09 global abiertas.  
 **Código del cerebro:** inspección estática del ejecutable y genoma C1 alimenta módulos E09f (SVRule, sinapsis, strength, migración) y microredes E09g de cinco y seis unidades; sin motor Nilo, cuerpo, mundo ni LLM.  
 **Autorización vigente documentada:** el usuario autorizó continuar ejecución secuencial hasta necesitar intervención; ninguna integración con el motor Nilo 0.7 ni merge a main.
 
@@ -12,16 +12,16 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | **E09g.10a validada técnicamente:** IG reproduce G en 20/20 semillas nuevas100..119; no es regla C1 histórica ni crédito causal general; g.5/g.8 fallidas |
-| Siguiente subtarea exacta | **E09g.10b — evaluar y preregistrar ensayo de distractores con demoras 1–3 ticks y baseline tabular de procedencia, antes de seguir afinando S0/S1.** No sumar neuronas ni integrar en Nilo |
-| Última subtarea validada | **E09g.10a, equivalencia 20/20 técnicamente aprobada (NO G05/G09):** [CI 300 tests y 2 expectedFailure](https://github.com/mxlzz/Nilo_public/actions/runs/44939579597), [informe](E09_02G_10A_RESULTADO_GATE_INTERNO.md), [JSON completo](resultados/run-44939579597/e09g10a.json). IG=G estado/pulso/decisiones; 17/20 semillas ≥0.9 ambas vs C12/20 |
-| Experimentos ejecutados | E01–E09g.10a: g.5–g.8 con 20 semillas0..19; g.9 nuevas20..99 (80), g.10a nuevas100..119 (20), sin alterar C1 ni Nilo. g.9 replicación positiva y g.10a equivalencia positiva |
-| Runs con evidencia | [E01–E08](https://github.com/mxlzz/Nilo_public/actions/runs/44852299967), [g.5](https://github.com/mxlzz/Nilo_public/actions/runs/44934616857), [g.5a](https://github.com/mxlzz/Nilo_public/actions/runs/44934965506), [g.6](https://github.com/mxlzz/Nilo_public/actions/runs/44938181968), [g.7](https://github.com/mxlzz/Nilo_public/actions/runs/44938471293), [g.8](https://github.com/mxlzz/Nilo_public/actions/runs/44938791056), [g.9](https://github.com/mxlzz/Nilo_public/actions/runs/44939075550), [g.10a](https://github.com/mxlzz/Nilo_public/actions/runs/44939579597) |
-| Última corrida del cerebro | [g.10a IG vs G, semillas100..119](E09_02G_10A_RESULTADO_GATE_INTERNO.md): igualdad completa 20/20, steady B G/IG0.965625 vs C0.922917; IG17/20 vs C12/20 superan ambas, early IG peor. [g.9](E09_02G_09_RESULTADO_REPLICACION.md): efecto externo G replicado con IC bootstrap95% positivo |
+| Etapa actual | **E09g.10c completada como auditoría exploratoria:** confirma memoria de elegibilidad sináptica C1 y crédito menos selectivo al crecer interferencia; g10b neuronal NO supera gate |
+| Siguiente subtarea exacta | **E09h.1 — fidelidad de scheduler y química C1 original**, siguiendo [análisis de alternativas](E09_02G_11_ALTERNATIVAS_Y_PRIORIDAD.md). Para verificar nuevas instrucciones de máquina requiere disponer otra vez del ejecutable original que no figura entre archivos accesibles |
+| Última subtarea validada | **E09g.10c validada técnicamente como diagnóstico, NO como éxito G05:** [CI 313 tests, 2 expectedFailure](https://github.com/mxlzz/Nilo_public/actions/runs/44943178871), [informe](E09_02G_10C_RESULTADO_ELEGIBILIDAD.md), [JSON resumen](resultados/run-44943178871/e09g10c_summary.json). Paridad con entrenamiento g10b de 40 semillas por fase; 4.800 eventos, 100% con susceptibilidad objetivo positiva |
+| Experimentos ejecutados | E01–E09g.10c; g10b 40 semillas nuevas120..159, controles C/IG/F/Q, recompensa diferida tras distractores; g10c diagnóstico del mismo conjunto sin cambios de modelo |
+| Runs con evidencia | [g.5](https://github.com/mxlzz/Nilo_public/actions/runs/44934616857), [g.9](https://github.com/mxlzz/Nilo_public/actions/runs/44939075550), [g.10a](https://github.com/mxlzz/Nilo_public/actions/runs/44939579597), [g.10b](https://github.com/mxlzz/Nilo_public/actions/runs/44942700990), [g.10c](https://github.com/mxlzz/Nilo_public/actions/runs/44943178871); anteriores g.5a–g.8 en logs históricos abajo |
+| Última corrida del cerebro | [g.10b](E09_02G_10B_RESULTADO_DEMORA_DISTRACTORES.md): C0.890 A/0.847 B (16/40), IG0.728/0.756 (6/40), Q1.0/1.0 (40/40), F≈azar; [g.10c](E09_02G_10C_RESULTADO_ELEGIBILIDAD.md): por pulso el efecto STW de la conexión objetivo cae al aumentar demora mientras el del distractor crece. No confundir con C1 original completo |
 | Estado de E00 | [Genoma CD vs parche](E00_GENOMA_ORIGINAL_COMPARACION.md), [receptores/emisores](E00_MAPA_NEUROQUIMICO_C1.md), [reacciones Reward/Punishment](E00_QUIMICA_REFUERZO_C1.md); faltan ecuaciones exactas del ejecutable |
-| Estado del código | E01–E09e/f históricos preservados; E09g.1–g.10a aisladas. 300 tests CI success, 2 expectedFailure históricos. IG usa traza artificial de dos salidas Concept, NO modifica `C1ContextBrain` y no se ha verificado en el ejecutable C1 |
+| Estado del código | E01–E09f históricos preservados; E09g.1–g.10c aislados. **313 tests** con 2 expectedFailure históricos en CI success. Nuevos módulos observan/diferencian estados sin modificar `C1ContextBrain` |
 | Integración con Nilo 0.7 | Ninguna |
-| Bloqueos | **GEN y EXE C1 examinados estáticamente**; subrutinas de migración modeladas con PRNG inyectado, pero scheduler/RNG real, bioquímica completa y dinámica original no validadas. G05 crédito causal abierta; no confundir modelos mínimos con emulación completa |
+| Bloqueos | Ejecutable y genoma C1 analizados en sesiones anteriores, con fuentes/offsets en E09f; el binario original NO está accesible en este contexto para ampliar inspección x86. Scheduler/RNG, bioquímica y dinámica C1 global no validados; G05 crédito causal sigue abierta |
 | Decisiones nuevas pendientes | Interpretación fiel bit a bit de motor C1 aún no comprobada; E09e es alternativa NeuroLab inspirada, no reproducción. Buscar ejecutable auténtico si se decide exigir fidelidad histórica. |
 
 **Regla:** nunca actualizar `última subtarea validada` sin prueba enlazada al commit, log/fixture y criterio de aceptación. Si se hace un paso pero no se logra evidencia suficiente, permanece en curso/bloqueado. No marcar «terminada» una etapa porque se produjo un texto sobre ella.
@@ -39,7 +39,7 @@
 | E06 | Validada: invariancia contextual, no creación de conceptos | — | CI 44851722169 |
 | E07 | Verificada en modelo experimental | — | [CI E07](https://github.com/mxlzz/Nilo_public/actions/runs/44852027094), sin ventaja demostrada frente a LRU |
 | E08 | Verificada dinámica matemática | — | [CI E08](https://github.com/mxlzz/Nilo_public/actions/runs/44852126108) |
-| E09 | f.1–f.6 investigadas; g.1–g.10a ejecutadas; g.5/g.8 puertas fallidas, g.9 réplica externa positiva, g.10a factibilidad interna IG=G positiva sin G05 | g.10b diseñar prueba distractores/demora1–3 y control tabular; no tunear más S0/S1 | [g.9](E09_02G_09_RESULTADO_REPLICACION.md), [g.10a](E09_02G_10A_RESULTADO_GATE_INTERNO.md); G00-H/G05/G09 abiertas |
+| E09 | E09f/g.1–g.10c ejecutadas. g10b FALLA gate neuronal; g10c describe susceptibilidad/efecto químico sin fechar aprendizaje conductual | E09h.1 fidelidad temporal C1; requiere binario para nuevas verificaciones x86 | [g10b](E09_02G_10B_RESULTADO_DEMORA_DISTRACTORES.md), [g10c](E09_02G_10C_RESULTADO_ELEGIBILIDAD.md), [alternativas](E09_02G_11_ALTERNATIVAS_Y_PRIORIDAD.md); G00-H/G05/G09 abiertas |
 
 No avanzar en una fase solo porque exista su definición en este archivo.
 
@@ -305,4 +305,15 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - **20/20 paridades IG=G exactas:** estados neurales/sinápticos finales, pulsos químicos pendientes, supresiones y holdout A/B. A328 supresiones, B331. Steady B C0.9229167 vs IG/G0.965625; C12/20 e IG/G17/20 superan ≥0.90 en ambas; early de IG empeora.
 - **No** es crédito causal general, ni puerta G05/G09 aprobada, ni un mecanismo observado en el genoma/ejecutable C1. El baseline Q2×2 sigue siendo más eficaz en la tarea de dos señales.
 - **Siguiente estudio:** no seguir ajustando esta tarea simple; preregistrar test con distractores y feedback1–3 ticks y baseline de memoria causal. `main`, Nilo y PR draft sin merge.
+
+### 2026-11-21 — NL-LOG-0026 (g.10b: recompensa diferida y distractores)
+- [Preregistro](E09_02G_10B_DEMORA_DISTRACTORES_PRE_REGISTRO.md), [código](../../experiments/neurolab/e09_delayed_distractors_protocol.py), [resultado](E09_02G_10B_RESULTADO_DEMORA_DISTRACTORES.md), [JSON por semilla](resultados/run-44942700990/e09g10b.json), [CI 308 tests](https://github.com/mxlzz/Nilo_public/actions/runs/44942700990), commit ensayado `738e002a85b4346eb44af0b83ebf889b5d6b8345`, success.
+- 40 semillas120..159, dos fases con 60 entrenamiento/36 holdout, 4 ticks target, 1–3 distractores y feedback en el tick siguiente. C16/40 e IG6/40 cumplen ≥0.90 ambas fases vs Q40/40 y F0/40. **C/IG gates fallidas**, Q recibe procedencia explícita privilegiada. IG suprime exactamente 800/2400 pulsos por fase, pero su rendimiento cae. No recalibrar retrospectivamente.
+- El criterio opcional de parada forzosa (ventaja media Q≥+0.15) NO se activó: +0.1316; se recomienda detener tunings por el costo de oportunidad, no falsear esa puerta.
+
+### 2026-11-21 — NL-LOG-0027 (g.10c: susceptibilidad ya existe)
+- [Preregistro post hoc explícito](E09_02G_10C_SUSCEPTIBILIDAD_PRE_REGISTRO.md), [auditoría](../../experiments/neurolab/e09_eligibility_audit.py), [informe](E09_02G_10C_RESULTADO_ELEGIBILIDAD.md), [resumen JSON](resultados/run-44943178871/e09g10c_summary.json), [CI 313 tests](https://github.com/mxlzz/Nilo_public/actions/runs/44943178871), commit `7ec6fc0e0a8bef52886962dddad64350da0885a6`, success.
+- 4800 eventos en 40 semillas, paridad exacta g.10b. Susceptibilidad de dendrita de contexto/acción originales >0 en el 100% de las llegadas. Frente a pulso ZERO en el mismo estado, con 3 distractores el efecto del pulso en STW objetivo disminuye y en distractor aumenta, comparado con 1 distractor. No significa atribución correcta exclusiva ni demuestra causa futura.
+- [Evaluación de alternativas E09g.11](E09_02G_11_ALTERNATIVAS_Y_PRIORIDAD.md): C1 ya tiene elegibilidad local; tabla Q usa información causal privilegiada; TD(lambda) existe pero no se justifica agregar otra traza aún. Próxima prioridad: reloj/bioquímica C1 históricos E09h.1. Binario original no accesible en los archivos de este proyecto/chats actuales para ampliar inspección estática; no pedir hasta que se precise.
+- PR #103 permanece draft, main/Nilo no modificados.
 
