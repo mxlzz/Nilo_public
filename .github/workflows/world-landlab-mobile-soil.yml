@@ -1,0 +1,26 @@
+name: World research - H8b mobile soil coupling
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_landlab_mobile_soil_feedback.py
+      - .github/workflows/world-landlab-mobile-soil.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile_soil:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install published Landlab wheel
+        run: |
+          python -m pip install --only-binary=:all: landlab numpy
+          python -m pip show landlab
+      - name: Run native closed-domain sediment and eco-sensitivity tests
+        run: python WORLD_RESEARCH/experiments/probe_landlab_mobile_soil_feedback.py
