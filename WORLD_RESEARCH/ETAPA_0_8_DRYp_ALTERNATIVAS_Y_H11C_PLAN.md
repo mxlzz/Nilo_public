@@ -46,3 +46,16 @@ Primer workflow H11c: https://github.com/mxlzz/Nilo_public/actions/runs/44956774
 - Con `rain_volume=0`: exigir `abs(residual)<1e-9m³`, e informar ese residual **absoluto**. No dividir entre 1e-12 ni fabricar un cociente sin significado.
 - Emitir los diagnósticos de cuatro escenarios antes de las aserciones, para poder auditar un fallo real sin editar repetidamente el ensayo.
 - Si el fallo >0.1% ocurre en un escenario **con lluvia**, detener selección de solver y cuantificar masa de frontera/numérica. La enmienda no permite aprobar ese escenario.
+
+## Addendum E0.8-DRYP2 — inspección de distribución existente sin copiar ni ejecutar código (antes del ensayo)
+Se localizaron también la documentación de CUWALID (https://cuwalid.github.io/), que incluye DRYP, STORM y stoPET, y el tutorial https://cuwalid.github.io/tutorials/github-installation/ . Este último atribuye el repo a `CornishLeo/CUWALID`; esa ruta responde HTTP 301 en GitHub API a un identificador de repositorio, cuyo destino canónico no pudo recuperarse por la integración disponible. La licencia MIT publicada en Zenodo 2.0 incluye `Copyright (c) 2024 CornishLeo`, que coincide con ese identificador de CUWALID. **Esto proporciona una explicación posible de la atribución, no prueba por sí sola que todos los archivos DRYP 2.0 estén legalmente cubiertos.**
+CUWALID guía de instalación https://cuwalid.github.io/tutorials/pip-installation/ recomienda rama TestPyPI, y para STORM requiere GDAL y `numpy<2.0`; no extrapolar esa dependencia a DRYP standalone sin inspeccionar.
+**Riesgo metodológico:** el tutorial de GitHub de CUWALID muestra un ejemplo de test que puede lanzar `AssertionError` en comparación de salida. No presumir que todos los tests upstream pasan.
+
+### H12a — clasificación estática de ZIP original, sin incorporación de código
+- Descargar desde Zenodo DOI `10.5281/zenodo.17451148` solamente en el runner efímero; verificar **MD5 `f1c491b001755a22c90214d609c0d51b`** indicado por Zenodo para `dryp.zip` y reportar SHA-256 para reproducibilidad; no almacenar ZIP en GitHub ni artifact.
+- Abrir ZIP en modo solo lectura, límite de tamaño descomprimido, inspeccionar árbol de archivos, nombre/copyright de licencias en el archivo si existen, versionado/dependencias, antigüedad aproximada de scripts; compilar AST de módulos Python para detectar problemas sintácticos **sin importar/ejecutar** código del proyecto externo.
+- Salidas: reporte resumido, número de módulos, errores y ruta(s) de configuración/test dentro del ZIP; no publicar código/archivos ajenos. Comparar existencia de licencias internas con la licencia externa del registro.
+- **Criterio positivo:** descargable con hash correcto, estructura inspeccionable y sintaxis compatible con Python 3.13. **No equivale** a que funcione con dependencias, que sus ecuaciones sean adecuadas al mundo, ni autoriza redistribución.
+- Si falla descarga, no inventar resultado; conservar fallo como bloqueo de infraestructura y mantener fuentes bibliográficas.
+- **Gate:** no instalar ni acoplar DRYP2 hasta ver estructura, licencia y requisitos; revisar luego pruebas upstream/documentación como caja negra, sin mezclarlo con NeuroLab.
