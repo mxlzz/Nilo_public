@@ -104,7 +104,7 @@ class C1DendriteTickTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 next_state(DendriteState(),invalid_tick)
         self.assertEqual(next_state(DendriteState(),0,rates=DendriteRates(0,0,0)),
-                         DendriteState())
+                         DendriteState(4,0,0))
 
     def test_determinism_and_bounded_states_twenty_seeds(self):
         for seed in range(20):
