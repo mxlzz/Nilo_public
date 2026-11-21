@@ -27,3 +27,6 @@
 Se dispone de una **cadencia nominal histórica respaldada**, suficiente para etiquetar hipótesis temporales de laboratorio, pero no para declarar fidelidad conductual o sincronización real. Antes de unificar el cerebro y la química en una simulación histórica, hace falta distinguir el contador de mundo, fases de criaturas y frecuencia efectiva/condicional por criatura mediante auditor adicional o una traza original controlada.
 
 **No ejecutar Creatures sin autorización específica, no publicar EXE/GEN, mantener PR #103 draft y Nilo 0.7/main intactos.**
+
+
+**Verificación CI posterior:** [run #44949141624](https://github.com/mxlzz/Nilo_public/actions/runs/44949141624), **success: 374 tests y 2 expectedFailure históricos**. La identidad de importaciones y mapeo WM_TIMER fue revalidada localmente sobre el EXE original; la CI solo prueba el auditor con un PE sintético. No implica un intervalo efectivo medido.
