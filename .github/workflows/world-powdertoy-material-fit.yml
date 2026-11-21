@@ -1,0 +1,45 @@
+name: World research - H15 Powder Toy headless material feasibility
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_powdertoy_ephemeral_inject.py
+      - .github/workflows/world-powdertoy-material-fit.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  powdertoy_material:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: research
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Meson and Ninja build tools
+        run: python -m pip install meson ninja
+      - name: Clone upstream Powder Toy at a recorded revision
+        run: |
+          git clone --depth 1 https://github.com/The-Powder-Toy/The-Powder-Toy.git upstream
+          echo "TPT_UPSTREAM_COMMIT=$(git -C upstream rev-parse HEAD)"
+          git -C upstream log -1 --format="%h %cs %s"
+      - name: Inject standalone material probe into TEMPORARY upstream renderer
+        run: python research/WORLD_RESEARCH/experiments/probe_powdertoy_ephemeral_inject.py upstream
+      - name: Configure official upstream renderer-only build
+        run: |
+          meson setup upstream-build upstream \
+            -Dstatic=prebuilt \
+            -Dbuild_powder=false \
+            -Dbuild_render=true \
+            -Dbuild_font=false \
+            -Dhttp=false \
+            -Dlua=none \
+            -Dcan_install=no
+      - name: Build upstream renderer with its native simulation core
+        run: meson compile -C upstream-build render -j 4
+      - name: Run H15 instrumented falling dust, impenetrable barrier and fixed-seed replay
+        run: upstream-build/render --world-research-fit
