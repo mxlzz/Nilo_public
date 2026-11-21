@@ -11,7 +11,6 @@ Referencia: docs/neurolab/E00_GENOMA_ORIGINAL_COMPARACION.md
 from __future__ import annotations
 
 import argparse
-from collections import Counter
 import hashlib
 import json
 from pathlib import Path
@@ -73,7 +72,7 @@ def decode_dendrite(raw: bytes) -> dict:
 
 
 def decode_lobe_record(record: bytes, lobe_id: int, offset: int) -> dict:
-    if not (len(record) == 122 and record.startswith(b"gene\\x00\\x00".replace(b"\\x00", b"\x00"))):
+    if not (len(record) == 122 and record[:6] == b"gene" + bytes((0, 0))):
         raise ValueError("El registro no es un lóbulo C1 de 122 bytes")
     body = record[10:]
     x, y, width, height = body[:4]
