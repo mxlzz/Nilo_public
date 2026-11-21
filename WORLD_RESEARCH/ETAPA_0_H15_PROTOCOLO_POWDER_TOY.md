@@ -23,3 +23,7 @@ H15 aceptada como segunda prueba ejecutada de un motor material **si** el ejecut
 
 ## Riesgos/costos a medir
 - Potencialmente cientos de unidades C++20 + librerías pesadas, GPL-3, renderer diseñado para miniaturas, simulación estructurada en elementos enumerados (`PT_NUM`), posible ausencia de API pública simple. Puede ser una referencia de materia local sin ser apropiado como núcleo principal del mundo 3D/ambiental.
+
+## Fallo instrumental H15.1 detectado y registrado antes de corregir
+CI inicial https://github.com/mxlzz/Nilo_public/actions/runs/44957866318 (**FAIL**). Meson consiguió resolver dependencias y compilar **259 de 260 tareas** del renderer, por lo que el núcleo upstream se compiló casi completamente, incluyendo `libsimulation.a` y `libcommon.a`. El único fallo fue en el **arnés de prueba**, que referenciaba `PT_DUST` y `PT_DMND` sin incluir `simulation/ElementClasses.h` (donde se definen las constantes a partir del `ElementNumbers.h` generado por Meson). El error en `Result` dependía de esos identificadores ausentes. **No es un defecto de TPT**, ni una falla de su física.
+**Corrección acotada:** agregar solo `#include "simulation/ElementClasses.h"` a la fuente temporal de instrumentación. No alterar 15 pasos, misma semilla, ley física, barrera, ni criterios. Si el ensayo arranca pero falla caída/bloqueo, registrar el comportamiento físico sin retocar umbrales.
