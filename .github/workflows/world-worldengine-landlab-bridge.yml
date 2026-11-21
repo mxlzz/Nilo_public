@@ -1,4 +1,4 @@
-name: World - generator integration validation
+name: World - generator bridge validation
 on:
   push:
     branches:
@@ -9,8 +9,21 @@ on:
 permissions:
   contents: read
 jobs:
-  smoke:
+  export_height:
     runs-on: ubuntu-24.04
     steps:
-      - name: Check workflow definition
-        run: echo "world bridge workflow syntax accepted"
+      - name: Export test data
+        run: echo "valid datum" > input.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: height-data
+          path: input.txt
+  simulate_terrain:
+    needs: export_height
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: height-data
+      - name: Verify data
+        run: grep -q "valid datum" input.txt
