@@ -26,7 +26,7 @@ mod candidate_eval {
         let mut u=prepared();
         let before=sand_coordinates(&u);
         assert_eq!(before,vec![(12,4)]);
-        for _ in 0..12 {u.tick();}
+        for step in 0..12 {u.tick(); println!("EVIDENCE sand_step={} position={:?}",step+1,sand_coordinates(&u));}
         let after=sand_coordinates(&u);
         assert_eq!(after.len(),1,"sand conservation failed");
         assert!(after[0].1 > before[0].1, "sand did not descend");
