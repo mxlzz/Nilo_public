@@ -1,8 +1,8 @@
 # NeuroLab — estado verificable y protocolo de continuidad
 
-**Estado actualizado:** 2026-11-21 (genoma original y ejecutable PE32 C1 analizados estáticamente; reglas numéricas y fases de sinapsis).  
+**Estado actualizado:** 2026-11-21 (genoma/exe C1 documentados; E09g.5a–g.9 diagnosticadas, probadas y replicadas fuera de muestra en microred aislada; sin integración Nilo).  
 **Línea base documentada:** protocolo v0.1.0 en rama `docs/neurolab-protocolo-20261120`, propuesto para revisión.  
-**Ejecución experimental:** E01–E08 y E09f/g en banco aislado; E09g.3 validó aprendizaje/reversión con reloj C1 simplificado; E09g.4 validó 4/6 perturbaciones, falló ruido10%; E09g.5 discrimina dos contextos pero NO supera gate 12/20. G05 y G09 global aún abiertas.  
+**Ejecución experimental:** E01–E08 y E09f/g en banco aislado; E09g.3 validó aprendizaje/reversión con reloj C1 simplificado; E09g.4 validó 4/6 perturbaciones, falló ruido10%; E09g.5 discrimina dos contextos pero NO supera gate 12/20; g.6 identifica efecto de persistencia y latencia mediante oráculos; g.7 cuenta 652 desalineaciones; g.8 prueba filtrado dirigido pero NO supera gate; g.9 reproduce su ventaja media fuera de muestra en 80 semillas. G00-H, G05 y G09 global aún abiertas.  
 **Código del cerebro:** inspección estática del ejecutable y genoma C1 alimenta módulos E09f (SVRule, sinapsis, strength, migración) y microredes E09g de cinco y seis unidades; sin motor Nilo, cuerpo, mundo ni LLM.  
 **Autorización vigente documentada:** el usuario autorizó continuar ejecución secuencial hasta necesitar intervención; ninguna integración con el motor Nilo 0.7 ni merge a main.
 
@@ -12,14 +12,14 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | **E09g.5a** diagnóstico exploratorio de fallo en dos contextos; G09g.5 NO superada, G00-H/G05/G09 global abiertas |
-| Siguiente subtarea exacta | **E09g.5a — verificar diagnóstico de errores por ciclo y semilla, luego preregistrar E09g.6 para atribución causal entre contextos; NO ajustar retrospectivamente E09g.5** |
-| Última subtarea validada | **E09g.5 implementada y evaluada sin aprobar puerta científica:** [CI 269 tests](https://github.com/mxlzz/Nilo_public/actions/runs/44934616857), [métricas](E09_02G_05_RESULTADO_DOS_CONCEPTOS.md). Última puerta positiva: g.4 limpia/retraso3, ruido10% falló |
-| Experimentos ejecutados | E01–E09g.5, 20 semillas por condición. g.4 seis perturbaciones; g.5 dos contextos y controles frozen/blind/tabular |
-| Runs con evidencia | [E01–E08](https://github.com/mxlzz/Nilo_public/actions/runs/44852299967), [genoma y lector](https://github.com/mxlzz/Nilo_public/actions/runs/44919429305), [E09e](https://github.com/mxlzz/Nilo_public/actions/runs/44920963462), [g.3](https://github.com/mxlzz/Nilo_public/actions/runs/44933734902), [g.4](https://github.com/mxlzz/Nilo_public/actions/runs/44934175507), [g.5](https://github.com/mxlzz/Nilo_public/actions/runs/44934616857) |
-| Última corrida del cerebro | [E09g.5 seis unidades](E09_02G_05_RESULTADO_DOS_CONCEPTOS.md): steady0.967 A/0.930 B, **solo 12/20** semillas conjuntas superan0.90, tabular2×2=1.0, datos versionados |
+| Etapa actual | **E09g.9 concluida técnicamente:** replicación fuera de muestra favorable para filtrado temporal EXTERNO, sin capacidad cerebral autónoma demostrada; g.5 y g.8 negativas según preregistro; G00-H/G05/G09 abiertas |
+| Siguiente subtarea exacta | **E09g.10 — evaluar alternativas de crédito causal INTERNO y baseline tabular antes de implementar. No insertar oráculo de frontera, alterar la red histórica ni fusionar main.** |
+| Última subtarea validada | **E09g.9 validada técnicamente como replicación controlada (NO gate de autonomía):** [CI 292 tests, 2 expectedFailure](https://github.com/mxlzz/Nilo_public/actions/runs/44939075550), [resultado](E09_02G_09_RESULTADO_REPLICACION.md) y [JSON íntegro de 80 semillas](resultados/run-44939075550/e09g9.json). CI success; los gates g.5 y g.8 siguen FALLIDOS |
+| Experimentos ejecutados | E01–E09g.9: g.5/g.6/g.7/g.8 con 20 semillas 0..19; g.9 replicación congelada con 80 semillas nuevas 20..99, sin introducir reglas en Nilo |
+| Runs con evidencia | [E01–E08](https://github.com/mxlzz/Nilo_public/actions/runs/44852299967), [g.5](https://github.com/mxlzz/Nilo_public/actions/runs/44934616857), [g.5a](https://github.com/mxlzz/Nilo_public/actions/runs/44934965506), [g.6](https://github.com/mxlzz/Nilo_public/actions/runs/44938181968), [g.7](https://github.com/mxlzz/Nilo_public/actions/runs/44938471293), [g.8](https://github.com/mxlzz/Nilo_public/actions/runs/44938791056), [g.9](https://github.com/mxlzz/Nilo_public/actions/runs/44939075550) |
+| Última corrida del cerebro | [g.9 nueva cohorte 80 semillas](E09_02G_09_RESULTADO_REPLICACION.md): steady fase B G0.9724 vs sham S0.9405, delta+0.03190, IC bootstrap95% [0.01615,0.05000], **60/80** buenas en G vs46/80 C; temprano G empeora. La tabla 2×2 ya obtuvo1.0 en g.5 |
 | Estado de E00 | [Genoma CD vs parche](E00_GENOMA_ORIGINAL_COMPARACION.md), [receptores/emisores](E00_MAPA_NEUROQUIMICO_C1.md), [reacciones Reward/Punishment](E00_QUIMICA_REFUERZO_C1.md); faltan ecuaciones exactas del ejecutable |
-| Estado del código | E01–E09e preservados; E09f.1–f.6 aritmética, migración y SVRule; E09g.1–g.5 red de 5/6 unidades, CI 269 tests con 2 expectedFailure históricos |
+| Estado del código | E01–E09e/f históricos preservados; E09g.1–g.9 en microred aislada, 292 tests CI success con 2 expectedFailure históricos; g.6, g.8 y g.9 son intervenciones/evaluaciones externas, NO nuevas reglas neurales C1 |
 | Integración con Nilo 0.7 | Ninguna |
 | Bloqueos | **GEN y EXE C1 examinados estáticamente**; subrutinas de migración modeladas con PRNG inyectado, pero scheduler/RNG real, bioquímica completa y dinámica original no validadas. G05 crédito causal abierta; no confundir modelos mínimos con emulación completa |
 | Decisiones nuevas pendientes | Interpretación fiel bit a bit de motor C1 aún no comprobada; E09e es alternativa NeuroLab inspirada, no reproducción. Buscar ejecutable auténtico si se decide exigir fidelidad histórica. |
@@ -39,7 +39,7 @@
 | E06 | Validada: invariancia contextual, no creación de conceptos | — | CI 44851722169 |
 | E07 | Verificada en modelo experimental | — | [CI E07](https://github.com/mxlzz/Nilo_public/actions/runs/44852027094), sin ventaja demostrada frente a LRU |
 | E08 | Verificada dinámica matemática | — | [CI E08](https://github.com/mxlzz/Nilo_public/actions/runs/44852126108) |
-| E09 | f.1–f.6 investigadas, g.1–g.5 ensayadas; g.5 gate falló | g.5a diagnóstico | [Microred](E09_G_MICRORED_RESULTADOS.md), [robustez](E09_02G_04_RESULTADO_ROBUSTEZ.md), [contextos](E09_02G_05_RESULTADO_DOS_CONCEPTOS.md); G09 abierta |
+| E09 | f.1–f.6 investigadas; g.1–g.9 ejecutadas, g.5/g.8 gates fallaron y g.9 replicó efecto EXTERNO, sin capacidad neuronal nueva | g.10 comparación crítica y protocolo de crédito interno, si se justifica | [g.6](E09_02G_06_RESULTADO_ABLACIONES_TEMPORALES.md), [g.7](E09_02G_07_RESULTADO_LEDGER_CAUSAL.md), [g.8](E09_02G_08_RESULTADO_PULSOS_PAREADOS.md), [g.9](E09_02G_09_RESULTADO_REPLICACION.md); G05/G09 abiertas |
 
 No avanzar en una fase solo porque exista su definición en este archivo.
 
@@ -279,3 +279,22 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - [Informe](E09_02G_05_RESULTADO_DOS_CONCEPTOS.md) y [JSON](resultados/run-44934616857/e09g5.json). Precisión steady neuronal 0.9671875 A y0.9302083 B; frozen0.51927/0.51146, blind0.49948/0.49688, **tabular 1.0/1.0**. Solo **12/20 semillas** cumplen ambos umbrales de0.90, contra criterio≥18/20. **No ajustar retrospectivamente.**
 - g.5a analiza por tick 8 semillas fallidas (0,2,3,4,8,16,17,19), especialmente errores cerca de transiciones de contexto. **Post hoc exploratorio, no hipótesis confirmatoria**.
 - Siguiente después del diagnóstico: preregistrar comparación de crédito causal diferido entre contextos; criterio de utilidad debe reconocer que el modelo tabular sencillo ya vence a la red. Sin cambios en `main` ni integración en motor Nilo.
+
+### 2026-11-21 — NL-LOG-0021 (diagnóstico E09g.5a y ablación g.6)
+- [g.5a, informe post hoc](E09_02G_05A_DIAGNOSTICO_POSTHOC.md): precisión en primer tick tras cambio de contexto 0 (A) y 0.0111 (B); hay errores persistentes más allá de la latencia de 1 tick. [CI g.5a](https://github.com/mxlzz/Nilo_public/actions/runs/44934965506).
+- [g.6, preregistro](E09_02G_06_ABLACIONES_TEMPORALES_PRE_REGISTRO.md), [resultado](E09_02G_06_RESULTADO_ABLACIONES_TEMPORALES.md), [CI #44938181968](https://github.com/mxlzz/Nilo_public/actions/runs/44938181968): reset neuronal N o precarga de Concept W mejoran parcialmente; ambos juntos NW logran 1.0 en A/B para 20/20 semillas. **NW es un oráculo artificial al inicio de cada bloque, NO una mente que se autorregula.** Paridad con E09g.5 preservada.
+- Resultado: diagnóstico validado como descripción del banco; no se modifica gate de g.5, no se implementa mecanismo interno.
+
+### 2026-11-21 — NL-LOG-0022 (auditoría de crédito E09g.7)
+- [Preregistro](E09_02G_07_CREDITO_CAUSAL_PRE_REGISTRO.md), [informe](E09_02G_07_RESULTADO_LEDGER_CAUSAL.md), [CI #44938471293](https://github.com/mxlzz/Nilo_public/actions/runs/44938471293): 10.240 ticks de entrenamiento, 10.200 pulsos comparables; **652 discrepancias** entre Concept de decisión previa y Concept de plasticidad actual, 331 con cambio STW. Se concentran en posición1 tras cambio contextual; LTW no cambia en esas observaciones.
+- Los estados finales por semilla/fase del entrenamiento instrumentado coinciden exactamente con E09g.5. Resultado: descripción temporal verificada, NO demostración de que cada peso cambiara por ese pulso ni cierre de G05.
+
+### 2026-11-21 — NL-LOG-0023 (E09g.8, resultado desfavorable según regla)
+- [Pre-registro g.8](E09_02G_08_PULSOS_PAREADOS_PRE_REGISTRO.md), [informe](E09_02G_08_RESULTADO_PULSOS_PAREADOS.md), [CI #44938791056](https://github.com/mxlzz/Nilo_public/actions/runs/44938791056): control original C, supresión dirigida G en tick1 de cambio, sham S en tick2. Omisiones emparejadas 319 (A) y333 (B) por brazo. Steady B C0.9302083, G0.9614583, S0.9322917. Puerta G−S B≥0.03 **FALLA**: diferencia +0.0291667; precisión temprana G empeora. Conteos conjuntos C12/20, G16/20, S13/20.
+- Resultado: experimento ejecutado sin errores de software, **hipótesis práctica NO aprobada**. No ajustar parámetros ni retroaprobarlo.
+
+### 2026-11-21 — NL-LOG-0024 (E09g.9, replicación fuera de muestra)
+- [Pre-registro de 80 semillas 20..99](E09_02G_09_REPLICACION_NUEVAS_SEMILLAS_PRE_REGISTRO.md), código reutiliza g.8 sin cambios; [reporte y limitaciones](E09_02G_09_RESULTADO_REPLICACION.md), [JSON original por semilla versionado](resultados/run-44939075550/e09g9.json), [CI #44939075550](https://github.com/mxlzz/Nilo_public/actions/runs/44939075550), commit ensayado `fb31ad91079f0454a4b8ac730455832bbdea44c3`, **success, 292 tests y 2 expectedFailure históricos**.
+- Media `steady_B(G-S)` +0.0319010, IC bootstrap pareado95% [0.0161458, 0.0500], umbral prospectivo cumplido; `steady_A(G-S)` +0.0311198. 46/80 C, 60/80 G, 44/80 S superan≥0.90 conjuntamente. B: 35 mejores, 13 peores y32 iguales; mediana0. `early` G empeora frente a C/S.
+- Resultado: **replicación positiva del efecto medio de un filtro de feedback EXTERNO**, no solución autónoma, no restauración del gate g.8 ni cierre G05/G09. Prioridad siguiente: g.10 evaluar si una memoria de procedencia verdaderamente interna justifica complejidad frente a tabla Q2×2.
+- Estado: PR #103 permanece **draft** y branch de NeuroLab aislada; `main` y motor Nilo 0.7 intactos. No se redistribuyeron archivos originales del juego.
