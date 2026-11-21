@@ -9,7 +9,7 @@
 Se evaluaron **42 artefactos o proyectos identificables** (aplicaciones, motores, bibliotecas, herramientas científicas, modelos académicos y estándares). No son 42 motores equivalentes y algunos son componentes del mismo ecosistema de software. La principal conclusión es que debemos **dejar de buscar un motor universal** y distinguir: (a) generador de condiciones iniciales; (b) procesos ambientales acoplados; (c) reglas locales que producen organización; (d) protocolo de estado, tiempo, unidades, persistencia y auditoría.
 
 Tres familias merecen prioridad de investigación:
-- **Candidatos al núcleo ambiental / ejemplos de ciclos causales:** Shanhai, AgroEcoSim, Landlab; Ecosystem Explorer como referencia funcional sin licencia de código verificada.
+- **Candidatos al núcleo ambiental / ejemplos de ciclos causales:** Shanhai (agua-suelo-vegetación, relieve estático), AgroEcoSim (crecimiento y suelo), Landlab (terreno dinámico y procesos), Ecosystem Explorer como referencia funcional sin licencia de código verificada.
 - **Candidatos al estado inicial:** WorldEngine y LibreTerrain. Infinigen es un generador geométrico/visual, no una simulación ambiental sostenida.
 - **Investigación de organización no predefinida:** Particle Life, Lenia/Flow-Lenia y ALIEN; complementarios, no sustitutos de erosión, clima e hidrología.
 
@@ -49,7 +49,7 @@ Además: **R** reproducción, observación y persistencia, **I** integración/do
 
 **01 — Ecosystem Explorer** · https://www.ethanjhulbert.org/ecosystem-explorer/ · Documentación https://www.ethanjhulbert.org/ecosystem-explorer/about/ · [D/P]. Terreno inicial por semillas y presets; clima, agua superficial/subterránea, sedimentos, vegetación, fuego, lava y evolución por pasos; permite intervenir y examinar celdas. **Muy alto ajuste como referencia de lo que debería sentir el sistema completo.** Código/licencia del programa no identificados; reglas simplificadas, sin prueba de evolución abierta. Prioridad: **ALTA para benchmark funcional, NO como biblioteca copiable**.
 
-**02 — Shanhai** · https://github.com/aruis/Shanhai · MIT · push 2026-05-17 · [R]. Workbench Eco-CA semi-3D con hidrología, humedad, nutrientes, crecimiento vegetal, degradación/recuperación y validaciones documentadas; escenarios controlados 64×64. **El candidato abierto más directamente alineado para experimentar un circuito ambiental acoplado y auditable.** Es un prototipo pequeño/reciente y habrá que ejecutar los tests; no afirmar que implementa geomorfología real ni estructuras abiertas. Prioridad **ALTA**.
+**02 — Shanhai** · https://github.com/aruis/Shanhai · MIT · push 2026-05-17 · [R]. Workbench Eco-CA semi-3D con hidrología, humedad, nutrientes, crecimiento vegetal, degradación/recuperación y validaciones documentadas; escenarios controlados 64×64. **El candidato abierto más directamente alineado para experimentar un circuito ambiental acoplado y auditable.** **Limitación verificada en su diseño `docs/eco-ca-system-design.md`: la matriz de relieve `H` es estática y no cambia durante el tick.** Simula ríos/lagos/cobertura, pero NO erosión que remodele la topografía. Es un prototipo pequeño/reciente y habrá que ejecutar los tests; no afirmar que implementa geomorfología real ni estructuras abiertas. Prioridad **ALTA**.
 
 **03 — AgroEcoSim** · https://github.com/cg-tuwien/AgroEcoSim · BSD-3-Clause · push 2026-11-16 · [R]. Simulador de crecimiento vegetal, clima procedural y difusión de humedad de suelo; CLI y servidor headless con interfaz HTTP, además de visualización. Muy útil para **submodelo de crecimiento y un contrato computacional desacoplado de la UI**. No ofrece por sí mismo tectónica ni evolución abierta. Prioridad **ALTA/MEDIA**.
 
@@ -177,7 +177,7 @@ Separar **estado del mundo** de **solvers especializados**. Empezar investigando
 
 **Decisión recomendada con confianza moderada:** continuar con **reutilización-primero y evaluación modular**, no motor físico propio. Las herramientas a ejecutar prioritariamente en pruebas **distintas y apropiadas a sus dominios**, no bajo un test universal inaplicable:
 
-**Línea A — Ambiente acoplado:** Shanhai y AgroEcoSim. Controlar escenario lluvia/suelo/vegetación, cambio de parámetros y ablación causal. Ecosystem Explorer como **benchmark funcional de caja negra** (sin copiar código), misma hipótesis observable si su UI lo permite.
+**Línea A — Ambiente acoplado:** Shanhai y AgroEcoSim. Controlar escenario lluvia/suelo/vegetación, cambio de parámetros y ablación causal. **No exigir erosión dinámica a Shanhai: documentación del modelo indica relieve H fijo; si la prueba objetivo requiere cambio de topografía, compararlo contra Landlab/Fastscape, no contra ese prototipo**. Ecosystem Explorer como **benchmark funcional de caja negra** (sin copiar código), misma hipótesis observable si su UI lo permite.
 
 **Línea B — Terreno inicial y cambio geomorfológico:** WorldEngine o LibreTerrain para exportar altura/material/agua; Landlab para simular erosión/transporte posterior. Para comparaciones geológicas incluir Fastscape en escenario que corresponda. El ensayo importante es **si el dato generado puede continuar evolucionando en otro modelo sin contradicción**, no cuál produce la imagen más bonita.
 
@@ -235,3 +235,13 @@ Separar **estado del mundo** de **solvers especializados**. Empezar investigando
 - Para alterar orden/criterios, crear ADR con justificación, riesgo, comparación, plan de prueba y gate; dejar versión anterior auditable.
 
 **Dictamen:** abandonar la estrategia de diseñar materiales primero y «buscar después» un mundo. Evaluar primero sistemas ambientales integrados y su capacidad de recibir un terreno inicial; reservar los sistemas de autoorganización para probar la parte realmente abierta.
+## 8. Auditoría complementaria de las tres bases de acoplamiento prioritarias
+
+### Shanhai — lectura de especificación interna
+Fuente primaria: https://github.com/aruis/Shanhai/blob/main/docs/eco-ca-system-design.md . Declara CA discreto con actualizaciones sincrónicas, capas separadas H (elevación), S (cobertura), W (agua), M (humedad de suelo), F (caudal reciente), N (nutrientes) y P (biomasa/plantas). **H se define estática** y no muta durante la simulación. La aparición de ríos es una evolución del flujo/cobertura sobre relieve fijo, no excavación de un nuevo cauce. Es una **limitación estructural clara** respecto al mundo que queremos, y obliga a priorizarlo como referencia ecohidrológica modular, no como base geológica completa. Fuente y pruebas declaradas no reemplazan ejecutar su suite.
+
+### AgroEcoSim — lectura de documentación de ejecución
+Fuente primaria: https://github.com/cg-tuwien/AgroEcoSim/blob/master/README.md . Proporciona CLI headless y API HTTP, timestep de horas, campo con resolución métrica configurable, parámetros de especie y semillas. Para iluminación, un servidor/ray tracing separado es opcional con fallback; varios subproyectos/tecnologías (.NET, Python, frontend) elevan el costo de integrar todo. Un modo de cultivo no equivale a ecosistema de formas biológicas abiertas. Como submodelo, su frontera clara de entrada/salida hace atractiva una prueba reducida.
+
+### Landlab — lectura de arquitectura declarada
+Fuente primaria: https://github.com/landlab/landlab/blob/master/README.md . Grid regular/irregular, componentes de proceso de interfaz común y herramientas de E/S/visualización. Ofrece el tipo de piezas necesarias sin reinventarlas, pero no es una 'ley universal de la materia'. La combinación concreta de módulos para erosión-escorrentía y su costo deben ejecutarse; la evaluación de paisaje no puede deducirse del README solamente.
