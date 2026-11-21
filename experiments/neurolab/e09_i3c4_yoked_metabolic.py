@@ -163,12 +163,13 @@ def run_phase(
     chem_states=[]
     cores=[]
     acceptance_flags=[]
+    accepted_connection_events=0
     cumulative_digest=hashlib.sha256()
     old_ptrs=tuple(link.source_pointer for link in state.brain.links)
     ref_cursor=0
 
     def advanced(context):
-        nonlocal state,ref_cursor
+        nonlocal state,ref_cursor,accepted_connection_events
         previous=state
         state,action,trace=coupled_step(
             brain,state,context,receptors,reactions,learn=(train and mode!="F"),
@@ -177,7 +178,9 @@ def run_phase(
             raise AssertionError("dynamic contact count changed")
         reasons=[e.reason for e in trace.migration]
         tally.update(reasons)
-        moved=any(e.migrated for e in trace.migration)
+        n_accepted=sum(e.migrated for e in trace.migration)
+        accepted_connection_events+=n_accepted
+        moved=n_accepted>0
         acceptance_flags.append(moved)
         if (tuple(link.source_pointer for link in state.brain.links)
                 !=tuple(link.source_pointer for link in previous.brain.links))!=moved:
@@ -240,7 +243,8 @@ def run_phase(
         "feedback_events":events,
         "action_counts":dict(sorted(action_counts.items())),
         "migration_reasons":dict(sorted(tally.items())),
-        "migration_acceptances":sum(acceptance_flags),
+        "migration_acceptances":accepted_connection_events,
+        "migration_active_ticks":sum(acceptance_flags),
         "exhausted_final":lost_at_end,
         "random_cursor":state.brain.random_tape.cursor,
         "wiring_final":[hex(link.source_pointer) for link in state.brain.links],
