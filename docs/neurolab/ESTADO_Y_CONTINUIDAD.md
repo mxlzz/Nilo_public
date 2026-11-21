@@ -21,7 +21,7 @@
 | Estado de E00 | [Informe histórico inicial](E00_INFORME_HISTORICO_01.md): G00-H abierto por incertidumbres; G00-N habilita variante propia E01 |
 | Estado del código | Módulos E01–E08; 85 métodos de test (E07 +10, E08 +8) |
 | Integración con Nilo 0.7 | Ninguna |
-| Bloqueos | E00.02 exactitud del genoma y discrepancia histórica salida=state vs state-threshold; no bloquean experimento N rotulado como propio |
+| Bloqueos | Genoma C1 modificado inspeccionado; original intacto aún no contrastado. Discrepancia histórica salida=state vs state-threshold; no bloquea modelo N explícitamente propio |
 | Decisiones nuevas pendientes | Fidelidad C1 vs adaptación mínima tras E00 |
 
 **Regla:** nunca actualizar `última subtarea validada` sin prueba enlazada al commit, log/fixture y criterio de aceptación. Si se hace un paso pero no se logra evidencia suficiente, permanece en curso/bloqueado. No marcar «terminada» una etapa porque se produjo un texto sobre ella.
@@ -30,7 +30,7 @@
 
 | Fase | Estado inicial | Próxima subtarea | Requisito de cierre |
 |---|---|---|---|
-| E00 | Parcial para H, suficiente N | E00.02 (genoma original), arqueología paralela | G00-H sigue abierta; G00-N documentada |
+| E00 | Genoma C1 actualizado recibido y hasheado; réplica H abierta | Comparar nueve genes cerebrales y buscar genoma de fábrica sin modificar | [Inventario E00.02 en issue #102](https://github.com/mxlzz/Nilo_public/issues/102#issuecomment-7064159473), G00-H abierta |
 | E01 | Validación automatizada | — | CI E01, 19 tests; benchmark en workflow |
 | E02 | Validación automatizada | — | CI E02, 8 tests; sin aprendizaje |
 | E03 | Validada N | — | [G03 CI verde](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727); no replica C1 |
@@ -205,3 +205,12 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - E03 exactitud media=1.0, control congelado=0.425, reversión=1.0; E06 conceptos=1.0 vs singleton=0.5375 y memorizador=0.5; E07 migración=1.0 vs fixed=0.5 **y LRU=1.0**, olvido antiguo medio=0.5.
 - Se ha cumplido **E09.01 (conservación reproducible de evidencia)**, no E09.02–09.10 ni G09.
 - **Intervención necesaria para fidelidad histórica:** obtener `dad1.gen` auténtico de Creatures 1 (o un genoma C1 equivalente con procedencia verificable). Si el usuario prefiere continuar sin ese archivo, el siguiente trabajo debe reconocer que la mente será una variante propia basada en principios documentados, no reconstrucción fiel. Esa decisión no está asumida aquí.
+
+
+### 2026-11-21 — NL-LOG-0013 (E00.02 — archivo aportado)
+- **ZIP inspeccionado:** `Updated C1 V2.zip`, SHA256 `2661f07b33a4d617c723466883ac9dbfc14a4211dad674a6d3cae9a936130d4f`; archivo de usuario, no subido a repo.
+- **dad1.gen localizado:** SHA256 `f32c0cac5985d9c71c9a6765b98cd321dd49574f315a1f2813cd4f0bb91babfe`; 20.001 bytes, 320 genes y 9 registros de lóbulos tipo/subtipo 0/0 identificados mediante marcadores de formato C1. La comparación interna con siete genomas del paquete revela identidad byte a byte de sus nueve registros de lóbulos.
+- **Origen modificado confirmado** por `readme.txt`: cambio para evitar inmortalidad y corregir envejecimiento; no se afirma originalidad del genoma.
+- **Registro exhaustivo y fuentes:** [comentario en issue #102](https://github.com/mxlzz/Nilo_public/issues/102#issuecomment-7064159473).
+- E00.02 ha avanzado desde ausencia de archivos concretos a espécimen modificado identificable/hasheado. **G00-H sigue abierta** por falta de referencia original de 1996 y divergencias del ejecutable no resueltas.
+- Siguiente subtarea documental: interpretar los nueve genes de lóbulos reales y sus campos SVRule; comparar contra documentación de C1 y prototipo N. No subir ni redistribuir genomas de terceros.
