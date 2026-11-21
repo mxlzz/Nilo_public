@@ -28,6 +28,6 @@ Para cualquiera de los tres emisores de E00, con fuente=80 y pool inicial cero, 
 
 **Importante:** el valor fuente=80 es un caso artificial; no implica que los loci C1 +0xC1/+0xC2 tomen ese valor durante una partida. No se reconstruyó aquí cómo se activan esos bytes a través de toda la conducta. El pool también puede ser alterado por múltiples emisores/reacciones y por decaimiento. No afirmar causalidad conductual.
 
-**Puertas:** G-H5-X86 verificada estáticamente sobre el EXE; G-H5-MATH implementada con tests, pendiente confirmación integral de CI al redactar este registro; G-H5-GEN conserva procedencia documental E00 sin nueva lectura del GEN. G00-H/G05/G09 siguen abiertas.
+**Puertas:** G-H5-X86 verificada estáticamente contra el EXE; **G-H5-MATH verificada en [CI #44948424321](https://github.com/mxlzz/Nilo_public/actions/runs/44948424321), success integral: 362 tests, 2 expectedFailure históricos**. CI no utiliza los binarios originales y prueba el auditor con memoria sintética. G-H5-GEN conserva procedencia documental E00 sin nueva lectura del GEN. G00-H/G05/G09 siguen abiertas.
 
 **Próxima dependencia propuesta dentro del plan:** reconstruir frecuencia y variaciones del scheduler C1 antes de integrar química con cerebro; no rediseñar sinapsis ni crear neuronas. Mantener PR #103 draft; main/Nilo 0.7 intactos.
