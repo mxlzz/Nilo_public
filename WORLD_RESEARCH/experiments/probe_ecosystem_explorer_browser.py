@@ -69,9 +69,49 @@ def main():
                     a["year"]!=b["year"] or a["season"]!=b["season"]
                 )
             )
+            def visible_buttons():
+                result=[]
+                for elem in page.locator("button").all():
+                    if elem.is_visible():
+                        result.append({
+                            "text":elem.inner_text()[:38],
+                            "title":elem.get_attribute("title"),
+                            "aria":elem.get_attribute("aria-label")
+                        })
+                return result[:26]
+            metrics["visible_buttons"] = visible_buttons()
+            metrics["new_world_panel_opened"]=False
+            metrics["inspect_panel_opened"]=False
+            metrics["panel_open_errors"]=[]
+            try:
+                star=page.get_by_role("button",name=re.compile(r"✳"))
+                if star.count()>0:
+                    star.first.click(timeout=5000)
+                    page.wait_for_timeout(500)
+                    metrics["new_world_panel"] = visible_summary(page)
+                    metrics["new_world_panel_opened"]=(
+                        metrics["new_world_panel"]["seed_input_label"] and
+                        metrics["new_world_panel"]["save_export_controls"])
+            except Exception as ex:
+                metrics["panel_open_errors"].append("new_world:"+type(ex).__name__+":"+str(ex)[:120])
+            if metrics["new_world_panel_opened"]:
+                try:
+                    close=page.get_by_role("button",name=re.compile(r"×"))
+                    if close.count()>0: close.first.click(timeout=5000)
+                except Exception as ex:
+                    metrics["panel_open_errors"].append("close:"+type(ex).__name__+":"+str(ex)[:120])
+            try:
+                inspector=page.get_by_role("button",name=re.compile(r"⌖"))
+                if inspector.count()>0:
+                    inspector.first.click(timeout=5000)
+                    page.wait_for_timeout(500)
+                    metrics["inspector_panel"]=visible_summary(page)
+                    metrics["inspect_panel_opened"]=metrics["inspector_panel"]["tile_inspector_label"]
+            except Exception as ex:
+                metrics["panel_open_errors"].append("inspector:"+type(ex).__name__+":"+str(ex)[:120])
             metrics["ui_controls_present"]= bool(
-                b["seed_input_label"] and b["save_export_controls"] and
-                b["tile_inspector_label"] and b["speed_controls"]
+                b["speed_controls"] and metrics["new_world_panel_opened"]
+                and metrics["inspect_panel_opened"]
             )
         finally:
             metrics["elapsed_seconds"]=round(time.perf_counter()-started,2)
