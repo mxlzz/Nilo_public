@@ -85,3 +85,17 @@ Limitaciones de arquitectura verificadas por lectura:
 - https://github.com/mxlzz/Nilo_public/actions/runs/44944136887 — WorldEngine **PASS**; Sandspiel (cuatro pruebas con control de viento neutral) **PASS**.
 - https://github.com/mxlzz/Nilo_public/actions/runs/44943929557 — fallo de CI **propio del arnés**: el descubrimiento de pruebas incluyó `test_worldengine_candidate.py` sin NumPy instalado. Se corrigió el patrón de pruebas del módulo de materia a `test_matter*.py`, sin modificar su núcleo. Este fallo no debe atribuirse a una incapacidad del candidato.
 - Próxima prueba externa: The Powder Toy u otra segunda base material con criterios equivalentes. No se aprueba adopción de Sandspiel como motor definitivo con cuatro pruebas básicas.
+
+## Corrección de cobertura: Ecosystem Explorer
+
+Se detectó que Ecosystem Explorer, ya mencionado en la conversación como antecedente relevante, había quedado **injustificadamente excluido** de los candidatos de etapa 0. Fuente: https://www.ethanjhulbert.org/ecosystem-explorer/about/ y aplicación https://www.ethanjhulbert.org/ecosystem-explorer/ .
+
+El sistema **declara y expone** generación de paisajes iniciales, interacciones entre relieve, agua, clima, vegetación y erosión, eventos como incendios, tiempo acelerado, inspección por celda y guardado portable. Es el candidato más cercano al **objetivo funcional integrado**, independientemente de que su motor sea reutilizable.
+
+**Estado de prueba:** documentación inspeccionada; comportamiento aún sin pruebas propias instrumentadas; no afirmar validación independiente de leyes ni dinámica prolongada.
+
+**Licencia:** no se identificó repositorio oficial público ni licencia de código abierto del proyecto. Condiciones del sitio: https://www.ethanjhulbert.org/privacy-legal/ . No extraer/copiar lógica del programa ni asumir que ejecutarlo en navegador otorga licencia de reutilización. Se podrá consultar al autor si se considera conveniente.
+
+**Acción de evaluación:** incluirlo en las pruebas de **caja negra** como baseline de entorno: generación reproducible, observación de dos estados, cambios causales tras intervención, guardado y restauración, seguimiento de una región. En paralelo, evaluar código reutilizable de componentes abiertos como WorldEngine/Sandspiel. No comparar Ecosystem Explorer con una biblioteca como si fueran artefactos equivalentes.
+
+**Ajuste de prioridad:** comparar funcionalidad de mundo integrado con Ecosystem Explorer **antes** de ampliar modelos físicos; la inspección de The Powder Toy sigue siendo pertinente exclusivamente para la necesidad de motor de materiales. La etapa 0 sigue abierta.
