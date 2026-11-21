@@ -1,0 +1,35 @@
+name: World research - H13 persistence and hydrologic scale
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_landlab_checkpoint_scale.py
+      - .github/workflows/world-landlab-checkpoint-scaling.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checkpoint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install published Landlab wheels
+        run: |
+          python -m pip install --only-binary=:all: landlab numpy
+          python -m pip show landlab
+      - name: Full uninterrupted baseline, process one
+        run: python WORLD_RESEARCH/experiments/probe_landlab_checkpoint_scale.py baseline /tmp/h13
+      - name: Half-run plus pickle checkpoint, process two
+        run: python WORLD_RESEARCH/experiments/probe_landlab_checkpoint_scale.py prepare /tmp/h13
+      - name: Resume and compare exactly, process three
+        run: python WORLD_RESEARCH/experiments/probe_landlab_checkpoint_scale.py resume /tmp/h13
+      - name: Independently benchmark multiple raster sizes, each a new process
+        run: |
+          for size in 12 32 64 128; do
+            python WORLD_RESEARCH/experiments/probe_landlab_checkpoint_scale.py scale "$size"
+          done
