@@ -2,8 +2,8 @@
 
 **Estado actualizado:** 2026-11-20 (registro posterior al comienzo de ejecución).  
 **Línea base documentada:** protocolo v0.1.0 en rama `docs/neurolab-protocolo-20261120`, propuesto para revisión.  
-**Ejecución experimental:** E01–E04 validadas experimentalmente, E05 con atribución causal fallida, E06 validada independientemente.  
-**Código del cerebro:** núcleo E01 y circuito E02 en experiments/neurolab/; sin aprendizaje hasta E03.  
+**Ejecución experimental:** E01–E04 y E06–E08 verificadas en prototipos aislados; E05 falla atribución causal; G09 sigue abierta.  
+**Código del cerebro:** módulos E01–E08 en experiments/neurolab/; aún no existe un cerebro que los integre todos.  
 **Autorización vigente documentada:** el usuario autorizó continuar ejecución secuencial hasta necesitar intervención; ninguna integración con el motor Nilo 0.7 ni merge a main.
 
 ## 1. Marcador canónico de progreso
@@ -12,14 +12,14 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | E07 — arqueología de plasticidad estructural; G05 sigue abierta |
-| Siguiente subtarea exacta | **E07.01 — contrastar migración histórica realmente activa** |
-| Última subtarea validada | E06 — generalización a contexto irrelevante con detectores fijos; G05 no superada |
+| Etapa actual | E09 — evaluación integral pendiente; G00-H y G05 abiertas |
+| Siguiente subtarea exacta | **E09.01 — congelar versiones y resultados reproducibles; integrar componentes luego de la auditoría** |
+| Última subtarea validada | E08 — circuitos recurrentes y controles; G09 abierta |
 | Experimentos ejecutados | E01–E02 unitarias, E03 experimento preregistrado (20 semillas, controles) |
 | Runs con evidencia | [E01+E02 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44850881701), [E03 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727), [E04 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622), [E05 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851485383) |
 | Última corrida del cerebro | Experimentos sintéticos E03 con aprendizaje local por refuerzo; sin cuerpo/mundo/LLM |
 | Estado de E00 | [Informe histórico inicial](E00_INFORME_HISTORICO_01.md): G00-H abierto por incertidumbres; G00-N habilita variante propia E01 |
-| Estado del código | E01–E06 en módulos experimentales; 67 métodos de prueba (incluidos 10 E06) |
+| Estado del código | Módulos E01–E08; 85 métodos de test (E07 +10, E08 +8) |
 | Integración con Nilo 0.7 | Ninguna |
 | Bloqueos | E00.02 exactitud del genoma y discrepancia histórica salida=state vs state-threshold; no bloquean experimento N rotulado como propio |
 | Decisiones nuevas pendientes | Fidelidad C1 vs adaptación mínima tras E00 |
@@ -37,9 +37,9 @@
 | E04 | Validada como dinámica sináptica aislada | — | [CI E04](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622); no integrado al selector aún |
 | E05 | **Parcial / límite negativo confirmado** | Revisar crédito causal | G05 no superada; refuerzo espurio en distractor correlacionado |
 | E06 | Validada: invariancia contextual, no creación de conceptos | — | CI 44851722169 |
-| E07 | En investigación documental | E07.01 | G07 plasticidad estructural aún sin ejecutar |
-| E08 | No iniciada | E08.01 | G08 dinámica interna caracterizada |
-| E09 | No iniciada | E09.01 | G09 comparación integral y arquitectura mínima |
+| E07 | Verificada en modelo experimental | — | [CI E07](https://github.com/mxlzz/Nilo_public/actions/runs/44852027094), sin ventaja demostrada frente a LRU |
+| E08 | Verificada dinámica matemática | — | [CI E08](https://github.com/mxlzz/Nilo_public/actions/runs/44852126108) |
+| E09 | Auditoría intermedia, sin integración | E09.01 | [Informe](E09_AUDITORIA_INTERMEDIA.md), G09 abierta |
 
 No avanzar en una fase solo porque exista su definición en este archivo.
 
@@ -179,3 +179,21 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - Fuentes directas: [paper de autores](https://eem.foo/ccarchive/Sites/fp.cyberlifersrch.plus.com/articles/agents_%2797_paper.htm) y [C1 Brain Guide](https://zenzoa.com/creatures/c1-brains.html).
 - Descubrimiento de [Gene Loom](https://lisdude.com/Creatures/Community/GeneLoom/) (v1.8.0, junio 2026), editor que admite genomas C1: alternativa existente para inspeccionar el `dad1.gen` auténtico **si se dispone legítimamente del archivo**, sin obligar a desarrollar un editor de genomas.
 - **E07.01 parcialmente verificada** a nivel de principios y estilos; parámetros y genoma exacto todavía abiertos. El archivo original no fue adquirido ni analizado.
+
+
+### 2026-11-20 — NL-LOG-0009 (E07)
+- [Pre-registro E07](E07_PRE_REGISTRO.md); dos slots, patrones antiguos y nuevos, controles con conexiones fijas y LRU.
+- Código: [rewiring.py](../../experiments/neurolab/rewiring.py), [e07_protocol.py](../../experiments/neurolab/e07_protocol.py), [tests E07](../../experiments/neurolab/tests/test_rewiring.py).
+- [CI #44852027094](https://github.com/mxlzz/Nilo_public/actions/runs/44852027094), SHA `c6542f53f7656699f871a5757a90060b1667e4ee`, `success`: umbral preregistrado satisfecho.
+- Conexiones reutilizadas bajo cupo fijo y olvido de asociaciones anteriores. No se infiere superioridad a LRU ni equivalencia histórica de reglas de atrofia. E07.01: Grand confirma migración cuando strength=0, salvo mecanismo competitivo adicional desconectado.
+
+### 2026-11-20 — NL-LOG-0010 (E08)
+- [Pre-registro E08](E08_PRE_REGISTRO.md), dos neuronas recurrentes, controles sin conexiones y con atenuación.
+- Código: [recurrent.py](../../experiments/neurolab/recurrent.py) y [tests E08](../../experiments/neurolab/tests/test_recurrent.py).
+- [CI #44852126108](https://github.com/mxlzz/Nilo_public/actions/runs/44852126108), SHA `060ecc3d369e18a4627b8c0a7c0bfbab3b3dc671`, `success`.
+- Oscilación de dos ticks caracterizada, control sin recurrencia se apaga; no atribuir pensamientos.
+
+### 2026-11-20 — NL-LOG-0011 (E09, auditoría preliminar)
+- [E09_AUDITORIA_INTERMEDIA.md](E09_AUDITORIA_INTERMEDIA.md): capacidades parciales comprobadas, sin unificación bajo un cerebro/tick común.
+- **G09 abierta**; G05 abierta por atribución equivocada; G00-H abierta por genoma original y reglas históricas contradictorias.
+- Próximo trabajo técnico: E09.01 exportar resultados agregados, congelar configuraciones y luego investigar integración con controles.
