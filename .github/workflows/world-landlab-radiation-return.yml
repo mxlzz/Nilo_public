@@ -5,6 +5,7 @@ on:
       - research/world-foundations-2026-11
     paths:
       - WORLD_RESEARCH/experiments/probe_landlab_radiation_topography.py
+      - WORLD_RESEARCH/experiments/probe_landlab_90day_radiative_return.py
       - .github/workflows/world-landlab-radiation-return.yml
   workflow_dispatch:
 permissions:
@@ -24,3 +25,5 @@ jobs:
           python -m pip show landlab
       - name: Run H10a topography to radiation and PET tests
         run: python WORLD_RESEARCH/experiments/probe_landlab_radiation_topography.py
+      - name: Run H10b ninety-day geometric return with radiation ablation
+        run: python WORLD_RESEARCH/experiments/probe_landlab_90day_radiative_return.py
