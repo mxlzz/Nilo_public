@@ -1,0 +1,26 @@
+name: World research - H10 terrain to energy
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_landlab_radiation_topography.py
+      - .github/workflows/world-landlab-radiation-return.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  terrain_energy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install published Landlab package
+        run: |
+          python -m pip install --only-binary=:all: landlab numpy
+          python -m pip show landlab
+      - name: Run H10a topography to radiation and PET tests
+        run: python WORLD_RESEARCH/experiments/probe_landlab_radiation_topography.py
