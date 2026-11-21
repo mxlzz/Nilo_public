@@ -1,14 +1,14 @@
 # NeuroLab — motor experimental aislado E01
 
-**ATENCIÓN:** aquí solo hay neuronas/sinapsis sin aprendizaje ni cuerpo. No contiene funciones de Nilo 0.7. No representa el algoritmo bit a bit de Creatures 1.
+**ATENCIÓN:** laboratorio aislado: E01 núcleo, E02 circuito de seis unidades, E03 aprendizaje por refuerzo, E04 doble peso STW/LTW aislado y E05 elegibilidad temporal aislada. No modifica Nilo 0.7 ni representa el algoritmo byte a byte de Creatures 1.
 
 - Documentación de arqueología: [E00](../../docs/neurolab/E00_INFORME_HISTORICO_01.md).
 - Plan por subetapas: [E01–E09](../../docs/neurolab/ETAPAS_00_09.md).
-- Código: `kernel.py` (transición pura, sincronía por salida anterior, escala byte, salida seleccionable).
+- Código: `kernel.py` (transición pura), `circuit.py` (elección), `plasticity.py` (aprendizaje E03), `twin_weight.py` (memoria E04) y `eligibility.py` (crédito temporal E05).
 - Tests: `python -m unittest discover -s experiments/neurolab/tests -v` desde la raíz del repositorio.
 - Sin PyTorch, sin internet, sin dependencias externas. Solo biblioteca estándar Python (3.10+ por operadores de tipos y diccionarios).
-- No hay recompensa ni pesos modificables hasta E03. Las variables STW/LTW y la adaptación quedan para E04 y posteriores.
-- Cualquier rendimiento medido aquí corresponde exclusivamente al kernel E01. No constituye aprendizaje ni mente general.
+- E03 incluye recompensas y pesos modificables; E04 y E05 son pruebas aisladas de mecanismos, **todavía no integradas** en un cerebro único que use las tres capacidades simultáneamente.
+- E03 tiene evidencia de aprendizaje asociativo elemental. E04 demuestra propiedades temporales de una sinapsis aislada; E05 documenta explícitamente una limitación de atribución causal. Nada de esto demuestra mente general o conducta autónoma.
 
 ## Semántica exacta E01
 
