@@ -18,7 +18,7 @@ Usando el pool de ejemplo de E09h.3 `49=12,50=12,52=5,53=12` y estado químico i
 - La lectura con `C1SVTable/evaluate` prueba que las variables del adaptador llegan a los operandos SVRule esperados en el **modelo condicionado**, no que C1 real tenga ese estado en un instante particular.
 - Los controles rechazan receptores duplicados para el mismo lóbulo+CHEM (precedencia real no verificada), tipos inválidos y pool fuera de rango; no mutan concentraciones ni amplían la microred.
 
-**Evidencia de ejecución:** el paso de unittest discover del [workflow H4](https://github.com/mxlzz/Nilo_public/actions/runs/44947076331) completó con `success`. El total del workflow y sus experimentos posteriores deben comprobarse independientemente antes de reclamar CI verde integral. Commit de tests `2ef85398502ff67b7a40f7106f6277394b989625`.
+**Evidencia de ejecución:** [CI #44947076331](https://github.com/mxlzz/Nilo_public/actions/runs/44947076331) **success integral** para commit de tests `2ef85398502ff67b7a40f7106f6277394b989625`: **339 tests ejecutados, 2 expectedFailure históricos**; los experimentos de regresión posteriores también completaron sin errores. El CI no contiene binarios originales, y por tanto no cierra G-H4-X86.
 
 ## Limitaciones y siguiente subtarea
 
