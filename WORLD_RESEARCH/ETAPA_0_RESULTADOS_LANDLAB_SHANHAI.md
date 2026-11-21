@@ -49,11 +49,19 @@ Copiar el array de un sistema al otro sin contrato de unidades y mapeo **sería 
 
 Protocolo extendido antes de implementar: `ETAPA_0_PROTOCOLO_LANDLAB_SHANHAI.md`.
 
-- H4: `Space` vs control de erosividad cero, inspección de `soil__depth`, `bedrock__elevation`, `sediment__outflux`, sin afirmar balance completo.
-- H5: `SoilMoisture` + `Vegetation` en una sola malla Landlab, lluvia vs ausencia de lluvia, métricas de saturación y vegetación.
-- CI para pruebas H4/H5: https://github.com/mxlzz/Nilo_public/actions/runs/44948182511
-- Gate: no cerrar hasta resultados/errores y análisis de costo/compatibilidad.
+**H4-H5 ejecutados con éxito** en GitHub Actions: https://github.com/mxlzz/Nilo_public/actions/runs/44948299834 (Landlab 2.11.0).
+
+- H4 `Space`: diez pasos con erosividad activa produjeron variación de suelo/relieve y flujo sedimentario positivo; el control con erosividades nulas no cambió relieve ni generó flujo; espesores no negativos. **No se demostró aún que exista deposición positiva en alguna celda ni se cerró un balance global de masa**.
+- H5 `SoilMoisture` + `Vegetation` sobre la misma malla de celdas: al ingresar lluvia hubo mayor saturación y menor estrés hídrico que sin ella. En condiciones de estación de crecimiento (PET30 = 8, por encima del umbral 6.8), hubo mayor biomasa con lluvia (~100.923 vs ~100.414 en promedios de la prueba).
+- Primera corrida H5 con PET30=0.25 mostró biomasa idéntica: **no era evidencia de incapacidad**, sino que `Vegetation` estaba en modo de senescencia, rama que no depende del estrés hídrico para esa comparación. Se inspeccionó su código y se corrigió el control a estación de crecimiento; el resultado anterior queda en historial CI.
+- Los componentes de humedad y vegetación comparten celdas/arrays de Landlab, demostrando acoplamiento técnico mínimo, **no el ciclo completo de realimentación con erosión ni conservación de todos los flujos**.
+- Gate sigue abierto mientras falta comprobar un circuito integrado (y coste de acople nodo/celda y pasos de tiempo).
+
 
 ## Decisión provisional
 
 **Preferir evaluar soluciones nativas Landlab frente a la integración heterogénea Landlab–Shanhai**. Shanhai queda como benchmark funcional y de mecanismos ecológicos; no adaptar un motor de alturas categóricas a geomorfología dinámica sin una prueba que demuestre la conveniencia. No adoptar ninguno definitivamente hasta completar H4/H5 y el análisis de condiciones iniciales.
+
+## H6 — Generación inicial -> evolución geológica (trabajo en curso)
+
+La prueba está documentada **antes** de su implementación en `ETAPA_0_PROTOCOLO_LANDLAB_SHANHAI.md`. Usa WorldEngine en Python 3.11 y Landlab en Python 3.13 con un artefacto de altura intercambiado, sin vincular códigos de motores. Comprueba cuantización y pérdida de relieve al simular alturas categóricas 0..4 de Shanhai. Se detectó un fallo al validar la primera versión del workflow de integración **sin iniciar jobs**, en proceso de aislamiento mediante smoke; no atribuir ese error a ninguna incompatibilidad de motores.
