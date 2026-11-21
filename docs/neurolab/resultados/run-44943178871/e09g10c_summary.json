@@ -1,0 +1,97 @@
+{
+  "aggregate": {
+    "first": {
+      "1": {
+        "fraction_distractor_STW_affected": 0.33,
+        "fraction_other_owner_STW_affected": 0.1675,
+        "fraction_sus_distractor_positive": 0.70875,
+        "fraction_sus_target_positive": 1,
+        "fraction_target_STW_affected": 0.73,
+        "mean_pulse_effect_distractor_STW": 3.28375,
+        "mean_pulse_effect_other_owner_STW_sum": 1.4225,
+        "mean_pulse_effect_target_STW": 8.31625,
+        "mean_sus_distractor_before": 13.595,
+        "mean_sus_target_before": 40.4875,
+        "missing_pulses": 0,
+        "pulses": 800
+      },
+      "2": {
+        "fraction_distractor_STW_affected": 0.475,
+        "fraction_other_owner_STW_affected": 0.15125,
+        "fraction_sus_distractor_positive": 0.985,
+        "fraction_sus_target_positive": 1,
+        "fraction_target_STW_affected": 0.61,
+        "mean_pulse_effect_distractor_STW": 4.155,
+        "mean_pulse_effect_other_owner_STW_sum": 1.105,
+        "mean_pulse_effect_target_STW": 5.825,
+        "mean_sus_distractor_before": 17.23625,
+        "mean_sus_target_before": 38.2475,
+        "missing_pulses": 0,
+        "pulses": 800
+      },
+      "3": {
+        "fraction_distractor_STW_affected": 0.53375,
+        "fraction_other_owner_STW_affected": 0.15875,
+        "fraction_sus_distractor_positive": 0.9975,
+        "fraction_sus_target_positive": 1,
+        "fraction_target_STW_affected": 0.54125,
+        "mean_pulse_effect_distractor_STW": 5.76125,
+        "mean_pulse_effect_other_owner_STW_sum": 1,
+        "mean_pulse_effect_target_STW": 4.6325,
+        "mean_sus_distractor_before": 20.19375,
+        "mean_sus_target_before": 36.2025,
+        "missing_pulses": 0,
+        "pulses": 800
+      }
+    },
+    "reversed": {
+      "1": {
+        "fraction_distractor_STW_affected": 0.17625,
+        "fraction_other_owner_STW_affected": 0.11625,
+        "fraction_sus_distractor_positive": 0.75375,
+        "fraction_sus_target_positive": 1,
+        "fraction_target_STW_affected": 0.67375,
+        "mean_pulse_effect_distractor_STW": 1.98,
+        "mean_pulse_effect_other_owner_STW_sum": 0.94375,
+        "mean_pulse_effect_target_STW": 6.74,
+        "mean_sus_distractor_before": 16.19625,
+        "mean_sus_target_before": 42.8175,
+        "missing_pulses": 0,
+        "pulses": 800
+      },
+      "2": {
+        "fraction_distractor_STW_affected": 0.31,
+        "fraction_other_owner_STW_affected": 0.1175,
+        "fraction_sus_distractor_positive": 0.99125,
+        "fraction_sus_target_positive": 1,
+        "fraction_target_STW_affected": 0.59375,
+        "mean_pulse_effect_distractor_STW": 2.65125,
+        "mean_pulse_effect_other_owner_STW_sum": 0.72,
+        "mean_pulse_effect_target_STW": 4.9575,
+        "mean_sus_distractor_before": 19.235,
+        "mean_sus_target_before": 40.395,
+        "missing_pulses": 0,
+        "pulses": 800
+      },
+      "3": {
+        "fraction_distractor_STW_affected": 0.41375,
+        "fraction_other_owner_STW_affected": 0.09875,
+        "fraction_sus_distractor_positive": 0.995,
+        "fraction_sus_target_positive": 1,
+        "fraction_target_STW_affected": 0.49375,
+        "mean_pulse_effect_distractor_STW": 4.02125,
+        "mean_pulse_effect_other_owner_STW_sum": 0.565,
+        "mean_pulse_effect_target_STW": 3.61625,
+        "mean_sus_distractor_before": 23.1325,
+        "mean_sus_target_before": 39.12125,
+        "missing_pulses": 0,
+        "pulses": 800
+      }
+    }
+  },
+  "classification": "EXPLORATORY post-hoc mechanism audit, not OOS confirmation",
+  "n_events": 4800,
+  "n_seeds": 40,
+  "protocol": "E09_02G_10C_SUSCEPTIBILIDAD_PRE_REGISTRO-v1",
+  "warning": "One-tick chemical counterfactual does not measure future behavioral causation."
+}
