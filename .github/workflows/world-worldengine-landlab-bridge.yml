@@ -1,10 +1,12 @@
-name: World - generator checkout validation
+name: World - generated terrain evolution test
 on:
   push:
     branches:
       - research/world-foundations-2026-11
     paths:
       - .github/workflows/world-worldengine-landlab-bridge.yml
+      - WORLD_RESEARCH/experiments/export_worldengine_height.py
+      - WORLD_RESEARCH/experiments/probe_worldengine_to_landlab.py
   workflow_dispatch:
 permissions:
   contents: read
@@ -50,3 +52,8 @@ jobs:
           python -m pip install --only-binary=:all: landlab numpy
       - name: Evolve generated terrain
         run: python WORLD_RESEARCH/experiments/probe_worldengine_to_landlab.py bridge/worldengine_height.npz bridge/terrain_after_landlab.npz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: landlab-evolved-height
+          path: bridge/terrain_after_landlab.npz
+          retention-days: 14
