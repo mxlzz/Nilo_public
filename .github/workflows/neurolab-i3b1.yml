@@ -1,0 +1,53 @@
+name: NeuroLab I3b1 — matched chemical gain and timing forks
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3b1_forks.py'
+      - 'experiments/neurolab/tests/test_e09_i3b1_forks.py'
+      - '.github/workflows/neurolab-i3b1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preregistered-forks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check code and scientific contracts
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3b1_forks
+      - name: Run 20 paired seeds and preserve negative results
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3b1_forks --output metrics/e09i3b1.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          r=json.load(open("metrics/e09i3b1.json"))
+          assert r["seeds"]==list(range(300,320))
+          assert r["episode_count"]==240
+          assert r["gate_wiring"].startswith("PASS")
+          assert r["gate_behavioral_G05_G09"].startswith("NOT EVALUATED")
+          print("Reference sign counts:",r["signs"])
+          print("Missing actions:",r["missing_reference_actions"])
+          for name,stats in r["contrasts"].items():
+              print(name,":",{
+                key:stats[key] for key in ("paired_episodes","n_seeds","mean","ci95")
+              })
+          PY
+      - name: Preserve all per-episode counterfactual observations
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3b1-paired-forks
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn
