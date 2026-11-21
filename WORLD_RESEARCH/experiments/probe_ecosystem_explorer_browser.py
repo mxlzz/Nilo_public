@@ -83,32 +83,29 @@ def main():
             metrics["new_world_panel_opened"]=False
             metrics["inspect_panel_opened"]=False
             metrics["panel_open_errors"]=[]
-            try:
-                star=page.get_by_role("button",name="Create a new world")
-                if star.count()>0:
-                    star.first.click(timeout=5000)
-                    page.wait_for_timeout(500)
-                    metrics["new_world_panel"] = visible_summary(page)
-                    metrics["new_world_panel_opened"]=(
-                        metrics["new_world_panel"]["seed_input_label"] and
-                        metrics["new_world_panel"]["save_export_controls"])
-            except Exception as ex:
-                metrics["panel_open_errors"].append("new_world:"+type(ex).__name__+":"+str(ex)[:120])
-            if metrics["new_world_panel_opened"]:
-                try:
-                    close=page.get_by_role("button",name=re.compile(r"×"))
-                    if close.count()>0: close.first.click(timeout=5000)
-                except Exception as ex:
-                    metrics["panel_open_errors"].append("close:"+type(ex).__name__+":"+str(ex)[:120])
+            # First select inspect mode while no modal hides this button.
             try:
                 inspector=page.get_by_role("button",name="Inspect a tile")
                 if inspector.count()>0:
                     inspector.first.click(timeout=5000)
                     page.wait_for_timeout(500)
-                    metrics["inspector_panel"]=visible_summary(page)
-                    metrics["inspect_panel_opened"]=True  # inspected via visible accessible button and click; a tile must be selected for panel contents
+                    metrics["inspector_mode_visible_after_click"]=bool(
+                        page.get_by_role("button",name="Inspect a tile").count()>0)
+                    metrics["inspect_panel_opened"]=True  # mode activation, NOT cell-measurement evidence
             except Exception as ex:
                 metrics["panel_open_errors"].append("inspector:"+type(ex).__name__+":"+str(ex)[:120])
+            # Only after selecting inspect mode, open new-world settings.
+            try:
+                create=page.get_by_role("button",name="Create a new world")
+                if create.count()>0:
+                    create.first.click(timeout=5000)
+                    page.wait_for_timeout(500)
+                    metrics["new_world_panel"]=visible_summary(page)
+                    metrics["new_world_panel_opened"]=(
+                        metrics["new_world_panel"]["seed_input_label"] and
+                        metrics["new_world_panel"]["save_export_controls"])
+            except Exception as ex:
+                metrics["panel_open_errors"].append("new_world:"+type(ex).__name__+":"+str(ex)[:120])
             metrics["ui_controls_present"]= bool(
                 b["speed_controls"] and metrics["new_world_panel_opened"]
                 and metrics["inspect_panel_opened"]
