@@ -42,7 +42,11 @@ def one_shot(rain_mm, alpha):
     sat=g.at_cell["soil_moisture__saturation_fraction"].copy()
     stress=g.at_cell["vegetation__water_stress"].copy()
 
-    veg=Vegetation(g)
+    # Default Bdead_init=450 saturates LAI_total at its ceiling, masking
+    # any causal influence of wet/dry growth on COVER (not on biomass).
+    # Use an initial litter-free state; equations and published alpha/Kb
+    # remain unchanged. The original failing run is preserved in CI.
+    veg=Vegetation(g, Bdead_init=0.0)
     veg.update()
     cover=np.asarray(g.at_cell["vegetation__cover_fraction"]).copy()
     biomass=np.asarray(g.at_cell["vegetation__live_biomass"]).copy()
