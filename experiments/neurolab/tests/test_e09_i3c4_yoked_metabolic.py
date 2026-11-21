@@ -1,5 +1,9 @@
 """I3c4 preregistered four-arm yoked chemical experiment and controls."""
 import unittest
+from dataclasses import replace
+
+from experiments.neurolab.c1_dendrite_tick import DendriteState
+from experiments.neurolab.c1_synapse_integrated import C1SynapseState
 
 from experiments.neurolab.c1_context_brain import C1ContextBrain
 from experiments.neurolab.e09_coupled_brain import initial_coupled
@@ -100,9 +104,30 @@ class DynamicYokedChemistryTests(unittest.TestCase):
             self.assertEqual(row["train"]["B"]["random_cursor"],0)
             self.assertEqual(row["train"]["F"]["random_cursor"],0)
             self.assertEqual(row["train"]["F"]["migration_acceptances"],0)
+            self.assertGreaterEqual(row["train"]["Y"]["migration_acceptances"],
+                                    row["train"]["Y"]["migration_active_ticks"])
 
     def test_same_seed_replays_without_hidden_randomness(self):
         self.assertEqual(run_seed(901),run_seed(901))
+
+    def test_two_migrations_same_tick_are_two_accepted_connections(self):
+        brain=DynamicContextBrain(902,migration_enabled=True)
+        state=brain.initial(
+            wiring=(0x1000,0x1000,0x2000,0x2000),
+            random_draws=(1,0,0,1,0,0),
+        )
+        disconnected=C1SynapseState(DendriteState(),0)
+        links=list(state.links)
+        links[0]=replace(links[0],synapse=disconnected)
+        links[1]=replace(links[1],synapse=disconnected)
+        state=replace(state,links=tuple(links),
+                      neuron_states=(255,0),concept_outputs=(255,0))
+        tr=brain.step(state,0,(0,0,0,0),learn=True)
+        self.assertEqual(tr.action,"D0")
+        self.assertEqual(sum(e.migrated for e in tr.migration),2)
+        self.assertEqual([x.source_pointer for x in tr.after.links[:2]],
+                         [0x2000,0x2000])
+        self.assertEqual(tr.after.random_tape.cursor,6)
 
     def test_subset_aggregates_do_not_claim_learning(self):
         doc=run_all((900,))
