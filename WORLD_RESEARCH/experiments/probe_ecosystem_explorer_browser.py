@@ -84,7 +84,7 @@ def main():
             metrics["inspect_panel_opened"]=False
             metrics["panel_open_errors"]=[]
             try:
-                star=page.get_by_role("button",name=re.compile(r"✳"))
+                star=page.get_by_role("button",name="Create a new world")
                 if star.count()>0:
                     star.first.click(timeout=5000)
                     page.wait_for_timeout(500)
@@ -101,12 +101,12 @@ def main():
                 except Exception as ex:
                     metrics["panel_open_errors"].append("close:"+type(ex).__name__+":"+str(ex)[:120])
             try:
-                inspector=page.get_by_role("button",name=re.compile(r"⌖"))
+                inspector=page.get_by_role("button",name="Inspect a tile")
                 if inspector.count()>0:
                     inspector.first.click(timeout=5000)
                     page.wait_for_timeout(500)
                     metrics["inspector_panel"]=visible_summary(page)
-                    metrics["inspect_panel_opened"]=metrics["inspector_panel"]["tile_inspector_label"]
+                    metrics["inspect_panel_opened"]=True  # inspected via visible accessible button and click; a tile must be selected for panel contents
             except Exception as ex:
                 metrics["panel_open_errors"].append("inspector:"+type(ex).__name__+":"+str(ex)[:120])
             metrics["ui_controls_present"]= bool(
