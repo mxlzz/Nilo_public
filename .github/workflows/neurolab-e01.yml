@@ -89,6 +89,9 @@ jobs:
       - name: E09g7 observational causal credit audit preserving tick ledger
         run: python -m experiments.neurolab.e09_causal_ledger --output metrics/e09g7_causal_ledger.json | tee metrics/e09g7_summary.json
 
+      - name: E09g8 paired suppression of mistimed chemistry vs temporal sham
+        run: python -m experiments.neurolab.e09_paired_pulse_protocol | tee metrics/e09g8.json
+
       - name: Preserve per-seed results and benchmark
         if: always()
         uses: actions/upload-artifact@v4
