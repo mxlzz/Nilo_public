@@ -2,7 +2,7 @@
 
 **Estado actualizado:** 2026-11-20 (registro posterior al comienzo de ejecución).  
 **Línea base documentada:** protocolo v0.1.0 en rama `docs/neurolab-protocolo-20261120`, propuesto para revisión.  
-**Ejecución experimental:** E01–E04 probadas; E05 ensayada con funcionamiento temporal y atribución causal deficiente. E06 puede estudiarse independientemente sin usar E05.  
+**Ejecución experimental:** E01–E04 validadas experimentalmente, E05 con atribución causal fallida, E06 validada independientemente.  
 **Código del cerebro:** núcleo E01 y circuito E02 en experiments/neurolab/; sin aprendizaje hasta E03.  
 **Autorización vigente documentada:** el usuario autorizó continuar ejecución secuencial hasta necesitar intervención; ninguna integración con el motor Nilo 0.7 ni merge a main.
 
@@ -12,14 +12,14 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | E05 crédito causal (limitación abierta); E06 independiente solo después de preregistro |
-| Siguiente subtarea exacta | **E05 — analizar crédito espurio y E06.01 — preregistrar conceptos independientes** |
-| Última subtarea validada | E05: tests numéricos de elegibilidad correctos, **G05 no superada** por distractor correlacionado |
+| Etapa actual | E07 — arqueología de plasticidad estructural; G05 sigue abierta |
+| Siguiente subtarea exacta | **E07.01 — contrastar migración histórica realmente activa** |
+| Última subtarea validada | E06 — generalización a contexto irrelevante con detectores fijos; G05 no superada |
 | Experimentos ejecutados | E01–E02 unitarias, E03 experimento preregistrado (20 semillas, controles) |
 | Runs con evidencia | [E01+E02 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44850881701), [E03 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727), [E04 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622), [E05 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851485383) |
 | Última corrida del cerebro | Experimentos sintéticos E03 con aprendizaje local por refuerzo; sin cuerpo/mundo/LLM |
 | Estado de E00 | [Informe histórico inicial](E00_INFORME_HISTORICO_01.md): G00-H abierto por incertidumbres; G00-N habilita variante propia E01 |
-| Estado del código | E01 kernel, E02 circuito, E03 plasticidad, E04 doble peso, E05 elegibilidad; tests 19+8+10+10+10=57 métodos |
+| Estado del código | E01–E06 en módulos experimentales; 67 métodos de prueba (incluidos 10 E06) |
 | Integración con Nilo 0.7 | Ninguna |
 | Bloqueos | E00.02 exactitud del genoma y discrepancia histórica salida=state vs state-threshold; no bloquean experimento N rotulado como propio |
 | Decisiones nuevas pendientes | Fidelidad C1 vs adaptación mínima tras E00 |
@@ -36,8 +36,8 @@
 | E03 | Validada N | — | [G03 CI verde](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727); no replica C1 |
 | E04 | Validada como dinámica sináptica aislada | — | [CI E04](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622); no integrado al selector aún |
 | E05 | **Parcial / límite negativo confirmado** | Revisar crédito causal | G05 no superada; refuerzo espurio en distractor correlacionado |
-| E06 | No iniciada | E06.01 | G06 generalización a holdouts |
-| E07 | No iniciada | E07.01 | G07 utilidad de migración sináptica |
+| E06 | Validada: invariancia contextual, no creación de conceptos | — | CI 44851722169 |
+| E07 | En investigación documental | E07.01 | G07 plasticidad estructural aún sin ejecutar |
 | E08 | No iniciada | E08.01 | G08 dinámica interna caracterizada |
 | E09 | No iniciada | E09.01 | G09 comparación integral y arquitectura mínima |
 
@@ -164,3 +164,18 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - Diferenciar **tests del cálculo esperable: éxito**, de **hipótesis de crédito causal correcto: NO VERIFICADA / FALLA EN ESTE CASO**. **Puerta G05 permanece abierta**, no aprobar hasta abordar limitación por diseño o delimitar el escenario de uso.
 - **Trabajo permitido independiente:** E06 solo evaluará detectores de patrones y transferencia con refuerzo inmediato de E03; no integrará ni dependerá de la elegibilidad E05. Registrar antes el diseño y no afirmar que se saltó la puerta G05.
 - La elección histórica vs nueva regla correctiva queda abierta para una decisión posterior basada en ensayos, sin imponer una respuesta por comodidad.
+
+
+### 2026-11-20 — NL-LOG-0007 (E06)
+- Pre-registro: [E06_PRE_REGISTRO.md](E06_PRE_REGISTRO.md), con 20 semillas, XOR, contexto C inédito y tres controles (memoria exacta, singleton aditivo, sin plasticidad).
+- Implementación: [concepts.py](../../experiments/neurolab/concepts.py), [e06_protocol.py](../../experiments/neurolab/e06_protocol.py), [tests E06](../../experiments/neurolab/tests/test_concepts.py).
+- [CI #44851722169](https://github.com/mxlzz/Nilo_public/actions/runs/44851722169), SHA `eeb0945a338b4167008e0138b2a8440b82a55610`: success, pasa tests y criterios preregistrados (≥18/20 semillas con precisión ≥0.90, ventaja media ≥0.20 sobre memorizador y ≥0.15 sobre singleton).
+- **Resultado acotado:** detectores conjuntivos **predefinidos** permiten retener decisiones ante señal distractora nueva. No aprende la representación de conceptos, no transfiere a pares esenciales no entrenados.
+- E06 fue ejecutada independientemente de E05; no modifica G05 que permanece abierta.
+
+### 2026-11-20 — NL-LOG-0008 (E07.01, primera verificación)
+- Paper primario Grand/Cliff/Malhotra: migración de dendritas cuando `strength=0` **sí** parte del modelo presentado; migraciones permanecen en el mismo lóbulo de origen. Un mecanismo *adicional* de competencia «supervivencia del más apto» fue dejado desconectado, **no** toda la migración.
+- Guía C1 posterior (fuente secundaria): detalla dos estilos diferentes, Decision-style y Concept-style, y restricciones de duplicados, exclusividad y actividad. La exactitud byte a byte de esas rutinas respecto al ejecutable de 1996 permanece abierta.
+- Fuentes directas: [paper de autores](https://eem.foo/ccarchive/Sites/fp.cyberlifersrch.plus.com/articles/agents_%2797_paper.htm) y [C1 Brain Guide](https://zenzoa.com/creatures/c1-brains.html).
+- Descubrimiento de [Gene Loom](https://lisdude.com/Creatures/Community/GeneLoom/) (v1.8.0, junio 2026), editor que admite genomas C1: alternativa existente para inspeccionar el `dad1.gen` auténtico **si se dispone legítimamente del archivo**, sin obligar a desarrollar un editor de genomas.
+- **E07.01 parcialmente verificada** a nivel de principios y estilos; parámetros y genoma exacto todavía abiertos. El archivo original no fue adquirido ni analizado.
