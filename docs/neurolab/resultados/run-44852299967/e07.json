@@ -1,0 +1,1274 @@
+{
+  "avg_fixed_new": 0.5,
+  "avg_lru_new": 1,
+  "avg_migration_new": 1,
+  "migration_old_loss": 0.5,
+  "migration_vs_fixed_new": 0.5,
+  "n_seeds": 20,
+  "new_90_percent_seeds": 20,
+  "passed": true,
+  "per_seed": [
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          2
+        ]
+      },
+      "seed": 0
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          2,
+          3
+        ]
+      },
+      "seed": 1
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          2
+        ]
+      },
+      "seed": 2
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          2,
+          3
+        ]
+      },
+      "seed": 3
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          2
+        ]
+      },
+      "seed": 4
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          2,
+          3
+        ]
+      },
+      "seed": 5
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          2
+        ]
+      },
+      "seed": 6
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          2,
+          3
+        ]
+      },
+      "seed": 7
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          2
+        ]
+      },
+      "seed": 8
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          2,
+          3
+        ]
+      },
+      "seed": 9
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          2
+        ]
+      },
+      "seed": 10
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          2,
+          3
+        ]
+      },
+      "seed": 11
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          2
+        ]
+      },
+      "seed": 12
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          2,
+          3
+        ]
+      },
+      "seed": 13
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          2
+        ]
+      },
+      "seed": 14
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          2,
+          3
+        ]
+      },
+      "seed": 15
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          2
+        ]
+      },
+      "seed": 16
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          2,
+          3
+        ]
+      },
+      "seed": 17
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          2
+        ]
+      },
+      "seed": 18
+    },
+    {
+      "fixed": {
+        "capacity": 2,
+        "new_after": 0.5,
+        "old_after": 1,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "lru": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "strength": [
+          3,
+          3
+        ]
+      },
+      "migratory": {
+        "capacity": 2,
+        "new_after": 1,
+        "old_after": 0.5,
+        "old_before": 1,
+        "slots": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "strength": [
+          2,
+          3
+        ]
+      },
+      "seed": 19
+    }
+  ],
+  "protocol": "E07_PRE_REGISTRO v1",
+  "scope": "two concept slots; migration trades forgetting for new learning; LRU control"
+}
