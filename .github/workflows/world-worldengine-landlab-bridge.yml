@@ -1,29 +1,56 @@
-name: World - generator bridge validation
+name: World - WorldEngine Landlab bridge
 on:
   push:
     branches:
       - research/world-foundations-2026-11
     paths:
       - .github/workflows/world-worldengine-landlab-bridge.yml
+      - WORLD_RESEARCH/experiments/export_worldengine_height.py
+      - WORLD_RESEARCH/experiments/probe_worldengine_to_landlab.py
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   export_height:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
-      - name: Export test data
-        run: echo "valid datum" > input.txt
+      - uses: actions/checkout@v4
+        with:
+          path: research
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Clone WorldEngine upstream
+        run: git clone --depth 1 https://github.com/Mindwerks/worldengine.git upstream
+      - name: Record WorldEngine source commit
+        run: git -C upstream rev-parse HEAD
+      - name: Install original generator
+        run: python -m pip install --no-cache-dir ./upstream
+      - name: Generate initial elevation
+        run: python research/WORLD_RESEARCH/experiments/export_worldengine_height.py worldengine_height.npz
       - uses: actions/upload-artifact@v4
         with:
-          name: height-data
-          path: input.txt
+          name: worldengine-height
+          path: worldengine_height.npz
   simulate_terrain:
     needs: export_height
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
       - uses: actions/download-artifact@v4
         with:
-          name: height-data
-      - name: Verify data
-        run: grep -q "valid datum" input.txt
+          name: worldengine-height
+          path: bridge
+      - name: Install Landlab
+        run: python -m pip install --only-binary=:all: landlab numpy
+      - name: Evolve terrain and check quantization
+        run: python WORLD_RESEARCH/experiments/probe_worldengine_to_landlab.py bridge/worldengine_height.npz bridge/terrain_after_landlab.npz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: landlab-evolved-height
+          path: bridge/terrain_after_landlab.npz
