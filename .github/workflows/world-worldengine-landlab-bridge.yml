@@ -1,0 +1,60 @@
+name: World research - generator to mutable terrain (stage 0)
+
+on:
+  push:
+    branches: [research/world-foundations-2026-11]
+    paths:
+      - 'WORLD_RESEARCH/experiments/export_worldengine_height.py'
+      - 'WORLD_RESEARCH/experiments/probe_worldengine_to_landlab.py'
+      - '.github/workflows/world-worldengine-landlab-bridge.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: research
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Checkout and install original WorldEngine
+        run: |
+          git clone --depth 1 https://github.com/Mindwerks/worldengine.git upstream
+          echo "WORLDENGINE_COMMIT=$(git -C upstream rev-parse HEAD)"
+          python -m pip install --no-cache-dir ./upstream
+      - name: Export deterministic original elevation
+        run: python research/WORLD_RESEARCH/experiments/export_worldengine_height.py worldengine_height.npz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: worldengine-initial-height
+          path: worldengine_height.npz
+          retention-days: 7
+
+  evolve:
+    needs: generate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: worldengine-initial-height
+          path: bridge
+      - name: Install published Landlab numerical package
+        run: python -m pip install --only-binary=:all: landlab numpy
+      - name: Evolve generated world and quantify categorical loss
+        run: python WORLD_RESEARCH/experiments/probe_worldengine_to_landlab.py bridge/worldengine_height.npz bridge/terrain_after_landlab.npz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: worldengine-landlab-evolved-height
+          path: bridge/terrain_after_landlab.npz
+          retention-days: 7
