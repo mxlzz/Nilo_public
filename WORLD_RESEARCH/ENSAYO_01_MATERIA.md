@@ -1,6 +1,6 @@
 # Ensayo 01 — materia, cantidades e invariantes (2026-11-21)
 
-**Estado:** prototipo experimental ejecutado en entorno local; todavía NO hay simulación física autónoma. No forma parte de Nilo ni NeuroLab.
+**Estado tras auditoría:** spike exploratorio con pruebas CI, **no adoptado como núcleo del proyecto**. Se implementó antes de cerrar etapa 0, incumpliendo la puerta de evaluación de alternativas. Congelar expansión hasta ADR-0002. No forma parte de Nilo ni NeuroLab.
 
 ## Decisión de alcance
 
@@ -43,7 +43,7 @@ cd WORLD_RESEARCH/experiments
 python -m unittest -v test_matter_v0.py
 ```
 
-Resultado de ejecución local (2026-11-21): **8 pruebas satisfactorias**, 0 fallos. El resultado no equivale a CI ni a prueba de rendimiento, y no demuestra emergencia.
+**Evidencia verificable (2026-11-21): 8 pruebas satisfactorias en GitHub Actions**, ejecución https://github.com/mxlzz/Nilo_public/actions/runs/44942005067 . No conservar una afirmación independiente de ejecución local si no se dispone de registro verificable. El resultado no demuestra dinámica, rendimiento, aptitud arquitectónica ni emergencia.
 
 Pruebas:
 1. Densidades distintas implican volúmenes ocupados distintos para una misma masa.
@@ -57,7 +57,7 @@ Pruebas:
 
 No se afirma que haya 200 transferencias exitosas: las propuestas inválidas se rechazan; el ensayo registra 200 intentos.
 
-## Prueba siguiente propuesta — movimiento por gravedad
+## Prueba siguiente propuesta histórica — movimiento por gravedad (EN PAUSA)
 
 Hipótesis: un material con movilidad positiva desciende por una regla local sin órdenes externas, respetando materia y capacidad, y el mismo material con movilidad nula queda inmóvil. Evitar una regla especial «material A cae»; comportamiento en función de propiedades.
 
@@ -85,4 +85,5 @@ Pruebas de aceptación a escribir antes del algoritmo:
 
 - La etapa «representación mínima y balances» posee un prototipo verificable con tests locales.
 - **No** está validada como fundamento físico completo ni como diseño irrevocable.
-- Siguiente trabajo: automatizar pruebas en CI, ejecutar un control de robustez adicional y diseñar movimiento con regla general. No añadir materiales o «biomas» específicos antes de comprobar los procesos.
+- **Siguiente trabajo real:** cerrar etapa 0 con comparación de reutilización y benchmarking de candidatos; no ampliar el motor de materia hasta que un ADR valide esa necesidad. CI ya configurado y verificado.
+- **Control de proyecto:** [procedimiento y auditoría](PROCEDIMIENTO_Y_AUDITORIA.md) y [ADR-0001](DECISIONES/ADR-0001_REUTILIZACION.md).
