@@ -1,0 +1,232 @@
+{
+  "by_phase_boundary_position": {
+    "first/initial/0": {
+      "comparable": 0,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 0,
+      "ticks": 20,
+      "unknown_source_pulses": 0
+    },
+    "first/initial/1": {
+      "comparable": 0,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 20,
+      "ticks": 20,
+      "unknown_source_pulses": 20
+    },
+    "first/initial/2": {
+      "comparable": 20,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 20,
+      "ticks": 20,
+      "unknown_source_pulses": 0
+    },
+    "first/initial/3plus": {
+      "comparable": 100,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 100,
+      "ticks": 100,
+      "unknown_source_pulses": 0
+    },
+    "first/repeated/0": {
+      "comparable": 301,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 301,
+      "ticks": 301,
+      "unknown_source_pulses": 0
+    },
+    "first/repeated/1": {
+      "comparable": 301,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 301,
+      "ticks": 301,
+      "unknown_source_pulses": 0
+    },
+    "first/repeated/2": {
+      "comparable": 301,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 301,
+      "ticks": 301,
+      "unknown_source_pulses": 0
+    },
+    "first/repeated/3plus": {
+      "comparable": 1505,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 1505,
+      "ticks": 1505,
+      "unknown_source_pulses": 0
+    },
+    "first/switch/0": {
+      "comparable": 319,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 319,
+      "ticks": 319,
+      "unknown_source_pulses": 0
+    },
+    "first/switch/1": {
+      "comparable": 319,
+      "discordant": 319,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 174,
+      "pulses": 319,
+      "ticks": 319,
+      "unknown_source_pulses": 0
+    },
+    "first/switch/2": {
+      "comparable": 319,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 319,
+      "ticks": 319,
+      "unknown_source_pulses": 0
+    },
+    "first/switch/3plus": {
+      "comparable": 1595,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 1595,
+      "ticks": 1595,
+      "unknown_source_pulses": 0
+    },
+    "reversed/initial/0": {
+      "comparable": 20,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 20,
+      "ticks": 20,
+      "unknown_source_pulses": 0
+    },
+    "reversed/initial/1": {
+      "comparable": 20,
+      "discordant": 9,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 2,
+      "pulses": 20,
+      "ticks": 20,
+      "unknown_source_pulses": 0
+    },
+    "reversed/initial/2": {
+      "comparable": 20,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 20,
+      "ticks": 20,
+      "unknown_source_pulses": 0
+    },
+    "reversed/initial/3plus": {
+      "comparable": 100,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 100,
+      "ticks": 100,
+      "unknown_source_pulses": 0
+    },
+    "reversed/repeated/0": {
+      "comparable": 296,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 296,
+      "ticks": 296,
+      "unknown_source_pulses": 0
+    },
+    "reversed/repeated/1": {
+      "comparable": 296,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 296,
+      "ticks": 296,
+      "unknown_source_pulses": 0
+    },
+    "reversed/repeated/2": {
+      "comparable": 296,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 296,
+      "ticks": 296,
+      "unknown_source_pulses": 0
+    },
+    "reversed/repeated/3plus": {
+      "comparable": 1480,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 1480,
+      "ticks": 1480,
+      "unknown_source_pulses": 0
+    },
+    "reversed/switch/0": {
+      "comparable": 324,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 324,
+      "ticks": 324,
+      "unknown_source_pulses": 0
+    },
+    "reversed/switch/1": {
+      "comparable": 324,
+      "discordant": 324,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 155,
+      "pulses": 324,
+      "ticks": 324,
+      "unknown_source_pulses": 0
+    },
+    "reversed/switch/2": {
+      "comparable": 324,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 324,
+      "ticks": 324,
+      "unknown_source_pulses": 0
+    },
+    "reversed/switch/3plus": {
+      "comparable": 1620,
+      "discordant": 0,
+      "discordant_with_ltw_change": 0,
+      "discordant_with_stw_change": 0,
+      "pulses": 1620,
+      "ticks": 1620,
+      "unknown_source_pulses": 0
+    }
+  },
+  "n_seeds": 20,
+  "protocol": "E09_02G_07_CREDITO_CAUSAL_PRE_REGISTRO-v1",
+  "total": {
+    "comparable": 10200,
+    "discordant": 652,
+    "discordant_with_ltw_change": 0,
+    "discordant_with_stw_change": 331,
+    "pulses": 10220,
+    "ticks": 10240,
+    "unknown_source_pulses": 20
+  },
+  "warning": "Alignment mismatch is not a proof that a STW change was caused by that pulse."
+}
