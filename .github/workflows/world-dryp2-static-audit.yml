@@ -1,0 +1,32 @@
+name: World research - H12a DRYP2 provenance inspection
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_dryp2_archive_static.py
+      - .github/workflows/world-dryp2-static-audit.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  upstream_package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Download official Zenodo file into ephemeral runner only
+        run: |
+          curl --fail --location --retry 2 --connect-timeout 20 --max-time 180 \
+            'https://zenodo.org/records/17451148/files/dryp.zip?download=1' \
+            --output /tmp/dryp2-official.zip
+          ls -lh /tmp/dryp2-official.zip
+      - name: Verify published checksum and inspect metadata without executing upstream code
+        run: |
+          python WORLD_RESEARCH/experiments/probe_dryp2_archive_static.py /tmp/dryp2-official.zip
+      - name: Remove upstream ZIP from temporary runner
+        if: always()
+        run: rm -f /tmp/dryp2-official.zip
