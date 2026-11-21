@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
             {
                 for (auto xx = x-50; xx<=x+50; ++xx)
                 {
-                    auto i=sim->create_part(-1,xx,y+12,PT_DMND);
+                    auto i=sim->create_part(-1,xx,y+3,PT_DMND);
                     if (i<0) throw std::runtime_error("Could not create barrier particle");
                 }
             }
@@ -59,7 +59,9 @@ int main(int argc, char *argv[])
         auto ok=free.finalType==PT_DUST
              && free.finalY>free.startY
              && wall.finalType==PT_DUST
-             && wall.finalY<=(wall.startY+11)
+             && wall.finalY<(wall.startY+3)
+             && free.finalY>(free.startY+3)
+             && wall.finalY<free.finalY
              && free.finalY==replay.finalY
              && free.finalX==replay.finalX
              && free.finalType==replay.finalType
@@ -73,7 +75,7 @@ int main(int argc, char *argv[])
           << "\"dust_free_final_x\":" << free.finalX << ","
           << "\"dust_wall_final_y\":" << wall.finalY << ","
           << "\"dust_wall_final_x\":" << wall.finalX << ","
-          << "\"wall_y\":" << (wall.startY+12) << ","
+          << "\"wall_y\":" << (wall.startY+3) << ","
           << "\"free_dust_count\":" << free.dustCount << ","
           << "\"wall_dust_count\":" << wall.dustCount << ","
           << "\"seeded_replay_equal\":" << (free.finalY==replay.finalY && free.finalX==replay.finalX ? "true":"false") << ","
