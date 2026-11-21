@@ -31,3 +31,6 @@ jobs:
         run: python -m py_compile experiments/neurolab/kernel.py experiments/neurolab/tests/test_kernel.py
       - name: E01 deterministic numerical oracles and state replay
         run: python -m unittest discover -s experiments/neurolab/tests -v
+
+      - name: E01 benchmark 100k ticks
+        run: python -m experiments.neurolab.bench
