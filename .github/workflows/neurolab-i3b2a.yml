@@ -1,0 +1,53 @@
+name: NeuroLab I3b2a — strength loss witness after LTW128
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3b2a_strength_witness.py'
+      - 'experiments/neurolab/tests/test_e09_i3b2a_strength_witness.py'
+      - '.github/workflows/neurolab-i3b2a.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  strength-witness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Recheck prior run and reject extra-gate LTW drops without strength loss
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3b2a_strength_witness
+      - name: Replay all 80 original LTW episodes and tally strength-caused resets
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3b2a_strength_witness --output metrics/e09i3b2a.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          r=json.load(open("metrics/e09i3b2a.json"))
+          assert r["seeds"]==list(range(400,420))
+          assert r["episode_count"]==80
+          assert r["all_absent_gate_drops_accounted"] is True
+          print("LTW drops and strength loss by mode:")
+          for mode,c in r["totals"].items():
+              print(mode,{key:c[key] for key in (
+                  "strength_lost","ltw_reset_units_129_to_136",
+                  "ltw_final_128","ltw_final_136"
+              )})
+              print("by tick",c["by_tick"])
+          PY
+      - name: Retain original-matched per-synapse traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3b2a-strength-clearing-witness
+          path: metrics/
+          if-no-files-found: warn
+          retention-days: 90
