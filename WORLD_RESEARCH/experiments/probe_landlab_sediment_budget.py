@@ -18,13 +18,17 @@ DT = 0.2
 STEPS = 12
 
 
-def scenario(k_sed):
+def scenario(k_sed,receiver_bare=False):
     g = RasterModelGrid(SHAPE, xy_spacing=SPACING)
     x, y = g.node_x, g.node_y
     # Plane gently sloping to bottom-left; small analytic relief perturbation.
     # The source of mobile sediment is ONLY the initial alluvium.
     br = 0.042 * y + 0.021 * x + 0.016*np.sin(x*.024 + y*.025)
     h = np.full(g.number_of_nodes, 0.6)
+    if receiver_bare:
+        # Lower 1/3 is initially bare, but receives upstream sediment.
+        # The engine, not this test, must calculate if/where it deposits.
+        h[y < 50.0] = 0.0
     g.at_node["bedrock__elevation"] = br.copy()
     g.at_node["soil__depth"] = h.copy()
     g.at_node["topographic__elevation"] = br.copy() + h
@@ -78,7 +82,8 @@ def scenario(k_sed):
         "erosion_detected_in_steps":erosional_steps,
         "max_deposition_flux":max_dep,
         "max_erosion_flux":max_er,
-        "net_soil_gain_node_count":int(np.count_nonzero(g.at_node["soil__depth"][g.core_nodes] - .6>1e-9)),
+        "net_soil_gain_node_count":int(np.count_nonzero(g.at_node["soil__depth"][g.core_nodes] - h[g.core_nodes]>1e-9)),
+        "receiver_bare":receiver_bare,
         "node_elevations":g.at_node["topographic__elevation"].copy(),
         "node_soil":g.at_node["soil__depth"].copy()
     }
@@ -87,6 +92,8 @@ def scenario(k_sed):
 def main():
     active=scenario(k_sed=.10)
     control=scenario(k_sed=0.)
+    receiver=scenario(k_sed=.10,receiver_bare=True)
+    receiver_control=scenario(k_sed=0.,receiver_bare=True)
     def scalars(d):
         return {k:v for k,v in d.items() if k not in ("node_elevations","node_soil")}
     print("WORLD_EVAL_JSON "+json.dumps({
@@ -95,6 +102,8 @@ def main():
         "shape":SHAPE,"spacing_m":SPACING,"dt":DT,"steps":STEPS,
         "source_conditions":"K_br=0, F_f=0, phi=0; initial sediment mobile; single outlet",
         "active":scalars(active),"control":scalars(control),
+        "bare_receiver_active":scalars(receiver),
+        "bare_receiver_control":scalars(receiver_control),
         "interpretation":"Balance accounts for sediment storage and modeled exit. Deposit flux >0 is not identical to net local soil gain; values are experimental not field-calibrated."
     },sort_keys=True))
     assert active["erosion_detected_in_steps"]>0,"H7 erosion not demonstrated"
@@ -105,6 +114,13 @@ def main():
     assert np.array_equal(control["node_soil"],np.full(control["node_soil"].shape,.6)),"H7 control soil changed"
     assert control["bedload_export_volume_m3"]==0,"H7 control exported sediment"
     assert active["mass_balance_relative_residual"]<0.01, "H7 measured budget exceeds 1% tolerance; inspect units/boundary fluxes before claim"
+    assert receiver["deposition_detected_in_steps"]>0,"H7b no sediment deposited"
+    assert receiver["net_soil_gain_node_count"]>0,"H7b no receiver node gained sediment: record limitation"
+    assert receiver["mass_balance_relative_residual"]<0.01,"H7b budget not closed"
+    assert receiver_control["deposition_detected_in_steps"]==0,"H7b negative control deposited"
+    assert receiver_control["erosion_detected_in_steps"]==0,"H7b negative control eroded"
+    assert receiver_control["net_soil_gain_node_count"]==0,"H7b negative control gained soil"
+    assert np.array_equal(receiver_control["node_soil"],np.where(RasterModelGrid(SHAPE,xy_spacing=SPACING).node_y<50,0.,.6)),"H7b no-erosivity control changed profile"
     replay=scenario(k_sed=.10)
     assert np.array_equal(active["node_soil"],replay["node_soil"]),"H7 replay soil differs"
 
