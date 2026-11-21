@@ -17,6 +17,9 @@ mod candidate_eval {
 
     fn prepared() -> Universe {
         let mut u=Universe::new(24,24);
+        // For native/headless integration, explicitly normalize the wind field.
+        // Upstream constructor initializes dx/dy=0, while blow_wind interprets 126 as zero drift.
+        for w in u.winds.iter_mut() { *w = Wind { dx: 126, dy: 126, pressure: 0, density: 0 }; }
         u.paint(12,4,0,Species::Sand);
         u
     }
@@ -40,6 +43,18 @@ mod candidate_eval {
         for _ in 0..20 {u.tick();v.tick();}
         assert_eq!(u.cells,v.cells);
         println!("EVIDENCE deterministic_same_input_20_ticks=true");
+    }
+
+    #[test]
+    fn candidate_eval_uninitialized_wind_is_not_neutral() {
+        let mut raw=Universe::new(24,24);
+        raw.paint(12,4,0,Species::Sand);
+        raw.tick();
+        let pos=sand_coordinates(&raw);
+        assert_eq!(pos.len(),1);
+        println!("EVIDENCE raw_default_wind_sand_position_after_tick={:?}",pos);
+        // Negative diagonal movement is the observed behavior for the raw default.
+        assert!(pos[0].0 < 12 && pos[0].1 < 4);
     }
 
     #[test]
