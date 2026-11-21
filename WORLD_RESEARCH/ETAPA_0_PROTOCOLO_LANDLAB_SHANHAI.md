@@ -34,3 +34,13 @@ Se clonan *upstream* en directorios temporales de CI, se registra commit externo
 - Si S1–S4 fallan: documentar qué precondición faltó y reevaluar adopción.
 - Si ambos pasan: **no implica que puedan acoplarse**. Preparar ADR sobre elección de base (Landlab, Shanhai, ambos mediante adaptador o ninguna) con evidencia y costos; o ampliar pruebas si H3 bloquea.
 - Prohibido desarrollar motor propio por resultados positivos de pruebas aisladas.
+
+## Extensión planificada E0.2 — ¿Landlab puede sustituir una integración heterogénea?
+
+Motivo: las primeras pruebas documentales y ejecutadas muestran que Shanhai usa relieve categórico estático y que Landlab también tiene `Space`, `SoilMoisture`, `Vegetation` y `VegCA`. Antes de escoger dos motores en lenguajes diferentes, **probar reutilización de componentes ya existentes en un solo framework**. No es ampliación de producto.
+
+**H4: sedimentación en Landlab.** Con `FlowAccumulator` + `Space` (modelo científicamente publicado), observar `soil__depth`, `bedrock__elevation`, `sediment__influx/outflux`. Comparar escenario de erosión con un control de erosividad nula y medir si los campos son finitos y los cambios/flujo tienen signo plausible. Registrar fuentes y salida al borde; **no declarar conservación de sedimento sin comprobar balance incluidas fronteras, densidad y aporte de roca madre**.
+
+**H5: humedad y vegetación dentro de Landlab.** Probar `SoilMoisture` y `Vegetation` sobre la misma rejilla de celdas con inputs documentados. Control de suelo seco frente a aporte de lluvia; medir variación de saturación, estrés hídrico y biomasa, reproducibilidad y costo. No se exige que un solo paso produzca bosque; la prueba valida acople técnico y diferencia causal mínima.
+
+**Salida:** si H4 y H5 funcionan, es prioritario un experimento integral **solo Landlab** antes de adoptar Shanhai o construir adaptadores interlingüísticos. Si fallan, registrar estado de componente y contrastar documentación sin cambiar automáticamente arquitectura. Las unidades y los campos Node/Cell requieren contrato antes de unir agua, erosión y vegetación. En ningún caso esta prueba implica empezar el desarrollo final.
