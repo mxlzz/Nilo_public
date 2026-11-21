@@ -1,0 +1,95 @@
+{
+  "protocol": "E09_02I_I3_BENCHMARK_PRE_REGISTRO-v1",
+  "status": "scientific_gate_failed; workflow_completed_successfully",
+  "source": {
+    "run_id": 44952276187,
+    "artifact_id": 14725468833,
+    "artifact_name": "neurolab-i3-metabolic-preregistered",
+    "path_in_artifact": "e09i3.json",
+    "expiry": "2027-02-19"
+  },
+  "cohort": {
+    "seeds": "200..219",
+    "count": 20,
+    "train_trials_per_phase": 60,
+    "holdout_trials_per_phase": 36,
+    "delays": [
+      1,
+      2,
+      3
+    ]
+  },
+  "parameters": {
+    "rate_lab_per_all_256": 40,
+    "precursor_dose": 80,
+    "reaction_genes": [
+      57,
+      71,
+      111,
+      112
+    ],
+    "brain_units": 6,
+    "decision_synapses": 8
+  },
+  "mean_holdout": {
+    "first": {
+      "M": 0.5138888888888888,
+      "F": 0.5125,
+      "C": 0.8902777777777777,
+      "Q": 1
+    },
+    "reversed": {
+      "M": 0.5347222222222222,
+      "F": 0.5347222222222222,
+      "C": 0.8458333333333333,
+      "Q": 1
+    }
+  },
+  "mean_by_delay": {
+    "first": {
+      "M": {
+        "1": 0.44166666666666665,
+        "2": 0.5708333333333333,
+        "3": 0.5291666666666667
+      }
+    },
+    "reversed": {
+      "M": {
+        "1": 0.55,
+        "2": 0.5583333333333333,
+        "3": 0.49583333333333335
+      }
+    }
+  },
+  "joint_ge_0_90_both_phases": {
+    "M": 0,
+    "F": 0,
+    "C": 8,
+    "Q": 20
+  },
+  "mean_M_minus_F_both_phases": 0.000694444444444442,
+  "gate_M_exploratory": false,
+  "observations": {
+    "missing_target_actions_training_M": {
+      "first": 71,
+      "reversed": 75
+    },
+    "missing_target_actions_training_F": {
+      "first": 0,
+      "reversed": 0
+    },
+    "max_observed_end_of_trial_chemical": {
+      "reward49": 25,
+      "punishment50": 25,
+      "reinforcement51": 109
+    },
+    "end_trial_chem49_50_51_saturation_counts": 0
+  },
+  "caveats": [
+    "C is nonmatched direct-pulse reference",
+    "Q baseline has privileged causal provenance",
+    "rates40 and dose80 synthetic, not historical C1",
+    "saturation only measured at trial endpoints",
+    "zero learning advantage does not identify cause"
+  ]
+}
