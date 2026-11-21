@@ -13,15 +13,15 @@
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
 | Etapa actual | E09 — evaluación integral pendiente; G00-H y G05 abiertas |
-| Siguiente subtarea exacta | **E09.02 — diseñar integración neuronal unificada; pendiente verificar un genoma C1 real o decidir explícitamente continuar solo como modelo experimental inspirado** |
+| Siguiente subtarea exacta | **E09.02a — especificar núcleo de SVRules de Decision, Attention y Concept basado en los genes verificables; después implementar mínimo experimental y comparar con E02/E03** |
 | Última subtarea validada | E08 — circuitos recurrentes y controles; G09 abierta |
 | Experimentos ejecutados | E01–E02 unitarias, E03 experimento preregistrado (20 semillas, controles) |
 | Runs con evidencia | [E01+E02 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44850881701), [E03 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727), [E04 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851265622), [E05 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851485383) |
 | Última corrida del cerebro | Experimentos sintéticos E03 con aprendizaje local por refuerzo; sin cuerpo/mundo/LLM |
-| Estado de E00 | [Informe histórico inicial](E00_INFORME_HISTORICO_01.md): G00-H abierto por incertidumbres; G00-N habilita variante propia E01 |
+| Estado de E00 | [Genoma y comparación binaria](E00_GENOMA_ORIGINAL_COMPARACION.md), [Mapa neuroquímico](E00_MAPA_NEUROQUIMICO_C1.md); estructura genética verificada, G00-H ejecutable aún abierta |
 | Estado del código | Módulos E01–E08; 85 métodos de test (E07 +10, E08 +8) |
 | Integración con Nilo 0.7 | Ninguna |
-| Bloqueos | Genoma C1 modificado inspeccionado; original intacto aún no contrastado. Discrepancia histórica salida=state vs state-threshold; no bloquea modelo N explícitamente propio |
+| Bloqueos | Genoma original aportado del CD decodificado y cotejado con actualizado (nueve lóbulos idénticos). Sigue abierta la verificación del ejecutable y de la interpretación exacta de sus ticks, SVRules y químicos |
 | Decisiones nuevas pendientes | Fidelidad C1 vs adaptación mínima tras E00 |
 
 **Regla:** nunca actualizar `última subtarea validada` sin prueba enlazada al commit, log/fixture y criterio de aceptación. Si se hace un paso pero no se logra evidencia suficiente, permanece en curso/bloqueado. No marcar «terminada» una etapa porque se produjo un texto sobre ella.
@@ -214,3 +214,14 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - **Registro exhaustivo y fuentes:** [comentario en issue #102](https://github.com/mxlzz/Nilo_public/issues/102#issuecomment-7064159473).
 - E00.02 ha avanzado desde ausencia de archivos concretos a espécimen modificado identificable/hasheado. **G00-H sigue abierta** por falta de referencia original de 1996 y divergencias del ejecutable no resueltas.
 - Siguiente subtarea documental: interpretar los nueve genes de lóbulos reales y sus campos SVRule; comparar contra documentación de C1 y prototipo N. No subir ni redistribuir genomas de terceros.
+
+
+### 2026-11-21 — NL-LOG-0014 (dad1.gen del CD y nueve lóbulos decodificados)
+- El usuario aportó `dad1.gen` extraído de `INSTALL/DATA.Z` en la imagen del CD. Archivo analizado: 10001 bytes, SHA-256 `e2bb4ccf6a4081a128c6c9ffc6eb233452d416717ceef47e78820ca3a152ddd4`. **No se subió el binario**.
+- Comparado contra `Updated C1 V2.zip/dad1.gen` (20001 bytes, SHA-256 `f32c0cac5985d9c71c9a6765b98cd321dd49574f315a1f2813cd4f0bb91babfe`).
+- 320 marcadores `gene` en ambas; mismos offsets. Solo 15 posiciones byte diferentes (7834,7835,7837,7839–7850); el cambio es el último gen (reacción → receptor químico) y posición de `gend`. Los nueve genes neuronales son **idénticos byte por byte**.
+- [Informe técnico E00-H02](E00_GENOMA_ORIGINAL_COMPARACION.md): nueve lóbulos 112+16+40+16+40+32+16+40+640=**952** posiciones, SVRules extraídas, conectividad Decision (128+128 dendritas por neurona), Attention (1+1), Concept (1–3).
+- [Mapa E00-H03](E00_MAPA_NEUROQUIMICO_C1.md): seis receptores y tres emisores cerebrales originales, con químicos identificados por códigos numéricos. No se asignan nombres funcionales no contrastados.
+- Código de inspección reproducible [c1_genome_inspector.py](../../experiments/neurolab/c1_genome_inspector.py) y [siete pruebas sintéticas](../../experiments/neurolab/tests/test_c1_genome_inspector.py): primer CI falló por tratar `gend` como parte de un gen terminal; causa documentada, corregida sin tocar datos. [CI corregida #44919429305](https://github.com/mxlzz/Nilo_public/actions/runs/44919429305): **success**, conjunto de tests de NeuroLab validado.
+- La estructura **genética** C1 queda muy bien especificada para este archivo aportado; G00-H **ejecutable** permanece abierta en cálculos hardcoded, reloj y parámetros/identidad química exacta. No atribuir fidelidad total a NeuroLab E01–E08.
+- Próximo paso: E09.02a definir microcircuito de prueba con las SVRules y conexiones históricas verificables, haciendo explícitas las convenciones temporales propias y controles necesarios.
