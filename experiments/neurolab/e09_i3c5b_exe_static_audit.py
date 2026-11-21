@@ -128,7 +128,7 @@ def inspect(physical: bytes, *, identity_required: bool = True) -> dict:
             "Static opcode and local control-flow evidence for one EXE only. "
             "No dynamic C1 replay, full-game timing or proof of sustained memory."
         ),
-        "G_I3c5b_H_local_control_flow": "VERIFIED_STATIC",
+        "G_I3c5b_H_local_control_flow": ("VERIFIED_STATIC" if identity_required else "SYNTHETIC_FIXTURE_ONLY"),
         "G05_G09_G00H": "OPEN — autonomous learning/full historical model not proven",
     }
 
