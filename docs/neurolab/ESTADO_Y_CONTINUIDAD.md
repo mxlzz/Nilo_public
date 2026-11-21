@@ -1,8 +1,8 @@
 # NeuroLab — estado verificable y protocolo de continuidad
 
-**Estado actualizado:** 2026-11-21 (E09h.4 ADAPTADOR documental y experimental verificable contra fuentes C1/fixture CD; la comprobación binaria de punteros queda abierta; h.1–h.3 preservadas, sin integración Nilo).
+**Estado actualizado:** 2026-11-21 (E09h.4 G-H4-X86 ENLACE ESTÁTICO VALIDADO contra EXE original SHA verificado, 31 firmas y 4 saltos, sin emular Norn ni integrar Nilo).
 **Línea base documentada:** protocolo v0.1.0 en rama `docs/neurolab-protocolo-20261120`, propuesto para revisión.  
-**Ejecución experimental:** E01–E09g.10c y E09h.1–h.3 previas conservadas. **E09h.4 parcial**: preregistro y adaptador con controles sobre seis receptores; [CI h.4](https://github.com/mxlzz/Nilo_public/actions/runs/44947076331) **success integral (339 tests, 2 expectedFailure históricos)**; no equivale a fidelidad del EXE. G00-H/G05/G09 global abiertas.
+**Ejecución experimental:** E01–E09g.10c, E09h.1–h.3 previas conservadas; E09h.4 completada en su alcance estático. [CI H4 final](https://github.com/mxlzz/Nilo_public/actions/runs/44947923270) **success 348 tests, 2 expectedFailure históricos**. G00-H/G05/G09 global abiertas.
 **Código del cerebro:** inspección estática del ejecutable y genoma C1 alimenta módulos E09f (SVRule, sinapsis, strength, migración) y microredes E09g de cinco y seis unidades; sin motor Nilo, cuerpo, mundo ni LLM.  
 **Autorización vigente documentada:** el usuario autorizó continuar ejecución secuencial hasta necesitar intervención; ninguna integración con el motor Nilo 0.7 ni merge a main.
 
@@ -12,17 +12,17 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | **E09h.4 PARCIAL**: receptor de E09h.3 → locus13..16 → CHEM0..3 corroborado en documentación C1 y probado como adaptador condicionado; **punteros x86 no comprobados** en esta intervención |
-| Siguiente subtarea exacta | **E09h.4-G-H4-X86**: inspeccionar bytes originales EXE para enlazar triplete organ/lobe/locus a puntero de CHEM por lóbulo y lectura en SVRule. No pasar a h.5 ni agregar neuronas mientras siga abierta |
-| Última subtarea validada | **E09h.4-G-H4-ADAPTER (compatibilidad lógica)**: [preregistro](E09_H_04_ENLACE_LOCI_PRE_REGISTRO.md), [resultado parcial](E09_H_04_RESULTADO_ENLACE_LOCI.md), [CI integral success: 339 tests, 2 expectedFailure](https://github.com/mxlzz/Nilo_public/actions/runs/44947076331) en commit de tests `2ef85398502ff67b7a40f7106f6277394b989625`. **E09h.3** continúa como última evidencia original EXE+GEN; H4-X86 sigue abierta |
-| Experimentos ejecutados | E01–E09g.10c en red reducida; E09h.1 inspección de calls y fases químicas con EXE/GEN auténticos; E09h.2 cinética de 58 reacciones aisladas; E09h.3 transformación de 43 receptores y seis cerebrales, sin modificar las redes |
-| Runs con evidencia | [g.10b](https://github.com/mxlzz/Nilo_public/actions/runs/44942700990), [g.10c](https://github.com/mxlzz/Nilo_public/actions/runs/44943178871), [h.1](https://github.com/mxlzz/Nilo_public/actions/runs/44944783092), [h.2](https://github.com/mxlzz/Nilo_public/actions/runs/44945152541), [h.3](https://github.com/mxlzz/Nilo_public/actions/runs/44945435224); resultados anteriores conservados en logs y archivos |
+| Etapa actual | **E09h.4 COMPLETADA solo en alcance estático:** receptor genético→puntero brain/lobe+CHEM0..3→lectura SVRule, verificación directa x86 original; no fidelidad conductual integral |
+| Siguiente subtarea exacta | **E09h.5-PRERREGISTRO**: reconstruir mecanismo emisor genético→concentraciones C1 y condicionales de tick usando EXE estático, aclarar procedencia de campos de genes ya archivados; no introducir nuevas neuronas ni alterar g.10 |
+| Última subtarea validada | **E09h.4 G-H4-X86**: [informe](E09_H_04_RESULTADO_ENLACE_LOCI.md), [evidencia binaria derivada](resultados/e09h4_inspeccion_estatica_original.json), [verificador](../../experiments/neurolab/e09_historical_locus_audit.py), [CI success 348 tests y 2 expectedFailure](https://github.com/mxlzz/Nilo_public/actions/runs/44947923270). EXE SHA256 548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7; G00-H abierta |
+| Experimentos ejecutados | E01–E09g.10c; h.1 scheduler/orden parcial; h.2 58 reacciones aisladas; h.3 43 receptores, seis cerebrales; h.4 enlace de seis genes a CHEM/SVRule con 31 firmas x86 y 4 saltos; sin nuevas redes integradas |
+| Runs con evidencia | [g.10b](https://github.com/mxlzz/Nilo_public/actions/runs/44942700990), [g.10c](https://github.com/mxlzz/Nilo_public/actions/runs/44943178871), [h.1](https://github.com/mxlzz/Nilo_public/actions/runs/44944783092), [h.2](https://github.com/mxlzz/Nilo_public/actions/runs/44945152541), [h.3](https://github.com/mxlzz/Nilo_public/actions/runs/44945435224), [h.4 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44947923270) |
 | Última corrida del cerebro | **No se ejecutó un nuevo cerebro integrado:** últimas pruebas de la microred permanecen [g.10b](E09_02G_10B_RESULTADO_DEMORA_DISTRACTORES.md) y [g.10c](E09_02G_10C_RESULTADO_ELEGIBILIDAD.md). H.1–H.3 verifican partes aisladas del motor histórico, no aptitud autónoma |
-| Estado de E00 | [Genoma CD vs parche](E00_GENOMA_ORIGINAL_COMPARACION.md), [receptores/emisores](E00_MAPA_NEUROQUIMICO_C1.md), [reacciones Reward/Punishment](E00_QUIMICA_REFUERZO_C1.md). E09h.2 verifica aritmética de reacción aislada y E09h.3 transferencia de receptor; conexión a loci CHEM y dinámica global pendientes |
-| Estado del código | E01–E09g, h.1–h.3 y **adaptador aislado h.4** más siete tests H4, sin binarios propietarios; último CI h.4 success integral: 339 tests y 2 expectedFailure; sin verificación binaria nueva. No se cambia la microred ni Nilo |
+| Estado de E00 | [Genoma CD](E00_GENOMA_ORIGINAL_COMPARACION.md), [receptores/emisores](E00_MAPA_NEUROQUIMICO_C1.md), [reacciones](E00_QUIMICA_REFUERZO_C1.md); química histórica parcial; **receptor→locus CHEM→SVRule verificado estáticamente en h.4**, scheduler global y emisores completos pendientes |
+| Estado del código | E01–E09g; h.1–h.3; [adaptador](../../experiments/neurolab/e09_historical_locus.py) de nominal y receptor, [auditor x86](../../experiments/neurolab/e09_historical_locus_audit.py), tests. **CI success 348 tests, 2 expectedFailure**; sin EXE/GEN publicados; Nilo intacto |
 | Integración con Nilo 0.7 | Ninguna |
-| Bloqueos | EXE/GEN originales existen como metadatos de Biblioteca, pero **no fueron accesibles en bytes en este chat** (materialización denegada para ambas copias). E09h.4-X86 requiere acceso real al EXE; otras lagunas: scheduler global, emisores, química integrada. No inferir bytes ni claim de equivalencia histórica |
-| Decisiones nuevas pendientes | Interpretación fiel bit a bit de motor C1 aún no comprobada; E09e es alternativa NeuroLab inspirada, no reproducción. Buscar ejecutable auténtico si se decide exigir fidelidad histórica. |
+| Bloqueos | **EXE recibido y verificado en bytes**; h.4 X86 ya no bloqueada. No se adjuntó nuevo GEN en esta intervención, pero subsiste el fixture verificado h.3. Globalmente pendientes reloj/frecuencia, química de emisores, integración y contraste con ejecución real de C1 |
+| Decisiones nuevas pendientes | Fidelidad dinámica integral aún no comprobada; E09e propio no es una réplica histórica. No resolver diferencias con hipótesis no testeadas ni adoptar g.10 neuronal sin puerta G05 |
 
 **Regla:** nunca actualizar `última subtarea validada` sin prueba enlazada al commit, log/fixture y criterio de aceptación. Si se hace un paso pero no se logra evidencia suficiente, permanece en curso/bloqueado. No marcar «terminada» una etapa porque se produjo un texto sobre ella.
 
@@ -39,7 +39,7 @@
 | E06 | Validada: invariancia contextual, no creación de conceptos | — | CI 44851722169 |
 | E07 | Verificada en modelo experimental | — | [CI E07](https://github.com/mxlzz/Nilo_public/actions/runs/44852027094), sin ventaja demostrada frente a LRU |
 | E08 | Verificada dinámica matemática | — | [CI E08](https://github.com/mxlzz/Nilo_public/actions/runs/44852126108) |
-| E09 | E09f/g aisladas y h.1–h.3 históricas; **h.4 adaptador documental/test condicional**, puerta de punteros binarios abierta | E09h.4-X86: comprobar mapeo de punteros y snapshot sin inventar campos | [h.1](E09_H_01_RESULTADO_ORDEN_CEREBRO_QUIMICA.md), [h.2](E09_H_02_RESULTADO_REACCIONES_QUIMICAS.md), [h.3](E09_H_03_RESULTADO_RECEPTORES.md), [h.4 parcial](E09_H_04_RESULTADO_ENLACE_LOCI.md); G00-H/G05/G09 abiertas |
+| E09 | E09f/g aisladas; h.1–h.3 históricas parciales; **h.4 enlace estático verificado en EXE original**, sin fidelidad de simulación integral | E09h.5 emisiones cerebrales y su temporización, con preregistro antes de código | [h.1](E09_H_01_RESULTADO_ORDEN_CEREBRO_QUIMICA.md), [h.2](E09_H_02_RESULTADO_REACCIONES_QUIMICAS.md), [h.3](E09_H_03_RESULTADO_RECEPTORES.md), [h.4](E09_H_04_RESULTADO_ENLACE_LOCI.md); G00-H/G05/G09 abiertas |
 
 No avanzar en una fase solo porque exista su definición en este archivo.
 
@@ -341,3 +341,12 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - Oráculos del fixture CD h.3: Decision6 CHEM=(11,11,5,16), Concept8 CHEM=(0,0,0,0), con pool de ejemplo; controles de aislamiento, canales ausentes, duplicados y no mutación. Son verificaciones de **compatibilidad documental**, no memoria física C1.
 - Acceso a binarios: Biblioteca localizó ambas copias originales por metadatos, pero falló la materialización de bytes. No se realizaron nuevas lecturas x86, y por eso la **puerta G-H4-X86 sigue abierta**. Siguiente tarea exacta: inspeccionar asignación de puntero receptor→lobe CHEM y su snapshot de SVRule cuando exista acceso real al ejecutable original.
 - PR #103 sigue draft; main/Nilo 0.7/G00-H/G05/G09 intactos.
+
+
+### 2026-11-21 — NL-LOG-0032 (E09h.4-X86, enlace verificado)
+- Fuente directa: nueva copia del EXE enviada por usuario, 387.072 bytes, SHA256 548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7; inspeccionado localmente en estático. No ejecutado ni subido.
+- [Evidencia x86 original](resultados/e09h4_inspeccion_estatica_original.json), [verificador](../../experiments/neurolab/e09_historical_locus_audit.py), [informe](E09_H_04_RESULTADO_ENLACE_LOCI.md) y tests: 31 instrucciones, vtable del resolver en 0x43302C→0x4030E0; locus13..16→+0xC3..+0xC6 en lóbulo 0xC8; código de receptor escribe mediante puntero guardado y la SVRule lee esos bytes como opcodes5..8.
+- Hallazgo adicional: loader inicializa destino con nominal en 0x421ACF. Se añadió función de nominales aislada y controles sobre los seis genes previamente archivados de h.3. Los genes originales no fueron reanexados en esta intervención; no afirmar relectura de GEN.
+- [CI final #44947923270](https://github.com/mxlzz/Nilo_public/actions/runs/44947923270): **success, 348 tests, 2 expectedFailure históricos**. CI solo usa fixtures y código, sin exe original; las firmas reales fueron verificadas localmente.
+- **G-H4-X86 validada en alcance estático, E09h.4 cerrada**; G00-H/G05/G09 pendientes; no hay cerebro integrado ni conducta real certificada. PR #103 draft, main y Nilo 0.7 sin cambios.
+- Siguiente **E09h.5**: preregistro de emisores y vinculación a concentraciones, desde EXE original; luego implementación aislada si la evidencia lo permite. No ampliar redes ni extrapolar resultados g.10.
