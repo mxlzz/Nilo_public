@@ -2,7 +2,7 @@
 
 **Estado actualizado:** 2026-11-20 (registro posterior al comienzo de ejecución).  
 **Línea base documentada:** protocolo v0.1.0 en rama `docs/neurolab-protocolo-20261120`, propuesto para revisión.  
-**Ejecución experimental:** E01 y E02 con pruebas automatizadas reales; E03 todavía no iniciada.  
+**Ejecución experimental:** E01–E03 con pruebas automatizadas reales; la fase E04 comienza con su pre-registro.  
 **Código del cerebro:** núcleo E01 y circuito E02 en experiments/neurolab/; sin aprendizaje hasta E03.  
 **Autorización vigente documentada:** el usuario autorizó continuar ejecución secuencial hasta necesitar intervención; ninguna integración con el motor Nilo 0.7 ni merge a main.
 
@@ -12,14 +12,14 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | E03 — plasticidad asociativa experimental; arqueología H aún abierta |
-| Siguiente subtarea exacta | **E03.01 — regla plástica candidata y controles** |
-| Última subtarea validada | E02.07 (circuito sin aprendizaje, CI verificado); no representa fidelidad C1 |
-| Experimentos ejecutados | Pruebas unitarias del núcleo y circuito; 0 estudios de plasticidad |
-| Runs con evidencia | [E01+E02 CI verde](https://github.com/mxlzz/Nilo_public/actions/runs/44850881701) |
-| Última corrida del cerebro | Ejecuciones sintéticas en CI; no hay mente adaptativa |
+| Etapa actual | E04 — memoria de dos velocidades; arqueología H aún abierta |
+| Siguiente subtarea exacta | **E04.01 — especificar y contrastar STW/LTW** |
+| Última subtarea validada | E03.10 — aprendizaje asociativo y reversión en 20 semillas, prueba preregistrada superada |
+| Experimentos ejecutados | E01–E02 unitarias, E03 experimento preregistrado (20 semillas, controles) |
+| Runs con evidencia | [E01+E02 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44850881701), [E03 CI](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727) |
+| Última corrida del cerebro | Experimentos sintéticos E03 con aprendizaje local por refuerzo; sin cuerpo/mundo/LLM |
 | Estado de E00 | [Informe histórico inicial](E00_INFORME_HISTORICO_01.md): G00-H abierto por incertidumbres; G00-N habilita variante propia E01 |
-| Estado del código | E01 kernel.py, E02 circuit.py; tests E01 19 + E02 8 = 27 métodos |
+| Estado del código | E01 kernel, E02 circuito, E03 plasticidad y evaluador; tests 19 + 8 + 10 = 37 métodos |
 | Integración con Nilo 0.7 | Ninguna |
 | Bloqueos | E00.02 exactitud del genoma y discrepancia histórica salida=state vs state-threshold; no bloquean experimento N rotulado como propio |
 | Decisiones nuevas pendientes | Fidelidad C1 vs adaptación mínima tras E00 |
@@ -33,8 +33,8 @@
 | E00 | Parcial para H, suficiente N | E00.02 (genoma original), arqueología paralela | G00-H sigue abierta; G00-N documentada |
 | E01 | Validación automatizada | — | CI E01, 19 tests; benchmark en workflow |
 | E02 | Validación automatizada | — | CI E02, 8 tests; sin aprendizaje |
-| E03 | En curso | E03.01 | G03 aprendizaje vs controles |
-| E04 | No iniciada | E04.01 | G04 memoria STW/LTW contrastada |
+| E03 | Validada N | — | [G03 CI verde](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727); no replica C1 |
+| E04 | Pendiente | E04.01 | G04 memoria STW/LTW contrastada |
 | E05 | No iniciada | E05.01 | G05 efecto del refuerzo retrasado |
 | E06 | No iniciada | E06.01 | G06 generalización a holdouts |
 | E07 | No iniciada | E07.01 | G07 utilidad de migración sináptica |
@@ -137,3 +137,13 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - G02 funcional: **VALIDADA**, siempre sin aprendizaje ni mundo. Etapa siguiente: E03.01.
 
 **Advertencia de trazabilidad:** los SHA de CI corresponden a los commits indicados, no necesariamente al HEAD futuro cuando se agreguen E03+.
+
+
+### 2026-11-20 — NL-LOG-0004 (E03)
+- Pre-registro previo a implementación: [E03_PRE_REGISTRO.md](E03_PRE_REGISTRO.md), fija 20 semillas, 100 episodios iniciales, 160 de inversión, holdouts y controles congelados, tasa de ajuste ±16 por refuerzo.
+- Código: [plasticity.py](../../experiments/neurolab/plasticity.py), [e03_protocol.py](../../experiments/neurolab/e03_protocol.py), [tests E03](../../experiments/neurolab/tests/test_plasticity.py).
+- [Ejecución CI #44851094727](https://github.com/mxlzz/Nilo_public/actions/runs/44851094727), SHA `ea4cf2de7ba9166edfefb568536f24c2a911bdaf`: **success**, pruebas y evaluación preregistrada completadas sin errores.
+- La suite contiene 37 métodos de test (19 E01, 8 E02, 10 E03); los tests de E03 comprueban aislamiento de la contingencia en evaluador, feedback posterior a decisión, ausencia de aprendizaje en baseline congelado, reversión, seeds y checkpoint.
+- El runner `run_all` sale con error si no se cumplen simultáneamente ≥18/20 semillas con exactitud ≥0.90 tras aprendizaje, ≥18/20 tras inversión y mejora media ≥0.30 frente al control congelado. Al completarse el paso con `success`, **los tres umbrales preregistrados se alcanzaron**, pero aquí no se inventan valores exactos que no se recuperaron del stdout.
+- Resultado: G03 **VALIDADA para el modelo experimental N**, no es aprendizaje químico de C1 ni una mente autónoma general.
+- Siguiente: E04.01 (STW/LTW de dos tiempos).
