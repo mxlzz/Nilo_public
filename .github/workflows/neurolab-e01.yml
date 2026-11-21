@@ -1,4 +1,4 @@
-name: NeuroLab E01 isolated neuron kernel
+name: NeuroLab isolated brain E01-E03
 
 on:
   push:
@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   kernel-unit-tests:
-    name: Pure Python neuron tests (E01)
+    name: Pure Python neuronal learning tests (E01-E03)
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -34,3 +34,6 @@ jobs:
 
       - name: E01 benchmark 100k ticks
         run: python -m experiments.neurolab.bench
+
+      - name: E03 preregistered 20-seed learning and reversal
+        run: python -m experiments.neurolab.e03_protocol
