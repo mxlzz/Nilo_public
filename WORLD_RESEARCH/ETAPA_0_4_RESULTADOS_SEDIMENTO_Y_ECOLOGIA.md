@@ -1,6 +1,6 @@
 # E0.4 — Resultados de sedimentos y realimentación ambiental
 
-**Fecha:** 2026-11-21 · **Estado:** H7/H7b verificadas; H8a en ensayo; H8b bloqueado a contrato de tiempo/unidades.
+**Fecha:** 2026-11-21 · **Estado:** H7/H7b, H8a y H8b verificadas; **ciclo dinámico multi-etapa todavía NO validado**.
 
 ## Procedimiento y trazabilidad
 - Plan **previo a ejecutar**: [ETAPA_0_4_PROTOCOLO_SEDIMENTO_FEEDBACK.md](ETAPA_0_4_PROTOCOLO_SEDIMENTO_FEEDBACK.md).
@@ -47,3 +47,44 @@
 
 ## Control de etapa
 Etapa 0 **ABIERTA**. La unidad H7 está validada, H8 permanece incompleta. No se adoptó arquitectura definitiva, no se integró código ajeno ni se modificó NeuroLab. Próximo gate: resultados H8a y diseño de acoplamiento físicamente consistente antes de codificar un circuito continuo.
+
+
+## H8a: lluvia y vegetación afectan difusividad de ladera
+
+Primera ejecución https://github.com/mxlzz/Nilo_public/actions/runs/44951386764 : falló correctamente el control de cobertura. `Vegetation` con `Bdead_init=450` (valor por defecto) llenaba el índice foliar máximo en ambos ensayos; la biomasa crecía con lluvia, pero la cobertura estaba saturada a 0.7768698, anulando diferencia en Kd. No era fallo de `LinearDiffuser` ni razón para quitar la aserción.
+
+Segunda ejecución https://github.com/mxlzz/Nilo_public/actions/runs/44951510991 : se dejó sin biomasa muerta inicial `Bdead_init=0` (condición de prueba explícita), manteniendo ecuaciones intactas. **PASS**.
+- Escenario sin lluvia: saturación media 0.23434, biomasa media 108.61757 y fracción de cobertura 0.3130824.
+- Escenario con lluvia: saturación 0.40359, biomasa 119.91507, cobertura 0.32692795.
+- Kd sobre nodos interiores: 0.0002275878 seco frente a 0.0002266445 húmedo, siguiendo `K_d=K_b exp(-0.3 V)`; `K_b=2.5e-4 m²/estación`, ambos de Tabla A1 publicada por Sharma y Ehlers (2023).
+- Diferencia máxima de relieve por el efecto de la vegetación: **1.5542e-6 m** en la prueba; con alfa=0, **0.0 m**.
+- **Interpretación:** conexión matemática causal entre cobertura y difusión de relieve en un paso. `LinearDiffuser` no distingue ni conserva una capa móvil, por lo que NO se usa H8a para demostrar conservación sedimentaria.
+
+## H8b: conexión sobre material móvil de suelo en terreno cerrado
+
+Código: `experiments/probe_landlab_mobile_soil_feedback.py` y workflow independiente `.github/workflows/world-landlab-mobile-soil.yml`.
+
+Ejecución GitHub Actions **PASS**: https://github.com/mxlzz/Nilo_public/actions/runs/44951675896 .
+- `SoilMoisture` + `Vegetation` en celdas → cobertura interpolada de nodos a links → `DepthDependentDiffuser` (flujo de ladera limitado por capa disponible), **sin crear un solver nuevo**.
+- Parámetros: Kb=0.00025 m²/estación y alfa=0.3 de Sharma y Ehlers 2023. Espesor de decaimiento de transporte `d*=1 m`, igual al predeterminado del componente y declarado como supuesto experimental; capa inicial 0.6 m; producción de suelo 0, fronteras cerradas.
+- Una intervención lluvia 25 mm produce mayor saturación (0.40359 vs 0.23434), biomasa (119.915 vs 108.618) y cobertura (0.32693 vs 0.31308) que 0 mm.
+- Diferencia máxima del relieve entre escenas **7.01247e-7 m**. Con `alpha=0`, **0 m**.
+- Volumen inicial de suelo = **21.600000000000005 m³**, final = **21.599999999999998 m³**; residual **-7.1054e-15 m³**. Roca madre sin cambios y capa móvil no negativa; resultado reproducible.
+- **Interpretación:** suelo redistribuido conservativamente dentro del dominio cerrado según el ensayo, con sensibilidad causal a vegetación. NO verifica ciclo estacional prolongado, routing hídrico condicionado por nuevo relieve ni acoplamiento fluvial a `SPACE`.
+- Se aisló la prueba en un workflow solo Landlab para evitar repetir costos de `npm ci` y la suite completa Shanhai en cada cambio.
+
+## Auditoría del alcance de H8
+
+**Aceptado:**
+1. Hidrología de evento → biomasa/cobertura; comprobado con intervención y ablación.
+2. Cobertura → difusividad de ladera, ecuación y parámetros de fuente académica; comprobado.
+3. Difusión → redistribución de capa móvil sin fuente ni pérdida en cuenca cerrada; verificado balance y control.
+
+**No demostrado:**
+1. Retroalimentación completa relieve→escorrentía→vegetación a través del tiempo.
+2. Conservación simultánea cuando `DepthDependentDiffuser` y `SpaceLargeScaleEroder` alteran el mismo suelo.
+3. Compatibilidad de pasos: `SoilMoisture` recibe un evento meteorológico, mientras que Kb del artículo se expresa por estación (3 meses). Un solo paso de cada uno **no constituye un paso físico conjunto coherente**.
+4. Respuesta ecológica sostenida ni formación de estructuras biológicas nuevas.
+5. Calibración de los parámetros contra un clima/territorio objetivo.
+
+**Gate siguiente:** antes de implementar un bucle autónomo, definir cronograma de subpasos con unidades, propietario único para masa/agua/sedimentos, intercambios entre procesos y escenarios de ablación; buscar un esquema de referencia ya publicado. Mantener la etapa 0 **ABIERTA**.
