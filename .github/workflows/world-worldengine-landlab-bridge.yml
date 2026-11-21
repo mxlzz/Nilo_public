@@ -30,3 +30,18 @@ jobs:
         with:
           name: worldengine-height
           path: worldengine_height.npz
+
+  simulate_terrain:
+    needs: export_height
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: worldengine-height
+          path: bridge
+      - name: Validate cross-environment artifact
+        run: ls -la bridge
