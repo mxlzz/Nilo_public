@@ -1,6 +1,6 @@
 # NeuroLab — estado verificable y protocolo de continuidad
 
-**Estado actualizado:** 2026-11-21 (genoma original inspeccionado y experimento mínimo de STW/LTW).  
+**Estado actualizado:** 2026-11-21 (genoma original y ejecutable PE32 C1 analizados estáticamente; reglas numéricas y fases de sinapsis).  
 **Línea base documentada:** protocolo v0.1.0 en rama `docs/neurolab-protocolo-20261120`, propuesto para revisión.  
 **Ejecución experimental:** E01–E08 registrados; E05 sigue con fallo de crédito. E09.02a/b/c/d/e ejecutadas: c y d fallaron reversión, e la superó en 20/20 semillas bajo reglas experimentales STW/LTW. G09 global aún abierta.  
 **Código del cerebro:** módulos E01–E08 y microcircuito E09 de cinco unidades basado en reglas genéticas C1; prueba de aprendizaje E09e combina conceptos, decisión, recompensa y STW/LTW propios. Sin motor original ni mundo.  
@@ -12,16 +12,16 @@
 |---|---|
 | Investigación | NeuroLab: mente neuronal aislada inspirada en Creatures 1 (1996) |
 | Documento rector | [README.md](README.md) |
-| Etapa actual | E09.02e validada experimentalmente; fidelidad C1 G00-H y G09 integral aún abiertas |
-| Siguiente subtarea exacta | **E09.02f — reconstruir actualización original de dendritas (susceptibilidad, STW, LTW, atrofia) con parámetros de dad1.gen y guías C1; comparar con prototipo E09e. Para fidelidad exacta se necesita analizar el ejecutable del juego** |
-| Última subtarea validada | **E09.02e:** cinco neuronas, STW/LTW, aprendizaje/reversión 20/20 semillas; [evidencia](E09_02E_RESULTADOS_STW_LTW.md), G09 global abierta |
+| Etapa actual | **E09.02f.4** completada como fragmentos estáticos del motor C1; migración f.5 abierta; G00-H/G05/G09 aún abiertas |
+| Siguiente subtarea exacta | **E09.02f.5 — decodificar las dos rutinas de migración del ejecutable (VA 0x404A80 y 0x404B90), preregistrar oráculos y solo después integrar microcerebro C1 histórico** |
+| Última subtarea validada | **E09.02f.4:** aritmética, decay/relax, transición parcial de dendrita y fortaleza históricas, [CI 188 tests](https://github.com/mxlzz/Nilo_public/actions/runs/44930221183) y [auditoría](E09_02F_INFORME_EJECUTABLE.md). No es una mente C1 integrada |
 | Experimentos ejecutados | E01–E08; E09c/d/e comparados con 20 semillas cada uno y métricas por semilla preservadas |
 | Runs con evidencia | [E01–E08 conjunto](https://github.com/mxlzz/Nilo_public/actions/runs/44852299967); [genoma/lector CI](https://github.com/mxlzz/Nilo_public/actions/runs/44919429305); [E09c/d/e y JSON](https://github.com/mxlzz/Nilo_public/actions/runs/44920963462) |
 | Última corrida del cerebro | [E09c/d/e comparadas](E09_02E_RESULTADOS_STW_LTW.md), 20 semillas; resultados negativos preservados, E09e aprobada en este protocolo |
 | Estado de E00 | [Genoma CD vs parche](E00_GENOMA_ORIGINAL_COMPARACION.md), [receptores/emisores](E00_MAPA_NEUROQUIMICO_C1.md), [reacciones Reward/Punishment](E00_QUIMICA_REFUERZO_C1.md); faltan ecuaciones exactas del ejecutable |
-| Estado del código | Módulos E01–E08, inspectores GEN/reacciones C1, subset SVRule, microcircuito y variantes E09c/d/e. CI y JSON por semilla |
+| Estado del código | Módulos E01–E09e preservados, más f.1 c1_runtime_math, f.2 c1_decay_math, f.3 c1_dendrite_tick y f.4 c1_strength; 188 tests CI con 2 expected failures históricos |
 | Integración con Nilo 0.7 | Ninguna |
-| Bloqueos | Genoma original aportado del CD decodificado y cotejado con actualizado (nueve lóbulos idénticos). Sigue abierta la verificación del ejecutable y de la interpretación exacta de sus ticks, SVRules y químicos |
+| Bloqueos | **Ejecutable C1 ya recibido y examinado estáticamente**, PE32 1997 SHA registrado. Falta reconstruir migración C1, SVRules y dinámica químicas completas y validar contra comportamiento dinámico original; no impedir la investigación matemática independiente |
 | Decisiones nuevas pendientes | Interpretación fiel bit a bit de motor C1 aún no comprobada; E09e es alternativa NeuroLab inspirada, no reproducción. Buscar ejecutable auténtico si se decide exigir fidelidad histórica. |
 
 **Regla:** nunca actualizar `última subtarea validada` sin prueba enlazada al commit, log/fixture y criterio de aceptación. Si se hace un paso pero no se logra evidencia suficiente, permanece en curso/bloqueado. No marcar «terminada» una etapa porque se produjo un texto sobre ella.
@@ -237,4 +237,19 @@ No tomar como decisiones confirmadas las propuestas del asistente. Una decisión
 - **Corrida canónica:** [CI #44920963462](https://github.com/mxlzz/Nilo_public/actions/runs/44920963462), commit probado `7066bef28ff6788cb89b4dc85063238e40f0331b`, `success`; resultados íntegrales con pesos por semilla en [E09c](resultados/run-44920963462/e09c_negative.json), [E09d](resultados/run-44920963462/e09d_negative.json), [E09e](resultados/run-44920963462/e09e_stw_ltw.json). El job preserva ambos controles negativos sin alterar su criterio preregistrado; los tests se etiquetan `expectedFailure` para los resultados negativos conocidos, nunca aprobados como G09.
 - **Genética neuroquímica C1:** [químicos49/50/51/52/53/70](E00_MAPA_NEUROQUIMICO_C1.md) verificados con nombres históricos; [reacciones de drive y refuerzo](E00_QUIMICA_REFUERZO_C1.md) decodificadas de `dad1.gen`; [lector de genes de reacción](../../experiments/neurolab/c1_reaction_inspector.py) y tests agregados. No se subieron archivos del juego.
 - **Estado crítico:** una red pequeña con dos velocidades funciona en la tarea sintética, pero las tasas de relajación experimental NO son las de la máquina de 1996 verificadas; no se demostró una mente C1 fiel ni unificación E01–E08 en un solo sistema; crédito causal diferido E05 sigue fallando. **Siguiente E09.02f:** reproducción/supervisión de un tick sináptico C1 y comparación contra nuestro E09e; para equivalencia exacta se necesita inspección del ejecutable original del CD.
+
+
+
+### 2026-11-21 — NL-LOG-0016 (Creatures.exe y fases f.1–f.4)
+
+- **Binario original de usuario examinado estáticamente**: `Creatures.exe` PE32 GUI x86, 387072 bytes, SHA256 `548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7`. Metadata PE: timestamp 1997-08-06 y versión 1.0.0.1. **No ejecutado ni subido a GitHub**.
+- [Informe forense con offsets/direcciones](E09_02F_INFORME_EJECUTABLE.md).
+- **f.1** `c1_runtime_math.py`: aritmética SVRule por operación con saturación byte, multiplicación y señal de dendrita `>>8`, salida `max(0,state-threshold)`, competencia WTA verificada; [CI](https://github.com/mxlzz/Nilo_public/actions/runs/44929478194).
+- **f.2** `c1_decay_math.py`: helpers decay/relax de VA0x419E40 y0x419E90, dos tablas de32 valores por rate y máscaras temporales, LTW cambia una unidad cuando tick%rate=0; [CI](https://github.com/mxlzz/Nilo_public/actions/runs/44929737314).
+- **f.3** `c1_dendrite_tick.py`: sus +4/wrap o decay, refuerzo STW según sus×chemical >>8, relajación STW hacia LTW, LTW ±1 con tasa genética. Test inicial con error de fixture de rate0, corregido sin modificar implementación; [CI verde](https://github.com/mxlzz/Nilo_public/actions/runs/44930063295).
+- **f.4** `c1_strength.py`: ganancia de fortaleza según regla y tasa, pérdida decremental y reinicio de campos cuando se agota. [CI verde](https://github.com/mxlzz/Nilo_public/actions/runs/44930221183): 188 tests, 2 fallos experimentales **expectedFailure** correspondientes a E09c/d, sin otros errores.
+- **Hallazgo f.5 preliminar**: en el mismo ejecutable las rutinas VA0x404A80 y0x404B90 gestionan migración/reconexión con criterios distintos (Decision-style y Concept-style), aún sin especificación/reimplementación. No suponer algoritmo de E07 equivalente.
+- **Divergencia cuantitativa** respecto de E09e preservada: con STATE80+TYPE0 240−TYPE1 200, la convención vieja devuelve120 y la del binario55. El primer refuerzo con sus0/chemical255 en tick1 da STW3/LTW0 bajo dinámica parcial C1, contra STW26/LTW1 del modelo experimental E09e. **Sus resultados previos siguen válidos solo para el modelo anterior**.
+- **Próximo E09.02f.5**: caracterizar migración desde los dos bloques x86 y diseñar test falsable. Después E09.02g microcerebro C1 con reglas numéricas/temporales corregidas; no saltar a 952 unidades sin justificación.
+- G00-H (fidelidad completa), G05 (crédito causal) y G09 (mente mínima integrada) permanecen ABIERTAS.
 
