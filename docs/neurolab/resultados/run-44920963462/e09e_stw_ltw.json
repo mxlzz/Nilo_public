@@ -1,0 +1,855 @@
+{
+  "advantage_over_frozen": 0.5075000000000001,
+  "better_than_greedy_6_seeds": true,
+  "mean_frozen": 0.4925,
+  "mean_reversal": 1,
+  "mean_train": 1,
+  "model": "NeuroLab E04 twin rates + C1 genomic neuron rules; NOT C1 engine kinetics",
+  "passed": true,
+  "per_seed": [
+    {
+      "frozen": 0.5125,
+      "reversal": 1,
+      "seed": 0,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.475,
+      "reversal": 1,
+      "seed": 1,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 60,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.575,
+      "reversal": 1,
+      "seed": 2,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 60,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.55,
+      "reversal": 1,
+      "seed": 3,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.4,
+      "reversal": 1,
+      "seed": 4,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.5375,
+      "reversal": 1,
+      "seed": 5,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.5125,
+      "reversal": 1,
+      "seed": 6,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.4375,
+      "reversal": 1,
+      "seed": 7,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 60,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.5,
+      "reversal": 1,
+      "seed": 8,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.5,
+      "reversal": 1,
+      "seed": 9,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 60,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.525,
+      "reversal": 1,
+      "seed": 10,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.4875,
+      "reversal": 1,
+      "seed": 11,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.4125,
+      "reversal": 1,
+      "seed": 12,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.4375,
+      "reversal": 1,
+      "seed": 13,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.45,
+      "reversal": 1,
+      "seed": 14,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.5625,
+      "reversal": 1,
+      "seed": 15,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.475,
+      "reversal": 1,
+      "seed": 16,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 60,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.45,
+      "reversal": 1,
+      "seed": 17,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.4375,
+      "reversal": 1,
+      "seed": 18,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 59,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 5,
+          "stw": 5
+        }
+      ],
+      "train": 1
+    },
+    {
+      "frozen": 0.6125,
+      "reversal": 1,
+      "seed": 19,
+      "synapses_after_reversal": [
+        {
+          "ltw": 87,
+          "stw": 87
+        },
+        {
+          "ltw": 37,
+          "stw": 37
+        },
+        {
+          "ltw": 112,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "synapses_before_reversal": [
+        {
+          "ltw": 60,
+          "stw": 249
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        },
+        {
+          "ltw": 0,
+          "stw": 0
+        }
+      ],
+      "train": 1
+    }
+  ],
+  "protocol": "E09_02E_STW_LTW_PRE_REGISTRO-v1",
+  "seeds": 20,
+  "success_reversal_seeds": 20,
+  "success_train_seeds": 20
+}
