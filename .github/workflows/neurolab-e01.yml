@@ -83,6 +83,9 @@ jobs:
       - name: E09g5a exploratory temporal context diagnostics
         run: python -m experiments.neurolab.e09_context_diagnostics | tee metrics/e09g5a_diagnostic.json
 
+      - name: E09g6 preregistered holdout-only perceptual latency and decision state ablations
+        run: python -m experiments.neurolab.e09_context_reset_diagnostics | tee metrics/e09g6.json
+
       - name: Preserve per-seed results and benchmark
         if: always()
         uses: actions/upload-artifact@v4
