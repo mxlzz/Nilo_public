@@ -1,0 +1,117 @@
+{
+  "protocol": "E09_02I_I3B1_RAMAS_QUIMICAS_PRE_REGISTRO-v1",
+  "source": {
+    "run_id": 44956959320,
+    "run_conclusion": "success",
+    "artifact_id": 14728625057,
+    "artifact_name": "neurolab-i3b1-paired-forks",
+    "retention_expiry": "2027-02-19",
+    "first_failing_test_run": 44956919841,
+    "fix_commit": "d40136ab8946eb39d9c56bda74e051dd1230c9ca"
+  },
+  "cohort": {
+    "seeds": "300..319",
+    "n_seeds": 20,
+    "episodes": 240,
+    "mappings": [
+      "A",
+      "B"
+    ],
+    "delays": [
+      1,
+      2,
+      3
+    ],
+    "correct_reference": 120,
+    "incorrect_reference": 120,
+    "none_reference": 0
+  },
+  "parameters": {
+    "brain_units": 6,
+    "synapses": 8,
+    "rate40_synthetic": true,
+    "precursor_dose": 80,
+    "neural_gains": [
+      1,
+      4
+    ]
+  },
+  "estimates": {
+    "gain_early_candidate_effect": {
+      "mean": 7.575,
+      "ci95": [
+        6.375,
+        8.7
+      ]
+    },
+    "gain_late_candidate_effect": {
+      "mean": 6.491666666666666,
+      "ci95": [
+        5.324791666666667,
+        7.558749999999998
+      ]
+    },
+    "timing_gain1_target_fraction": {
+      "mean": 0.1773611111111111,
+      "ci95": [
+        0.1372048611111111,
+        0.21459374999999994
+      ]
+    },
+    "timing_gain4_target_fraction": {
+      "mean": 0.11202337190178753,
+      "ci95": [
+        0.10361257289165934,
+        0.12062476382574297
+      ]
+    },
+    "timing_gain1_candidate_effect": {
+      "mean": 0.2583333333333333,
+      "ci95": [
+        0.11666666666666667,
+        0.4083333333333333
+      ]
+    },
+    "timing_gain4_candidate_effect": {
+      "mean": 1.3416666666666668,
+      "ci95": [
+        1.1916666666666667,
+        1.491874999999999
+      ]
+    }
+  },
+  "short_readout_accuracy": {
+    "N": 0.5,
+    "E1": 0.5,
+    "L1": 0.5,
+    "E4": 0.6541666666666667,
+    "L4": 0.65
+  },
+  "short_readout_posthoc_cluster_ci": {
+    "E4_minus_N": {
+      "mean": 0.15416666666666667,
+      "ci95": [
+        0.020833333333333332,
+        0.275
+      ]
+    },
+    "L4_minus_N": {
+      "mean": 0.15,
+      "ci95": [
+        0.0375,
+        0.25
+      ]
+    }
+  },
+  "ltw_all_branches_delta": 0,
+  "ltw_zero_reason": "Trunk tick36; last measured tick <=52; C1 Decision LTW update requires tick % 128 == 0; no eligible tick was observed.",
+  "gate_wiring": true,
+  "gate_observation": true,
+  "gate_behavioral_learning": "NOT TESTED; previous I3 negative",
+  "caveats": [
+    "Artificial gain4, synthetic rates40, one-pulse interventions",
+    "same precursor dose, not equal downstream exposure",
+    "source target vs distractor is operational not causal synapse proof",
+    "clustered sampling: 240 episodes but 20 independent seeds"
+  ]
+}
