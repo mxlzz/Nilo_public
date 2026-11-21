@@ -6,6 +6,7 @@ on:
     paths:
       - WORLD_RESEARCH/experiments/probe_landlab_overland_water.py
       - WORLD_RESEARCH/experiments/probe_landlab_kinwave_greenampt_budget.py
+      - WORLD_RESEARCH/experiments/probe_water_solver_normalized.py
       - .github/workflows/world-landlab-water-budget.yml
   workflow_dispatch:
 permissions:
@@ -27,3 +28,5 @@ jobs:
         run: python WORLD_RESEARCH/experiments/probe_landlab_overland_water.py
       - name: Run H11b Kinwave and Green Ampt two-compartment budget
         run: python WORLD_RESEARCH/experiments/probe_landlab_kinwave_greenampt_budget.py
+      - name: H11c normalized hydraulic solver comparison, both with GreenAmpt
+        run: python WORLD_RESEARCH/experiments/probe_water_solver_normalized.py
