@@ -1,0 +1,33 @@
+{
+  "protocol": "E09_H_05_EMISORES_PRE_REGISTRO-v1",
+  "source": {
+    "exe_sha256": "548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7",
+    "exe_bytes": 387072
+  },
+  "x86": {
+    "instruction_signatures_verified": 32,
+    "brain_virtual_resolver": "0x4030e0",
+    "emitter_link": "0x421b85",
+    "source_pointer_saved": "0x421c17",
+    "emitter_loop": "0x421e83",
+    "pool_write": "0x421f4b",
+    "source_reset": "0x421f4f..0x421f58",
+    "chemical0_conditional_branches": [
+      "0x421eef->0x421f4f",
+      "0x421f24->0x421f4f"
+    ],
+    "emitter_loci": [
+      {
+        "gene_locus": 1,
+        "resolver_case_va": "0x4031d8",
+        "lobe_relative_byte_offset": "0xc1"
+      },
+      {
+        "gene_locus": 2,
+        "resolver_case_va": "0x4031e0",
+        "lobe_relative_byte_offset": "0xc2"
+      }
+    ]
+  },
+  "limits": "Static EXE disassembly; genome fields borrowed from verified prior E00 document; no live C1 simulation."
+}
