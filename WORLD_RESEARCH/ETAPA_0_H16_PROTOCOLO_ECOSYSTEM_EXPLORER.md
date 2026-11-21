@@ -26,3 +26,8 @@ H16A: la interfaz pública permite alcanzar un estado de mundo inicial no vacío
 
 ## Gates
 La etapa 0 requiere cotejar H16 con H15 material y con Landlab ecohidrológico/WorldEngine; no comparar producto terminado de tercera parte vs biblioteca científica mediante un único score. El punto de decisión es **reutilizar** lo que tiene licencia y API apropiadas, y usar Ecosystem Explorer como benchmark de experiencia, sin copiarlo.
+
+## Incidencia H16.1 — prueba de reloj pasó; indicador de controles incorrecto
+CI https://github.com/mxlzz/Nilo_public/actions/runs/44957981477 (**FAIL** total). La aplicación devolvió HTTP200, renderizó seis canvas, permitía pulsar **28×**, y el reloj observado pasó de **Year 1 Spring** a **Year 3 Autumn** durante 15s. El test `ui_controls_present` falló porque buscaba etiquetas de **paneles plegados** solo en `document.body.innerText`, que ignora contenido no visible, sin abrir los paneles mediante sus controles. Esto **no significa** que las funciones no existan. El criterio original de disponibilidad sigue válido; falta visitar las secciones visibles para comprobarlo.
+
+**Corrección antes de nueva ejecución:** tras medir el reloj, usar botones públicos visibles `✳` (menú nuevo mundo/guardar) y `⌖` (inspector) por Playwright, sin leer estado interno; comprobar que sus etiquetas se vuelven visibles al abrir los paneles. Si son inaccesibles, reportar nombres de botones visibles, no asumir ausencia. Mantener requisito H16A de controls accesibles + reloj que avanza; no relajar criterios ni probar física.
