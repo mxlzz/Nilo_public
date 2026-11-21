@@ -1,0 +1,61 @@
+name: NeuroLab I3c4a — read-only Type1 turnover witness
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c4a_turnover_observer.py'
+      - 'experiments/neurolab/tests/test_e09_i3c4a_turnover_observer.py'
+      - '.github/workflows/neurolab-i3c4a.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  turnover-witness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Assert exact I3c4 per-seed output SHA and observer integrity
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c4a_turnover_observer
+      - name: Retrospectively observe all 20 original seeds without changing them
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c4a_turnover_observer --output metrics/e09i3c4a.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          d=json.load(open("metrics/e09i3c4a.json",encoding="utf-8"))
+          assert d["seeds"]==list(range(900,920))
+          assert d["original_hashes_verified"]
+          assert d["all_original_outputs_identical"]
+          assert d["G05_G09"]=="OPEN"
+          for mode in ("B","Y","P","F"):
+              for phase in ("first","reversed"):
+                  x=d["totals"][mode][phase]
+                  assert x["accepted_contact_events"]>=x["migration_active_ticks"]
+                  print(mode,phase,{k:x[k] for k in (
+                      "accepted_contact_events","migration_active_ticks",
+                      "positive_LTW_before_migration",
+                      "LTW_units_present_before_migration",
+                      "positive_STW_before_migration",
+                      "LTW_total_at_training_end",
+                      "strength_zero_at_training_end"
+                  )})
+          assert sum(d["totals"]["Y"][p]["accepted_contact_events"] for p in ("first","reversed"))==3377
+          assert sum(d["totals"]["P"][p]["accepted_contact_events"] for p in ("first","reversed"))==3379
+          PY
+      - name: Preserve all original-matched per-event data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c4a-turnover-exact-replay
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn
