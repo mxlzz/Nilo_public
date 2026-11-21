@@ -5,6 +5,7 @@ on:
       - research/world-foundations-2026-11
     paths:
       - WORLD_RESEARCH/experiments/probe_landlab_mobile_soil_feedback.py
+      - WORLD_RESEARCH/experiments/probe_landlab_90day_loop.py
       - .github/workflows/world-landlab-mobile-soil.yml
   workflow_dispatch:
 permissions:
@@ -24,3 +25,5 @@ jobs:
           python -m pip show landlab
       - name: Run native closed-domain sediment and eco-sensitivity tests
         run: python WORLD_RESEARCH/experiments/probe_landlab_mobile_soil_feedback.py
+      - name: Run H9 multievent ecological continuity on mobile soil
+        run: python WORLD_RESEARCH/experiments/probe_landlab_90day_loop.py
