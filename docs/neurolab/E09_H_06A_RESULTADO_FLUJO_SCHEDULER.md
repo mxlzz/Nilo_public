@@ -27,3 +27,6 @@
 - **G00-H / G05 / G09:** permanecen abiertas.
 
 **Próxima E09h.6b:** investigar origen de cadencia y controles de los tres invocadores de 0x4247B0; no inventar tiempo de tick. Sin aumentar neuronas ni tocar Nilo 0.7, main o merge del PR #103.
+
+
+**Verificación CI posterior:** [run #44949141624](https://github.com/mxlzz/Nilo_public/actions/runs/44949141624), **success: 374 tests y 2 expectedFailure históricos**. La CI prueba el auditor con memoria sintética, no vuelve a leer el EXE original.
