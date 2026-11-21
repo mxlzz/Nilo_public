@@ -38,8 +38,10 @@ SIGNATURES = {
     0x421ED7: "2be8",
     0x421EDF: "f6c102",           # flag2 full gain
     0x421EEB: "8a06",             # gain
+    0x421EEF: "745e",             # chemical0 -> flags1 reset without write
     0x421F17: "0fafc1",           # x*gain
     0x421F1F: "c1e808",           # >>8
+    0x421F24: "7429",             # chemical0 -> flags1 reset without write
     0x421F26: "8a544f08",         # chemical pool byte stride2
     0x421F4B: "88444f08",         # chemical pool saturated write
     0x421F4F: "f6460101",         # flag1 source reset
