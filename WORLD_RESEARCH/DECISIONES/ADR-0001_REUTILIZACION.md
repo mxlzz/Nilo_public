@@ -50,6 +50,17 @@
 - **Limitación:** generador de condiciones iniciales, no dinámica física continua de un mismo mundo.
 - **Uso candidato:** primera generación geográfica. Debe probarse si la salida puede transformarse sin contradicciones al estado de otro motor.
 
+### Ecosystem Explorer — referencia funcional prioritaria (incorporado tras auditoría de omisión)
+- Sitio: https://www.ethanjhulbert.org/ecosystem-explorer/
+- Descripción del autor: https://www.ethanjhulbert.org/ecosystem-explorer/about/
+- Condiciones de software/copyright: https://www.ethanjhulbert.org/privacy-legal/
+- **Encaje conceptual muy alto:** generación inicial coherente, evolución temporal, relieve, agua, erosión, sedimentos, clima, temporadas, vegetación y fuego interactúan sobre celdas; inspección del estado, guardado local y exportable; visualización 2D/3D.
+- **Evidencia disponible:** documentación y aplicación pública; capacidades descritas por el autor. No se ejecutó una batería controlada de pruebas ni se auditó su motor interno.
+- **Límite frente al objetivo de investigación:** comportamientos ambientales simplificados y hábitats construidos con reglas conocidas. No hay evidencia de generación abierta de nuevas leyes o mecanismos de organización.
+- **Reutilización de código NO acreditada:** en búsqueda pública por nombre/autor no se identificó repositorio oficial ni licencia de código para este proyecto. Las condiciones generales del sitio impiden presumir derecho de copia/adaptación. No equivale a afirmar que el código es inaccesible o que el autor no otorgaría permiso.
+- **Papel propuesto:** **baseline funcional de mayor prioridad** para el acoplamiento ambiental y para criterios observables de intervención, persistencia, inspectabilidad y evolución; no copiar ni integrar su código sin autorización expresa.
+- **Acción de etapa 0:** ensayar escenarios comparables en la aplicación si se dispone de acceso interactivo, registrando estado inicial, semilla, intervención, evolución y exportación. Una prueba de caja negra puede validar comportamiento, pero no arquitectura ni licencia.
+
 ### GeoTaichi
 - Repositorio: https://github.com/Yihao-Shi/GeoTaichi
 - Modelos geofísicos MPM/DEM y acoplados; Python y Taichi, GPL-3.0; push consultado: 2026-11-18.
@@ -78,7 +89,7 @@ El spike propio `matter_v0.py` tiene utilidad como **especificación ejecutable 
 
 1. **Congelar expansión del spike propio.** Mantener código/tests como referencia experimental histórica.
 2. **Adoptar principio reutilización-primero.**
-3. **Probar primero Sandspiel/Sandspiel Studio** como laboratorio local de interacción de materia; y **WorldEngine** como generador de condiciones iniciales. Contrastar The Powder Toy como alternativa más completa de materiales. Eso no supone unir de inmediato sus códigos.
+3. **Usar Ecosystem Explorer como baseline funcional prioritario** del ambiente integrado (sin copiar código sin permiso). **Probar Sandspiel/Sandspiel Studio** como laboratorio local de interacción de materia y **WorldEngine** para generar condiciones iniciales. Contrastar The Powder Toy como motor de materiales más completo. No implica unir inmediatamente sus códigos.
 4. Si uno satisface el contrato, preferir adaptarlo o conectarlo frente a implementar lo mismo. Solo construir el mínimo no cubierto por alternativas verificadas.
 5. **La elección de engine sigue abierta hasta una prueba de encaje técnico ejecutada y documentada.** Decisión distinta a dejar el trabajo sin rumbo: el siguiente paso es un benchmark acotado, no otro módulo de física propia.
 
@@ -117,3 +128,7 @@ Registrar:
 - **No se decidió aún integrar ningún proyecto ni copiar código externo.**
 - **No hay pruebas comparativas ejecutadas** hasta este ADR.
 - La etapa 0 permanece abierta. Al cerrarla, registrar un ADR-0002 con adopción, descarte o combinación fundamentada y actualizar el plan versionado.
+
+## Nota de corrección de cobertura — 2026-11-21
+
+Ecosystem Explorer había sido identificado previamente en la conversación como un proyecto muy pertinente, pero se omitió de la comparación inicial: incumplimiento del principio de cobertura de antecedentes. Se añade expresamente como candidato de referencia ambiental y se obliga a comprobar si el candidato relevante ya está en el registro antes de decidir qué examinar a continuación. Esta actualización **no constituye prueba de reutilización del código ni adopción de un motor**.
