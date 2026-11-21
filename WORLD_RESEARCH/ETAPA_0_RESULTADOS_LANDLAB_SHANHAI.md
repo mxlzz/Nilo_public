@@ -64,7 +64,7 @@ Protocolo extendido antes de implementar: `ETAPA_0_PROTOCOLO_LANDLAB_SHANHAI.md`
 
 ## H6 — Estado inicial generado con WorldEngine -> evolución con Landlab
 
-**PRUEBA EJECUTADA CON ÉXITO:** https://github.com/mxlzz/Nilo_public/actions/runs/44948883527 .
+**PRUEBA EJECUTADA CON ÉXITO:** ejecución inicial https://github.com/mxlzz/Nilo_public/actions/runs/44948883527 ; ejecución final verificada con archivos de entrada y salida: https://github.com/mxlzz/Nilo_public/actions/runs/44949003747 .
 
 - Pipeline aislado: WorldEngine en Python 3.11 genera `NPZ`, otro job en Python 3.13 descarga el mismo archivo y ejecuta Landlab 2.11.0. No se copian/unen motores.
 - WorldEngine semilla 7321 y NumPy RNG global 1234 producen la elevación 16×32 de hash SHA-256 `495e97c24477e68e0cffcab8f485481630d4425d31a01442c7ad1cbb0daa170d`, el mismo que en el ensayo previo de WorldEngine.
@@ -72,7 +72,7 @@ Protocolo extendido antes de implementar: `ETAPA_0_PROTOCOLO_LANDLAB_SHANHAI.md`
 - Landlab produjo erosión efectiva en 406 nodos con pérdida máxima de altura de ~1.291 unidades adoptadas en el ensayo; el control sin eroder dejó elevaciones idénticas.
 - **Pérdida significativa de información con Shanhai 0..4:** cuantizar a cinco categorías dio ~1.725 m de error cuadrático medio de reconstrucción bajo esta escala experimental. En ~99.5 % de los nodos erosionados, la categoría de altura no cambió aunque sí cambió la elevación continua. Por tanto **no es viable usar la representación original categórica como intercambio fiel de la evolución topográfica** sin un rediseño amplio del estado.
 - **Estado válido:** factibilidad de transferencia de datos, no acoplamiento físico multiescala ni simulación ecohidrológica completa. Pendiente contratos de nodos vs celdas, resolución, fronteras, unidades, tiempo y conservación.
-- Evidencia en código: `experiments/export_worldengine_height.py`, `experiments/probe_worldengine_to_landlab.py` y workflow `world-worldengine-landlab-bridge.yml`. El flujo está configurado para publicar archivos de entrada y salida como artifacts.
+- Evidencia en código: `experiments/export_worldengine_height.py`, `experiments/probe_worldengine_to_landlab.py` y workflow `world-worldengine-landlab-bridge.yml`. El flujo publica ambos archivos como artifacts (verificados en la ejecución final): `worldengine-height` y `landlab-evolved-height`.
 - Infraestructura: primera versión de workflow falló sin jobs por YAML mal formado: `run: python -m pip install --only-binary=:all: landlab numpy` contenía `: ` sin comillas en valor simple. Se corrigió convirtiendo el comando a escalar de bloque. Esta falla era **del arnés CI**, no del generador ni del modelo geológico.
 
 ## Estado de selección
