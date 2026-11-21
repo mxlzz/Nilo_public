@@ -108,7 +108,11 @@ def inspect(data: bytes) -> dict:
     for i, offset in enumerate(offs):
         if data[offset+4:offset+6] != b"\x00\x00":
             continue
-        end = offs[i+1] if i+1 < len(offs) else len(data)
+        if i + 1 < len(offs):
+            end = offs[i + 1]
+        else:
+            terminator = data.find(b"gend", offset + 10)
+            end = terminator if terminator >= 0 else len(data)
         candidates.append(decode_lobe_record(data[offset:end], len(candidates), offset))
     return {
         "sha256": hashlib.sha256(data).hexdigest(),
