@@ -88,7 +88,7 @@ def trial(solver, rain, k, bump=False):
         "final_infiltration_record_m3":v_soil,
         "new_infiltration_m3":v_soil-start_soil,
         "balance_residual_m3":residual,
-        "relative_error_vs_rain":abs(residual)/max(introduced,1e-12),
+        "relative_error_vs_rain":abs(residual)/introduced if introduced>0 else None,
         "min_surface_m":float(np.min(h)),
         "min_infiltration_m":float(np.min(infiltration)),
         "runtime_seconds":round(elapsed,6),
@@ -105,10 +105,16 @@ def main():
         dry=trial(solver,0.,ACTIVE_K)
         bump=trial(solver,RAIN_MM_HR,ACTIVE_K,True)
         replay=trial(solver,RAIN_MM_HR,ACTIVE_K)
-        for scene in (active,noinf,dry,bump):
+        for label,scene in (("active",active),("noinf",noinf),("dry",dry),("bump",bump)):
+            print("H11C_DIAGNOSTIC "+json.dumps({"solver":solver,"scene":label,
+                 "residual":scene["balance_residual_m3"],"rain_m3":scene["rain_volume_m3"],
+                 "relative_error":scene["relative_error_vs_rain"]}))
             assert scene["min_surface_m"]>=-1e-9, (solver,"negative surface")
             assert scene["min_infiltration_m"]>=0, (solver,"negative infiltrated column")
-            assert scene["relative_error_vs_rain"]<.001, (solver,"water conservation",scene["relative_error_vs_rain"])
+            if scene["rain_volume_m3"]>0:
+                assert scene["relative_error_vs_rain"]<.001, (solver,label,"relative water conservation",scene["relative_error_vs_rain"])
+            else:
+                assert abs(scene["balance_residual_m3"])<1e-9, (solver,label,"absolute zero-rain water conservation",scene["balance_residual_m3"])
         assert active["new_infiltration_m3"]>1e-6, (solver,"no infiltration")
         assert abs(noinf["new_infiltration_m3"])<1e-9, (solver,"K=0 infiltrated")
         assert abs(dry["new_infiltration_m3"])<1e-9, (solver,"dry leaked")
