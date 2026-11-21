@@ -1,0 +1,4703 @@
+{
+  "at_least_one_gate_passed": true,
+  "conditions": {
+    "post_wta_gated/first_index": {
+      "advantage_vs_frozen": 0,
+      "mean_frozen": 1,
+      "mean_reversal": 1,
+      "mean_train": 1,
+      "passed": false,
+      "per_seed": [
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 0,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 1,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 2,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 3,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 4,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 5,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 6,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 7,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 8,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 9,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 10,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 11,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 12,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 13,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 14,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 15,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 16,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 17,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 18,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 19,
+          "train": 1
+        }
+      ],
+      "seeds_reversal_at_least_90pct": 20,
+      "seeds_train_at_least_90pct": 20,
+      "tie_mode": "first_index",
+      "timing": "post_wta_gated"
+    },
+    "post_wta_gated/random_tie": {
+      "advantage_vs_frozen": 0.5075000000000001,
+      "mean_frozen": 0.4925,
+      "mean_reversal": 1,
+      "mean_train": 1,
+      "passed": true,
+      "per_seed": [
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.5125,
+          "reversal": 1,
+          "seed": 0,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.475,
+          "reversal": 1,
+          "seed": 1,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.575,
+          "reversal": 1,
+          "seed": 2,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.55,
+          "reversal": 1,
+          "seed": 3,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.4,
+          "reversal": 1,
+          "seed": 4,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.5375,
+          "reversal": 1,
+          "seed": 5,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.5125,
+          "reversal": 1,
+          "seed": 6,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.4375,
+          "reversal": 1,
+          "seed": 7,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.5,
+          "reversal": 1,
+          "seed": 8,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.5,
+          "reversal": 1,
+          "seed": 9,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.525,
+          "reversal": 1,
+          "seed": 10,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.4875,
+          "reversal": 1,
+          "seed": 11,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.4125,
+          "reversal": 1,
+          "seed": 12,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.4375,
+          "reversal": 1,
+          "seed": 13,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.45,
+          "reversal": 1,
+          "seed": 14,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.5625,
+          "reversal": 1,
+          "seed": 15,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.475,
+          "reversal": 1,
+          "seed": 16,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.45,
+          "reversal": 1,
+          "seed": 17,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 155,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 235,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 236
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.4375,
+          "reversal": 1,
+          "seed": 18,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 157,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 2,
+              "stw": 159,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 220,
+              "susceptibility": 220
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 220
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 0
+            }
+          ],
+          "frozen": 0.6125,
+          "reversal": 1,
+          "seed": 19,
+          "train": 1
+        }
+      ],
+      "seeds_reversal_at_least_90pct": 20,
+      "seeds_train_at_least_90pct": 20,
+      "tie_mode": "random_tie",
+      "timing": "post_wta_gated"
+    },
+    "pre_wta_all/first_index": {
+      "advantage_vs_frozen": 0,
+      "mean_frozen": 1,
+      "mean_reversal": 0,
+      "mean_train": 1,
+      "passed": false,
+      "per_seed": [
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 0,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 1,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 2,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 3,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 4,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 5,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 6,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 7,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 8,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 9,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 10,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 11,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 12,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 13,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 14,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 15,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 16,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 17,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 18,
+          "train": 1
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 235,
+              "stw": 157,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 2,
+              "stw": 0,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 1,
+          "reversal": 0,
+          "seed": 19,
+          "train": 1
+        }
+      ],
+      "seeds_reversal_at_least_90pct": 0,
+      "seeds_train_at_least_90pct": 20,
+      "tie_mode": "first_index",
+      "timing": "pre_wta_all"
+    },
+    "pre_wta_all/random_tie": {
+      "advantage_vs_frozen": 0,
+      "mean_frozen": 0.4925,
+      "mean_reversal": 0.510625,
+      "mean_train": 0.4925,
+      "passed": false,
+      "per_seed": [
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 240,
+              "stw": 200,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 240,
+              "stw": 200,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 239,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 195,
+              "stw": 205,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 195,
+              "stw": 205,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.5125,
+          "reversal": 0.5125,
+          "seed": 0,
+          "train": 0.5125
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 204,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 199,
+              "stw": 223,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 199,
+              "stw": 223,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.475,
+          "reversal": 0.5125,
+          "seed": 1,
+          "train": 0.475
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 200,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 200,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 213,
+              "stw": 231,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 213,
+              "stw": 231,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.575,
+          "reversal": 0.425,
+          "seed": 2,
+          "train": 0.575
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 236,
+              "stw": 200,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 236,
+              "stw": 200,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 227,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 182,
+              "stw": 235,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 227,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 182,
+              "stw": 235,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.55,
+          "reversal": 0.5,
+          "seed": 3,
+          "train": 0.55
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 237,
+              "stw": 207,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 237,
+              "stw": 207,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 211,
+              "stw": 235,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 211,
+              "stw": 235,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.4,
+          "reversal": 0.475,
+          "seed": 4,
+          "train": 0.4
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 204,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 211,
+              "stw": 231,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 211,
+              "stw": 231,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.5375,
+          "reversal": 0.4625,
+          "seed": 5,
+          "train": 0.5375
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 237,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 237,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 227,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 211,
+              "stw": 235,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 227,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 211,
+              "stw": 235,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.5125,
+          "reversal": 0.5125,
+          "seed": 6,
+          "train": 0.5125
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 204,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 195,
+              "stw": 235,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 195,
+              "stw": 235,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.4375,
+          "reversal": 0.6,
+          "seed": 7,
+          "train": 0.4375
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 240,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 240,
+              "stw": 204,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 223,
+              "stw": 235,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 223,
+              "stw": 235,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.5,
+          "reversal": 0.5125,
+          "seed": 8,
+          "train": 0.5
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 207,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 233,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 207,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 233,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 195,
+              "stw": 235,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 195,
+              "stw": 235,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.5,
+          "reversal": 0.5875,
+          "seed": 9,
+          "train": 0.5
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 211,
+              "stw": 231,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 211,
+              "stw": 231,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.525,
+          "reversal": 0.525,
+          "seed": 10,
+          "train": 0.525
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 204,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 175,
+              "stw": 235,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 175,
+              "stw": 235,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.4875,
+          "reversal": 0.5375,
+          "seed": 11,
+          "train": 0.4875
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 204,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 203,
+              "stw": 223,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 203,
+              "stw": 223,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.4125,
+          "reversal": 0.575,
+          "seed": 12,
+          "train": 0.4125
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 236,
+              "stw": 200,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 236,
+              "stw": 200,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 223,
+              "stw": 227,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 223,
+              "stw": 227,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.4375,
+          "reversal": 0.6,
+          "seed": 13,
+          "train": 0.4375
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 207,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 207,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 203,
+              "stw": 223,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 203,
+              "stw": 223,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.45,
+          "reversal": 0.4125,
+          "seed": 14,
+          "train": 0.45
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 197,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 197,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 223,
+              "stw": 227,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 223,
+              "stw": 227,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.5625,
+          "reversal": 0.5,
+          "seed": 15,
+          "train": 0.5625
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 195,
+              "stw": 235,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 231,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 195,
+              "stw": 235,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.475,
+          "reversal": 0.4875,
+          "seed": 16,
+          "train": 0.475
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 237,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 237,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 211,
+              "stw": 227,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 211,
+              "stw": 227,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.45,
+          "reversal": 0.5375,
+          "seed": 17,
+          "train": 0.45
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 240,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 240,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 244,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 199,
+              "stw": 223,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 199,
+              "stw": 223,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.4375,
+          "reversal": 0.5,
+          "seed": 18,
+          "train": 0.4375
+        },
+        {
+          "after_reversal": [
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 243,
+              "stw": 204,
+              "susceptibility": 208
+            },
+            {
+              "ltw": 1,
+              "strength": 247,
+              "stw": 208,
+              "susceptibility": 208
+            }
+          ],
+          "after_train": [
+            {
+              "ltw": 0,
+              "strength": 199,
+              "stw": 231,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 199,
+              "stw": 231,
+              "susceptibility": 240
+            },
+            {
+              "ltw": 0,
+              "strength": 235,
+              "stw": 239,
+              "susceptibility": 240
+            }
+          ],
+          "frozen": 0.6125,
+          "reversal": 0.4375,
+          "seed": 19,
+          "train": 0.6125
+        }
+      ],
+      "seeds_reversal_at_least_90pct": 0,
+      "seeds_train_at_least_90pct": 0,
+      "tie_mode": "random_tie",
+      "timing": "pre_wta_all"
+    }
+  },
+  "holdout_episodes_per_phase": 80,
+  "protocol": "E09_02G_02_MICRORED_PRE_REGISTRO-v1",
+  "reversal_episodes": 120,
+  "scope": "5 synthetic units, historical arithmetic and dendritic genetics; simplified timing/feedback",
+  "seeds_per_condition": 20,
+  "training_episodes": 60
+}
