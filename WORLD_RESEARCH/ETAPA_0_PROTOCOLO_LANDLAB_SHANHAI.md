@@ -44,3 +44,16 @@ Motivo: las primeras pruebas documentales y ejecutadas muestran que Shanhai usa 
 **H5: humedad y vegetación dentro de Landlab.** Probar `SoilMoisture` y `Vegetation` sobre la misma rejilla de celdas con inputs documentados. Control de suelo seco frente a aporte de lluvia; medir variación de saturación, estrés hídrico y biomasa, reproducibilidad y costo. No se exige que un solo paso produzca bosque; la prueba valida acople técnico y diferencia causal mínima.
 
 **Salida:** si H4 y H5 funcionan, es prioritario un experimento integral **solo Landlab** antes de adoptar Shanhai o construir adaptadores interlingüísticos. Si fallan, registrar estado de componente y contrastar documentación sin cambiar automáticamente arquitectura. Las unidades y los campos Node/Cell requieren contrato antes de unir agua, erosión y vegetación. En ningún caso esta prueba implica empezar el desarrollo final.
+
+## Extensión planificada E0.3 — Del generador al modelo dinámico, sin simular millones de años
+
+**H6:** exportar un territorio real de WorldEngine y hacerle evolucionar mediante Landlab sin compartir código de ambos motores ni tomar su escala como calibrada. Los dos componentes requieren versiones de Python potencialmente distintas; ejecutar en jobs independientes y transportar solo datos (`NPZ`) con metadatos explícitos.
+
+Pruebas definidas previamente:
+- (G1) WorldEngine produce elevación finita (16×32) con semilla y estado NumPy documentados.
+- (G2) se serializa el campo original de elevación y Landlab lo lee conservando forma, valores y hash de contenido.
+- (G3) transformar explícitamente el rango adimensional de WorldEngine a una escala **experimental** (no calibrada) de metros y registrar la función; resultado Landlab contiene erosión medible y una ejecución control sin erosión no cambia datos.
+- (G4) analizar por qué importar un relieve continuo directamente a Shanhai (Uint8, clases 0–4) pierde variación: cuantizar y medir error de reconstrucción y celdas cuyo cambio de cota desaparece.
+- (G5) archivar fuente/versión, datos exportados y logs de CI.
+
+**Criterio:** si G1–G4 pasan, queda demostrada una ruta **técnica** de `WorldEngine -> archivo -> Landlab`. No declarar acoplamiento físico calibrado ni integración con Shanhai, clima o vegetación. Si se detectan unidades o fronteras incompatibles, anotarlo antes de adoptar.
