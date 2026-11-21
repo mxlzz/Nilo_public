@@ -1,0 +1,52 @@
+{
+  "protocol": "E09_02I_I3A_DIAGNOSTICO_POSTHOC_PRE_REGISTRO-v1",
+  "source": {
+    "run_id": 44952704490,
+    "workflow_conclusion": "success",
+    "artifact_id": 14726098025,
+    "artifact_name": "neurolab-i3a-mechanistic-witness",
+    "file": "e09i3a.json",
+    "retention_expiry": "2027-02-19"
+  },
+  "cohorts": {
+    "seeds": "200..219",
+    "count": 20,
+    "rates_lab": 40,
+    "precursor_dose": 80,
+    "model_parameters_unchanged": true,
+    "replay_equivalence": "all eight synapses every tick and full state at phase ends"
+  },
+  "first": {
+    "synapse_samples": 67200,
+    "chem_positive": 13308,
+    "susceptibility_positive": 47769,
+    "chem_and_suscept_positive": 9850,
+    "effect_positive": 2820,
+    "stw_increased": 1724,
+    "stw_changed": 3787,
+    "ltw_changed": 94,
+    "max_chem": 24,
+    "max_susceptibility": 59,
+    "max_effect": 4,
+    "missing_target_choices": 71,
+    "delivered_precursors": 1129
+  },
+  "reversed": {
+    "synapse_samples": 67200,
+    "chem_positive": 13500,
+    "susceptibility_positive": 48202,
+    "chem_and_suscept_positive": 9836,
+    "effect_positive": 2981,
+    "stw_increased": 1828,
+    "stw_changed": 4034,
+    "ltw_changed": 96,
+    "max_chem": 24,
+    "max_susceptibility": 57,
+    "max_effect": 4,
+    "missing_target_choices": 75,
+    "delivered_precursors": 1125
+  },
+  "interpretation": "Chemistry reaches synapses and occasionally reinforces STW/LTW; low effect strength is an exploratory hypothesis, not a causal diagnosis or a successful learner.",
+  "scientific_i3_gate": false,
+  "observational_i3a_gate": true
+}
