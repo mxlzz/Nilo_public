@@ -68,6 +68,9 @@ jobs:
       - name: E09.02e preregistered two-speed synapse reversal
         run: python -m experiments.neurolab.e09_twinbrain_protocol | tee metrics/e09e_twinsynapse.json
 
+      - name: E09.02g.2 genetic C1 microbrain preregistered 2x2
+        run: python -m experiments.neurolab.e09_microbrain_genetic_protocol | tee metrics/e09g2.json
+
       - name: Preserve per-seed results and benchmark
         if: always()
         uses: actions/upload-artifact@v4
