@@ -1,0 +1,96 @@
+{
+  "protocol": "E09_02I_I3B2_VENTANA_LTW_PRE_REGISTRO-v1",
+  "source": {
+    "run_id": 44957320048,
+    "conclusion": "success",
+    "artifact_id": 14728127074,
+    "artifact_name": "neurolab-i3b2-ltw128-gate",
+    "expires": "2027-02-19"
+  },
+  "cohort": {
+    "seeds": "400..419",
+    "n_seeds": 20,
+    "n_episodes": 80,
+    "correct": 40,
+    "incorrect": 40,
+    "missing": 0
+  },
+  "gates": {
+    "wiring": true,
+    "observation": true,
+    "learning": "NOT EVALUATED",
+    "G05": "OPEN",
+    "G09": "OPEN"
+  },
+  "logic": {
+    "before_event_tick": 124,
+    "early_injection_tick": 125,
+    "late_injection_tick": 128,
+    "ltw_gate_tick": 128,
+    "last_plastic_tick": 136,
+    "last_readout_tick": 140
+  },
+  "means": {
+    "E1": {
+      "ltw128": 1.475,
+      "ltw136": 0.05,
+      "stw128": 1.775,
+      "readout_correct": 0.5
+    },
+    "L1": {
+      "ltw128": 0,
+      "ltw136": 0,
+      "stw128": 0,
+      "readout_correct": 0.5
+    },
+    "E4": {
+      "ltw128": 3.925,
+      "ltw136": 3.375,
+      "stw128": 21.95,
+      "readout_correct": 0.6125
+    },
+    "L4": {
+      "ltw128": 0,
+      "ltw136": 0,
+      "stw128": 0,
+      "readout_correct": 0.6125
+    },
+    "N": {
+      "ltw128": 0,
+      "ltw136": 0,
+      "stw128": 0,
+      "readout_correct": 0.5
+    }
+  },
+  "paired_bootstrap_seed_clusters_20": {
+    "early4_minus_late4_ltw128": {
+      "mean": 3.925,
+      "ci95": [
+        3.8,
+        4
+      ]
+    },
+    "early1_minus_late1_ltw128": {
+      "mean": 1.475,
+      "ci95": [
+        1.275,
+        1.6756249999999966
+      ]
+    },
+    "early4_minus_late4_ltw136": {
+      "mean": 3.375,
+      "ci95": [
+        3.175,
+        3.575
+      ]
+    },
+    "early4_minus_neutral_readout": {
+      "mean": 0.1125,
+      "ci95": [
+        0.0125,
+        0.2
+      ]
+    }
+  },
+  "caution": "LTW declines after tick128 despite ltw_rate128 update gate; strength-loss clearing is candidate mechanism, not proven by I3b2 alone"
+}
