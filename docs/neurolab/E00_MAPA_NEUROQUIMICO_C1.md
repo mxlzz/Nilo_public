@@ -66,3 +66,25 @@ Mantener explícitamente separadas:
 - [CDR: Chemical Emitter](https://double.nz/creatures/genetics/emitter.htm).
 - [CDR: Brain Lobes](https://double.nz/creatures/brainlobes/intro.htm).
 - [C1 Brain Guide](https://zenzoa.com/creatures/c1-brains.html).
+
+
+## 4. Actualización de nomenclatura histórica — 21/11/2026
+
+Una fuente independiente de los bytes del genoma permite ahora identificar los **nombres oficiales usados en C1**: [C1 Chemical List (transcripción atribuida al Genetics Preview Kit)](https://creatures.fandom.com/wiki/C1_Chemical_List). Es una lista histórica reproducida por la comunidad, no el ejecutable original. La descripción del **paper Grand/Cliff/Malhotra** respalda Reward/Punishment/Reinforcement y su participación en aprendizaje.
+
+| ID de genoma C1 | Nombre documentado | Uso bioquímico descrito |
+|---:|---|---|
+| **49** | Reward | Señal de refuerzo positivo hacia conexiones excitatorias de Decision |
+| **50** | Punishment | Señal de refuerzo negativo hacia conexiones inhibitorias de Decision |
+| **51** | Reinforcement | Producto químico breve derivado tanto de Reward como Punishment; actúa sobre fortaleza de Concept independientemente del signo del refuerzo |
+| **52** | ConASH | *Concept Atrophy Suppressing Hormone*: control de la pérdida/migración de dendritas en Concept |
+| **53** | DecASH1 | *Decision Atrophy Suppressing Hormone* clase 0, conexiones excitatorias |
+| **70** | DecASH2 | *Decision Atrophy Suppressing Hormone* clase 1, conexiones inhibitorias |
+
+**Nota sobre registros previos:** La sección 2 declaró que no se había verificado el nombre/función de los químicos 49/50/51/52/53/70. Ese límite estaba vigente durante la inspección binaria, pero esta tabla lo **resuelve parcialmente con una fuente independiente**. No transforma en dato verificado el orden de ejecución ni las funciones exactas que usa el motor para convertir concentraciones químicas a STW/LTW, susceptibilidad y fortaleza.
+
+### Implicación mecánica para la investigación
+
+El circuito del genoma separa **(i) aprendizaje de qué decisiones resultan útiles bajo una situación** (CHEM0/1 en lóbulo Decision), **(ii) mantenimiento/atenuación de dendritas de esas decisiones** (CHEM2/3, DecASH1/2) y **(iii) mantenimiento de detectores conjuntivos de conceptos** (Reinforcement/ConASH). Por eso el actual ajuste experimental de un peso +16 o -16 en cinco neuronas no es una reproducción de estas capas.
+
+**Próximo trabajo histórico prioritario:** usar [C1 Brain Guide](https://zenzoa.com/creatures/c1-brains.html) para reconstruir cada fase de actualización de sinapsis con niveles de evidencia y valores de genoma, elaborando tests de oráculo manual antes de incorporar la química al microcircuito; distinguir de una eventual corrección por exploración.
