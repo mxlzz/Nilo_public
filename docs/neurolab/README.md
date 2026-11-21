@@ -1,11 +1,11 @@
 # NeuroLab — protocolo maestro de mente neuronal aislada
 
-**Versión del protocolo:** 0.1.0 (documentación, propuesta de investigación)  
+**Versión del protocolo:** 0.1.0 (protocolo inicial) — ejecución experimental y estado real en [ESTADO_Y_CONTINUIDAD.md](ESTADO_Y_CONTINUIDAD.md)  
 **Fecha del registro:** 2026-11-20  
 **Registro de referencia:** [issue #102](https://github.com/mxlzz/Nilo_public/issues/102)  
 **Origen:** exploración acordada del cerebro de los Norns de *Creatures 1* (1996).
 
-> **Estado real:** plan escrito, no experimento ejecutado. No hay algoritmo neuronal implementado ni resultados obtenidos. La aprobación de documentar no significa aprobar una implementación, integración con Nilo 0.7 o autonomía de un agente externo.
+> **Estado real:** ya hay implementaciones y ensayos aislados E01–E05; la fase histórica G00-H sigue abierta. Consultar el marcador canónico de [estado](ESTADO_Y_CONTINUIDAD.md) y las ejecuciones de CI antes de atribuir resultados. Ningún cambio está fusionado con la rama estable ni integrado al juego.
 
 ## 1. Pregunta y alcance
 
