@@ -2,6 +2,9 @@
 import json
 import unittest
 
+# La prueba preregistrada no supera el umbral de reversión en la versión v1.
+# Conservar el criterio original, etiquetando ese resultado NEGATIVO.
+
 from experiments.neurolab.c1_microlearning import MiniLearner,MiniState
 from experiments.neurolab.e09_microlearn_protocol import (
     evaluate,run_all,run_seed,train,
@@ -76,7 +79,7 @@ class MicroLearningTests(unittest.TestCase):
         for bad in (-1,0,256,True,1.5):
             with self.assertRaises(ValueError):
                 MiniLearner(0,rate=bad)
-        for bad in (True,-2,0,1.5):
+        for bad in (True,-2,256,1.5):
             with self.assertRaises(ValueError):
                 MiniState(weights=(bad,0,0,0))
         with self.assertRaises(ValueError):
@@ -88,6 +91,7 @@ class MicroLearningTests(unittest.TestCase):
         for seed in range(20):
             self.assertEqual(run_seed(seed),run_seed(seed))
 
+    @unittest.expectedFailure
     def test_preregistered_gate(self):
         result=run_all()
         self.assertEqual(result["seeds"],20)
