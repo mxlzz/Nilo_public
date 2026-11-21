@@ -57,7 +57,14 @@ class I3bPairedForkTests(unittest.TestCase):
         self.assertEqual(left["reference_action"],right["reference_action"])
         self.assertEqual(left["reference_tick"],right["reference_tick"])
         self.assertNotEqual(left["reference_correct"],right["reference_correct"])
-        self.assertEqual(left["branches"]["N"],right["branches"]["N"])
+        # Mapping changes the evaluation LABEL only, never the no-feedback
+        # neural/chemical trajectory or the final unlabelled action.
+        omitted="final_readout_correct"
+        neutral_l={k:v for k,v in left["branches"]["N"].items() if k!=omitted}
+        neutral_r={k:v for k,v in right["branches"]["N"].items() if k!=omitted}
+        self.assertEqual(neutral_l,neutral_r)
+        self.assertNotEqual(left["branches"]["N"][omitted],
+                            right["branches"]["N"][omitted])
 
     def test_reject_unknown_conditions(self):
         for args in ((300,2,1,"A"),(300,1,4,"A"),(300,0,1,"BAD")):
