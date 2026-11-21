@@ -1,0 +1,110 @@
+{
+  "protocol": "E09_02I_I3C4_QUIMICA_APAREADA_PRE_REGISTRO-v1",
+  "source": {
+    "run_id": 44960526007,
+    "conclusion": "success",
+    "tests": 8,
+    "artifact_id": 14729775966,
+    "artifact_name": "neurolab-i3c4-chemical-yoked-four-arm",
+    "expires": "2027-02-19",
+    "mislabelled_earlier_run": 44960312460,
+    "fix_commit": "b991dad4ee77bba0b8024acd3912d15a77f75c31"
+  },
+  "cohort": {
+    "seeds": "900..919",
+    "n_seeds": 20,
+    "train_trials_per_phase": 60,
+    "holdout_trials_per_phase": 36,
+    "phases": [
+      "first",
+      "reversed"
+    ],
+    "arms": [
+      "B",
+      "Y",
+      "P",
+      "F"
+    ]
+  },
+  "mean_accuracy": {
+    "first": {
+      "B": 0.4847222222222222,
+      "Y": 0.4847222222222222,
+      "P": 0.4861111111111111,
+      "F": 0.49027777777777776
+    },
+    "reversed": {
+      "B": 0.5041666666666667,
+      "Y": 0.5069444444444444,
+      "P": 0.5069444444444444,
+      "F": 0.5041666666666667
+    }
+  },
+  "contrasts": {
+    "Y_minus_B_first": {
+      "mean": 0,
+      "ci95": [
+        -0.009722222222222212,
+        0.00972222222222223
+      ]
+    },
+    "Y_minus_B_reversed": {
+      "mean": 0.002777777777777779,
+      "ci95": [
+        -0.005555555555555555,
+        0.012499999999999994
+      ]
+    },
+    "B_minus_F_first": {
+      "mean": -0.005555555555555555,
+      "ci95": [
+        -0.0125,
+        0
+      ]
+    }
+  },
+  "migration_events_accepted": {
+    "Y": {
+      "first": 1698,
+      "reversed": 1679,
+      "total": 3377
+    },
+    "P": {
+      "first": 1700,
+      "reversed": 1679,
+      "total": 3379
+    },
+    "B": 0,
+    "F": 0
+  },
+  "migration_active_ticks": {
+    "Y": {
+      "first": 1401,
+      "reversed": 1386,
+      "total": 2787
+    },
+    "P": {
+      "first": 1402,
+      "reversed": 1385,
+      "total": 2787
+    }
+  },
+  "final_exhausted_connections_summed_per_phase": {
+    "first": {
+      "B": 76,
+      "Y": 49,
+      "P": 49,
+      "F": 0
+    },
+    "reversed": {
+      "B": 77,
+      "Y": 48,
+      "P": 47,
+      "F": 0
+    }
+  },
+  "chemistry_B_Y_F_exact_every_tick": true,
+  "gate_behavioral_G05": "OPEN",
+  "gate_integrated_G09": "OPEN",
+  "limitations": "N reduced 4-synapse architecture, synthetic rates40/dose80/migration init and RNG; yoked Y receives feedback conditioned on B decisions; P on-policy, not causal isolation."
+}
