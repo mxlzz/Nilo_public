@@ -11,10 +11,11 @@ const horizon=120;
 describe("external world-research fit: hydrology and coupling",()=>{
   it("source ablation changes hydrology without changing the initial terrain",()=>{
     const wet=createSimulation("riverValleyGrassland",stableDefaultParams);
-    const dry=createSimulation("riverValleyGrassland",{
-      ...stableDefaultParams,
-      springOutput:{spring:0,summer:0,autumn:0,winter:0},
-    });
+    const dry=createSimulation("riverValleyGrassland",stableDefaultParams);
+    // Ablation must remove the real input: spring.output, when present,
+    // overrides params.springOutput[season]. Changing only params did NOT
+    // stop input in the first CI run. Keep all other initial state identical.
+    dry.state.springs=[];
     const initialHeight=Array.from(wet.state.heightMap);
     expect(initialHeight).toEqual(Array.from(dry.state.heightMap));
     wet.step(horizon);
@@ -39,6 +40,7 @@ describe("external world-research fit: hydrology and coupling",()=>{
       plantBiomassWithoutSources:sum(dry.state.plantBiomass),
       terrainMutates:false,
       dryLastTickSource:drySource,
+      ablation:"removed spring sources from otherwise identical initial state",
       wetLastTickSource:wetSource
     };
     console.log("WORLD_EVAL_JSON "+JSON.stringify(result));
