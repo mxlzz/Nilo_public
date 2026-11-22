@@ -1,0 +1,55 @@
+name: NeuroLab I3c6c — original chemical atrophy inhibition threshold
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c6c_functional_loss_threshold.py'
+      - 'experiments/neurolab/tests/test_e09_i3c6c_functional_loss_threshold.py'
+      - '.github/workflows/neurolab-i3c6c.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  actual-strength-loss-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test original Decision loss rules and receptor chain
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c6c_functional_loss_threshold
+      - name: Preserve full two-class x0..32 atrophy curves
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c6c_functional_loss_threshold --output metrics/i3c6c.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          r=json.load(open("metrics/i3c6c.json"))
+          assert r["protocol"]=="NL-EXP-I3c6c-v1"
+          assert r["receptor_change_locus_threshold"]==3
+          assert r["functional_antiatrophy_locus_threshold"]==18
+          assert r["G05_G09_G00H"]=="OPEN"
+          for v in r["pairs"].values():
+              assert v["curve"][3]["decision_chem_value"]==15
+              assert v["curve"][3]["strength_after_tick5"]==3
+              assert v["curve"][18]["decision_chem_value"]==0
+              assert v["curve"][18]["strength_after_tick5"]==4
+          print('RECEPTOR CHANGE THRESHOLD: 3')
+          print('ACTUAL LOSS INHIBITION THRESHOLD: 18')
+          PY
+          sha256sum metrics/i3c6c.json > metrics/artifact.sha256
+      - name: Preserve positive and negative numeric evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c6c-functional-atrophy-gate
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn
