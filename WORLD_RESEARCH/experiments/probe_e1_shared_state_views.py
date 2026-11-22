@@ -69,10 +69,10 @@ def main():
     dst=mapping[(1,0)]
     assert a[src]>.125
     oldsrc=float(root[0,0,0,0]);olddst=float(root[0,0,0,1])
-    a[src]-=.125
-    a[dst]+=.125
-    assert root[0,0,0,0]==oldsrc-.125
-    assert root[0,0,0,1]==olddst+.125
+    a[src]-=.05
+    a[dst]+=.05
+    assert root[0,0,0,0]==oldsrc-.05
+    assert root[0,0,0,1]==olddst+.05
     assert validate_and_restore(ds,0).mass_by_material()["A"]>0
 
     # The reverse direction uses the existing xarray backing array.
@@ -143,6 +143,44 @@ def main():
     finally:
         restored.close()
 
+    # H2b preregistered: replacing an xarray variable may sever views.
+    # Keep a separate copy with exactly identical values, without physics.
+    stale_g,_,_ = bind_fields(ds)
+    stale_field=stale_g.at_cell["material_mass__A"]
+    stale_before=float(stale_field[src])
+    original_da=ds["material_mass"]
+    replacement=xr.DataArray(np.array(original_da.values,copy=True),
+        dims=original_da.dims,
+        coords={d:ds.coords[d] for d in original_da.dims},
+        attrs=dict(original_da.attrs))
+    ds["material_mass"]=replacement
+    current_mass=ds["material_mass"].values
+    stale_view_detected=not np.shares_memory(stale_field,current_mass)
+    assert stale_view_detected, "Replacing xarray tensor did not detach Landlab old view as expected"
+    # Change the NEW owner and verify the old view does NOT magically update.
+    new_before=float(current_mass[0,0,0,0])
+    current_mass[0,0,0,0]+=.015625
+    assert float(stale_field[src])==stale_before
+    current_mass[0,0,0,0]=new_before
+    assert float(stale_field[src])==stale_before
+    # Rebind fields explicitly, with no second material inventory.
+    rebound_after_replace={}
+    for i,material in enumerate(ds.coords["material"].values.tolist()):
+        view=current_mass[i,0,:,:].reshape(-1)
+        new_field=stale_g.add_field(
+            f"material_mass__{material}",view,
+            at="cell",units="kg",copy=False,clobber=True)
+        rebound_after_replace[material]=bool(np.shares_memory(new_field,current_mass))
+    assert all(rebound_after_replace.values()), "Rebind failed to regain shared owner"
+    after_rebind=stale_g.at_cell["material_mass__A"]
+    after_before=float(current_mass[0,0,0,0])
+    after_rebind[src]+=.015625
+    assert current_mass[0,0,0,0]==after_before+.015625
+    after_rebind[src]=after_before
+    assert validate_and_restore(ds,0).snapshot()==valid_snapshot
+    assert np.array_equal(current_mass[:,1,:,:],second_level_before)
+    assert matter_totals(ds)==totals
+
     output={
         "test":"E1-H2 shared single-owner material inventory with Landlab views",
         "landlab_version":landlab.__version__,
@@ -162,6 +200,9 @@ def main():
         "netcdf_bytes":filename.stat().st_size,
         "reloaded_values_exact":True,
         "rebinding_after_reload_shares_memory":rebound_aliases,
+        "h2b_stale_view_detected_after_variable_replacement":stale_view_detected,
+        "h2b_explicit_rebind_restores_alias":rebound_after_replace,
+        "h2_first_transfer_kg":0.05,
         "restored_snapshot_sha256":hashlib.sha256(valid_snapshot.encode()).hexdigest(),
         "limitations":"No state lock, transactional write API, simultaneous solver alias guarantee, 3D physics, property-based solids, or cross-process pointer alias. Numpy fields permit invalid edits until validator is called."
     }
