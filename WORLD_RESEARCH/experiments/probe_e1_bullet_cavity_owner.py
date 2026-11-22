@@ -238,6 +238,11 @@ def execute(ds,gravity):
             "final_vertical_velocity_m_s":float(velocity[2]),
             "total_contacts_last_step":len(allcontacts),
             "cavity_floor_contact_count":len(support_contacts),
+            "contact_geometry_debug":[{"static_voxel_xyz":list(ids.get(contact[2],(-1,-1,-1))),
+                         "distance_m":float(contact[8]),
+                         "normal_on_B_xyz":[float(v) for v in contact[7]],
+                         "normal_force_N":float(contact[9])}
+                        for contact in allcontacts[:18]],
             "mobile_mass_cached_kg":bullet_mass,
             "inventories_unchanged":True,
             "elapsed_step_seconds":round(elapsed,6),
@@ -274,6 +279,11 @@ def main(folder):
     with_gravity=execute(ds,-9.81)
     no_gravity=execute(ds,0.0)
     replay=execute(ds,-9.81)
+    for label,case in (("gravity",with_gravity),("no_gravity",no_gravity),("replay",replay)):
+        print("H8_DIAGNOSTIC "+json.dumps({"case":label,"center_z":case["final_center_z_m"],
+               "velocity_z":case["final_vertical_velocity_m_s"],
+               "contacts":case["contact_geometry_debug"],
+               "cavity_floor_contact_count":case["cavity_floor_contact_count"]},sort_keys=True),flush=True)
     assert CUBE_EXPECTED_REST_Z-.05<=with_gravity["final_center_z_m"]<=CUBE_EXPECTED_REST_Z+.10
     assert abs(with_gravity["final_vertical_velocity_m_s"])<.1
     assert with_gravity["total_contacts_last_step"]>0
