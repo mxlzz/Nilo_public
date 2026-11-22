@@ -44,6 +44,19 @@ jobs:
                      and row[p]["golden_e09g5_frozen_metrics_equal"]
                      for row in r["per_seed"] for p in ("first","reversed"))
           assert r["gates"]["G05"]=="OPEN"
+          # Refactoring the CI/analysis must not alter a single original
+          # neural trajectory: exact aggregate hash of ALL 20 seed traces
+          # from the first SUCCESS run #44969153930, artifact14733290218.
+          import hashlib
+          trace=json.dumps(r["per_seed"],sort_keys=True,separators=(",",":")).encode()
+          assert hashlib.sha256(trace).hexdigest()==(
+              "311b387817b4f0d645cf191df99ae701641c11e9329758fe64f1f71701af8f8e"
+          ),"underlying per-seed neural data changed"
+          for p in ("first","reversed"):
+              for m in r["modes"]:
+                  c=r["paired_contrasts"][p][
+                      "frozen_minus_active_within_each_mode"][m]
+                  assert len(c["ci95"])==2 and c["n_seeds"]==20
           for p in ("first","reversed"):
               print("PHASE",p,"STEADY ACTIVE",{
                   m: r["summary"][p][m]["active_no_new_reward"]["mean_steady"]
