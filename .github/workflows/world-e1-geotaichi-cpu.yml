@@ -1,0 +1,43 @@
+name: World research - E1 H13A GeoTaichi native CPU tests
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - .github/workflows/world-e1-geotaichi-cpu.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  official_native_tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install minimal existing geomechanics CPU stack, not full GeoTaichi extras
+        run: |
+          python -m pip install --only-binary=:all: taichi==1.7.0 numpy==2.2.4 scipy trimesh psutil pillow pytest matplotlib sympy meshio
+          python -m pip show taichi numpy pytest
+      - name: Isolated fixed-revision checkout of GPL-3 GeoTaichi (no code imported into Nilo)
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/world_h13_geotaichi"
+          git -C "$RUNNER_TEMP/world_h13_geotaichi" init -q
+          git -C "$RUNNER_TEMP/world_h13_geotaichi" remote add origin https://github.com/Yihao-Shi/GeoTaichi.git
+          git -C "$RUNNER_TEMP/world_h13_geotaichi" fetch --depth 1 origin 6cae5a6998c4f0be9f59b5615bf2e26857df824f
+          git -C "$RUNNER_TEMP/world_h13_geotaichi" checkout -q --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/world_h13_geotaichi" rev-parse HEAD)" = 6cae5a6998c4f0be9f59b5615bf2e26857df824f
+          echo "GEOTAICHI_ROOT=$RUNNER_TEMP/world_h13_geotaichi" >> "$GITHUB_ENV"
+      - name: Execute two original upstream tests without modifying them
+        shell: bash
+        run: |
+          cd "$GEOTAICHI_ROOT"
+          export PYTHONPATH="$GEOTAICHI_ROOT"
+          export GEOTAICHI_TEST_ARCH=cpu
+          export GEOTAICHI_FORCE_CPU=1
+          python -m pytest -v -s --maxfail=1 \
+            tests/integration/mpm/test_sparse_grid_explicit.py::test_sparse_grid_explicit_3d_solid \
+            tests/integration/mpm/test_direct_mpm_backend.py::test_direct_backend_rejects_particles_outside_the_background_grid
