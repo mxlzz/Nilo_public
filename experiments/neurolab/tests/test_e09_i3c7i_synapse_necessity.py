@@ -109,6 +109,14 @@ class LocalCausalNecessityContracts(unittest.TestCase):
         self.assertIsNone(d["gate_allzero_effective"])
         self.assertIsNone(d["gate_baseline_informative"])
         self.assertEqual(d["gates"]["G05"],"OPEN")
+        group=d["paired_B_minus_P_by_alignment"]["reversed"][
+            "True"]["net_lost_correct_rate"]
+        self.assertEqual(group["n_seeds"],1)
+        self.assertEqual(group["ci95"],[group["mean"],group["mean"]])
+        self.assertEqual(
+            set(d["paired_B_minus_P_by_alignment"]["first"]),
+            {"True","False"},
+        )
         for phase in ("first","reversed"):
             for contrast in d["paired_B_minus_P"][phase].values():
                 self.assertEqual(contrast["n_seeds"],1)
