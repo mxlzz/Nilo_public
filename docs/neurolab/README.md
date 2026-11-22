@@ -1,5 +1,7 @@
 # NeuroLab — protocolo maestro de mente neuronal aislada
 
+> **Estado actualizado 22/11/2026:** el texto fechado 20/11 (incluidos «primer paso pendiente» y «E01–E05») describe el registro inicial, **no el progreso actual**. Leer primero [ESTADO_Y_CONTINUIDAD](ESTADO_Y_CONTINUIDAD.md), [contrato de puertas reconciliado](E09_00R_RECONCILIACION_GATES_20261122.md), [auditoría E00–E08](E09_01_AUDITORIA_CAPACIDADES_20261122.md) y [E09.05 equivalencia tabular](E09_05_TAB1_RESULTADO_EQUIVALENCIA.md). G05 crédito temporal, R-ACT-I3c retención activa y G09 síntesis mínima **continúan sin cierre global**. GEN/EXE originales fueron inspeccionados sin publicarse; reconstrucción H incompleta. PR#103 sigue draft, Nilo 0.7 intacto.
+
 **Versión del protocolo:** 0.1.0 (protocolo inicial) — ejecución experimental y estado real en [ESTADO_Y_CONTINUIDAD.md](ESTADO_Y_CONTINUIDAD.md)  
 **Fecha del registro:** 2026-11-20  
 **Registro de referencia:** [issue #102](https://github.com/mxlzz/Nilo_public/issues/102)  
