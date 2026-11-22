@@ -20,6 +20,7 @@ jobs:
       - name: Install minimal existing geomechanics CPU stack, not full GeoTaichi extras
         run: |
           python -m pip install --only-binary=:all: taichi==1.7.0 numpy==2.2.4 scipy trimesh psutil pillow pytest matplotlib sympy meshio
+          python -m pip install --only-binary=:all: --no-deps open3d==0.19.0
           python -m pip show taichi numpy pytest
       - name: Isolated fixed-revision checkout of GPL-3 GeoTaichi (no code imported into Nilo)
         shell: bash
