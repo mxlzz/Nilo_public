@@ -38,14 +38,14 @@ jobs:
           assert r["gates"]["G05"]=="OPEN"
           print("ORIGINAL NEURAL HISTORY EXACT 20-SEED SHA:",h)
           PY
-      - name: Audit all 30720 original frozen and active holdout tick frames
+      - name: Audit all 61440 original frozen and active holdout tick frames
         run: |
           python -m experiments.neurolab.e09_i3c7f_weight_persistence_audit --input metrics/i3c7e_exact_replay.json --output metrics/i3c7f_persistence.json | tee metrics/summary.json
           python - <<'PY'
           import json
           r=json.load(open('metrics/i3c7f_persistence.json'))
           assert r['protocol']=='NL-AUDIT-I3c7f-v1'
-          assert r['n_holdout_frames']==30720
+          assert r['n_holdout_frames']==61440  # 20 seeds * 2 phases * 6 arms * 2 readouts * 128 ticks
           assert r['source_per_seed_sha256']=='311b387817b4f0d645cf191df99ae701641c11e9329758fe64f1f71701af8f8e'
           assert r['G05_G09_G00H']=='OPEN'
           for phase in ('first','reversed'):
