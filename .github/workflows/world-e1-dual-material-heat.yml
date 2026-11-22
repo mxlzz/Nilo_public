@@ -19,6 +19,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install FiPy physics plus storage/array dependencies
-        run: python -m pip install --only-binary=:all: fipy==4.0.3 numpy scipy xarray
+        run: |
+          python -m pip install --only-binary=:all: fipy==4.0.3 numpy scipy xarray
       - name: Execute H16 registered composition, mass, energy, volume, phase and replay gates
         run: python WORLD_RESEARCH/experiments/probe_e1_h16_dual_material_heat.py
