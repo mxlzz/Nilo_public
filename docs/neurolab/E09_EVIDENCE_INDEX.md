@@ -1,5 +1,7 @@
 # NeuroLab — evidencia reproducible de la ejecución conjunta E01–E08
 
+> **Rectificación de alcance (22/11/2026):** «ejecución conjunta» significa que la CI ejecutó varios módulos en el mismo job, **NO que formaran un cerebro integrado**. Esta fotografía precede a inspección de GEN/EXE C1, hoy documentada, y al [ensayo E09.05-TAB1](E09_05_TAB1_RESULTADO_EQUIVALENCIA.md), que prueba equivalencia exacta de E06 con una tabla de la misma representación. Consultar [auditoría actual](E09_01_AUDITORIA_CAPACIDADES_20261122.md) y [errata de puertas](E09_00R_RECONCILIACION_GATES_20261122.md); no reescribir las métricas de aquella corrida.
+
 **Fuente de verdad de estos datos:** [GitHub Actions run #44852299967](https://github.com/mxlzz/Nilo_public/actions/runs/44852299967), job `136686250858`, SHA del código ensayado `56cb2e7456103eee7a65cdadc275da01a1869720`. Conclusión CI: **success**, 85 métodos de prueba además de los protocolos E03/E06/E07/E08 y benchmark E01. Ambiente CI: Python 3.11.18 sobre runner Ubuntu. La captura de logs se realizó después de finalizar la ejecución.
 
 **Las salidas JSON completas con resultados por semilla se recuperaron del log del job y guardaron en el repositorio**, en esta misma rama, para que no dependan de la caducidad (90 días) de los artefactos Actions.
