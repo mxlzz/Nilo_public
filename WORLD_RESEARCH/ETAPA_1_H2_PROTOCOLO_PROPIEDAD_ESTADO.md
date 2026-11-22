@@ -21,3 +21,16 @@ La implementación oficial de Landlab `GraphFields.add_field(name, array, at="ce
 **H2 aprobada si:** alias bidireccional real, control `copy=True` no alias, conservación tras cambios, capa superior aislada, corrupción detectada, NetCDF recupera datos exactos y se vuelven a enlazar nuevas vistas. Si el framework copia, falla el gate aunque roundtrip conserve datos; preferir adaptador explícito con owner único y sincronización validada.
 
 **Bloqueos posteriores:** no extrapolar a `Space`, `SoilMoisture`, `Radiation` o `OverlandFlow`, porque esos componentes almacenan referencias, pueden reubicar arrays y usan topologías distintas; no se ha ensayado un solo inventario hídrico/sólido entre solvers. No declarar estado 3D físico porque existen dos índices de nivel. No iniciar leyes de materia nuevas hasta aprobación de arquitectura mínima compartida y sus tests.
+
+## Auditoría tras la primera CI H2 (sin ocultar desvíos)
+
+Primera ejecución: https://github.com/mxlzz/Nilo_public/actions/runs/44959354131, **SUCCESS** para alias, copias, balance, niveles, corrupción y NetCDF. Se registró un desajuste **del arnés frente al protocolo**: el documento fijó transferir **0.05 kg** en el primer cambio, pero el script ejecutó **0.125 kg**. Ambas caben en la celda, pero los valores de un protocolo preregistrado no se alteran implícitamente. La prueba inicial es válida para el mecanismo de memoria compartida, pero la conformidad estricta al protocolo H2 requiere repetir la transferencia con 0.05 kg y conservar ambas ejecuciones.
+
+### H2b, control negativo adicional antes de implementarlo
+**Riesgo identificado por lectura de Landlab y xarray:** sustituir toda la variable mediante asignación `ds["material_mass"]=...` puede crear un array nuevo sin actualizar los campos Landlab enlazados. Los tests H2 solo modifican `values` en sitio; aún no demuestran seguridad al reemplazar variables, una operación habitual al trabajar con xarray.
+
+**Hipótesis:** tras reemplazar el tensor xarray por una copia independiente de valores idénticos, el campo Landlab anterior deja de compartir memoria. Mutar la nueva variable ya no debe verse desde el campo anterior. Rehacer `grid.add_field("material_mass__A", nueva_vista, at="cell", copy=False, clobber=True)` restablece el alias y una mutación posterior vuelve a propagarse. La masa total debe permanecer invariante (cambios de prueba reversibles) y no deben cambiar niveles altos. La sonda debe informar `stale_view_detected` y `explicit_rebind_restores_alias`, sin fingir que la sincronización es automática.
+
+**Criterio:** no se aprueba seguridad de propiedad de estado si el alias se rompe sin ser detectado. Aunque H2b pase, **no** garantiza ausencia de race conditions, transacciones atómicas ni soporte para cambio de forma/topología; habrá que imponer reglas de actualización y testearlas antes de sistemas físicos simultáneos.
+
+**Alcance:** son pruebas de infraestructura sobre datos, no leyes de transporte.
