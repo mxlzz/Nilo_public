@@ -1,0 +1,67 @@
+name: NeuroLab I3c7i — local causal STW lesions at hash-verified checkpoints
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c7i_synapse_necessity.py'
+      - 'experiments/neurolab/tests/test_e09_i3c7i_synapse_necessity.py'
+      - 'docs/neurolab/resultados/e09i3c7h_resumen_y_hashes.json'
+      - '.github/workflows/neurolab-i3c7i.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  original-c1-single-slot-intervention:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify SHA of prior experiment and sham/local-lesion exactness
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c7i_synapse_necessity
+      - name: Replay all twenty original source seeds and perform frozen local readouts
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c7i_synapse_necessity --output metrics/i3c7i.json | tee metrics/summary.json
+          python - <<'PY'
+          import json
+          x=json.load(open("metrics/i3c7i.json"))
+          assert x["protocol"]=="NL-AUDIT-I3c7i-v1"
+          assert x["seeds"]==list(range(1800,1820))
+          assert x["n_seeds"]==20
+          assert x["n_microblocks"]==800
+          assert x["n_single_lesion_microblocks"]==640
+          assert x["n_total_probe_steps"]==6400
+          assert len(x["per_seed_sha256"])==20
+          assert x["gates"]["G05"]=="OPEN"
+          for row in x["per_seed"]:
+              for phase in ("first","reversed"):
+                  for mode in ("B","P"):
+                      o=row["phases"][phase][mode]
+                      assert o["summary"]["n_lesions"]==16
+                      assert len(o["observations"])==2
+                      for obs in o["observations"]:
+                          assert obs["sham_identical"]
+                          assert len(obs["lesions"])==8
+          print("CAUSAL LESION GATES",x["gate_allzero_effective"],
+                x["gate_baseline_informative"])
+          for phase in ("first","reversed"):
+              print("PHASE",phase,"B/P",x["summary"][phase])
+              print("PAIRED",x["paired_B_minus_P"][phase])
+          PY
+          sha256sum metrics/i3c7i.json > metrics/source.sha256
+      - name: Preserve all scored/unscored lesion and negative results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c7i-c1-local-synaptic-necessity
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn
