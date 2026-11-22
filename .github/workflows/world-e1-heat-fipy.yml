@@ -1,0 +1,26 @@
+name: World research - E1 H14 energy conservation FiPy
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e1_h14_heat_fipy.py
+      - .github/workflows/world-e1-heat-fipy.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  thermal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install NIST FiPy and lightweight data dependencies (wheels only)
+        run: |
+          python -m pip install --only-binary=:all: fipy==4.0.3 numpy scipy xarray
+          python -m pip show fipy
+      - name: Check thermal energy balance, no-flux, replay, negative controls and NetCDF
+        run: python WORLD_RESEARCH/experiments/probe_e1_h14_heat_fipy.py
