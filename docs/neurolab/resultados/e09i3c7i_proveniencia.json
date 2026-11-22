@@ -1,0 +1,39 @@
+{
+  "protocol": "NL-AUDIT-I3c7i-v1",
+  "source_experiment": "NL-EXP-I3c7h-v1",
+  "source_seed_range": [
+    1800,
+    1819
+  ],
+  "source_original_json_sha256": "d723c4a590c0428e13b175c39cd9028c69ed5b714d000f46ada61717eebe925e",
+  "preregistered_protocol": "docs/neurolab/E09_02I_I3C7I_ABLACION_LOCAL_PRE_REGISTRO.md",
+  "final_workflow_run_id": 44987034290,
+  "final_artifact_id": 14739729195,
+  "final_json_filename": "i3c7i.json",
+  "final_json_bytes": 1041852,
+  "final_json_sha256": "e6a30b3c2271a87b7404e4c0a9544f41c5ba0d265f946c8ece188fcc93952b5d",
+  "canonical_all_20_per_seed_sha256": "bed54546d4dbfba0f9fb55e5db6bbbc9b537708ae48f37f52bbb3ba8a76502e5",
+  "first_raw_20_seed_simulation_sha256": "bed54546d4dbfba0f9fb55e5db6bbbc9b537708ae48f37f52bbb3ba8a76502e5",
+  "source_artifact_retention_note": "Complete JSON and individual seed SHA values are in workflow artifact/log; after expiry rerun runner and verify canonical aggregate SHA.",
+  "counts": {
+    "seeds": 20,
+    "phases": 2,
+    "modes": 2,
+    "contexts": 2,
+    "microblocks": 1600,
+    "single_slot_lesions": 1280,
+    "shams": 160,
+    "all_zero": 160,
+    "microticks": 12800
+  },
+  "gates": {
+    "software": "PASS",
+    "source_replay": "PASS",
+    "all_zero": "PASS",
+    "baseline": "PASS",
+    "G05": "OPEN",
+    "G09": "OPEN",
+    "G00H": "OPEN"
+  },
+  "limits": "Post hoc same seeds; local STW necessity under frozen diagnostic, not faithful original C1 credit learning or 128-tick active retention."
+}
