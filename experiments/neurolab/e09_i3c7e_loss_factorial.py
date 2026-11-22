@@ -364,6 +364,33 @@ def _paired_ci(rows,phase,readout,a,b,metric="steady"):
     }
 
 
+def _frozen_minus_active_ci(rows,phase,mode,metric="steady"):
+    """Pre-registered within-arm paired seed-cluster 95% interval.
+
+    Both readouts start from the SAME training checkpoint, so the
+    statistical unit is the seed, not the 128 correlated tick choices.
+    """
+    vals=[
+        row[phase]["arms"][mode]["readouts"]["frozen"][metric]
+        -row[phase]["arms"][mode]["readouts"][
+            "active_no_new_reward"][metric]
+        for row in rows
+    ]
+    if not vals:
+        return {"mean":None,"ci95":None,"n_seeds":0}
+    rng=random.Random(BOOTSTRAP_SEED)
+    draws=sorted(
+        statistics.mean(rng.choice(vals) for _ in vals)
+        for _ in range(BOOTSTRAP_REPS)
+    )
+    return {
+        "mean":statistics.mean(vals),
+        "ci95":[draws[int(0.025*BOOTSTRAP_REPS)],
+                draws[int(0.975*BOOTSTRAP_REPS)-1]],
+        "n_seeds":len(vals),
+    }
+
+
 def run_all(seeds=SEEDS):
     if (not isinstance(seeds,tuple) or not seeds
             or len(set(seeds))!=len(seeds)
@@ -424,15 +451,8 @@ def run_all(seeds=SEEDS):
                 for readout in READOUTS
             }
         contrasts[phase]["frozen_minus_active_within_each_mode"]={
-            mode:{
-                "n_seeds":len(result),
-                "mean":statistics.mean(
-                    row[phase]["arms"][mode]["readouts"]["frozen"]["steady"]
-                    -row[phase]["arms"][mode]["readouts"][
-                        "active_no_new_reward"]["steady"]
-                    for row in result
-                ),
-            } for mode in MODES
+            mode:_frozen_minus_active_ci(result,phase,mode)
+            for mode in MODES
         }
     return {
         "protocol":"NL-EXP-I3c7e-v1",
