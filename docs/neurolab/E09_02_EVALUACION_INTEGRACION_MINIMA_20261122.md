@@ -1,5 +1,7 @@
 # NeuroLab — E09.02–.05: evaluación previa de integración, controles y coste (22/11/2026)
 
+> **Adenda posterior a esta evaluación (22/11/2026):** [E09.05-TAB1](E09_05_TAB1_RESULTADO_EQUIVALENCIA.md) encontró y comprobó equivalencia matemática y operacional exacta de `ConceptLearner` en E06 con una tabla de cuatro pares×dos pesos. La propuesta exploratoria del apartado 4 de construir un adaptador E03+E06 **queda despriorizada** mientras no exista otra predicción discriminante; no reinterpretemos una tabla como prueba de mente neuronal. Esta anotación preserva el análisis previo y documenta el cambio de decisión.
+
 **Tipo:** decisión de diseño experimental sin implementación. Basada en [contrato reconciliado](E09_00R_RECONCILIACION_GATES_20261122.md), [auditoría E00–E08](E09_01_AUDITORIA_CAPACIDADES_20261122.md) y [plan E09](ETAPAS_00_09.md). No cambia C1, dosis, topología, semillas ni `main`.
 
 ## 1. Pregunta de decisión original
