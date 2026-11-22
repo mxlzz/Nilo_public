@@ -1,0 +1,60 @@
+name: NeuroLab I3c7b — direct vs metabolic signal sensitivity
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c7b_paired_signal.py'
+      - 'experiments/neurolab/tests/test_e09_i3c7b_paired_signal.py'
+      - '.github/workflows/neurolab-i3c7b.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  paired-signal-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Exact chemical matching, frozen controls and no evaluator leakage
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c7b_paired_signal
+      - name: Run all preregistered independent development seeds
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c7b_paired_signal --output metrics/i3c7b.json | tee metrics/summary.json
+          python - <<'PY'
+          import json
+          data=json.load(open('metrics/i3c7b.json'))
+          assert data["protocol"]=="NL-EXP-I3c7b-v1"
+          assert data["seeds"]==list(range(1500,1520))
+          assert data["n_physical_trunks"]==40
+          assert data["n_mapping_coordinates"]==80
+          assert data["n_branches"]==320
+          assert len(data["per_seed_sha256"])==20
+          assert all(len(row["episodes"])==4 for row in data["per_seed"])
+          assert data["gates"]["G05"]=="OPEN"
+          assert data["gates"]["sensitivity"]=="DESCRIPTIVE_ONLY"
+          assert data["direct_pulse_tick"]==7
+          assert data["precursor_tick"]==5
+          print("CONTROLS:",{m:(
+             data["summary"][m]["branches_with_type_change_vs_N"],
+             data["summary"][m]["branches_with_score_change_vs_N"],
+             data["summary"][m]["readout_action_changed_vs_N"]
+             ) for m in ("C","M","N","F")})
+          PY
+          sha256sum metrics/i3c7b.json > metrics/full.sha256
+      - name: Preserve all positives, zeros and per-seed traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c7b-chemical-direct-four-arms
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn
