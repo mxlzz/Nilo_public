@@ -1,0 +1,26 @@
+name: World research - E1 H15 latent heat and material phase fraction
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e1_h15_phase_enthalpy.py
+      - .github/workflows/world-e1-phase-enthalpy.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  physical_phase_fraction:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install tested NIST FiPy data solver and numeric dependencies
+        run: |
+          python -m pip install --only-binary=:all: fipy==4.0.3 numpy scipy xarray
+          python -m pip show fipy
+      - name: Run preregistered mass, latent-energy, conversion and ablation checks
+        run: python WORLD_RESEARCH/experiments/probe_e1_h15_phase_enthalpy.py
