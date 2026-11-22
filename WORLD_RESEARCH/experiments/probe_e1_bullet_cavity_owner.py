@@ -16,6 +16,7 @@ import json
 import math
 import pathlib
 import platform
+import sys
 import time
 from importlib.metadata import version
 
@@ -23,10 +24,27 @@ import numpy as np
 import xarray as xr
 import pybullet as p
 
-from probe_e1_surface_volume_partition import (
-    make_state, derive_heights, validate, totals,
-    X0, Y0, MATERIALS,
-)
+# The producer runs H5/Landlab in Python3.13. This consumer uses only
+# the verified NetCDF, in Python3.11 with Bullet; no Landlab imported.
+X0,Y0=2,1
+W,H,Z=12,8,7
+MATERIALS=("A","B")
+
+def static_totals(ds):
+    a=ds["outside_column_mass"].values
+    b=ds["roi_voxel_mass"].values
+    return {name:float(a[i].sum()+b[i].sum()) for i,name in enumerate(MATERIALS)}
+
+def surface_heights(ds):
+    """Geometric verification of data-only interface; no simulation."""
+    d=ds["material_density"].values
+    elev=(ds["outside_column_mass"].values/d[:,None,None]).sum(axis=0)
+    occ=(ds["roi_voxel_mass"].values/d[:,None,None,None]).sum(axis=0)>0
+    roof=np.where(occ,np.arange(Z)[:,None,None]+1,0).max(axis=0)
+    ys=ds.coords["roi_y"].values.astype(int)
+    xs=ds.coords["roi_x"].values.astype(int)
+    elev[np.ix_(ys,xs)]=roof
+    return elev
 
 DT=1.0/240.0
 STEPS=360
@@ -45,32 +63,58 @@ def canonical_hash(ds):
     ).hexdigest()
 
 
-def scenario_owner():
-    full=make_state()
-    assert totals(full)==BASE_INVENTORY
-    hollow=full.copy(deep=True)
-    voxel=hollow["roi_voxel_mass"].values
-    assert np.all(voxel[0,2:4,2:4,2:6]==2.)
-    assert np.all(voxel[1,2:4,2:4,2:6]==0.)
-    removed=float(voxel[0,2:4,2:4,2:6].sum())
-    assert removed==32.
-    voxel[0,2:4,2:4,2:6]=0.
-    hollow=hollow.assign_coords(rigid_body=["excavated_A_cube"])
-    hollow["rigid_body_mass"]=(
-        ("material","rigid_body"),
-        np.array([[2.0],[0.0]],dtype=np.float64),
-        {"units":"kg","owner":"one material body transferred from removed cavity stock"}
-    )
-    hollow.attrs["external_sinks_A_kg"]=removed-2.0
-    hollow.attrs["rigid_body_cube_side_m"]=CUBE_SIDE_M
-    check_ledger(hollow)
-    assert np.array_equal(derive_heights(hollow),derive_heights(full))
-    return full,hollow
-
+def load_owner(folder):
+    file=folder/"h8_material_owner.nc"
+    manifest=json.loads((folder/"h8_manifest.json").read_text())
+    if hashlib.sha256(file.read_bytes()).hexdigest()!=manifest["netcdf_file_sha256"]:
+        raise ValueError("NetCDF source hash mismatch")
+    with xr.open_dataset(file,engine="scipy") as opened:
+        ds=opened.load()
+    if canonical_hash(ds)!=manifest["owner_sha256"]:
+        raise ValueError("Material owner hash differs across Python versions")
+    if hashlib.sha256(surface_heights(ds).tobytes()).hexdigest()!=manifest["heightfield_sha256"]:
+        raise ValueError("Height projections disagree across Python versions")
+    for key in ("original_height_equals_hollow",
+                "full_world_body_initial_position_blocked",
+                "hollow_world_body_initial_position_clear"):
+        if manifest[key] is not True:
+            raise ValueError("Producer geometric control failed: "+key)
+    return ds,manifest
 
 def check_ledger(ds):
     expected_static={"A":730.,"B":3.}
-    validate(ds,expected_static)
+    if tuple(ds["outside_column_mass"].dims)!=("material","y","x") or tuple(ds["roi_voxel_mass"].dims)!=("material","z","roi_y","roi_x"):
+        raise ValueError("Unexpected tensor dimensions")
+    if ds["outside_column_mass"].attrs.get("units")!="kg" or ds["roi_voxel_mass"].attrs.get("units")!="kg":
+        raise ValueError("Material units invalid")
+    if ds["material_density"].attrs.get("units")!="kg m-3":
+        raise ValueError("Density units invalid")
+    if ds.attrs.get("schema_version")!=1:
+        raise ValueError("Owner version unknown")
+    if ds.coords["roi_x"].values.tolist()!=list(range(2,10)) or ds.coords["roi_y"].values.tolist()!=list(range(1,7)):
+        raise ValueError("ROI coordinate order differs")
+    mask=ds["region_is_volume"].values
+    expected_mask=np.zeros((H,W),dtype=bool)
+    expected_mask[1:7,2:10]=True
+    if not np.array_equal(mask,expected_mask):
+        raise ValueError("Owner ROI mask invalid")
+    outside=ds["outside_column_mass"].values
+    voxel=ds["roi_voxel_mass"].values
+    density=ds["material_density"].values
+    if outside.shape!=(2,H,W) or voxel.shape!=(2,Z,6,8):
+        raise ValueError("Material shape invalid")
+    if not all(np.isfinite(x).all() for x in (outside,voxel,density)):
+        raise ValueError("Nonfinite material")
+    if np.any(outside<0) or np.any(voxel<0) or np.any(density<=0):
+        raise ValueError("Negative mass or invalid density")
+    if np.any(outside[:,mask]!=0):
+        raise ValueError("Surface and voxel states both own ROI matter")
+    if np.any(outside[1]!=0):
+        raise ValueError("Invalid exterior material composition")
+    if np.any((voxel/density[:,None,None,None]).sum(axis=0)>1.+1e-12):
+        raise ValueError("Material exceeds voxel capacity")
+    if static_totals(ds)!=expected_static:
+        raise ValueError("Static material count changed")
     if ds["rigid_body_mass"].attrs.get("units")!="kg":
         raise ValueError("rigid body unit invalid")
     material_names=ds.coords["material"].values.tolist()
@@ -89,7 +133,7 @@ def check_ledger(ds):
     sink=float(ds.attrs.get("external_sinks_A_kg",float("nan")))
     if not math.isfinite(sink) or sink<0:
         raise ValueError("invalid sink ledger")
-    static=totals(ds)
+    static=static_totals(ds)
     if not math.isclose(static["A"]+float(mobile[0,0])+sink,
                         BASE_INVENTORY["A"],rel_tol=0,abs_tol=1e-10):
         raise ValueError("A stock duplicated or disappeared")
@@ -203,11 +247,10 @@ def execute(ds,gravity):
         p.disconnect(physicsClientId=cid)
 
 
-def main():
-    full,ds=scenario_owner()
-    assert not placement_is_empty(full), "Solid world should not allow cube placement"
-    assert placement_is_empty(ds), "Voided world should allow cube placement"
-    assert np.array_equal(derive_heights(ds),derive_heights(full))
+def main(folder):
+    ds,manifest=load_owner(folder)
+    assert placement_is_empty(ds), "Cavity should contain empty cube placement"
+    assert manifest["enclosed_void_voxels"]==16
     base=canonical_hash(ds)
     ledger=check_ledger(ds)
     rejected={}
@@ -241,13 +284,13 @@ def main():
     assert with_gravity["total_contacts_last_step"]==replay["total_contacts_last_step"]
     assert canonical_hash(ds)==base
 
-    path=pathlib.Path("/tmp/e1_h8_cavity_and_body_owner.nc")
+    path=folder/"h8_bullet_owner_roundtrip.nc"
     ds.to_netcdf(path,engine="scipy")
     with xr.open_dataset(path,engine="scipy") as f:
         restored=f.load()
     assert check_ledger(restored)==ledger
     assert canonical_hash(restored)==base
-    assert np.array_equal(derive_heights(restored),derive_heights(full))
+    assert np.array_equal(surface_heights(restored),surface_heights(ds))
     assert placement_is_empty(restored)
 
     report={
@@ -256,7 +299,11 @@ def main():
         "pybullet_version":version("pybullet"),
         "xarray_version":xr.__version__,
         "dt_s":DT,"steps":STEPS,
-        "same_visible_heightfield_full_and_hollow":True,
+        "same_visible_heightfield_full_and_hollow":manifest["original_height_equals_hollow"],
+        "landlab_state_produced_python_version":manifest["python"],
+        "bullet_solver_python_version":platform.python_version(),
+        "cross_runtime_netcdf_source_sha256":manifest["netcdf_file_sha256"],
+        "separate_python_runtime_data_interface":True,
         "enclosed_hole_removed_voxels":16,
         "solid_world_rejects_initial_body_placement":True,
         "hollow_world_accepts_initial_body_placement":True,
@@ -273,4 +320,5 @@ def main():
 
 
 if __name__=="__main__":
-    main()
+    if len(sys.argv)!=2:raise SystemExit("Usage: consumer.py /tmp/h8")
+    main(pathlib.Path(sys.argv[1]))
