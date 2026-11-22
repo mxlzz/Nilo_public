@@ -23,3 +23,9 @@ No editar los tests. Su primer fallo se clasifica (entorno/compilación/geométr
 **Aprobado como baseline técnico** solo si ambos tests originales se ejecutan con éxito en CPU, a versión fijada y tiempo medido. Esto habilita *proponer* H13B con arena bajo gravedad, no demuestra colapso de columna ni explica H12. **No aprobado** si falla instalación/import/runtime; registrar fallo y costo, sin modificar upstream. Permitido un ajuste mínimo de dependencias comprobadas, documentado antes de repetir; no instalar paquetes pesados por inercia. No se incorpora motor definitivo ni se cierra ninguna etapa del plan.
 
 Fuentes: https://github.com/Yihao-Shi/GeoTaichi y https://doi.org/10.1016/j.cpc.2024.109219
+
+## Incidencia H13A.0 — import prematuro de Open3D, antes de física
+
+**Primera CI:** https://github.com/mxlzz/Nilo_public/actions/runs/45055983838 **FAILED** tras instalar Taichi1.7, NumPy y checkout upstream; primer test ni siquiera inició solver. El traceback nace en GeoTaichi `geotaichi/__init__.py → src.sdf.arbitrarily → src.sdf.MeshBased → src.sdf.BasicShape`, que importa `open3d` sin uso explícito en este test MPM. `ModuleNotFoundError: No module named 'open3d'`. No equivale a fallo MPM, incapacidad CPU ni problema de estabilidad.
+
+**Enmienda preregistrada ANTES de repetir:** añadir únicamente `open3d==0.19.0`, ya declarado en `pyproject.toml` oficial del proveedor, a la instalación binaria. Mantener exactamente el commit externo, Python3.11, versión Taichi, tests originales, plataforma CPU y criterios. No editar el upstream ni añadir stubs del módulo. **Límite de costo:** si después aparecen nuevos imports faltantes no relacionados con MPM, detener y evaluar si la carga de dependencias justifica esta línea de comparación; no perseguir indefinidamente importaciones de UI/mesh.
