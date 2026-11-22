@@ -1,0 +1,26 @@
+name: World research - E1 H10 collective rigid grains
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e1_h10_rigid_grains.py
+      - .github/workflows/world-e1-rigid-grains.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rigid_grains:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install same officially packaged Bullet used in H7 and H8
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+          python -m pip show pybullet xarray
+      - name: H10 27 rigid grains with gravity, no gravity, no floor, replay and owner
+        run: python WORLD_RESEARCH/experiments/probe_e1_h10_rigid_grains.py
