@@ -1,0 +1,32 @@
+name: World research - E1 H3 all-layer integrity and safe publishing
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e1_all_level_validation.py
+      - .github/workflows/world-e1-state-integrity.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  e1_integrity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install existing material containers and published Pandera xarray validator
+        run: |
+          python -m pip install --only-binary=:all: landlab numpy scipy xarray 'pandera[xarray]>=0.31,<1'
+          python -m pip show pandera landlab xarray
+      - name: Preserve old material invariant and projection tests
+        run: |
+          cd WORLD_RESEARCH/experiments
+          python -m unittest -v test_matter_v0.py
+          python probe_e1_state_representations.py
+          python probe_e1_shared_state_views.py
+      - name: H3 validate all levels and stage atomic-in-single-writer commit
+        run: python WORLD_RESEARCH/experiments/probe_e1_all_level_validation.py
