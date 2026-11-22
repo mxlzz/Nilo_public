@@ -36,9 +36,9 @@ jobs:
           assert x["protocol"]=="NL-AUDIT-I3c7i-v1"
           assert x["seeds"]==list(range(1800,1820))
           assert x["n_seeds"]==20
-          assert x["n_microblocks"]==800
-          assert x["n_single_lesion_microblocks"]==640
-          assert x["n_total_probe_steps"]==6400
+          assert x["n_microblocks"]==1600
+          assert x["n_single_lesion_microblocks"]==1280
+          assert x["n_total_probe_steps"]==12800
           assert len(x["per_seed_sha256"])==20
           assert x["gates"]["G05"]=="OPEN"
           for row in x["per_seed"]:
