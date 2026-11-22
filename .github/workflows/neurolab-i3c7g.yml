@@ -1,0 +1,76 @@
+name: NeuroLab I3c7g — preregistered short vs long reversal LTW horizon
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c7g_consolidation_horizon.py'
+      - 'experiments/neurolab/tests/test_e09_i3c7g_consolidation_horizon.py'
+      - '.github/workflows/neurolab-i3c7g.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  original-gene-horizon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Enforce nested balanced schedule and E09g5 exact parity
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c7g_consolidation_horizon
+      - name: Run all twenty development seeds with 32/80 reversed blocks
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c7g_consolidation_horizon --output metrics/i3c7g.json | tee metrics/summary.json
+          python - <<'PY'
+          import json
+          d=json.load(open('metrics/i3c7g.json'))
+          assert d["protocol"]=="NL-EXP-I3c7g-v1"
+          assert d["seeds"]==list(range(1700,1720))
+          assert d["n_seeds"]==20
+          assert d["modes"]==["M0","M16","D0","FM"]
+          assert d["phaseB_short_ticks"]==256
+          assert d["phaseB_long_ticks"]==640
+          assert d["post_reversal_LTW_gates"]=={
+              "short":[384,512],"long":[384,512,640,768,896],
+          }
+          assert d["same_short_prefix_in_long"]
+          assert d["same_holdout_sequences"]
+          assert d["original_direct_gene_protocol_exact_short_reference"]
+          assert d["gates"]["G05"]=="OPEN"
+          assert len(d["per_seed_sha256"])==20
+          for r in d["per_seed"]:
+              assert r["D0_e09g5_exact_reference"]
+              for m in d["modes"]:
+                  assert r["modes"][m]["short"]["after_training_sha256"]==r["modes"][m]["long"]["initial_short_prefix_sha256"]
+                  assert r["modes"][m]["short"]["end_weights"]["n_live_ltw_ge5"]==0
+                  for length in ("short","long"):
+                      for readout in ("frozen","active_no_new_reward"):
+                          assert r["modes"][m][length]["readouts"][readout]["new_feedback_events"]==0
+          for m in d["modes"]:
+              print("REVERSED ACTIVE",m,{
+                  p:d["summary"][m][p]["readouts"]["active_no_new_reward"]["mean_steady"]
+                  for p in ("short","long")
+              })
+              print("LTW>=5",m,{
+                  p:d["summary"][m][p]["ltw_at_least5_before_holdout_total"]
+                  for p in ("short","long")
+              })
+              print("PAIRED",m,d["paired_long_minus_short"][m]["active_no_new_reward"])
+          PY
+          sha256sum metrics/i3c7g.json > metrics/artifact.sha256
+      - name: Preserve all positive and null samples including full per-seed histories
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c7g-short-long-original-ltw-gates
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn
