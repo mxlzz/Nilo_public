@@ -30,3 +30,14 @@ Los cinco brazos preservaron la simetría esperada de dosis y exposición integr
 - **G05, G09 y G00-H ABIERTAS**. La exactitud 0,50 impide interpretar este resultado como aprendizaje; no tunear ni ampliar red con esta cohorte. Ver [I3c.5b](E09_02I_I3C5B_RESULTADO_STRENGTH0.md) antes de diseñar intervención con fuerza y pruebas conductuales confirmatorias.
 
 **Límite de alcance:** ocho contactos fijos de la línea N; puente metabólico con tasas40/dosis80 sintéticas, no emulación validada del Norn completo; sin migración deliberadamente para separar crédito temporal. La cohorte1200..1219 queda consumida y no puede servir como validación independiente de una variante elegida a posteriori.
+
+
+## Anexo de auditoría retrospectiva del artefacto íntegro (posterior al resultado)
+
+Se descargó el ZIP original del CI **44963833232**, artefacto ID **14730781039**, y se inspeccionaron **los 52.800 registros por tick** de las 400 ramas (132 ticks por rama). **En el primer frame posfeedback (tick125), las ocho dendritas tenían strength=0 en el 100% de las ramas**; por identidad del tronco, todas comenzaban el bifurcado en tick124 con los ocho slots agotados. Esto no estaba detectado en el preregistro original y se informa como **limitación metodológica post hoc**, sin cambiar los resultados numéricos.
+
+- En el control N, los 10.560 frames mantuvieron siempre los ocho slots agotados.
+- En D0/D1/D2/D3 hubo transiciones transitorias de fuerza positiva después del pulso: frames con menos de ocho agotadas, respectivamente **270 / 650 / 0 / 750** de 10.560 por modo. Al tick256, **todos** tenían fuerza0; la lectura final siguió al azar.
+- Es incorrecto interpretar el contraste de fracciones D0 vs D3 como aprendizaje sobre una red inicialmente consolidada. Representa asignación numérica temporal bajo **condiciones de agotamiento inicial**; algunas ramas muestran recuperación transitoria de fuerza sin retención final. El posible mecanismo histórico de pesos sobre fuerza0 se investigó por separado en [I3c.5b-H](E09_02I_I3C5B_H_RESULTADO_X86.md).
+
+**Consecuencia:** conservar la observación (no es un fallo de ejecución) pero no usarla como prueba ni siquiera indicio suficiente de aprendizaje conductual. Investigar por qué el warmup lleva a fuerza0 antes de un futuro experimento confirmatorio. Ya se preregistró la auditoría [I3c.5c](E09_02I_I3C5C_DISPONIBILIDAD_TRONCO_PRE_REGISTRO.md) sin alterar el cerebro. G05/G09 permanecen abiertas.
