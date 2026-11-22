@@ -1,0 +1,37 @@
+name: World research - E1 H12 MPM 3D long-horizon settling
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e1_h12_mpm_settling.py
+      - WORLD_RESEARCH/experiments/probe_e1_h11_upstream_mpm3d.py
+      - .github/workflows/world-e1-mpm3d-settling.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  settling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install CPU-only upstream engine dependencies
+        run: |
+          python -m pip install --only-binary=:all: 'torch==2.10.0+cpu' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install --only-binary=:all: numpy xarray scipy
+      - name: Get exact same upstream as H11 in temporary workspace
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/world_h12_upstream"
+          git -C "$RUNNER_TEMP/world_h12_upstream" init -q
+          git -C "$RUNNER_TEMP/world_h12_upstream" remote add origin https://github.com/PINNeAPPle-Labs/PINNeAPPle.git
+          git -C "$RUNNER_TEMP/world_h12_upstream" fetch --depth 1 origin c8a6e3dce5daedd10903cc68f7f3a062c42b8bc4
+          git -C "$RUNNER_TEMP/world_h12_upstream" checkout -q --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/world_h12_upstream" rev-parse HEAD)" = c8a6e3dce5daedd10903cc68f7f3a062c42b8bc4
+          echo "PINNEAPPLE_GEO_MPM_PATH=$RUNNER_TEMP/world_h12_upstream/pinneapple_simulation/particle_dynamics/geo_mpm.py" >> "$GITHUB_ENV"
+      - name: Run and report H12 longitudinal gates, including negative findings
+        run: python WORLD_RESEARCH/experiments/probe_e1_h12_mpm_settling.py
