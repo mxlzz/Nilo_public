@@ -264,7 +264,10 @@ def summarize(data):
                     row[phase]["arms"][mode]["readouts"][readout]["overall"]
                     for row in rows
                 )
-                if sum(w["accuracy"] for w in windows)/4!=original:
+                # The same rational accuracy may accumulate with different
+                # floating-point order: compare within machine precision,
+                # never alter original counts or cohorts.
+                if abs(sum(w["accuracy"] for w in windows)/4-original)>1e-12:
                     raise AssertionError("original overall accuracy mismatch")
                 out["by_phase_mode_readout"][phase][mode][readout]={
                     "n_seeds":20,
