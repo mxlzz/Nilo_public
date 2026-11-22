@@ -74,7 +74,7 @@ def state_sha(ds):
         h.update(key.encode())
         h.update(ds[key].attrs["units"].encode())
     h.update(ds.coords["cell"].values.tobytes())
-    h.update(json.dumps(dict(ds.attrs),sort_keys=True).encode())
+    h.update(json.dumps({k: (v.item() if isinstance(v, np.generic) else v) for k, v in ds.attrs.items()}, sort_keys=True).encode())
     return h.hexdigest()
 
 
