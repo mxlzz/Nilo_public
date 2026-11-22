@@ -1,0 +1,73 @@
+{
+  "protocol": "NL-EXP-I3c7h-v1",
+  "run_id": 44986258314,
+  "artifact_id": 14739997041,
+  "full_json_bytes": 39394817,
+  "full_json_sha256": "d723c4a590c0428e13b175c39cd9028c69ed5b714d000f46ada61717eebe925e",
+  "canonical_per_seed_sha256": "dfb26799e560d072234224fd3075980fdd7a0104b3fc1486200731e556a10d41",
+  "seeds": [
+    1800,
+    1801,
+    1802,
+    1803,
+    1804,
+    1805,
+    1806,
+    1807,
+    1808,
+    1809,
+    1810,
+    1811,
+    1812,
+    1813,
+    1814,
+    1815,
+    1816,
+    1817,
+    1818,
+    1819
+  ],
+  "per_seed_sha256": {
+    "1800": "70c3b75c484670f844b41577eb07d6caa47d89b05c1cc2515f910ac273b42983",
+    "1801": "4a7cf062113adc4037fbafc6c9c813c5763442284baf966f5a71aa3999c24fe4",
+    "1802": "4c519ab6704389647100c8dc60408fa78b9ee0666c4a974a37c7b6ab51c8f23f",
+    "1803": "db24200bda188c739cd88641a231c20035c8d97ca3dacf45b477b179d668d56b",
+    "1804": "cb08ce88bd0df345e69b1d0858858722f248f3705fa62554cadca2f502b749ef",
+    "1805": "e6e6917ad9a8112aa96c326702b8f92753e9b5a226609b9505f1fe236c6d574d",
+    "1806": "c492f74a0ecb6b7374f7efc85d48e28823742acc0509ff4dd1d3ec4c8ab77839",
+    "1807": "3d65e4d597979d33f67f8e543d316c53699489474bc13f0ec6bd4ff4dd1d66fa",
+    "1808": "b87951cc6110ea0d8502ccb8dceabf4280e205c707e8be1d6255b4ca2a129c28",
+    "1809": "97033b55fcf33c1c9e7d96e99f4218eb66ed53a52d5e54b1d7e3424457aa2ee6",
+    "1810": "5509fe6d214cfe4f3da5c1c830745e542ebaf6fcf0effea9b3b79f73a9ccb7a9",
+    "1811": "93b0a1a062757b4a63db560b692d6a465b07fb11639d9f8446b3ea31d0fe80be",
+    "1812": "fdf1823de30fedf92d66b66273313cbe1f246c0d4bc2931ca2ee56423916bf86",
+    "1813": "678a9277ef48f5b468e4af44b1f2f046ead837c54ffe2b14e94dde283fcf9062",
+    "1814": "14b0add4597a12e3b62e331b757d4c21a2f88fa40361c42ed8ab8d58f2b32130",
+    "1815": "6320cb4b8963aed0869d69ea9042ab479c5bc46344994507ae98442325024659",
+    "1816": "e6e6b5b920b4c7d381317abbcd5a047d68ccd4a3178d1d6508d599e105129e32",
+    "1817": "a2be9ac02cc7feb3fe4002323a46cda13a825259335c640056d6206150332d80",
+    "1818": "9b0bd620e75d2df156c0d0da26f3bbad325bbdb1fa01d8780676c5ba30bb2855",
+    "1819": "ac5d37306d4b0f6a7236dab6a3f86d864f7912d7fd10e12c57bfe898512527b0"
+  },
+  "permutation_effective_seeds_first": 20,
+  "permutation_effective_seeds_reversed": 20,
+  "primary_active_reversed": {
+    "B": 0.878125,
+    "P": 0.4916666666666667,
+    "F": 0.4927083333333333,
+    "B_minus_P_mean": 0.38645833333333335,
+    "B_minus_P_ci95": [
+      0.29635416666666664,
+      0.4822916666666667
+    ]
+  },
+  "gates": {
+    "software": "PASS",
+    "informative": "PASS",
+    "precommitted_interest": "PASS",
+    "G05": "OPEN",
+    "G09": "OPEN",
+    "G00H": "OPEN"
+  },
+  "warning": "Same-shape chemistry B/Y/F exact; P chemical timing/kinetics not matched. Outcome is NOT causal attribution of individual synapses."
+}
