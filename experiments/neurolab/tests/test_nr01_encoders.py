@@ -47,6 +47,12 @@ class TestCategoricalLibrariesToy(unittest.TestCase):
             self.assertEqual(len(feature), 16)
             self.assertEqual(sum(feature), 1.0)
         self.assertEqual(digest, hashlib.sha256(model.snapshot()).hexdigest())
+        restored = FuzzyART16.restore(model.snapshot())
+        self.assertEqual(model.snapshot(), restored.snapshot())
+        self.assertEqual(model.encode_read_only(obs(.21)), restored.encode_read_only(obs(.21)))
+        restored.over_budget = True
+        with self.assertRaises(RuntimeError):
+            restored.encode_read_only(obs(.21))
         with self.assertRaises(RuntimeError):
             model.observe_unlabelled(obs(.3))
         with self.assertRaises((ValueError, TypeError)):
@@ -71,6 +77,9 @@ class TestCategoricalLibrariesToy(unittest.TestCase):
             self.assertEqual(len(feature), 4)
             self.assertEqual(sum(feature), 1.0)
         self.assertEqual(digest, hashlib.sha256(model.snapshot()).hexdigest())
+        restored = KMeansCategories.restore(model.snapshot())
+        self.assertEqual(model.snapshot(), restored.snapshot())
+        self.assertEqual(model.encode_read_only(obs(.21)), restored.encode_read_only(obs(.21)))
         with self.assertRaises(RuntimeError):
             model.observe_unlabelled(obs(.3))
 

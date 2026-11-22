@@ -64,6 +64,8 @@ class FuzzyART16:
     def encode_read_only(self, x: tuple[float, ...]):
         if not self.frozen:
             raise RuntimeError("encoder must be frozen before decoding")
+        if self.over_budget or self.categories > self.CAPACITY:
+            raise RuntimeError("ART exceeds preregistered 16-category budget")
         before = self.categories
         label = int(self.model.predict(self._prepared(x))[0])
         if self.categories != before:
@@ -75,6 +77,23 @@ class FuzzyART16:
         # Includes all library state, data bounds and learned category weights.
         return pickle.dumps((self.rho, self.model, self.frozen,
                              self.observed, self.over_budget), protocol=5)
+
+    @classmethod
+    def restore(cls, data: bytes):
+        # Trusted internal snapshots only; do not unpickle external files.
+        rho, model, frozen, observed, over_budget = pickle.loads(data)
+        from artlib import FuzzyART
+        if (rho not in (.60, .80, .90) or not isinstance(model, FuzzyART)
+                or type(frozen) is not bool or type(observed) is not int
+                or observed < 0 or type(over_budget) is not bool):
+            raise ValueError("invalid ART snapshot")
+        obj = cls.__new__(cls)
+        import numpy as np
+        obj._np = np
+        obj.rho, obj.model = rho, model
+        obj.frozen, obj.observed = frozen, observed
+        obj.over_budget = over_budget or len(model.W) > cls.CAPACITY
+        return obj
 
 
 class KMeansCategories:
@@ -139,3 +158,20 @@ class KMeansCategories:
         # Snapshot of the full reconstructible training state, incl. pending buffer.
         return pickle.dumps((self.k, self.model, self.buffer, self.frozen,
                              self.fitted, self.observed), protocol=5)
+
+    @classmethod
+    def restore(cls, data: bytes):
+        # Trusted internal snapshots only; do not unpickle external files.
+        k, model, buffer, frozen, fitted, observed = pickle.loads(data)
+        from sklearn.cluster import MiniBatchKMeans
+        if (k not in (4, 8, 16) or not isinstance(model, MiniBatchKMeans)
+                or type(buffer) is not list or len(buffer) >= cls.BATCH
+                or type(frozen) is not bool or type(fitted) is not bool
+                or type(observed) is not int or observed < 0):
+            raise ValueError("invalid KMeans snapshot")
+        obj = cls.__new__(cls)
+        import numpy as np
+        obj._np, obj.k, obj.model = np, k, model
+        obj.buffer, obj.frozen, obj.fitted, obj.observed = buffer, frozen, fitted, observed
+        obj.over_budget = False
+        return obj
