@@ -95,7 +95,7 @@ def reject_bad_owners(ds):
     fails("unauthorized_mass", lambda x: x["material_mass_kg"].values.__setitem__((0, 0), 0.3))
     fails("wrong_mass_unit", lambda x: x["material_mass_kg"].attrs.__setitem__("units", "g"))
     fails("wrong_radius", lambda x: x.attrs.__setitem__("sphere_radius_m", 0))
-    fails("altered_identity", lambda x: x.coords["grain"].values.__setitem__(0, "bogus"))
+    fails("altered_identity", lambda x: x.coords.__setitem__("grain", ["bogus"] + [f"grain_{i:02d}" for i in range(1, N)]))
     return rejected
 
 
