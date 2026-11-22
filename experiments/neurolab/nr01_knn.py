@@ -37,12 +37,15 @@ class CaseMemory16:
         observed = _vector(x)
         if not self.cases:
             return "D0"
-        # Python's min preserves the first item among equal distances.
-        _distance, label = min(
-            (math.fsum((a - b) ** 2 for a, b in zip(observed, prior)), action)
-            for prior, action in self.cases
+        # min(key=...) keeps the earliest case on equal distance. Do NOT
+        # compare (distance, action) tuples: that would break the tie rule.
+        _prior, action = min(
+            self.cases,
+            key=lambda case: math.fsum(
+                (a - b) ** 2 for a, b in zip(observed, case[0])
+            ),
         )
-        return label
+        return action
 
     def apply_reward(self, x, chosen_action, reward):
         observed = _vector(x)
