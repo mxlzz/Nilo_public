@@ -1,0 +1,26 @@
+name: World research - E3 H19 depositional pattern with conditional nulls
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e3_h19_deposit_pattern.py
+      - .github/workflows/world-e3-deposit-pattern.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sediment_pattern:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install verified Landlab 2.11 and scipy statistics
+        run: |
+          python -m pip install --only-binary=:all: landlab==2.11.0 numpy xarray scipy
+          python -m pip show landlab scipy
+      - name: Test preregistered connected deposition vs row-preserving 512 nulls and T24 persistence
+        run: python WORLD_RESEARCH/experiments/probe_e3_h19_deposit_pattern.py
