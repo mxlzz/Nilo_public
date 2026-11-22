@@ -102,9 +102,9 @@ class LocalCausalNecessityContracts(unittest.TestCase):
     def test_integral_design_counts_and_statistical_seed_unit(self):
         d=run_all((1801,))
         self.assertEqual(d["n_seeds"],1)
-        self.assertEqual(d["n_microblocks"],40)
-        self.assertEqual(d["n_single_lesion_microblocks"],32)
-        self.assertEqual(d["n_total_probe_steps"],320)
+        self.assertEqual(d["n_microblocks"],80)
+        self.assertEqual(d["n_single_lesion_microblocks"],64)
+        self.assertEqual(d["n_total_probe_steps"],640)
         self.assertEqual(len(d["per_seed_sha256"]),1)
         self.assertIsNone(d["gate_allzero_effective"])
         self.assertIsNone(d["gate_baseline_informative"])
