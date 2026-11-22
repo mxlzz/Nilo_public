@@ -320,4 +320,7 @@ def main():
             "M16"]["active_no_new_reward"]["windows"],
         "G05_G09_G00H":result["G05_G09_G00H"],
     },sort_keys=True))
-\n\nif __name__=="__main__":\n    main()\n
+
+
+if __name__=="__main__":
+    main()
