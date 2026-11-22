@@ -20,3 +20,10 @@ El [I3c.4b](E09_02I_I3C4B_RESULTADO_GATE128.md) mostró aumentos numéricos LTW 
 **No modificar a ciegas las reglas** para ignorar strength0 ni interpretar automáticamente como fallo del histórico C1. Si el EXE verifica que se excluye un slot agotado, preregistrar después un contrafactual estricto de una sola regla con muestras nuevas y control igualado. Si no lo excluye, documentar la divergencia intuitiva y verificar qué condición real restaura o migra conexiones.
 
 **G05, G09 y G00-H siguen ABIERTAS.** Nilo0.7 y `main` intactos; PR #103 permanece experimental en borrador.
+
+
+## Actualización de verificación histórica (posterior al cierre del informe N)
+
+Se recuperó **el mismo EXE original del usuario** desde la carpeta Drive `neurolab` y se verificó el SHA256. La auditoría x86 [I3c.5b-H](E09_02I_I3C5B_H_RESULTADO_X86.md) y sus [siete huellas](resultados/e09i3c5b_h_strength0_x86_original.json) demostraron estáticamente que, en este ejecutable, el cálculo de señal no consulta strength y el bloque de fuerza cero incrementa un contador **sin saltarse la regla de susceptibilidad y la plasticidad numérica**. La rutina de pérdida sí limpia STW/LTW/susceptibilidad al descender fuerza a cero.
+
+**La condición “bloqueada por EXE no disponible” descrita arriba queda SUPERADA en cuanto al flujo x86 local**; se conserva por trazabilidad del estado anterior, no como bloqueo vigente. **G-I3c5b-H-LOCAL VERIFIED_STATIC**. No implica equivalencia dinámica global, ni cierra G05/G09/G00-H. No modificar la semántica N de fuerza0 sin mayor evidencia.
