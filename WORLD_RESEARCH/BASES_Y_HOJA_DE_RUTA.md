@@ -1,6 +1,6 @@
 # Mundo autónomo — fundamentos y hoja de ruta experimental
 
-**Estado:** investigación conceptual con spike técnico aislado y auditable; **desarrollo del motor propio suspendido** hasta decisión de reutilización. Ver [auditoría](PROCEDIMIENTO_Y_AUDITORIA.md) y [ADR-0001](DECISIONES/ADR-0001_REUTILIZACION.md).
+**Estado actualizado (2026-11-22):** etapa 0, gate de reutilización, **cerrada provisionalmente** con [ADR-0003](DECISIONES/ADR-0003_CIERRE_ETAPA_0_BASES_MODULARES.md). Etapa 1 **ABIERTA**, con pruebas de representación H1–H6 verificadas y [ADR-0005](DECISIONES/ADR-0005_REPRESENTACION_ESPACIAL_HIBRIDA.md) reversible. **Ningún motor físico propio autorizado**, etapas 2–8 no completadas. Ver [auditoría](PROCEDIMIENTO_Y_AUDITORIA.md) y [ADR-0001](DECISIONES/ADR-0001_REUTILIZACION.md).
 **Fecha de registro:** 2026-11-21.
 **Ubicación provisional:** rama `research/world-foundations-2026-11` de `mxlzz/Nilo_public`.
 **Alcance:** mundo físico/ambiental generativo. **Excluye** cerebro, genética neuronal, Norns, NeuroLab, LLM y control cognitivo de agentes.
@@ -118,5 +118,6 @@ No comenzar por biomas, gráficos, árboles, personajes ni ecosistemas completos
 - **Propuesto, no aprobado todavía:** representación discreta inicial, variables del apartado 5, primer experimento y secuencia detallada del apartado 6.
 - **Implementado fuera de secuencia:** prototipo aislado de invariantes de materia, con 8 pruebas aprobadas por CI; no se adopta como motor.
 - **No hecho:** benchmarks comparativos de motores, simulación física autónoma, generación ambiental ni validación de emergencia.
-- **Estado de gates:** etapa 0 ABIERTA; etapa 1 SPIKE NO ADOPTADO; etapas 2–8 SIN INICIAR.
-- **Próxima actividad prevista:** evaluar alternativas y medir pruebas de encaje conforme al [ADR-0001](DECISIONES/ADR-0001_REUTILIZACION.md); utilizar [controles auditables](PROCEDIMIENTO_Y_AUDITORIA.md).
+- **Estado de gates al 2026-11-21 (histórico):** etapa 0 abierta; etapa 1 spike no adoptado; etapas 2–8 sin iniciar.
+- **Actualización verificada al 2026-11-22:** etapa 0 cerró exclusivamente la selección de alternativas por [ADR-0003](DECISIONES/ADR-0003_CIERRE_ETAPA_0_BASES_MODULARES.md). Etapa 1 continúa ABIERTA con H1–H6 (datos materiales, integridad, pérdida de geometría en altura, owner particionado y migración segura de ROI), ensayos CI e informes en `WORLD_RESEARCH/ETAPA_1_H{1..6}_*`. [ADR-0004](DECISIONES/ADR-0004_PROPIEDAD_INTEGRIDAD_ESTADO.md) y [ADR-0005](DECISIONES/ADR-0005_REPRESENTACION_ESPACIAL_HIBRIDA.md) son decisiones técnicas **reversibles para laboratorio**; no motor físico elegido. Ninguna etapa 2–8 se considera iniciada por estos ensayos, aunque hubo pruebas exploratorias adelantadas de procesos ambientales. Los apartados históricos de "sin benchmarks" y "alternativas pendientes" más arriba corresponden al diagnóstico anterior, no al estado vigente.
+- **Próxima actividad aprobada por el plan:** regresar a los invariantes materiales faltantes de la etapa 1 y evaluar una ley local **ya existente** (etapa 2 futura), con gate previo y controles. No profundizar en infraestructura de formatos sin una necesidad física nueva demostrada. Mantener [controles auditables](PROCEDIMIENTO_Y_AUDITORIA.md).
