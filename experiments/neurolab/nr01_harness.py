@@ -140,14 +140,21 @@ def feedback_phase(arm, feedback_cases, test_cases, family, task, world_seed):
               _observations_digest(feedback_cases),
               "test_observations_sha256": _observations_digest(test_cases),
               "checkpoints": {}}
+    decision_cpu_ns = update_cpu_ns = holdout_cpu_ns = 0
     for i, case in enumerate(feedback_cases, 1):
         x = case.observation
+        t0 = time.process_time_ns()
         chosen = arm.choose(x)
+        decision_cpu_ns += time.process_time_ns() - t0
         # Reward only AFTER the model chose; no latent reaches the model.
         reward = 1 if chosen == _target(family, case, task) else -1
+        t1 = time.process_time_ns()
         arm.apply_reward(x, chosen, reward)
+        update_cpu_ns += time.process_time_ns() - t1
         if i in CHECKPOINTS:
+            t2 = time.process_time_ns()
             evaluated = evaluate_read_only(arm, test_cases, family, task)
+            holdout_cpu_ns += time.process_time_ns() - t2
             shuffled = negative_test_permutation(
                 evaluated["actions"], test_cases, family, task, world_seed
             )
@@ -157,6 +164,9 @@ def feedback_phase(arm, feedback_cases, test_cases, family, task, world_seed):
                 "negative_accuracy": shuffled["accuracy"],
                 "negative_D0_count": shuffled["permuted_D0_count"],
                 "state_bytes": arm.state_size_bytes(),
+                "decision_cpu_ns_cumulative": decision_cpu_ns,
+                "feedback_update_cpu_ns_cumulative": update_cpu_ns,
+                "holdout_cpu_ns_cumulative": holdout_cpu_ns,
             }
     return result
 
@@ -179,17 +189,17 @@ def run_world(family, world_seed, kind, parameter=None):
     arm = Arm(kind, encoder)
     unlabelled = make_tape(family, world_seed, "unsupervised")
     test = make_tape(family, world_seed, "test")
-    start = time.perf_counter_ns()
+    start = time.process_time_ns()
     for case in unlabelled:
         arm.observe_unlabelled(case.observation)
     arm.freeze_encoder()
-    acquisition_ns = time.perf_counter_ns() - start
+    acquisition_ns = time.process_time_ns() - start
     report = {"schema": "nr01-software-harness-v1",
               "family": family, "world_seed": world_seed,
               "kind": kind, "parameter": parameter,
               "unlabelled_sha256": _observations_digest(unlabelled),
               "test_sha256": _observations_digest(test),
-              "acquisition_ns": acquisition_ns,
+              "acquisition_cpu_ns": acquisition_ns,
               "encoder_categories": getattr(encoder, "categories", None),
               "over_budget": arm.over_budget,
               "initial_state_bytes": arm.state_size_bytes()}
