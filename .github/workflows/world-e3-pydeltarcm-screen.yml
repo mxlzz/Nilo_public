@@ -1,0 +1,35 @@
+name: World research - E3 H20A pyDeltaRCM isolated screening
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e3_h20a_pydeltarcm_screen.py
+      - .github/workflows/world-e3-pydeltarcm-screen.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  upstream_delta_screening:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install upstream runtime wheels only
+        run: |
+          python -m pip install --only-binary=:all: numpy scipy matplotlib netCDF4 pyyaml numba importlib-resources
+      - name: Fetch and install pinned MIT upstream delta solver
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/world_h20a"
+          git -C "$RUNNER_TEMP/world_h20a" init -q
+          git -C "$RUNNER_TEMP/world_h20a" remote add origin https://github.com/DeltaRCM/pyDeltaRCM.git
+          git -C "$RUNNER_TEMP/world_h20a" fetch --depth 1 origin a107c1d0f6b18ac19ac15ec4586179678329ae35
+          git -C "$RUNNER_TEMP/world_h20a" checkout -q --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/world_h20a" rev-parse HEAD)" = a107c1d0f6b18ac19ac15ec4586179678329ae35
+          python -m pip install --no-deps "$RUNNER_TEMP/world_h20a"
+      - name: Check runnable delta morphology, replay, seeds, declared volume diagnostics
+        run: python WORLD_RESEARCH/experiments/probe_e3_h20a_pydeltarcm_screen.py
