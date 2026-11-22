@@ -5,6 +5,7 @@ on:
       - research/world-foundations-2026-11
     paths:
       - WORLD_RESEARCH/experiments/probe_e1_bullet_cavity_owner.py
+      - WORLD_RESEARCH/experiments/probe_e1_bullet_cavity_prepare.py
       - .github/workflows/world-e1-bullet-cavity.yml
   workflow_dispatch:
 permissions:
@@ -17,10 +18,19 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - name: Install existing physics engine and state libraries
+          python-version: '3.13'
+      - name: Install existing H5 state producer on its supported interpreter
         run: |
-          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray landlab
-          python -m pip show pybullet landlab xarray
-      - name: H8 cavity-vs-heightfield placement, live physics support and mass ownership
-        run: python WORLD_RESEARCH/experiments/probe_e1_bullet_cavity_owner.py
+          python -m pip install --only-binary=:all: numpy scipy xarray landlab
+          python -m pip show landlab xarray
+      - name: Build cavity owner and original heightfield data-only checkpoint (Python 3.13)
+        run: python WORLD_RESEARCH/experiments/probe_e1_bullet_cavity_prepare.py /tmp/h8
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install official Bullet wheel and NetCDF reader, never import Landlab here
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+          python -m pip show pybullet xarray
+      - name: H8 read validated NetCDF from other interpreter, test cavity contact and budget
+        run: python WORLD_RESEARCH/experiments/probe_e1_bullet_cavity_owner.py /tmp/h8
