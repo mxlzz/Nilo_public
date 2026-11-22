@@ -1,0 +1,26 @@
+name: World research - E1 H5 exclusive spatial ownership
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e1_surface_volume_partition.py
+      - .github/workflows/world-e1-surface-volume-state.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ownership:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install prior validated material/environment data libraries
+        run: |
+          python -m pip install --only-binary=:all: numpy scipy xarray landlab
+          python -m pip show landlab xarray
+      - name: H5 partition owners and check cache/sinks/NetCDF without implementing physics
+        run: python WORLD_RESEARCH/experiments/probe_e1_surface_volume_partition.py
