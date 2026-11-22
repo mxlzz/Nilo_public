@@ -33,3 +33,9 @@
 ## Limitaciones y gate posterior
 
 **H16 SOLO demuestra** coexistencia espacial de dos materiales bajo la misma PDE térmica con propiedades diferentes y una fase derivada, en **1D sin mezcla intracelda ni movimiento**. No demuestra acoplamiento mecánico, cavidades, patrones 3D ni autoorganización abierta. Si todos los gates pasan, ejecutar **auditoría específica contra los cuatro criterios formales de etapa1**, incluyendo H1–H6 y H15; no declarar cierre automáticamente. Etapas2–8 permanecen sin aprobación por este protocolo.
+
+## Incidencia H16.0: el workflow fue inválido antes de ejecutar jobs
+
+[Primera Actions run 45059294431](https://github.com/mxlzz/Nilo_public/actions/runs/45059294431) se marcó **FAIL** instantáneo, con **cero jobs**. Un parser YAML independiente reprodujo `mapping values are not allowed here` en la línea `run: python -m pip install --only-binary=:all: ...`; la secuencia `=:all:` con dos puntos dentro de un escalar YAML no citado invalida ese bloque. **No se ejecutó ninguna simulación** y no existe resultado físico H16 todavía.
+
+**Enmienda preregistrada antes de reintentar:** cambiar exclusivamente el comando de instalación a bloque literal `run: |` como en H15, sin modificar dependencias, código, hipótesis, parámetros, tests ni umbrales. Conservar la CI roja y realizar una segunda ejecución válida.
