@@ -5,6 +5,8 @@ on:
     branches: ['docs/neurolab-*','work/neurolab-*']
     paths:
       - '.github/workflows/neurolab-nr01-api-smoke.yml'
+      - 'experiments/neurolab/nr01_encoders.py'
+      - 'experiments/neurolab/tests/test_nr01_encoders.py'
   workflow_dispatch:
 
 permissions:
@@ -73,3 +75,6 @@ jobs:
               "status":"API_SMOKE_PASS"
           },sort_keys=True))
           PY
+
+      - name: NR01.03-C2 toy-only frozen encoder adapter tests
+        run: python -m unittest experiments.neurolab.tests.test_nr01_encoders -v
