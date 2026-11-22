@@ -360,6 +360,30 @@ def _paired_ci(rows,phase,metric):
     }
 
 
+def _paired_ci_by_alignment(rows,phase,group,metric):
+    """Same original paired seed-cluster bootstrap for BOTH structural groups.
+
+    Descriptive grouping was specified before lesions, but this output
+    aggregator was added after first data inspection. No reranking/selection.
+    """
+    vals=[
+        row["phases"][phase]["B"]["summary"]["per_alignment"][group][metric]
+        -row["phases"][phase]["P"]["summary"]["per_alignment"][group][metric]
+        for row in rows
+    ]
+    rng=random.Random(BOOTSTRAP_SEED)
+    draws=sorted(
+        statistics.mean(rng.choice(vals) for _ in vals)
+        for _ in range(BOOTSTRAP_REPS)
+    )
+    return {
+        "n_seeds":len(vals),
+        "mean":statistics.mean(vals),
+        "ci95":[draws[int(0.025*BOOTSTRAP_REPS)],
+                draws[int(0.975*BOOTSTRAP_REPS)-1]],
+    }
+
+
 def run_all(seeds=SEEDS):
     if (not isinstance(seeds,tuple) or not seeds
             or len(set(seeds))!=len(seeds)
@@ -398,6 +422,26 @@ def run_all(seeds=SEEDS):
                 "single_lesion_net_lost_correct_rate",
             )
         }
+    alignment_contrasts={
+        phase:{
+            group:{
+                metric:_paired_ci_by_alignment(rows,phase,group,metric)
+                for metric in ("action_change_rate","net_lost_correct_rate")
+            } for group in ("True","False")
+        } for phase in ("first","reversed")
+    }
+    for phase in ("first","reversed"):
+        for mode in EVALUATED_MODES:
+            summary[phase][mode]["by_alignment"]={
+                group:{
+                    metric:statistics.mean(
+                        row["phases"][phase][mode]["summary"][
+                            "per_alignment"][group][metric]
+                        for row in rows
+                    )
+                    for metric in ("action_change_rate","net_lost_correct_rate")
+                } for group in ("True","False")
+            }
     if len(rows)==20:
         gate_allzero=(summary["reversed"]["B"][
             "n_seed_all_zero_changes_action"]>=MIN_ALL_ZERO_EFFECTIVE_SEEDS)
@@ -419,6 +463,8 @@ def run_all(seeds=SEEDS):
         "n_total_probe_steps":len(rows)*2*2*2*10*PROBE_TICKS,
         "summary":summary,
         "paired_B_minus_P":contrast,
+        "paired_B_minus_P_by_alignment":alignment_contrasts,
+        "analysis_amendment":"Structural alignment seed-cluster aggregate added after original data were inspected; per_seed neural/probe data unchanged.",
         "gate_allzero_effective":gate_allzero,
         "gate_baseline_informative":gate_baseline,
         "per_seed_sha256":{str(r["seed"]):digest(r) for r in rows},
@@ -444,7 +490,8 @@ def main():
         k:result[k] for k in (
             "protocol","n_seeds","seeds","n_microblocks",
             "n_single_lesion_microblocks","n_total_probe_steps",
-            "summary","paired_B_minus_P","gate_allzero_effective",
+            "summary","paired_B_minus_P",
+            "paired_B_minus_P_by_alignment","gate_allzero_effective",
             "gate_baseline_informative","per_seed_sha256","gates",
         )
     },sort_keys=True))
