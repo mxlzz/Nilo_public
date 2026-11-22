@@ -1,0 +1,39 @@
+name: NeuroLab G05-INFO.03 feasibility
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths:
+      - experiments/neurolab/g05_info_feasibility.py
+      - .github/workflows/neurolab-g05-info.yml
+  workflow_dispatch:
+
+jobs:
+  g05_info:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Verify registered analytic fixtures (not scientific experiments)
+        run: |
+          python experiments/neurolab/g05_info_feasibility.py > g05_info_03_toy_result.json
+          python -m json.tool g05_info_03_toy_result.json > /dev/null
+          sha256sum experiments/neurolab/g05_info_feasibility.py g05_info_03_toy_result.json
+          python - <<'PY'
+          import json
+          x = json.load(open("g05_info_03_toy_result.json", encoding="utf8"))
+          assert x["legacy_pulses_verified"] == 648
+          assert x["ambiguous_hidden_histories_verified"] is True
+          assert x["collision_priority_verified"] is True
+          assert x["exogenous_schedule_independent_of_actions"] is True
+          assert [r["seed"] for r in x["rows"]] == [0, 1, 42]
+          print("G05-INFO.03 technical gate PASS on Python 3.13")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-g05-info03-toy
+          path: g05_info_03_toy_result.json
+          retention-days: 90
