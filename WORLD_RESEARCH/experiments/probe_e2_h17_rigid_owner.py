@@ -103,16 +103,16 @@ def validate(ds,placement):
         raise ValueError("Material volume or fixed constraint modified")
     if not np.array_equal(x[1],obstacle_xyz(placement)) or not np.array_equal(v[1],ZERO3):
         raise ValueError("Static material B moved")
+    sep=np.abs(x[0]-x[1])
+    overlap=np.maximum(0.,half[0]+half[1]-sep)
+    if np.all(overlap>.02):
+        raise ValueError("Material volumes interpenetrate")
     if np.max(np.abs(x[0,:2]))>.15:
         raise ValueError("Mobile A left initial vertical corridor")
     if x[0,2]-.5<-.02:
         raise ValueError("Mobile body penetrated ground excessively")
     if np.max(np.abs(x[0]))>10. or np.max(np.abs(v[0]))>50.:
         raise ValueError("Unbounded mobile body state")
-    sep=np.abs(x[0]-x[1])
-    overlap=np.maximum(0.,half[0]+half[1]-sep)
-    if np.all(overlap>.02):
-        raise ValueError("Material volumes interpenetrate")
     return {"mass_kg":float(m.sum()),"volume_m3":float(np.prod(2*half[0])+np.prod(2*half[1]))}
 
 
@@ -207,7 +207,7 @@ def reject_changes(owner):
     reject("wrong_length_units",lambda d:d["position_m"].attrs.__setitem__("units","cm"))
     reject("changed_identity",lambda d:d.coords.__setitem__("body",np.array(["C","B"])))
     reject("static_block_displaced",lambda d:d["position_m"].values.__setitem__((1,0),5.))
-    reject("overlapped_solids",lambda d:d["position_m"].values.__setitem__((0,2),.5 if placement=="blocked" else 2.))
+    reject("overlapped_solids",lambda d:d["position_m"].values.__setitem__((0,slice(None)),d["position_m"].values[1].copy()))
     reject("wrong_velocity_units",lambda d:d["velocity_mps"].attrs.__setitem__("units","km/h"))
     reject("fixed_flag_swapped",lambda d:d["fixed_flag"].values.__setitem__(0,1))
     reject("extra_velocity_stock",lambda d:d.__setitem__("velocity_copy",xr.DataArray(np.zeros((2,3)),dims=("body","coord"))))
