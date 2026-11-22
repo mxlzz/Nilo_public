@@ -1,0 +1,26 @@
+name: World research - E2 H18 sediment slope-gradient differential
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e2_h18_slope_ablation.py
+      - .github/workflows/world-e2-sediment-slope.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  differential_slope:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install same Landlab2.11 provider as H9
+        run: |
+          python -m pip install --only-binary=:all: landlab==2.11.0 xarray scipy numpy
+          python -m pip show landlab xarray
+      - name: Execute preregistered slope sensitivity and material budget
+        run: python WORLD_RESEARCH/experiments/probe_e2_h18_slope_ablation.py
