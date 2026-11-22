@@ -1,0 +1,55 @@
+name: NeuroLab I3c5d — early feedback before exhaustion
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c5d_early_window.py'
+      - 'experiments/neurolab/tests/test_e09_i3c5d_early_window.py'
+      - '.github/workflows/neurolab-i3c5d.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preregistered-early-window:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Lock 4-tick baseline, no evaluator leak, no post hoc tuning
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c5d_early_window
+      - name: Run fixed 20-seed 240-branch experiment
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c5d_early_window --output metrics/i3c5d.json | tee metrics/summary.json
+          python - <<'PY'
+          import json
+          r=json.load(open("metrics/i3c5d.json"))
+          assert r["protocol"]=="NL-EXP-I3c5d-v1"
+          assert r["seeds"]==list(range(1300,1320))
+          assert r["n_unique_trunks"]==40
+          assert r["n_mapping_coordinates"]==80
+          assert r["n_branches"]==240
+          assert r["no_extra_gain_or_migration"]
+          assert all(len(v["episodes"])==4 for v in r["per_seed"])
+          assert len(r["per_seed_sha256"])==20
+          assert r["gates"]["G05"]=="OPEN"
+          print("SUMMARY:",r["summary"])
+          print("CONTRASTS:",r["paired_contrasts"])
+          PY
+          sha256sum metrics/i3c5d.json > metrics/data.sha256
+      - name: Preserve positive and negative results with per-seed traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c5d-early-feedback
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn
