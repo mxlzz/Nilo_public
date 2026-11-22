@@ -63,3 +63,14 @@ El trabajo específico y pequeño (por ejemplo interfaces o adaptadores) puede r
 - Etapas 2–8: **no iniciadas**.
 - Bloqueo actual: prueba de encaje técnico y licencias de al menos dos candidatas sobre los mismos casos de uso.
 - Próximo trabajo autorizado por el plan: documentación, inspección de alternativas, definición de benchmarks y pruebas limitadas de adaptación; **no** desarrollar nuevas leyes físicas en el prototipo existente.
+
+## Addendum — estado verificable al 22-11-2026 (prevalece sobre el corte histórico anterior)
+
+Las líneas anteriores "etapa 0 abierta / etapa 1 spike en cuarentena" documentan el diagnóstico del **21 de noviembre**. **NO** representan el estado vigente tras las pruebas posteriores. Mantenerlas por trazabilidad y utilizar la [hoja de ruta actualizada](BASES_Y_HOJA_DE_RUTA.md) como puerta activa.
+
+- **Etapa 0 / evaluación de alternativas:** cerrada **solo en su gate de reutilización** mediante [ADR-0003](DECISIONES/ADR-0003_CIERRE_ETAPA_0_BASES_MODULARES.md); seis familias de soluciones ensayadas, errores instrumentales preservados. No existe motor universal seleccionado.
+- **Etapa 1 / estado material:** sigue **ABIERTA**. H1–H3 validaron material/capas/alias/contrato; [H4](https://github.com/mxlzz/Nilo_public/actions/runs/45034754946) demostró colisión de alturas con cavidades y puentes estáticos, [H5](https://github.com/mxlzz/Nilo_public/actions/runs/45035061531) validó propietario material exclusivo entre superficie/volumen y caché derivada, y [H6](https://github.com/mxlzz/Nilo_public/actions/runs/45035363232) migró 24kg de frontera a vóxeles y volvió sin pérdida, rechazando simplificar columnas con huecos. Los documentos completos se encuentran junto a los protocolos.
+- **Decisión espacial reversible:** [ADR-0005](DECISIONES/ADR-0005_REPRESENTACION_ESPACIAL_HIBRIDA.md): considerar superficie ambiental con regiones volumétricas locales **si** el fenómeno lo exige; no inventar un motor propio ni voxelizar todo el mapa. `ADR-0004` sigue como principio de propiedad de estado; `ADR-0005` ajusta su representación experimental a propietarios exclusivos por región.
+- **No probado:** estabilidad física, contacto 3D, generación espontánea de cavidades, incorporación de leyes reales al estado, energía y transformaciones de material, escala y concurrencia. Pruebas antiguas H7–H14 de agua/ecología no cierran etapas 5/6.
+- **Próxima puerta:** definir y validar fenómenos materiales e invariantes no cubiertos por H1–H6, elegir componentes de física **existentes** antes de desarrollar nuevos, y evitar seguir programando adaptadores sin hipótesis causal. No pasar a etapas 2–8 sin un gate propio.
+- **Repositorio:** rama `research/world-foundations-2026-11` de `Nilo_public`, ubicación provisional, aislada de `main` y de NeuroLab. El agente siguiente debe tomar las ADR recientes y resultados CI como información vigente en lugar de las etiquetas históricas.
