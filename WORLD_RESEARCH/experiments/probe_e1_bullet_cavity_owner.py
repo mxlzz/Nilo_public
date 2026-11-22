@@ -238,6 +238,8 @@ def execute(ds,gravity):
             "final_vertical_velocity_m_s":float(velocity[2]),
             "total_contacts_last_step":len(allcontacts),
             "cavity_floor_contact_count":len(support_contacts),
+            "largest_contact_normal_force_N":max((float(contact[9]) for contact in allcontacts),default=0.0),
+            "largest_floor_contact_force_N":max((float(contact[9]) for contact in support_contacts),default=0.0),
             "contact_geometry_debug":[{"static_voxel_xyz":list(ids.get(contact[2],(-1,-1,-1))),
                          "distance_m":float(contact[8]),
                          "normal_on_B_xyz":[float(v) for v in contact[7]],
@@ -283,13 +285,17 @@ def main(folder):
         print("H8_DIAGNOSTIC "+json.dumps({"case":label,"center_z":case["final_center_z_m"],
                "velocity_z":case["final_vertical_velocity_m_s"],
                "contacts":case["contact_geometry_debug"],
-               "cavity_floor_contact_count":case["cavity_floor_contact_count"]},sort_keys=True),flush=True)
+               "cavity_floor_contact_count":case["cavity_floor_contact_count"],
+               "max_contact_force_N":case["largest_contact_normal_force_N"],
+               "max_floor_contact_force_N":case["largest_floor_contact_force_N"]},sort_keys=True),flush=True)
     assert CUBE_EXPECTED_REST_Z-.05<=with_gravity["final_center_z_m"]<=CUBE_EXPECTED_REST_Z+.10
     assert abs(with_gravity["final_vertical_velocity_m_s"])<.1
     assert with_gravity["total_contacts_last_step"]>0
     assert with_gravity["cavity_floor_contact_count"]>0
     assert abs(no_gravity["final_center_z_m"]-CUBE_START[2])<1e-9
-    assert no_gravity["total_contacts_last_step"]==0
+    assert no_gravity["cavity_floor_contact_count"]==0, "No-gravity body should not receive floor support"
+    assert no_gravity["largest_contact_normal_force_N"]<1e-9, "No-gravity tangential wall contacts must have no force"
+    assert with_gravity["largest_floor_contact_force_N"]>0.0, "Gravity case must have load-bearing floor contact"
     assert with_gravity["sampled_time_z_vz"]==replay["sampled_time_z_vz"]
     assert with_gravity["total_contacts_last_step"]==replay["total_contacts_last_step"]
     assert canonical_hash(ds)==base
