@@ -1,0 +1,33 @@
+name: NeuroLab H08a static historical audit (no proprietary files)
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths:
+      - experiments/neurolab/h08a_static_audit.py
+      - experiments/neurolab/tests/test_h08a_static_audit.py
+      - .github/workflows/neurolab-h08a-static.yml
+  workflow_dispatch:
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Check synthetic fixtures only (original EXE/GEN not on CI)
+        run: |
+          python -m unittest experiments.neurolab.tests.test_h08a_static_audit -v
+          python - <<'PY'
+          import json
+          x=json.load(open('docs/neurolab/resultados/h08a_original_evidence_20261122.json'))
+          assert x["signature_count"]==15
+          assert len(x["direct_calls"]["brain"])==2
+          assert len(x["direct_calls"]["chemistry"])==3
+          assert len(x["direct_calls"]["world_tick"])==3
+          assert x["constructor_like_path"]["chemical_tick_call"]=="0x40b089"
+          print('Verified archived evidence shape; NOT a new binary audit')
+          PY
