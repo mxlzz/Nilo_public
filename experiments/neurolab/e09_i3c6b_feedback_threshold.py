@@ -38,7 +38,7 @@ def authentic_receptors():
     records={}
     for idx in RECEPTOR_IDS:
         gene=Receptor(idx,**data["brain_receptors"][str(idx)])
-        if not (gene.organ==gene.lobe*0 and gene.lobe==6
+        if not (gene.organ==0 and gene.lobe==6
                 and gene.locus==15+(idx-127)
                 and gene.chemical in (53,70)
                 and gene.threshold==0 and gene.nominal==16
