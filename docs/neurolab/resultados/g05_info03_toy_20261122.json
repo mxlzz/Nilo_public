@@ -1,0 +1,87 @@
+{
+  "ambiguous_hidden_histories_verified": true,
+  "collision_priority_verified": true,
+  "exogenous_schedule_independent_of_actions": true,
+  "legacy_pulses_verified": 648,
+  "protocol": "G05-INFO.03/toy-v1",
+  "rows": [
+    {
+      "action_mode": "random",
+      "colliding_ticks": 241,
+      "correlations": {
+        "1": 0.0011004401760704283,
+        "2": 0.061524609843937574,
+        "3": 0.0037014805922368946,
+        "4": 0.062625050020008,
+        "5": 0.00010004001600640257,
+        "6": -0.0039015606242496998,
+        "7": 0.062625050020008,
+        "8": 0.0028011204481792717
+      },
+      "created": 3957,
+      "delivered": 3707,
+      "dropped_collision": 250,
+      "opportunity_sha256": "6a000b039383b552ae3c10f9eb4d3dbcd55af9113b5a5b578258ce765a5190b0",
+      "permuted_correlations": {
+        "2": -0.010404161664665866,
+        "4": -0.00010004001600640257,
+        "7": -0.002300920368147259
+      },
+      "seed": 0,
+      "stream_sha256": "4319d295d3eae940304a5f0cb029b15ebb7c676fae3a7c9c6163efe0ba5949d3",
+      "ticks": 20000
+    },
+    {
+      "action_mode": "random",
+      "colliding_ticks": 281,
+      "correlations": {
+        "1": -0.007503001200480192,
+        "2": 0.06412565026010404,
+        "3": -0.004601840736294518,
+        "4": 0.06072428971588636,
+        "5": -0.0021008403361344537,
+        "6": -0.00020008003201280514,
+        "7": 0.05982392957182873,
+        "8": 0.00040016006402561027
+      },
+      "created": 4031,
+      "delivered": 3741,
+      "dropped_collision": 290,
+      "opportunity_sha256": "c708f48f705ff9bb20f5f44cef84ad564f4fcfb00a90ae7ac913d3154f9220dd",
+      "permuted_correlations": {
+        "2": 0.00010004001600640257,
+        "4": -0.002901160464185674,
+        "7": 0.003401360544217687
+      },
+      "seed": 1,
+      "stream_sha256": "2e69d0346d93972c6e1e7fefe0e74d0f3ac7b4dca3aadce10574aaae7c28adb4",
+      "ticks": 20000
+    },
+    {
+      "action_mode": "random",
+      "colliding_ticks": 259,
+      "correlations": {
+        "1": -0.0010504201680672268,
+        "2": 0.062875150060024,
+        "3": 0.006052420968387355,
+        "4": 0.06057422969187675,
+        "5": -0.0016506602641056423,
+        "6": -0.004251700680272109,
+        "7": 0.06317527010804322,
+        "8": -0.0002501000400160064
+      },
+      "created": 4023,
+      "delivered": 3760,
+      "dropped_collision": 263,
+      "opportunity_sha256": "96a18c576d62db26bdf60f53af29edb79804444ed6f944e38ae465028e685626",
+      "permuted_correlations": {
+        "2": 0.0029511804721888755,
+        "4": -0.0029511804721888755,
+        "7": 0.003051220488195278
+      },
+      "seed": 42,
+      "stream_sha256": "8069553ed10bf1ab27b0328bc91c902ae4157c73d4f2f83bb56e526764e44e39",
+      "ticks": 20000
+    }
+  ]
+}
