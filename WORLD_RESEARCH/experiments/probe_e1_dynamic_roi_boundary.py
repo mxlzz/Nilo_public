@@ -110,7 +110,7 @@ def make_cavity():
 
 def promote_boundary(ds):
     assert ds.coords["roi_x"].values.tolist()==list(range(X0,X1))
-    candidate=ds.reindex(roi_x=np.arange(X0,X1+1),fill_value=0)
+    candidate=ds.reindex(roi_x=np.arange(X0,X1+1),fill_value=0).copy(deep=True)
     outside=candidate["outside_column_mass"].values
     newroi=candidate["roi_voxel_mass"].values
     assert np.all(outside[0,Y0:Y1,X1]==4.)
@@ -175,7 +175,7 @@ def main():
 
     # Negative: removing outside stock without moving it into new owner
     # must be rejected by the global material balance.
-    missing=base.reindex(roi_x=np.arange(X0,X1+1),fill_value=0)
+    missing=base.reindex(roi_x=np.arange(X0,X1+1),fill_value=0).copy(deep=True)
     missing["outside_column_mass"].values[0,Y0:Y1,X1]=0.
     missing["region_is_volume"].values[Y0:Y1,X1]=True
     missing_stock_rejected=False
