@@ -82,7 +82,11 @@ def _input_neural(state,mode):
     via,loss_nominal,_=SPECS[mode]
     base=(state.pending if via=="D"
           else state.coupled.chemistry.decision_chem)
-    return (base[0],base[1],base[2],base[3]) if loss_nominal else (
+    # Important: direct pending REWARD/PUNISHMENT has CHEM2/3=0 by design;
+    # loss16 must instead borrow the ORIGINAL receptor's nominal output.
+    # Otherwise D16 would silently be identical to D0 (invalid factorial).
+    receptor=state.coupled.chemistry.decision_chem
+    return (base[0],base[1],receptor[2],receptor[3]) if loss_nominal else (
         base[0],base[1],0,0
     )
 
