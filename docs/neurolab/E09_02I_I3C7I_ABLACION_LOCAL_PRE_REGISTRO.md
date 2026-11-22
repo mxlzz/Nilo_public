@@ -39,3 +39,10 @@ Se puede intervenir la microred existente `C1ContextBrain`: `ContextBrainState` 
 **Resultado negativo:** ninguna lesión modifica acciones aunque el modelo discrimine (redundancia o WTA), lesiones fuera de alineación ayudan, o intervención global falla. Registrarlos sin ajustar la red.
 
 **G05/G09/G00-H ABIERTAS**, aunque aparezca señal. No tocar `main`, Nilo0.7 ni PR103 draft; no usar `C1` original completo como si estuviera implementado.
+
+
+## Fe de erratas instrumental posterior a ejecución — 22/11/2026
+
+El conteo **800 microbloques, 640 lesiones únicas** escrito arriba fue un ERROR ARITMÉTICO de metadatos: la fórmula declarada literalmente (20 × 2 fases × 2 modos × 2 contextos × (1 sham + 8 single + 1 all-zero)) da **1.600 microbloques, de los cuales 1.280 son lesiones individuales, 160 sham y 160 all-zero; 12.800 microticks de diagnóstico**. El código siempre ejecutó la fórmula y **todos los datos de la primera corrida coinciden con 1.600**, sin modificación de algoritmo ni de semillas.
+
+El [primer CI I3c7i #44986729926](https://github.com/mxlzz/Nilo_public/actions/runs/44986729926) falló un test que esperaba erróneamente40 para una sola semilla (real80). Corregida solamente la expectativa, la [segunda CI #44986812101](https://github.com/mxlzz/Nilo_public/actions/runs/44986812101) pasó los7 tests y generó el dataset completo, pero falló su último `assert` porque exigía800/640/6400 en lugar de1600/1280/12800. **No se alteraron dendritas, seeds, checkpoints, gates ni resultados.** El workflow de comprobación se corrigió a los totales matemáticos reales. Conservar este historial y no confundir fallas de recuento con resultados científicos negativos.
