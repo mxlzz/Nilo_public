@@ -1,0 +1,75 @@
+name: NeuroLab NR01 — existing libraries API-only smoke
+
+on:
+  push:
+    branches: ['docs/neurolab-*','work/neurolab-*']
+    paths:
+      - '.github/workflows/neurolab-nr01-api-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  no-science-software-contract:
+    name: ARTlib and MiniBatchKMeans no-label/read-only API contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned existing open-source libraries
+        run: python -m pip install --disable-pip-version-check 'artlib==0.1.12' 'scikit-learn==1.9.1'
+      - name: Verify incremental fit, observation-only clustering and read-only predictions
+        run: |
+          python - <<'PY'
+          import copy, json
+          import numpy as np
+          import sklearn
+          import artlib
+          from artlib import FuzzyART
+          from sklearn.cluster import MiniBatchKMeans
+
+          # Fixed synthetic 4x16 examples; NEVER import NR01 scientific generator.
+          X=np.array([
+              [.20]*16,[.22]*16,[.77]*16,[.80]*16
+          ],dtype=float)
+          assert X.shape==(4,16)
+          assert sklearn.__version__=='1.9.1'
+          art=FuzzyART(rho=.8,alpha=.001,beta=1.0)
+          art.set_data_bounds(np.zeros(16),np.ones(16))
+          XP=art.prepare_data(X)
+          assert XP.shape==(4,32),XP.shape
+          art.partial_fit(XP)
+          before=[np.array(w,copy=True) for w in art.W]
+          clusters_before=len(before)
+          pred=art.predict(XP)
+          after=[np.array(w,copy=True) for w in art.W]
+          assert len(pred)==len(X)
+          assert len(before)==len(after)
+          assert all(np.array_equal(a,b) for a,b in zip(before,after))
+          assert clusters_before==len(after)
+
+          km=MiniBatchKMeans(n_clusters=2, batch_size=4, random_state=42)
+          km.partial_fit(X)
+          centers=np.array(km.cluster_centers_,copy=True)
+          nsteps=int(km.n_steps_)
+          labels=km.predict(X)
+          assert len(labels)==len(X)
+          assert km.cluster_centers_.shape==(2,16)
+          assert np.array_equal(km.cluster_centers_,centers)
+          assert int(km.n_steps_)==nsteps
+          print(json.dumps({
+              "protocol":"NR01.03-B-software-v1",
+              "science_seeds_used":False,
+              "models_trained_on_worlds":False,
+              "python_libs":{"artlib":"0.1.12","scikit_learn":sklearn.__version__},
+              "ART":{"prepared_features":XP.shape[1],"clusters":clusters_before,
+                     "prediction_did_not_mutate_weights":True},
+              "KMeans":{"clusters":2,"features":16,
+                        "prediction_did_not_mutate_centroids":True},
+              "status":"API_SMOKE_PASS"
+          },sort_keys=True))
+          PY
