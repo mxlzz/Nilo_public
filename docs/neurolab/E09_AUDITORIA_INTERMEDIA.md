@@ -1,5 +1,7 @@
 # E09 — auditoría intermedia de mecanismos y decisión sobre integración
 
+> **Archivo histórico de 20/11, no estado vigente (nota 22/11):** aquí se indica que todavía faltaban `dad1.gen` y `Creatures.exe`, pero ambos fueron aportados e inspeccionados después; tampoco equivale la integración parcial E09 cerebro-química a una integración de todas las capacidades. Ver [GEN original](E00_GENOMA_ORIGINAL_COMPARACION.md), [EXE auditado](E09_02F_INFORME_EJECUTABLE.md), [auditoría actual](E09_01_AUDITORIA_CAPACIDADES_20261122.md) y [errata](E09_00R_RECONCILIACION_GATES_20261122.md). Conservar las observaciones y su fecha, sin aprobar G09 por ellas.
+
 **Fecha:** 2026-11-20. **Carácter:** auditoría de lo realmente ejecutado en E00–E08; **NO cierre de G09**. No se creó todavía un cerebro que combine todas las capacidades; no presentar módulos independientes como un agente funcional.
 
 ## 1. Evidencia reproducible
