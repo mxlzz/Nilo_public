@@ -1,5 +1,7 @@
 # NeuroLab — protocolo de evaluación, controles y evidencia
 
+> **Nota de vigencia 22/11/2026:** «todavía no hay datos» refiere solo al preregistro inicial del 20/11; existen resultados ejecutados. La definición normativa de G05/G09 se conserva en [ETAPAS_00_09](ETAPAS_00_09.md) y su [reconciliación E09.00R](E09_00R_RECONCILIACION_GATES_20261122.md). Ver [inventario auditado](E09_01_AUDITORIA_CAPACIDADES_20261122.md) y [estado canónico](ESTADO_Y_CONTINUIDAD.md). Este aviso no modifica preregistros ni umbrales históricos.
+
 **Estado:** pre-registro metodológico, todavía no hay datos. Los números propuestos son parámetros iniciales del banco de pruebas, no resultados ni características de C1.
 
 ## 1. Contrato de cada experimento
