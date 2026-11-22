@@ -171,6 +171,5 @@ def main():
                       "direct_calls":result["direct_calls"],"third_chemistry":result["constructor_like_path"]},
                       indent=2,sort_keys=True))
 
-
 if __name__ == "__main__":
     main()
