@@ -1,0 +1,39 @@
+name: World research - E1 H11 pinned upstream MPM 3D
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e1_h11_upstream_mpm3d.py
+      - .github/workflows/world-e1-mpm3d-upstream.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  existing_plastic_mpm3d:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install CPU-only PyTorch plus lightweight data dependencies
+        run: |
+          python -m pip install --only-binary=:all: 'torch==2.10.0+cpu' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install --only-binary=:all: numpy xarray scipy
+          python -m pip show torch numpy xarray
+      - name: Checkout pinned permissively licensed upstream source outside project
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/world_h11_upstream"
+          git -C "$RUNNER_TEMP/world_h11_upstream" init -q
+          git -C "$RUNNER_TEMP/world_h11_upstream" remote add origin https://github.com/PINNeAPPle-Labs/PINNeAPPle.git
+          git -C "$RUNNER_TEMP/world_h11_upstream" fetch --depth 1 origin c8a6e3dce5daedd10903cc68f7f3a062c42b8bc4
+          git -C "$RUNNER_TEMP/world_h11_upstream" checkout -q --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/world_h11_upstream" rev-parse HEAD)" = c8a6e3dce5daedd10903cc68f7f3a062c42b8bc4
+          test -f "$RUNNER_TEMP/world_h11_upstream/pinneapple_simulation/particle_dynamics/geo_mpm.py"
+          echo "PINNEAPPLE_GEO_MPM_PATH=$RUNNER_TEMP/world_h11_upstream/pinneapple_simulation/particle_dynamics/geo_mpm.py" >> "$GITHUB_ENV"
+          sha256sum "$RUNNER_TEMP/world_h11_upstream/pinneapple_simulation/particle_dynamics/geo_mpm.py"
+      - name: H11 gravity, g0, friction ablation, replay, xarray owner
+        run: python WORLD_RESEARCH/experiments/probe_e1_h11_upstream_mpm3d.py
