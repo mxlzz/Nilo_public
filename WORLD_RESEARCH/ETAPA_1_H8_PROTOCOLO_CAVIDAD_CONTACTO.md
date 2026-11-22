@@ -25,3 +25,15 @@ Dos terrenos con exactamente el mismo campo superficial z(x,y) —un bloque maci
 H8 aprobada si el dato volumétrico causa una diferencia clara de **validez geométrica** frente al mapa de alturas y permite apoyo físico coherente en un hueco oculto, con controles de gravedad, replay y balance de masa. Esto no demuestra que las cuevas se formen de manera autónoma, sean estables bajo resistencia del terreno, ni que sea viable representar miles de bloques como colliders separados. Antes de diseñar un generador de cavidades o estabilidad de roca, estudiar motores existentes para materiales deformables si la pregunta lo requiere.
 
 **Si falla** por colisiones entre cajas estáticas coincidentes o rendimiento, diagnosticar configuración de colliders y considerar malla estática existente; no alterar geometría/umbrales para obtener aprobación. No tocar `main` ni NeuroLab.
+
+## Incidencia H8.0 — incompatibilidad de dependencias, antes de entrar en física (2026-11-22)
+
+**Primera CI FALLÓ**: https://github.com/mxlzz/Nilo_public/actions/runs/45036561189 . El fallo fue importar `landlab` en Python3.11, ya que una dependencia instalada (`requireit.py`) incluye `def require_instance[T](...)`, sintaxis de parámetros genéricos PEP695 introducida en Python 3.12; en 3.11 genera `SyntaxError: expected '('`. La primera ejecución **no alcanzó el código físico ni probó H8**, así que no corresponde atribuir el fallo a Bullet, a la cavidad ni a masa conservada.
+
+**Enmienda de implementación documentada ANTES DE SEGUNDO INTENTO:** separar dos procesos/cargas sin parchear ni copiar bibliotecas externas:
+- **Preparación en Python3.13**: generar escenario exactamente desde `probe_e1_surface_volume_partition.py` y sus funciones H5 verificadas; registrar alturas originales e idénticas, ledger de 30kg salida y 2kg en un cuerpo móvil, checksums y persistir a **NetCDF** más manifiesto pequeño JSON.
+- **Dinámica en Python3.11**: abrir el estado **de datos** sin importar Landlab ni ningún objeto pickle, validar esquema/masas/geometry/sha en NumPy/xarray y construir colliders con Bullet oficial 3.2.7. Aplicar **idénticos 360 pasos, gravedad/control, posiciones y umbrales** al protocolo H8. Releer el NetCDF como segunda verificación de transporte, sin alterar inventario ni codificar física.
+- **Contrato nuevo comprobable:** distinta versión de Python para generación geomorfológica y dinámica rígida con un único owner serializado por NetCDF, sin inferir que ambos motores comparten memoria ni que pueden ejecutarse sincronizados sin un adaptador futuro.
+- El manifiesto registra hash del owner y dimensiones; la prueba rechaza si difieren. Los campos de posición observados por Bullet siguen separados de material; no copiar código de Landlab ni asumir compatibilidad de sus clases entre intérpretes.
+
+**No se modifican hipótesis, geometrías ni criterios numéricos de contacto**. La separación de entornos evita degradar Landlab o compilar Bullet desde fuente solo para un ensayo. Si el intercambio falla se registra como nueva brecha de arquitectura, no se baja tolerancia.
