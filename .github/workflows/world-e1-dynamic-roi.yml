@@ -1,0 +1,26 @@
+name: World research - E1 H6 dynamic ROI ownership
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e1_dynamic_roi_boundary.py
+      - .github/workflows/world-e1-dynamic-roi.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  migration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install reusable data libraries (no new physics)
+        run: |
+          python -m pip install --only-binary=:all: numpy scipy xarray landlab
+          python -m pip show xarray landlab
+      - name: H6 promote and safely demote compact ROI boundary
+        run: python WORLD_RESEARCH/experiments/probe_e1_dynamic_roi_boundary.py
