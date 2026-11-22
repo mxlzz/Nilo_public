@@ -88,6 +88,10 @@ class FactorialLossControls(unittest.TestCase):
         self.assertEqual(len(r["per_seed_sha256"]),1)
         self.assertEqual(r["gates"]["G05"],"OPEN")
         self.assertIn("NOT equivalent",r["equal_dose_caveat"])
+        within=r["paired_contrasts"]["first"][
+            "frozen_minus_active_within_each_mode"]["M16"]
+        self.assertEqual(within["n_seeds"],1)
+        self.assertEqual(within["ci95"],[within["mean"],within["mean"]])
         self.assertEqual(set(r["paired_contrasts"]["first"]),{
             "D0_minus_D16","M0_minus_M16","D0_minus_M0","D16_minus_M16",
             "D16_minus_FD","M16_minus_FM",
