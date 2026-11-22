@@ -1,0 +1,26 @@
+name: World research - E1 H7 existing Bullet rigid contact
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e1_bullet_rigid_contact.py
+      - .github/workflows/world-e1-bullet-contact.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rigid_contact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install official PyBullet 3.2.7 compatible binary (no building a physics solver)
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+          python -m pip show pybullet xarray
+      - name: H7 rigid fall, support, zero gravity, no support, replay and material owner
+        run: python WORLD_RESEARCH/experiments/probe_e1_bullet_rigid_contact.py
