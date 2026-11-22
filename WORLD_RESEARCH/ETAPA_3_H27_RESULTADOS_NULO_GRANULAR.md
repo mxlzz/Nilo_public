@@ -1,0 +1,20 @@
+# Etapa3 — H27. Nulo granular condicionado NO estimable por jamming del muestreador
+
+**Fecha:** 2026-11-22. **Dictamen H27 NO APROBADA** porque el algoritmo preregistrado de muestreo aleatorio con exclusión geométrica **no pudo producir una muestra suficientemente grande**, **no** porque la pila se pareciera a un patrón aleatorio y tampoco por fallo de la física H26. [Prerregistro H27](ETAPA_3_H27_PROTOCOLO_NULO_GRANULAR.md), [código](experiments/probe_e3_h27_hardcore_spatial_null.py), [CI H27 45085565080 FAIL](https://github.com/mxlzz/Nilo_public/actions/runs/45085565080). Todos los parámetros/nulos/semillas/umbrales previos intactos.
+
+## Lo verificado
+
+Las dos escenas H26 originales se reprodujeron **con exactamente los mismos SHA-256** que el caso físico aprobado y el mismo suelo y contacto. Se aplicó a sus posiciones un estadístico geométrico de proximidad (`d<=2R+0.015m`) **distinto del grafo de fuerzas** de H26, precisamente para no confundir los dos tipos de red.
+
+- **Semilla20261122:** red observada de proximidad: mayor componente **107** de125 granos, **140** aristas y14 componentes totales; red de *fuerzas* H26 conocida mayor73. Radio horizontal mediano0,470656m y máximo1,202877m. Se logró **solo 1 nulo completo de 256 solicitados** con componente mayor16; el generador falló en el segundo a pesar de5 reinicios de hasta1000 intentos por esfera. Estadístico P95=16 con **n=1 no es una estimación válida**; el `p_empirical=0,5` arrojado automáticamente con n1 **no debe interpretarse como prueba**.
+- **Semilla20261123:** proximidad observada mayor componente **101**, 150 aristas y17 componentes; grafo de fuerzas H26 mayor92. Radio mediano0,437624m, máximo1,232370m. **0/256 nulos válidos**; estimación de percentiles y p no disponible.
+- **Motivo de interrupción:** el nulo fijaba cada `z` observado y la pertenencia a banda radial interior/exterior, colocando sucesivamente XY uniformes en área y rechazando si distancia<2R. La densidad local de la pila real permite una configuración ordenada por contactos, pero la **inserción aleatoria secuencial** puede quedar atrapada sin huecos disponibles aunque existan otras configuraciones. Este problema es **jamming del algoritmo**, no prueba de imposibilidad geométrica de un nulo físico.
+- No se alteró la física original, las masas, el dueño de estado ni la malla; los outputs son solo diagnósticos. No hay 512 nulos ni p-válidos de H27; no se declara `p<=0,05` ni aprobación retroactiva del patrón.
+
+## Evaluación y siguiente decisión
+
+**Etapa3 ABIERTA:** H26 produjo una pila compacta en reposo y físicamente controlada, pero no ha superado todavía una comparación aleatoria físicamente excluyente válida. Descarta repetir exactamente el esquema de **inserción uniforme con cinco reinicios**: ya sabemos que se atasca. Tampoco basta rebajar el condicionamiento o admitir superposiciones para obtener éxitos post hoc, porque ese control podría subestimar estructura aleatoria.
+
+**Alternativa metodológica existente:** muestreo de configuraciones de esferas duras por **cadena de Markov de desplazamientos angulares con aceptación por no-solapamiento** (hard-sphere MCMC). Arrancar desde la configuración física real garantiza una disposición inicial posible y permite explorar variaciones sin intentar insertar125 esferas desde cero; requiere **probar mezcla y autocorrelación**, no suponer que cualquier cadena desplazó suficientemente los contactos. Previo a desarrollo adicional, definir volumen de propuestas, tasas de aceptación, dispersión angular y diagnóstico de mezcla de dos cadenas; si no mezclan, **detener sin conclusión espacial**, no convertir en evidencia favorable.
+
+**Nota:** método MCMC cambia el algoritmo del nulo y por eso requeriría un **nuevo prerregistro H28**, manteniendo estatístico geométrico `d<=0,165m`, 256 muestras, margen≥10 y p≤0,05, ambas semillas. Si H28 tampoco es muestreable/estable, el gate estadístico E3 permanece irresuelto y conviene detener las iteraciones de nulos en vez de gastar indefinidamente.
