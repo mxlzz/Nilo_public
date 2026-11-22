@@ -1,0 +1,27 @@
+name: World research - E3 H24 unconfined granular-pile mechanics
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e3_h24_granular_pile.py
+      - .github/workflows/world-e3-granular-pile.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  granular_physics:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install previously tested PyBullet and xarray runtime
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+          python -m pip show pybullet
+      - name: Run preregistered pile formation, friction ablation and owner checks
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e3_h24_granular_pile.py
