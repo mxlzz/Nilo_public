@@ -1,0 +1,26 @@
+name: World research - E1 H9 native sediment material owner
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e1_h9_sediment_owner.py
+      - .github/workflows/world-e1-sediment-owner.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sediment_owner:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install existing validated provider and labeled material store
+        run: |
+          python -m pip install --only-binary=:all: landlab xarray scipy numpy
+          python -m pip show landlab xarray
+      - name: Run H9 native erosion/deposition, ledger, negative controls and checkpoint
+        run: python WORLD_RESEARCH/experiments/probe_e1_h9_sediment_owner.py
