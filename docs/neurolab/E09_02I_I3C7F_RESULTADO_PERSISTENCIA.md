@@ -36,6 +36,14 @@ En los cuadros hay variaciones del equilibrio por contexto: el cuarto1 reúne **
 
 **Límites epistémicos:** los dos controles están *on-policy*, el código usa dosis80/tasa40 sintéticas, se han observado los resultados antes de diseñar esta auditoría, el valor STW≥5 se infiere de un Concept-output específico, y ninguna correlación peso/accuracy prueba causalidad individual. No se midió cerebro C1 completo ni motivación/mente autónoma.
 
+## Cota estructural del calendario de consolidación
+
+Esta consecuencia es **deductiva**, no un parámetro ajustado ni un resultado adicional dependiente de las20 semillas: el estado `C1ContextBrain.initial()` crea todas las dendritas con `LTW=0`; el gen Decision original tiene `ltw_rate=128` y `ltw_toward()` permite como máximo **una unidad de cambio** en ticks divisibles por128. Antes de iniciar el holdout invertido, hay exactamente cuatro oportunidades (`tick128,256,384,512`), por lo que **LTW<=4 en cada dendrita** incluso bajo estímulo/recompensa perfectos. El holdout invertido comprende ticks513..640; hasta tick639 no hay consolidación adicional. En tick640 puede pasar a5 **después de calcular la decisión de ese tick**, demasiado tarde para afectar cualquier elección de ese holdout mediante LTW sola.
+
+Bajo `Concept output=126` y atenuación Decision128, el mínimo `STW=5` para una contribución positiva ya fue verificado en [I3c.5e](E09_02I_I3C5E_RESULTADO_PUERTA_SENAL.md). **En este protocolo fijo la LTW sola NO puede sostener una contribución positiva durante ninguna de las 128 elecciones del holdout invertido**, aunque la STW aún pueda ser mayor y decaiga progresivamente. Por eso el resultado FROZEN alto (STW bloqueada) no demuestra memoria estable en el tiempo de prueba, y aumentar conexiones sin revisar el horizonte no soluciona la restricción.
+
+Esta cota no se aplica de manera automática a una arquitectura con migración y LTW inicial resembrada ni a un Norn completo; sólo al cerebro `C1ContextBrain` fijo y la ventana `I3c.7e`. La respuesta correcta de método no es cambiar la tasa128 a posteriori, sino diseñar **antes de correr nuevos casos** si el protocolo debe incluir suficientes oportunidades naturales de consolidación para poder evaluar la propiedad buscada.
+
 ## Decisión científica y siguiente paso
 
 La comparación ACTIVE vs FROZEN de I3c.7e sigue mostrando que los resultados de evaluación congelada **sobreestiman la persistencia que se observa cuando la dinámica continua**. **La intervención loss0 por sí sola no alcanza robustez suficiente (sólo1/20 semillas M0 con precisión steady≥0.90 en ambas fases ACTIVE).** No tiene sentido desarrollar de inmediato un emisor histórico de atrofia ni doblar sinapsis para buscar mejores aciertos.
