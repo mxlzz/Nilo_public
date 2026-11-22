@@ -1,0 +1,71 @@
+name: NeuroLab I3c7f — read-only chemical STW/LTW retention audit
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c7f_weight_persistence_audit.py'
+      - 'experiments/neurolab/tests/test_e09_i3c7f_weight_persistence_audit.py'
+      - '.github/workflows/neurolab-i3c7f.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  original-trace-forensics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify post hoc auditor does not invent stimuli or feedback
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c7f_weight_persistence_audit
+      - name: Replay original preregistered I3c7e seeds with identical brain histories
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c7e_loss_factorial --output metrics/i3c7e_exact_replay.json > metrics/i3c7e_stdout.json
+          python - <<'PY'
+          import json,hashlib
+          r=json.load(open('metrics/i3c7e_exact_replay.json'))
+          h=hashlib.sha256(json.dumps(r["per_seed"],sort_keys=True,separators=(',',':')).encode()).hexdigest()
+          assert h=='311b387817b4f0d645cf191df99ae701641c11e9329758fe64f1f71701af8f8e',h
+          assert r["seeds"]==list(range(1600,1620))
+          assert r["gates"]["G05"]=="OPEN"
+          print("ORIGINAL NEURAL HISTORY EXACT 20-SEED SHA:",h)
+          PY
+      - name: Audit all 30720 original frozen and active holdout tick frames
+        run: |
+          python -m experiments.neurolab.e09_i3c7f_weight_persistence_audit --input metrics/i3c7e_exact_replay.json --output metrics/i3c7f_persistence.json | tee metrics/summary.json
+          python - <<'PY'
+          import json
+          r=json.load(open('metrics/i3c7f_persistence.json'))
+          assert r['protocol']=='NL-AUDIT-I3c7f-v1'
+          assert r['n_holdout_frames']==30720
+          assert r['source_per_seed_sha256']=='311b387817b4f0d645cf191df99ae701641c11e9329758fe64f1f71701af8f8e'
+          assert r['G05_G09_G00H']=='OPEN'
+          for phase in ('first','reversed'):
+              for mode in ('D0','D16','M0','M16','FD','FM'):
+                  for readout in ('frozen','active_no_new_reward'):
+                      a=r['by_phase_mode_readout'][phase][mode][readout]
+                      assert a['n_seeds']==20
+                      assert a['n_ticks']==2560
+                      assert len(a['windows'])==4
+          for mode in ('M0','M16'):
+              a=r['by_phase_mode_readout']['reversed'][mode]['active_no_new_reward']
+              print('REVERSED ACTIVE',mode,'LAST WINDOW:',a['windows'][3])
+              print('REVERSED ACTIVE',mode,'NO-LIVE-END:',a['n_seeds_all_strength_zero_at_end'])
+          PY
+          sha256sum metrics/i3c7e_exact_replay.json metrics/i3c7f_persistence.json > metrics/manifest.sha256
+      - name: Archive all raw and descriptive outcomes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c7f-posthoc-stw-ltw-retention
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn
