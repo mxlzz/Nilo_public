@@ -7,6 +7,12 @@ on:
       - '.github/workflows/neurolab-nr01-api-smoke.yml'
       - 'experiments/neurolab/nr01_encoders.py'
       - 'experiments/neurolab/tests/test_nr01_encoders.py'
+      - 'experiments/neurolab/nr01_harness.py'
+      - 'experiments/neurolab/tests/test_nr01_harness.py'
+      - 'experiments/neurolab/nr01_knn.py'
+      - 'experiments/neurolab/tests/test_nr01_knn.py'
+      - 'experiments/neurolab/nr01_decoder.py'
+      - 'experiments/neurolab/tests/test_nr01_decoder.py'
   workflow_dispatch:
 
 permissions:
@@ -78,3 +84,6 @@ jobs:
 
       - name: NR01.03-C2 toy-only frozen encoder adapter tests
         run: python -m unittest experiments.neurolab.tests.test_nr01_encoders -v
+
+      - name: NR01.03-D isolated fairness, replay and reward-timing software tests
+        run: python -m unittest -v experiments.neurolab.tests.test_nr01_decoder experiments.neurolab.tests.test_nr01_knn experiments.neurolab.tests.test_nr01_harness
