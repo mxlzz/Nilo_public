@@ -32,3 +32,9 @@ La física será **capacidad calorífica aparente/entalpía estándar** en banda
 **Aceptar H15 solo** si gates1–7 pasan en CI de forma verificable. **No aceptar** si se cumple la conservación pero no cambia la fracción, si falla la ablación L=0, si se invierte mediante clipping para forzar rango o si solo hay cambios cosméticos.
 
 **Interpretación permitida:** demostración de **fracción de estado material derivada de energía conservada** con transición reversible *mushy* y sin cambio volumétrico. **Prohibido concluir:** hielo real, microestructura, fusión abrupta, calor del movimiento, mecánica de un líquido, interacción con cavidad3D, formación emergente o mundo operativo. Etapa1 ABIERTA y etapas2–8 sin gate formal.
+
+## Incidencia H15.0 — fallo de hash de checkpoint antes del informe físico
+
+**Primera CI:** https://github.com/mxlzz/Nilo_public/actions/runs/45058864901 **FAIL** (exit1) dentro de `state_sha(restored)` después de ejecutar casos y controles, al verificar NetCDF. Error `TypeError: Object of type int32 is not JSON serializable`: `xarray.open_dataset` reconstituyó `schema_version` como `numpy.int32` mientras el hasher usa `json.dumps(dict(ds.attrs))`. **No hubo resumen WORLD_EVAL_JSON**; la ausencia de ese registro impide afirmar que ya pasaron todos los gates físicos, aunque el traceback alcanzó el checkpoint. No es un fallo identificado en el solver FiPy.
+
+**Enmienda de ingeniería antes del reintento:** normalizar escalar NumPy de metadatos a escalar Python mediante `v.item()` solo al calcular el hash; mantener exactamente el modelo, la ecuación, parámetros, escenarios, semillas, tolerancias, cinco corridas y criterios previos. No alterar el checkpoint ni reducir controles. **Segundo CI deberá ejecutar física y todos los gates**. Conservar el primer CI rojo en el historial.
