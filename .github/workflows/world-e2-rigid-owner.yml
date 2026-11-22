@@ -1,0 +1,26 @@
+name: World research - E2 H17 kinetic owner free vs obstacle
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e2_h17_rigid_owner.py
+      - .github/workflows/world-e2-rigid-owner.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rigid_owner:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install existing PyBullet physics and xarray data runtime
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy xarray scipy
+          python -m pip show pybullet
+      - name: Execute registered gravitational motion, blocking, replay and owner checks
+        run: python WORLD_RESEARCH/experiments/probe_e2_h17_rigid_owner.py
