@@ -35,3 +35,9 @@
 ## Gate
 
 **Aceptar** solo si los controles se cumplen; **ajustar** únicamente si se identifica un fallo del arnés o una condición inicial físicamente contradictoria y se documenta antes de modificar; **descartar** si no se observa interacción colectiva. Un éxito probará contacto *entre granos rígidos*, no formación natural de suelo, estabilidad de cavidades, propiedades de sólidos deformables ni pertinencia de miles de partículas. Si se necesitan deformación plástica, fragmentación o flujo granular calibrado, evaluar GeoTaichi/Chrono o solvers especializados con criterio físico y de licencia previo. Nunca subir un solver físico propio a `main`.
+
+## Incidencia H10.0 — error de arnés de estado xarray previo al cálculo físico
+
+**CI primera ejecución:** https://github.com/mxlzz/Nilo_public/actions/runs/45049082476 — **FAIL**. Instaló correctamente PyBullet 3.2.7 y xarray, pero al preparar el quinto control negativo (`altered_identity`) intentó escribir en `x.coords["grain"].values[0]`. xarray protegió la coordenada como `read-only` y lanzó `ValueError: assignment destination is read-only`. La ejecución **no llegó a ninguna simulación Bullet**, así que no evalúa caída, contactos, redistribución ni conservación durante dinámica.
+
+**Corrección preregistrada:** construir el dataset candidato inválido mediante asignación pública de coordenadas (`x.coords["grain"] = ["wrong", ...]`) en lugar de alterar la vista NumPy inmutable. Mantener los cinco controles negativos, valores iniciales, 27 esferas, integración, 720 pasos, tolerancias y condiciones físicas intactos. Conservar vínculo a CI fallida. Si el segundo ensayo alcanza un fallo físico, registrar métricas diagnósticas **antes de tocar umbrales**; no reducir exigencia para obtener una aprobación.
