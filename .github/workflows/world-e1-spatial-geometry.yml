@@ -1,0 +1,26 @@
+name: World research - E1 H4 spatial representation comparison
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e1_spatial_geometry.py
+      - .github/workflows/world-e1-spatial-geometry.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  geometry:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install existing geometric and data libraries only
+        run: |
+          python -m pip install --only-binary=:all: numpy scipy xarray trimesh
+          python -m pip show trimesh scipy xarray
+      - name: Test heightfield collision, 3D topology and material-preserving owner
+        run: python WORLD_RESEARCH/experiments/probe_e1_spatial_geometry.py
