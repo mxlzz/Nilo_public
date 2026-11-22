@@ -41,6 +41,7 @@ def requires_real(value,label):
 
 
 def run(seed,folder):
+    pathlib.Path(folder).mkdir(parents=True,exist_ok=True)
     kwargs=dict(PARAMS)
     kwargs["seed"]=int(seed)
     kwargs["out_dir"]=str(pathlib.Path(folder)/f"run_{seed}_{pathlib.Path(folder).name}")
