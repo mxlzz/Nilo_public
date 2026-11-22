@@ -1,0 +1,142 @@
+{
+  "protocol": "NL-EXP-I3c6a-v1",
+  "source": {
+    "name": "Creatures.exe",
+    "sha256": "548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7",
+    "bytes": 387072,
+    "pe32_text_base_va": "0x401000"
+  },
+  "gen_source": {
+    "name": "dad1.gen",
+    "sha256": "e2bb4ccf6a4081a128c6c9ffc6eb233452d416717ceef47e78820ca3a152ddd4",
+    "bytes": 10001,
+    "verified_emitter_genes": {
+      "124": {
+        "organ": 0,
+        "lobe": 6,
+        "locus": 1,
+        "chemical": 53,
+        "threshold": 0,
+        "sample_rate": 1,
+        "gain": 255,
+        "flags": 1
+      },
+      "125": {
+        "organ": 0,
+        "lobe": 6,
+        "locus": 2,
+        "chemical": 70,
+        "threshold": 0,
+        "sample_rate": 1,
+        "gain": 255,
+        "flags": 1
+      }
+    },
+    "verified_receptors": {
+      "127": {
+        "lobe": 6,
+        "locus": 15,
+        "chemical": 53,
+        "nominal": 16,
+        "gain": 255,
+        "flags": 1
+      },
+      "128": {
+        "lobe": 6,
+        "locus": 16,
+        "chemical": 70,
+        "nominal": 16,
+        "gain": 255,
+        "flags": 1
+      }
+    }
+  },
+  "anchored_blocks": [
+    {
+      "name": "lobe_counter_reset",
+      "va": "0x403e76",
+      "n_bytes": 18,
+      "sha256": "4aba9a044aff7d631a241bf4da111132ea2c5666dc6c72b739fb3f051b0a79eb",
+      "matched_original": true
+    },
+    {
+      "name": "type1_minimum_sentinel",
+      "va": "0x403e8f",
+      "n_bytes": 22,
+      "sha256": "2072f4a044f2841e05e0962fe4c63afa11dbfd7e5ef5720e787ff1985b52d80e",
+      "matched_original": true
+    },
+    {
+      "name": "per_neuron_counter_reset",
+      "va": "0x40416a",
+      "n_bytes": 20,
+      "sha256": "8de1dbc6972a6000a63b4e9ddeb997907908ccbf6f3a0dd85efb9e57ac1c06c6",
+      "matched_original": true
+    },
+    {
+      "name": "exhausted_dendrite_counter",
+      "va": "0x4041a1",
+      "n_bytes": 27,
+      "sha256": "79aa411e104cf5115156d43ec36c90863fe95aa7bff53ed31b5e78f20c548f0c",
+      "matched_original": true
+    },
+    {
+      "name": "loss_reset_and_counter",
+      "va": "0x4047c6",
+      "n_bytes": 28,
+      "sha256": "2cc9aec13299e8ded5f7c4293bda6ecde689e489b5fc6abe4948afcaf2717cae",
+      "matched_original": true
+    },
+    {
+      "name": "type1_class_gate",
+      "va": "0x404803",
+      "n_bytes": 20,
+      "sha256": "03fa0c4bb3bc64a7e49250869a783354369f532089600b793e20a3abbb136855",
+      "matched_original": true
+    },
+    {
+      "name": "type1_minimum_writer",
+      "va": "0x404817",
+      "n_bytes": 20,
+      "sha256": "60d3706c21d92173636ed2f000690b650fba04975b9cf34ae9657454be8cfd0d",
+      "matched_original": true
+    },
+    {
+      "name": "type2_nonzero_gate",
+      "va": "0x40482b",
+      "n_bytes": 16,
+      "sha256": "b1a2a89917a4399bd34e36ac466d8f549d00da6e6b169ce2932520a2d4b1667d",
+      "matched_original": true
+    },
+    {
+      "name": "type2_saturating_increment",
+      "va": "0x40483b",
+      "n_bytes": 20,
+      "sha256": "dec856b59af5f8861c34e106ee20708b7c3d8cac4e150c8b8f04995f42d3c191",
+      "matched_original": true
+    },
+    {
+      "name": "next_class_iteration",
+      "va": "0x404865",
+      "n_bytes": 19,
+      "sha256": "d8776c1f10b0525f363345cd30dd01a9ca6db7806913d7c8bed115579379eeb6",
+      "matched_original": true
+    }
+  ],
+  "anchor_count": 10,
+  "conclusions": {
+    "Type1": "lobe + C1/C2 starts at FF and updates with min(local loose count) among traversed neuron-class records; zero in any visited record suppresses locus",
+    "Type2": "if local loose count positive, increments one per visited neuron-class with saturation FF, not number of exhausted links",
+    "loss_counter": "local counter esp+30 resets at neuron-class start, increments for old strength0 and newly lost strength0",
+    "gene_to_chem": "Decision lobe loci1/2 -> original emitters124/125 -> chemicals53/70 -> receptors127/128 -> Decision CHEM2/3",
+    "actual_integrated_neural_and_chemical_dynamics": "NOT VERIFIED"
+  },
+  "limitations": "Only local static x86 blocks of exact original EXE; not a live replay, complete scheduler, or guaranteed all neuron activity. Some control-flow paths may bypass a visited record; no G05/G09 inference.",
+  "ci_synthetic": "https://github.com/mxlzz/Nilo_public/actions/runs/44966344851",
+  "gates": {
+    "G_I3c6a_X86_LOCAL": "VERIFIED_STATIC",
+    "G05": "OPEN",
+    "G09": "OPEN",
+    "G00_H": "OPEN"
+  }
+}
