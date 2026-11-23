@@ -8,6 +8,9 @@ on:
       - WORLD_RESEARCH/experiments/probe_e4_h29_generated_owner_landlab.py
       - WORLD_RESEARCH/experiments/probe_e4_h30_worldengine_bullet.py
       - WORLD_RESEARCH/experiments/probe_e5_h31_soil_contact_coupling.py
+      - WORLD_RESEARCH/experiments/probe_e5_h31_owner_contract.py
+      - WORLD_RESEARCH/experiments/probe_e5_h31_landlab_stage.py
+      - WORLD_RESEARCH/experiments/probe_e5_h31_bullet_stage.py
       - .github/workflows/world-e4-seeded-terrain-owner.yml
   workflow_dispatch:
 permissions:
@@ -82,10 +85,35 @@ jobs:
         run: |
           python WORLD_RESEARCH/experiments/probe_e4_h30_worldengine_bullet.py bridge/worldengine_two_seeds.npz
 
-  check_one_way_soil_contact_coupling:
+  validate_joint_owner_soil_stage:
     needs: generate_raw_worlds
     runs-on: ubuntu-24.04
-    timeout-minutes: 16
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: worldengine-h29-raw-2-seeds
+          path: bridge
+      - name: Install native Landlab 2.11 for Python 3.13
+        run: |
+          python -m pip install --only-binary=:all: landlab==2.11.0 numpy scipy xarray
+      - name: Erode canonical soil and retain body in material reservoir
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e5_h31_landlab_stage.py bridge/worldengine_two_seeds.npz h31_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h31-joint-owner-after-landlab
+          path: h31_out
+          retention-days: 14
+
+  validate_joint_owner_bullet_stage:
+    needs: [generate_raw_worlds, validate_joint_owner_soil_stage]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -95,9 +123,19 @@ jobs:
         with:
           name: worldengine-h29-raw-2-seeds
           path: bridge
-      - name: Install previously evaluated Landlab and PyBullet solvers
+      - uses: actions/download-artifact@v4
+        with:
+          name: h31-joint-owner-after-landlab
+          path: h31_input
+      - name: Install native PyBullet 3.2.7 for Python 3.11
         run: |
-          python -m pip install --only-binary=:all: landlab==2.11.0 pybullet==3.2.7 numpy scipy xarray
-      - name: Test H31 owner joint mass budget and causal soil-to-rigid-contact
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+      - name: Evaluate causal rigid contact on same owner and recover final state
         run: |
-          python WORLD_RESEARCH/experiments/probe_e5_h31_soil_contact_coupling.py bridge/worldengine_two_seeds.npz
+          python WORLD_RESEARCH/experiments/probe_e5_h31_bullet_stage.py bridge/worldengine_two_seeds.npz h31_input h31_final
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: h31-joint-owner-after-bullet
+          path: h31_final
+          retention-days: 14
