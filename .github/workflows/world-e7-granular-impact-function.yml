@@ -1,0 +1,26 @@
+name: World research - E7 H36 functional impact of native granular heap
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e7_h36_granular_impact_function.py
+      - .github/workflows/world-e7-granular-impact-function.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  functional_granular_impact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install native Bullet and minimal material owner runtime
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+      - name: Run two natural piles, frictionless ablation, impact and full replay
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e7_h36_granular_impact_function.py
