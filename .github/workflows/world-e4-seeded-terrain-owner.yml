@@ -11,6 +11,9 @@ on:
       - WORLD_RESEARCH/experiments/probe_e5_h31_owner_contract.py
       - WORLD_RESEARCH/experiments/probe_e5_h31_landlab_stage.py
       - WORLD_RESEARCH/experiments/probe_e5_h31_bullet_stage.py
+      - WORLD_RESEARCH/experiments/probe_e5_h32_local_contract.py
+      - WORLD_RESEARCH/experiments/probe_e5_h32_local_landlab.py
+      - WORLD_RESEARCH/experiments/probe_e5_h32_local_bullet.py
       - .github/workflows/world-e4-seeded-terrain-owner.yml
   workflow_dispatch:
 permissions:
@@ -138,4 +141,59 @@ jobs:
         with:
           name: h31-joint-owner-after-bullet
           path: h31_final
+          retention-days: 14
+
+  validate_local_erodibility_landlab:
+    needs: generate_raw_worlds
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: worldengine-h29-raw-2-seeds
+          path: bridge
+      - name: Install pinned native sediment solver
+        run: |
+          python -m pip install --only-binary=:all: landlab==2.11.0 numpy scipy xarray
+      - name: Preregistered H32 local K field and native downstream sediment
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e5_h32_local_landlab.py bridge/worldengine_two_seeds.npz h32_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h32-joint-owner-local-K-after-landlab
+          path: h32_out
+          retention-days: 14
+
+  validate_local_K_downstream_bullet:
+    needs: [generate_raw_worlds, validate_local_erodibility_landlab]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: worldengine-h29-raw-2-seeds
+          path: bridge
+      - uses: actions/download-artifact@v4
+        with:
+          name: h32-joint-owner-local-K-after-landlab
+          path: h32_input
+      - name: Install pinned native rigid contact solver
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+      - name: Preregistered H32 downstream triangle contact effect
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e5_h32_local_bullet.py bridge/worldengine_two_seeds.npz h32_input h32_final
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: h32-joint-owner-local-K-after-bullet
+          path: h32_final
           retention-days: 14
