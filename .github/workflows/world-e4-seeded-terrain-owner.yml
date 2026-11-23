@@ -7,6 +7,7 @@ on:
       - WORLD_RESEARCH/experiments/probe_e4_h29_worldengine_seeds.py
       - WORLD_RESEARCH/experiments/probe_e4_h29_generated_owner_landlab.py
       - WORLD_RESEARCH/experiments/probe_e4_h30_worldengine_bullet.py
+      - WORLD_RESEARCH/experiments/probe_e5_h31_soil_contact_coupling.py
       - .github/workflows/world-e4-seeded-terrain-owner.yml
   workflow_dispatch:
 permissions:
@@ -80,3 +81,23 @@ jobs:
       - name: Verify terrain triangle raycast, gravity/contact, controls and owner
         run: |
           python WORLD_RESEARCH/experiments/probe_e4_h30_worldengine_bullet.py bridge/worldengine_two_seeds.npz
+
+  check_one_way_soil_contact_coupling:
+    needs: generate_raw_worlds
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: worldengine-h29-raw-2-seeds
+          path: bridge
+      - name: Install previously evaluated Landlab and PyBullet solvers
+        run: |
+          python -m pip install --only-binary=:all: landlab==2.11.0 pybullet==3.2.7 numpy scipy xarray
+      - name: Test H31 owner joint mass budget and causal soil-to-rigid-contact
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e5_h31_soil_contact_coupling.py bridge/worldengine_two_seeds.npz
