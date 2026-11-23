@@ -1,0 +1,50 @@
+name: World research - E6 H34 native PyBullet disk restart
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e6_h34_bullet_disk_resume.py
+      - .github/workflows/world-e6-bullet-disk-restart.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  store_solver_and_owner:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install existing PyBullet and xarray for owner
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+      - name: Save native Bullet snapshot at t360 with canonical xarray plus continuous t720
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e6_h34_bullet_disk_resume.py producer bullet_snapshots
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h34-native-bullet-and-owner
+          path: bullet_snapshots
+          retention-days: 14
+  new_runner_restores_contact:
+    needs: store_solver_and_owner
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: h34-native-bullet-and-owner
+          path: bullet_input
+      - name: Install same pinned native PyBullet provider in separate process
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+      - name: Restore Bullet contacts and compare exact continuation steps361-720
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e6_h34_bullet_disk_resume.py consumer bullet_input
