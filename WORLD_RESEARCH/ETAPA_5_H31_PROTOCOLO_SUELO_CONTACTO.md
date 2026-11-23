@@ -22,3 +22,10 @@ Sobre la misma materia/relieve generado por WordEngine y almacenado en un único
 ## Interpretación y stop
 
 **H31 APRUEBA** solo si ambos seeds pasan todos los gates de propietario, conservación, cambio de cota, reacción real de contacto, controles, replay y NetCDF. Si falla, conservar CI roja, no bajar tolerancias ni elegir manualmente otra región para que parezca éxito. Si pasa, constituye **un enlace causal mínimo en un owner único y orden de eventos**, NO un mundo autónomo completo ni E5 cerrada: aún faltan prueba de intervención **local**, feedback y/o procesos ambientales compatibles, persistencia de solvers. No tocar `main` ni NeuroLab.
+
+
+## Enmienda de identidad del actor ANTES DE CI: cuerpo material en reservorio durante erosión
+
+La selección de patch por máxima diferencia de cota se determina **después** de los seis pasos Landlab. Por ello la pose física del cuerpo sobre el patch no puede conocerse en t0 sin usar información del futuro. Para evitar teletransportar silenciosamente un cuerpo que supuestamente ya caía, H31 especifica **un reservorio de cuerpo no activo** como fuente de frontera: el owner tiene `body_mass_kg=2kg` desde t0, `body_status="reservoir"`, pose de referencia finita `(0,0,0)` **NO interpretada como posición en el espacio físico**. Tras seleccionar patch desde el estado de suelo erosionado, se registra un **único evento de liberación prescrito**, el actor pasa a `body_status="released"` y adquiere pose inicial física `(40,30,z_before+3)`, velocidad0; a partir de ahí solo Bullet mueve el actor. El mismo evento, lugar y masa se usan en control K=0 y activo, con diferencias exclusivamente de topografía por erosion. Esta transición material no crea ni borra cuerpo, se verifica `source_body_mass+released_body_mass=2kg` y se conserva el total `soil+export+body` por fase. En campos de pose no se representará la referencia de reservorio como posición física real.
+
+No cambia las condiciones de fricción, gravedad, selección de patch, tiempos, semillas, umbrales o suposiciones de acople unidireccional. Se registra antes de cualquier CI H31 para impedir una inconsistencia causal del diseño.
