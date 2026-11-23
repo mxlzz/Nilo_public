@@ -6,6 +6,7 @@ on:
     paths:
       - WORLD_RESEARCH/experiments/probe_e4_h29_worldengine_seeds.py
       - WORLD_RESEARCH/experiments/probe_e4_h29_generated_owner_landlab.py
+      - WORLD_RESEARCH/experiments/probe_e4_h30_worldengine_bullet.py
       - .github/workflows/world-e4-seeded-terrain-owner.yml
   workflow_dispatch:
 permissions:
@@ -59,3 +60,23 @@ jobs:
       - name: Validate source geometry, matter and native sediment compatibility
         run: |
           python WORLD_RESEARCH/experiments/probe_e4_h29_generated_owner_landlab.py bridge/worldengine_two_seeds.npz
+
+  check_local_bullet_support:
+    needs: generate_raw_worlds
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: worldengine-h29-raw-2-seeds
+          path: bridge
+      - name: Install previously verified Bullet local contact provider
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+      - name: Verify terrain triangle raycast, gravity/contact, controls and owner
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e4_h30_worldengine_bullet.py bridge/worldengine_two_seeds.npz
