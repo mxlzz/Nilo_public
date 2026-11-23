@@ -1,0 +1,17 @@
+# Etapa6 — H34. RestoreState desde archivo Bullet en nuevo proceso reproduce trayectoria exacta
+
+**Fecha:** 2026-11-22. **Dictamen H34 APROBADA** bajo todos los gates preregistrados, **solo para dos cubos rígidos y contacto de laboratorio**, no para mundo completo. [Protocolo previo](ETAPA_6_H34_PROTOCOLO_CHECKPOINT_BULLET.md), [script](experiments/probe_e6_h34_bullet_disk_resume.py), [CI 45092703790 — SUCCESS en dos jobs independientes](https://github.com/mxlzz/Nilo_public/actions/runs/45092703790). Python3.11.18, PyBullet3.2.7, xarray2026.9.0, NumPy2.4.6.
+
+## Escena y transiciones verificadas
+
+Escena física H17 de dos cubos rígidos A2kg móvil desde z2m y B8kg en el owner pero inmovilizado con `baseMass=0` en Bullet como restricción, B centro z0,5 sobre suelo externo plano, sin paredes. `dt=1/240s`, gravedad−9,81, fricción lateral0,8, restitución0. **Estado canónico** `xarray.Dataset` conserva masa total10kg, pose, velocidad lineal/angular, geometría, ids, orientaciones y progreso, sin segundo stock. El estado `.bullet` nativo es **cache de solver** para preservar contactos/impulsos; no se contabiliza como material independiente.
+
+- **Productor:** computó720 pasos continuos y salvó en paso360 NetCDF de owner **1564bytes** con SHA`994ef743e5734ced406c9788e7712f322b4d57d50886334df589f1089e03c56d` + archivo nativo `.bullet` **18.092bytes**, SHA`2a0f2d99efbc3b3fe341b6b11c7294c4f228add4d0f77f8de699802a025fe3bd`. Final esperado owner t720 SHA`f85aa7a6c66225fc538e27e6649a1f047a4df50218932e5f5cccc5f37b31e1d9`. Repetición baseline desde0, idéntica bit a bit. Nueve corrupciones de material/pose/metadata rechazadas sin tocar owner.
+- **Apoyo físico real:** en checkpoint y al final hubo4 contactos Bullet de fuerza normal positiva de A sobre B, peak6,09716N y6,09732N; el cuerpo no atravesó bloque ni suelo. B se mantuvo fijo. No hay colapso, se prueba restaurar una dinámica con contactos estables.
+- **Consumidor en runner nuevo:** recreó mismos cuerpos y colisiones sin ejecutar pasos1..360, validó SHA del owner y archivo nativo, ejecutó `restoreState(fileName)` de PyBullet sobre la escena nueva. **Posiciones, velocidades lineales/angular y orientaciones de ambos cuerpos tras restore fueron idénticas bit a bit al owner t360.** Corrió únicamente pasos361..720, reprodujo todos los campos del owner final bit a bit, SHA exacta `f85aa7a6...`, fuerza/contacto final igual al productor. `failed_preregistered_gates=[]`; ambos jobs SUCCESS.
+
+## Valor y límites
+
+**Nuevo avance E6:** restore entre procesos incluso de estado interno de contacto, mediante mecanismo original `saveBullet/restoreState`, sin reimplementar solver ni fabricar posición final. En contraste con H31, el checkpoint está en **medio de una trayectoria temporal**, no solo entre dos proveedores. Se conserva un owner lógico autoritativo y cache binaria transitoria nativa; esa cache no es independiente del formato de Bullet.
+
+**NO probado:** guardado y continuación de125 granos de H26 mientras la fuente sigue alimentando materia, reanudación de Landlab (se evalúa por separado en H33), secuencia conjunta Landlab→Bullet, tiempo coordinado entre solvers, compatibilidad con nuevas versiones Bullet o OS distintos, recuperación tras crash a mitad de llamada, evolución abierta de un ecosistema. **E6 ABIERTA** hasta auditar sus criterios en subsistemas relevantes con material compartido; H34 por sí sola no significa mundo autónomo.
