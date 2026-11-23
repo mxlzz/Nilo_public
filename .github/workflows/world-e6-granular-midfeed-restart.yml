@@ -1,0 +1,50 @@
+name: World research - E6 H35 granular mid-feed restart
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e6_h35_granular_midfeed_restart.py
+      - .github/workflows/world-e6-granular-midfeed-restart.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  save_midfeed_source_and_bullet:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install original PyBullet H26/H34 provider and xarray
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+      - name: Run canonical H26 baseline and instrument identical feed at step1200
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e6_h35_granular_midfeed_restart.py producer h35_midfeed
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h35-midfeed-source-and-native-contacts
+          path: h35_midfeed
+          retention-days: 14
+  restore_and_continue_source_feed:
+    needs: save_midfeed_source_and_bullet
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: h35-midfeed-source-and-native-contacts
+          path: h35_saved
+      - name: Install same native Bullet and owner runtime in fresh process
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+      - name: Restore mid-feed state and run only remaining grain releases plus settling
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e6_h35_granular_midfeed_restart.py consumer h35_saved
