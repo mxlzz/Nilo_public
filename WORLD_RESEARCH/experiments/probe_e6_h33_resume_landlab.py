@@ -24,6 +24,12 @@ END_STEP=c.TIMESTEPS
 CASES=((7321,c.K_ACTIVE),(8128,c.K_ACTIVE),(7321,0.))
 NAMES=("seed7321_active","seed8128_active","seed7321_zero_K")
 
+def json_numpy_scalar(value):
+    """Only convert reporting scalars; never modify scientific state/gates."""
+    if isinstance(value,np.generic):
+        return value.item()
+    raise TypeError("Unsupported diagnostic JSON object: "+type(value).__name__)
+
 
 def read_raw(filepath):
     with np.load(filepath,allow_pickle=False) as data:
@@ -256,7 +262,7 @@ def consumer(rawpath,folder):
         "failed_preregistered_gates":failed,
         "limitations":"Restart evaluated only for Landlab soil + inert rigid body reservoir, same runtime version. No Bullet contact solver continuation, granular source, cross-version portability or shared time clock."
     }
-    print("WORLD_EVAL_JSON "+json.dumps(result,sort_keys=True),flush=True)
+    print("WORLD_EVAL_JSON "+json.dumps(result,sort_keys=True,default=json_numpy_scalar),flush=True)
     if failed:
         raise AssertionError("H33 preregistered resume gates failed: "+", ".join(failed))
 
