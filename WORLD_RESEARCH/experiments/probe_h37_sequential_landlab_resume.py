@@ -18,6 +18,9 @@ import landlab
 import probe_e6_h33_resume_landlab as h33
 import probe_e5_h31_owner_contract as c
 
+CASE_NAMES=(*h33.NAMES,"seed8128_zero_K")
+CASE_INPUTS=(*h33.CASES,(8128,0.))
+
 def run(rawpath,checkpoints_dir,output):
     raw=h33.read_raw(rawpath)
     source=pathlib.Path(checkpoints_dir)
@@ -31,7 +34,7 @@ def run(rawpath,checkpoints_dir,output):
             "numpy":np.__version__,"xarray":xr.__version__,
             "steps_executed_after_restart":[4,5,6],
             "cases":{},"failed_preregistered_gates":[]}
-    for name,(seed,k) in zip(h33.NAMES,h33.CASES):
+    for name,(seed,k) in zip(CASE_NAMES,CASE_INPUTS):
         with xr.open_dataset(source/f"{name}_checkpoint.nc",engine="scipy") as f:
             mid=f.load()
         with xr.open_dataset(source/f"{name}_baseline.nc",engine="scipy") as f:
