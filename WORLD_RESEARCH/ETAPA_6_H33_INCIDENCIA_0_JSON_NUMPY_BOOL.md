@@ -1,0 +1,7 @@
+# Incidencia H33.0 — Booleano NumPy en serialización del informe de reanudación
+
+**2026-11-22. Fallo instrumental, NO resultado de comparación física.** En [primera CI H33 45092212509](https://github.com/mxlzz/Nilo_public/actions/runs/45092212509), los jobs `source_raw` y `continuous_and_mid_checkpoint` fueron SUCCESS. Se generaron estados t3 y baselines t6 con presupuesto cerrado, hash NetCDF exacto y rechazo de nueve alteraciones inválidas. El job `restart_in_new_runner` alcanzó `consumer`, pero la construcción de `WORLD_EVAL_JSON` falló en `json.dumps` con `TypeError: Object of type bool is not JSON serializable` antes de imprimir las métricas/gates; el valor incompatible proviene de `np.array_equal`, cuyo tipo `numpy.bool_` no es booleano JSON Python nativo.
+
+**Alcance de lo conocido:** no se conoce el estado de los gates físicos en ese intento, porque el informe completo no se emitió; **no** declarar H33 aprobada/rechazada basándose en la excepción de JSON. La primera etapa y estados persistidos sí fueron válidos y el consumidor llegó al reporte.
+
+**Corrección exclusiva:** convertir únicamente el resultado de comparación `same_mass` a `bool(np.array_equal(...))` antes de incluirlo en el informe, conservando exactamente los mismos arrays, comparaciones, umbrales, semillas, relojes, estados, fuentes, algoritmo de continuación y exigencia de igualdad bit a bit. Relanzar los tres jobs/entornos del mismo protocolo. Conservar esta incidencia y primera CI como trazabilidad. No alterar H31 o H32, main, NeuroLab.
