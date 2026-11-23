@@ -1,0 +1,7 @@
+# Incidencia H33.1 — Segundo booleano NumPy en el informe final
+
+**2026-11-22. Fallo exclusivamente de JSON, resultado físico aún sin publicar.** [CI H33 segundo intento 45092434351](https://github.com/mxlzz/Nilo_public/actions/runs/45092434351). Productor raw y productor de baselines+checkpoints t3 completaron SUCCESS. El consumidor ejecutó hasta `print("WORLD_EVAL_JSON "+json.dumps(result,...))`, pero `json.dumps` volvió a fallar con `TypeError: Object of type bool is not JSON serializable`. H33.0 había convertido únicamente `same_mass` a `bool` Python; existe al menos otro booleano/escalares NumPy en la estructura del informe, probablemente un resultado de comparar atributos NumPy restaurados del NetCDF. No se emitió el dictamen físico de comparación continuo/reanudado.
+
+**Corrección sin alterar física:** normalizar de manera general `np.generic` a su valor escalar Python únicamente al serializar `WORLD_EVAL_JSON` mediante `default` de `json.dumps`; no redondear masas, no convertir arrays del estado ni relajar gates, y seguir exigiendo igualdad bit a bit. No reescribir el protocolo ni H31/H32. La incidencia H33.0 permanece preservada, así como ambas CI fallidas.
+
+**Mejora metodológica:** los fallos de reporte impidieron observar resultados aun cuando se recorrió todo el solver. Las próximas pruebas deben usar serialización robusta antes de su primera corrida, sin ampliar burocracia ni repetir instalaciones por el mismo problema.
