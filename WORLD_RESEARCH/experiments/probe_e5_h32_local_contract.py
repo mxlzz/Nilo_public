@@ -88,8 +88,12 @@ def hash_owner(owner):
     h=hashlib.sha256(original.encode())
     h.update(owner[LOCAL_FIELD].values.tobytes())
     h.update(owner[LOCAL_FIELD].attrs["units"].encode())
-    h.update(json.dumps({k:owner.attrs[k] for k in sorted(EXTRA_KEYS)},
-                        sort_keys=True).encode())
+    # NetCDF restores integer attrs as NumPy scalars. Convert metadata
+    # only (not physics state) to canonical Python JSON scalar types.
+    metadata={k:(v.item() if isinstance(v,np.generic) else v)
+              for k in sorted(EXTRA_KEYS)
+              for v in (owner.attrs[k],)}
+    h.update(json.dumps(metadata,sort_keys=True).encode())
     return h.hexdigest()
 
 def receiver_hash(receivers):
