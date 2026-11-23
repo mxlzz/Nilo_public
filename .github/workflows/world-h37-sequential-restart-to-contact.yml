@@ -1,0 +1,124 @@
+name: World research - H37 sequential restarted soil to Bullet contact
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_h37_extended_landlab_producer.py
+      - WORLD_RESEARCH/experiments/probe_h37_sequential_landlab_resume.py
+      - WORLD_RESEARCH/experiments/probe_h37_sequential_bullet_contact.py
+      - .github/workflows/world-h37-sequential-restart-to-contact.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original_worldengine_source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: research
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Fetch upstream WorldEngine fixed historical revision
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/worldengine_h37"
+          git -C "$RUNNER_TEMP/worldengine_h37" init -q
+          git -C "$RUNNER_TEMP/worldengine_h37" remote add origin https://github.com/Mindwerks/worldengine.git
+          git -C "$RUNNER_TEMP/worldengine_h37" fetch --depth 1 origin 3b9113ecfad884cab4b32081d138a15e6262ada8
+          git -C "$RUNNER_TEMP/worldengine_h37" checkout -q --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/worldengine_h37" rev-parse HEAD)" = 3b9113ecfad884cab4b32081d138a15e6262ada8
+          python -m pip install "$RUNNER_TEMP/worldengine_h37"
+      - name: Emit same audited two raw procedural terrains as H29-H33
+        run: |
+          python research/WORLD_RESEARCH/experiments/probe_e4_h29_worldengine_seeds.py worldengine_two_seeds.npz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h37-original-raw-worlds
+          path: worldengine_two_seeds.npz
+          retention-days: 14
+
+  original_landlab_six_and_checkpoint_three:
+    needs: original_worldengine_source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: h37-original-raw-worlds
+          path: world
+      - name: Use same Landlab H33 solver/owner
+        run: |
+          python -m pip install --only-binary=:all: landlab==2.11.0 numpy scipy xarray
+      - name: Produce original three H33 cases and additional pre-registered K0 second seed
+        run: |
+          python WORLD_RESEARCH/experiments/probe_h37_extended_landlab_producer.py world/worldengine_two_seeds.npz checkpoint_owners
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h37-continuous-and-midpoint-owners
+          path: checkpoint_owners
+          retention-days: 14
+
+  native_landlab_restart_from_midpoint:
+    needs: [original_worldengine_source, original_landlab_six_and_checkpoint_three]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: h37-original-raw-worlds
+          path: world
+      - uses: actions/download-artifact@v4
+        with:
+          name: h37-continuous-and-midpoint-owners
+          path: saved
+      - name: Use identical native Landlab in independent runner
+        run: |
+          python -m pip install --only-binary=:all: landlab==2.11.0 numpy scipy xarray
+      - name: Continue only steps 4-6 and publish fully validated resumed land
+        run: |
+          python WORLD_RESEARCH/experiments/probe_h37_sequential_landlab_resume.py world/worldengine_two_seeds.npz saved resumed_owners
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h37-resumed-landlab-owners
+          path: resumed_owners
+          retention-days: 14
+
+  original_bullet_contact_from_both_histories:
+    needs: [original_worldengine_source, original_landlab_six_and_checkpoint_three, native_landlab_restart_from_midpoint]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: h37-original-raw-worlds
+          path: world
+      - uses: actions/download-artifact@v4
+        with:
+          name: h37-continuous-and-midpoint-owners
+          path: continuous
+      - uses: actions/download-artifact@v4
+        with:
+          name: h37-resumed-landlab-owners
+          path: resumed
+      - name: Use original PyBullet H31 contact provider without Landlab import
+        run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy scipy xarray
+      - name: Verify whole continuous-vs-restored causal chain reaches identical contacts
+        run: |
+          python WORLD_RESEARCH/experiments/probe_h37_sequential_bullet_contact.py world/worldengine_two_seeds.npz continuous resumed
