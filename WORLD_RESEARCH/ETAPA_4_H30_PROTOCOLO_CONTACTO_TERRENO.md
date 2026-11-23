@@ -13,7 +13,7 @@ PyBullet3.2.7 ya utilizado con `GEOM_PLANE` en H17/H26; su `GEOM_MESH` y `GEOM_F
 ## Input compartido y muestras
 
 - Reutilizar **sin modificaciones** el generador H29 pinneado `Mindwerks/worldengine SHA 3b9113ecfad884cab4b32081d138a15e6262ada8`, mismo NPZ raw de seeds **7321 y8128**, mismo reset global1234, shape16×32, mismos SHA fuente. La CI puede usar el mismo artefacto generado por el job H29.
-- Convertir a elevación **nominal 0..50m** con `z_m=50*(raw-min)/(max-min)`; **no** calibración de relieve natural. De todos los subcuadrados de2×2 muestras de cada mapa, seleccionar uno **de manera determinista** con mínimo rango `max(z_4)-min(z_4)`, desempate por orden de filas/columnas; no escoger a mano la ubicación según resultado Bullet.
+- Convertir a elevación **nominal 0..50m** con `z_m=50*(raw-min)/(max-min)`; **no** calibración de relieve natural. De todos los subcuadrados de2×2 muestras de cada mapa, seleccionar uno **de manera determinista** con mínimo rango **estrictamente mayor o igual a0,05m nominales** `max(z_4)-min(z_4)`, desempate por orden de filas/columnas; no escoger a mano la ubicación según resultado Bullet.
 - Construir la superficie local a partir de cuatro muestras con separación horizontal100m y alturas calculadas: vértices `v0=(0,0,z00)`, `v1=(100,0,z01)`, `v2=(100,100,z11)`, `v3=(0,100,z10)`, triángulos orientados `[v0,v1,v2]` y `[v0,v2,v3]`. Los nodos corresponden a posiciones originales de **centros de celda WorldEngine** (regla de traslado del origen físico −50m H29); no se interpola entre escenas de origen distinto. La pendiente/rango y origen (índice row/col) se registran; la prueba NO modela toda la superficie global.
 - Punto de ensayo en **interior del triángulo1** `(x=40m,y=30m)`, barycentría `z_expected=0.6*z00+0.1*z01+0.3*z11`. El ray cast vertical desde `z_expected+10m` hasta `z_expected−10m` debe golpear el mismo mesh y reflejar altura esperada a tol absoluta **0,001m**. No trasladar ni deformar datos para forzar el rayo.
 
@@ -35,3 +35,8 @@ PyBullet3.2.7 ya utilizado con `GEOM_PLANE` en H17/H26; su `GEOM_MESH` y `GEOM_F
 ## Interpretación
 
 **H30 APROBADA** solo si todos los gates funcionan en ambas semillas y controles; junto con H29 habilita auditoría de cierre mínimo E4: dos terrenos iniciales reproducibles, materia/relieve sin saldos inválidos y compatibilidad con ambas interacciones elegidas en E2, **por separado**. No demostraría cuevas, estabilidad geológica, realismo métrico ni acoplamiento ambiental. La etapa5 tiene su propia hipótesis y no se declara hecha.
+
+
+## Enmienda geométrica ANTES de la primera CI — impedir patch completamente plano
+
+La selección literal «menor rango» podía escoger un subcuadrado con cuatro alturas idénticas de agua/océano, equivalente a **una superficie horizontal arbitraria**; se perdería la pregunta sobre compatibilidad de topografía generada distinta de `GEOM_PLANE`. Antes de ejecutar H30 se requiere rango de alturas del patch **≥0,05m nominales** y se escoge el menor que cumpla, en caso de empate el primer par de índices fila-columna. Si no existe tal patch en alguna seed, H30 no aprueba. La condición evita una prueba trivial y mantiene el patch local menos inclinado posible; se trata de un umbral computacional nominal, NO pendiente medida geológicamente. Ninguna física/contacto/tiempo/seed modificados. No hay resultados H30 observados al registrar esta enmienda.
