@@ -10,6 +10,7 @@ import json
 import pathlib
 import platform
 import sys
+import tempfile
 
 import landlab
 import numpy as np
