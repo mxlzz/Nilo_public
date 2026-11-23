@@ -1,0 +1,61 @@
+name: World research - E4 H29 seeded WorldEngine to Landlab material owner
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e4_h29_worldengine_seeds.py
+      - WORLD_RESEARCH/experiments/probe_e4_h29_generated_owner_landlab.py
+      - .github/workflows/world-e4-seeded-terrain-owner.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  generate_raw_worlds:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: research
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Fetch fixed MIT WorldEngine generator
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/worldengine_h29"
+          git -C "$RUNNER_TEMP/worldengine_h29" init -q
+          git -C "$RUNNER_TEMP/worldengine_h29" remote add origin https://github.com/Mindwerks/worldengine.git
+          git -C "$RUNNER_TEMP/worldengine_h29" fetch --depth 1 origin 3b9113ecfad884cab4b32081d138a15e6262ada8
+          git -C "$RUNNER_TEMP/worldengine_h29" checkout -q --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/worldengine_h29" rev-parse HEAD)" = 3b9113ecfad884cab4b32081d138a15e6262ada8
+          python -m pip install "$RUNNER_TEMP/worldengine_h29"
+      - name: Execute original procedural generation with replay and two seeds
+        run: |
+          python research/WORLD_RESEARCH/experiments/probe_e4_h29_worldengine_seeds.py worldengine_two_seeds.npz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: worldengine-h29-raw-2-seeds
+          path: worldengine_two_seeds.npz
+          retention-days: 14
+
+  check_landlab_material_owner:
+    needs: generate_raw_worlds
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: worldengine-h29-raw-2-seeds
+          path: bridge
+      - name: Install already-tested Landlab 2.11, xarray and numerical wheels
+        run: |
+          python -m pip install --only-binary=:all: landlab==2.11.0 numpy xarray scipy
+      - name: Validate source geometry, matter and native sediment compatibility
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e4_h29_generated_owner_landlab.py bridge/worldengine_two_seeds.npz
