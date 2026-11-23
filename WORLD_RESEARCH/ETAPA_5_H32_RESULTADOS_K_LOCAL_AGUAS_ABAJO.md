@@ -1,0 +1,24 @@
+# Etapa5 — H32. Perturbación local de K_sed afecta sedimento aguas abajo, NO alcanza contacto
+
+**2026-11-22. Dictamen científico: H32 NO APROBADA conforme al protocolo original.** [Protocolo preregistrado](ETAPA_5_H32_PROTOCOLO_K_LOCAL_AGUAS_ABAJO.md), [CI con métricas 45091763734 — FAIL por gates físicos](https://github.com/mxlzz/Nilo_public/actions/runs/45091763734). No modificar umbrales, tamaño3×3, semillas, K, tiempo ni selección de patch para forzar resultado. E5 sigue formalmente abierta hasta **auditoría independiente de requisitos del plan original**, que puede ser más acotado que la hipótesis específica H32.
+
+## Incidencia instrumental previa, distinguida del resultado físico
+
+[Primer CI H32 45088903758](https://github.com/mxlzz/Nilo_public/actions/runs/45088903758) detuvo el job Landlab al reconstruir un hash de metadatos xarray NetCDF porque `numpy.int32` no es serializable directamente a JSON. [Incidencia H32.0 registrada antes de corregir](ETAPA_5_H32_INCIDENCIA_0_HASH_NETCDF.md). Se cambió **solo** la normalización de escalares `np.generic.item()` en `probe_e5_h32_local_contract.hash_owner`; sin alterar ley física, parámetros, condiciones, semilla, criterios ni stock. La segunda CI ejecutó la física y emitió métricas, culminando en failure científico por dos gates.
+
+## Resultados verificados del segundo CI
+
+**Fuente:** mismos mapas WorldEngine v`3b9113ec...` seeds7321/8128 que H29/H31, estado único material `soil_mass_kg`, cuerpo2kg en reservorio, K espacial`(y,x)`. Landlab2.11 Python3.13 integró6 pasosdt0,2, K=0,10 en todos los nodos en control y **K=0 en un patch3×3 seleccionado antes de tratamiento**. Outlet, máscara, suelos y demás variables idénticos. Las dos ramas mantuvieron `suelo + exportado + cuerpo = 921.600.002kg`, residuo máximo**1,1921×10⁻⁷ kg**, replay de seed7321 exacto, hashes de checkpoint validados.
+
+- **Seed7321:** parche local centro **(5,2)**, ruta de receptores D8 al outlet core validada; cinco nodos aguas abajo fuera del patch cambiaron masa más de100kg, variación absoluta máxima downstream **3.812,495kg**; en total62 nodos con cambios entre ramas. Diferencia de stock total **+119.511,84760664kg** compensada por menor exportación del mismo valor. El patch elegible downstream con mayor diferencia de cota derivada tuvo `delta_z=-0,000113492195m nominales`, esto es **−0,1135mm nominales**.
+- **Seed8128:** parche local centro **(15,15)** y ruta aguas abajo larga; **27 nodos** downstream fuera de región cambiaron masa más de100kg, diferencia máxima **12.256,377kg**; en total315 nodos cambiaron. Más suelo almacenado **+136.850,66813405kg**, exportación del mismo valor menos. Patch downstream elegido por regla predefinida, cota `delta_z=-0,000316872275m nominales`, **−0,3169mm nominales**.
+- **Gates que PASARON:** exactamente9 nodos intervenidos, respuesta de masa en receptores aguas abajo≥100kg, balance y replay de sedimento, mismo propietario conjunto material/K/cuerpo, NetCDF restaurado; los jobs de regresión H29/H30/H31 de la misma CI no fallaron.
+- **Gates que FALLARON:** `7321_downstream_surface_response`, `8128_downstream_surface_response`. El protocolo exigía `abs(delta_z)>0,003m` nominales, mientras ambas diferencias medidas son entre9,5 y26,4 veces **menores** que esa condición. La CI detuvo antes de ejecutar el job Bullet H32, correctamente: **no hay raycast ni altura de primer contacto aguas abajo para H32**, y no está permitido inferirlas de la mera geométrica transformada.
+
+## Interpretación y decisión
+
+**Demostrado:** una intervención **local** sobre la erodibilidad de nueve nodos en Landlab se propaga a otros nodos siguiendo la red hidrológica inicial, modifica directamente el inventario material y el ledger de exportación de modo conservativo, sin efectos inventados. Esta evidencia es independiente de H31, que demostró en el mismo owner que una intervención **global** sobre `K_sed` alteraba relieve y contacto Bullet.
+
+**No demostrado por H32:** cambio medible de contacto rigid *aguas abajo* sobre la zona seleccionada, retroacción de Bullet sobre material erosionado, acoplamiento termomecánico, simultaneidad del reloj ni un mundo natural geológicamente calibrado. **H32 NO APROBADA** según criterio original, aun si otros mecanismos E5 se cumplen parcialmente.
+
+**Siguiente decisión:** cotejar [plan rector E5 §6](BASES_Y_HOJA_DE_RUTA.md) con H31 y los **resultados positivos/negativos distinguidos** de H32. No diseñar otro experimento de K local simplemente incrementando pasos, tamaño del patch o aflojando umbral para alcanzar3mm: su valor científico marginal sería bajo y sesgaría la evidencia. Si el mínimo original se considera satisfecho por H31+la propagación material parcial H32, cerrar **solo** gate E5 mínimo con una auditoría que enumere explícitamente la falta de contacto downstream; si no, mantener abierto por falta de una segunda conexión causal física. En ambos casos NO borrar ni declarar H32 aprobada.
