@@ -199,8 +199,8 @@ def consumer(rawpath,folder):
              saved.attrs["landlab_t_bench"]==3*c.LANDLAB_DT)
         continued,diagnostic=advance(saved,raws[seed],seed,k,
                                     SPLIT_STEP+1,END_STEP)
-        same_mass=np.array_equal(continued["soil_mass_kg"].values,
-                                baseline["soil_mass_kg"].values)
+        same_mass=bool(np.array_equal(continued["soil_mass_kg"].values,
+                                     baseline["soil_mass_kg"].values))
         same_export=(continued.attrs["exported_soil_kg"]==
                      baseline.attrs["exported_soil_kg"])
         same_sha=c.hash_owner(continued)==c.hash_owner(baseline)
