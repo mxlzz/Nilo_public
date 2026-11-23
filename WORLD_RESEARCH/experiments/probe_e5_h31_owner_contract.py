@@ -110,11 +110,11 @@ def topography(owner):
             owner["soil_mass_kg"].values/(RHO*AREA))
 
 def soil_only(owner):
+    allowed=(set(baseline_attrs(int(owner.attrs["source_seed"]),
+                                owner.attrs["source_hash_sha256"])) |
+             {"exported_soil_kg"})
     return owner[list(FIELDS_SOIL)].assign_attrs({
-        k:v for k,v in owner.attrs.items()
-        if k in set(baseline_attrs(int(owner.attrs["source_seed"]),
-                                   owner.attrs["source_hash_sha256"]))|
-                {"exported_soil_kg"}
+        k:v for k,v in owner.attrs.items() if k in allowed
     })
 
 def validate(owner,raw,seed,k):
