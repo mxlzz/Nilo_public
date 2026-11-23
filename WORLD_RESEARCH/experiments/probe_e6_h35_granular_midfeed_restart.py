@@ -457,8 +457,8 @@ def consumer(folder):
     gate("same_material_ledger",state["max_ledger_error_kg"]<1e-12)
     gate("same_final_original_H26",h24.state_sha(final_h26)==ORIGINAL_SHA and
          all(np.array_equal(final_h26[name].values,expected_h26[name].values)
-             for name in h24.state_sha.__globals__.get("FIELDS",())
-             if name in expected_h26.data_vars))
+             for name in ("material_mass_kg","radius_m","position_m",
+                          "velocity_mps","angular_velocity_rad_s","orientation_xyzw")))
     gate("same_final_extended_owner",hash_owner(final_h35)==manifest["expected_H35_sha256"]
          and all(np.array_equal(final_h35[name].values,expected_h35[name].values,
                                 equal_nan=True) for name in MOTION))
