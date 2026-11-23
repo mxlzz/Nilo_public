@@ -113,9 +113,11 @@ def soil_only(owner):
     allowed=(set(baseline_attrs(int(owner.attrs["source_seed"]),
                                 owner.attrs["source_hash_sha256"])) |
              {"exported_soil_kg"})
-    return owner[list(FIELDS_SOIL)].assign_attrs({
-        k:v for k,v in owner.attrs.items() if k in allowed
-    })
+    view=owner[list(FIELDS_SOIL)].copy(deep=False)
+    # assign_attrs() merges extra body attrs; replace the attribute dictionary
+    # so the H29 native solver sees ONLY its strict soil contract.
+    view.attrs={k:v for k,v in owner.attrs.items() if k in allowed}
+    return view
 
 def validate(owner,raw,seed,k):
     if seed not in SOURCES:
