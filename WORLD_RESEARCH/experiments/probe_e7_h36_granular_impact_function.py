@@ -54,7 +54,7 @@ def combined_owner(grain_snapshot,probe_native,seed,friction,step_h26):
     return xr.Dataset({
         "material_mass_kg":(("object",),np.r_[np.full(h26.N,h26.M),PROBE_M],{"units":"kg"}),
         "radius_m":(("object",),np.r_[np.full(h26.N,h26.R),PROBE_R],{"units":"m"}),
-        "role_code":(("object",),np.r_[np.zeros(h26.N,dtype=np.int32),1],{"units":"1"}),
+        "role_code":(("object",),np.concatenate((np.zeros(h26.N,dtype=np.int32),np.ones(1,dtype=np.int32))),{"units":"1"}),
         "position_m":(("object","xyz"),positions,{"units":"m"}),
         "velocity_mps":(("object","xyz"),linear,{"units":"m/s"}),
         "angular_velocity_rad_s":(("object","xyz"),angular,{"units":"rad/s"}),
@@ -64,9 +64,10 @@ def combined_owner(grain_snapshot,probe_native,seed,friction,step_h26):
     attrs={"schema_version":1,"stage":"impact_complete",
            "seed":int(seed),"friction_on":int(bool(friction)),
            "release_count":h26.N,"h26_final_step":int(step_h26),
+           "h26_source_sha256":REFERENCE[(seed,friction)][0],
            "probe_steps":N_IMPACT_STEPS,
            "total_time_s":(step_h26+N_IMPACT_STEPS)*h26.DT,
-           "probe_start_xyz":tuple(PROBE_INITIAL.tolist()),
+           "probe_start_xyz":"0,0,1.6",
            "boundary":"open ground, no walls and native Bullet contacts"})
  
 def validate(ds,seed,friction,h26_step):
@@ -88,9 +89,10 @@ def validate(ds,seed,friction,h26_step):
     base={"schema_version":1,"stage":"impact_complete",
           "seed":int(seed),"friction_on":int(bool(friction)),
           "release_count":h26.N,"h26_final_step":int(h26_step),
+          "h26_source_sha256":REFERENCE[(seed,friction)][0],
           "probe_steps":N_IMPACT_STEPS,
           "total_time_s":(h26_step+N_IMPACT_STEPS)*h26.DT,
-          "probe_start_xyz":tuple(PROBE_INITIAL.tolist()),
+          "probe_start_xyz":"0,0,1.6",
           "boundary":"open ground, no walls and native Bullet contacts"}
     if set(ds.attrs)!=set(base) or any(ds.attrs.get(k)!=v for k,v in base.items()):
         raise ValueError("Physical scenario/clock modified")
@@ -99,7 +101,7 @@ def validate(ds,seed,friction,h26_step):
     roles=ds["role_code"].values
     if not np.array_equal(m,np.r_[np.full(h26.N,h26.M),PROBE_M]) or float(m.sum())!=3.225:
         raise ValueError("Material created/destroyed")
-    if not np.array_equal(radii,np.r_[np.full(h26.N,h26.R),PROBE_R]) or not np.array_equal(roles,np.r_[np.zeros(h26.N,dtype=np.int32),1]):
+    if not np.array_equal(radii,np.r_[np.full(h26.N,h26.R),PROBE_R]) or not np.array_equal(roles,np.concatenate((np.zeros(h26.N,dtype=np.int32),np.ones(1,dtype=np.int32)))):
         raise ValueError("Body physical role/volume changed")
     for field in MOTION:
         if not np.isfinite(ds[field].values).all():
