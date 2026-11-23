@@ -1,0 +1,89 @@
+name: World research - E6 H33 exact mid-run Landlab restart
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_e6_h33_resume_landlab.py
+      - .github/workflows/world-e6-landlab-restart.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source_raw:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: research
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Load original upstream WorldEngine generator at pinned commit
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/worldengine_h33"
+          git -C "$RUNNER_TEMP/worldengine_h33" init -q
+          git -C "$RUNNER_TEMP/worldengine_h33" remote add origin https://github.com/Mindwerks/worldengine.git
+          git -C "$RUNNER_TEMP/worldengine_h33" fetch --depth 1 origin 3b9113ecfad884cab4b32081d138a15e6262ada8
+          git -C "$RUNNER_TEMP/worldengine_h33" checkout -q --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/worldengine_h33" rev-parse HEAD)" = 3b9113ecfad884cab4b32081d138a15e6262ada8
+          python -m pip install "$RUNNER_TEMP/worldengine_h33"
+      - name: Produce two exact repeatable terrain seeds
+        run: |
+          python research/WORLD_RESEARCH/experiments/probe_e4_h29_worldengine_seeds.py worldengine_two_seeds.npz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h33-raw-worlds
+          path: worldengine_two_seeds.npz
+          retention-days: 14
+
+  continuous_and_mid_checkpoint:
+    needs: source_raw
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: h33-raw-worlds
+          path: world
+      - name: Install existing Landlab and material owner runtime
+        run: |
+          python -m pip install --only-binary=:all: landlab==2.11.0 numpy scipy xarray
+      - name: Run original dynamics six steps and persist separate three-step checkpoints
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e6_h33_resume_landlab.py producer world/worldengine_two_seeds.npz h33_checkpoints
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h33-owner-continuous-and-midpoint
+          path: h33_checkpoints
+          retention-days: 14
+
+  restart_in_new_runner:
+    needs: [source_raw, continuous_and_mid_checkpoint]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: h33-raw-worlds
+          path: world
+      - uses: actions/download-artifact@v4
+        with:
+          name: h33-owner-continuous-and-midpoint
+          path: saved
+      - name: Install the same pinned Landlab runtime in a fresh process
+        run: |
+          python -m pip install --only-binary=:all: landlab==2.11.0 numpy scipy xarray
+      - name: Reconstruct solver from NetCDF and compute ONLY steps 4-6
+        run: |
+          python WORLD_RESEARCH/experiments/probe_e6_h33_resume_landlab.py consumer world/worldengine_two_seeds.npz saved
