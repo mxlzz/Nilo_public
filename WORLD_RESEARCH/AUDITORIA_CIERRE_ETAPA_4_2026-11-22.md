@@ -1,0 +1,28 @@
+# Auditoría formal — Gate Etapa 4 (generación de estado inicial)
+
+**2026-11-22. Dictamen: cierre PROVISIONAL del gate mínimo de Etapa4, solamente para condiciones iniciales procedurales de altura2.5D con suelo A y contacto local rígido de prueba.** No equivale a inicializar un mundo físico volumétrico ni a simular fenómenos acoplados. Coteja [plan original §6 E4](BASES_Y_HOJA_DE_RUTA.md) con [H29](ETAPA_4_H29_RESULTADOS_SEMILLAS_TERRITORIO.md) y [H30](ETAPA_4_H30_RESULTADOS_CONTACTO_TERRENO.md), sin cambiar los criterios para forzar aprobación.
+
+## 1. Hipótesis y tests originales
+
+**Hipótesis E4:** un generador produce «territorios plausibles y variados, utilizables por la dinámica posterior» y su salida no requiere fingir millones de años de evolución antes de la simulación. Pruebas E4: semillas reproducibles, estados iniciales válidos, condiciones compatibles con reglas locales de etapa2, variación entre seeds, ausencia de lugares imposibles o saldos negativos.
+
+1. **Generación reproducible, variación mensurable:** [CI H29](https://github.com/mxlzz/Nilo_public/actions/runs/45086430133) usó WorldEngine MIT pin `3b9113ecfad884cab4b32081d138a15e6262ada8`, reset global NumPy1234 + semillas WorldEngine7321/8128. Replay seed7321 exacto; **418/512** posiciones raw distintas entre seeds, no llanuras triviales. Alturas fuente guardadas con SHA en NPZ sin suponer unidades geológicas. **CUMPLIDO**.
+2. **Estado inicial válido:** H29 mapeó los512 centros de muestras originales sobre nodos core interiores Landlab18×34; halo exterior sin materia, unidades horizontal100m/vertical0–50m nominales declaradas, sin tratar samples como vértices de celda externa ni interpolar el original. Suelo A inicial exacto921.600.000kg, ninguna celda de borde con propiedad material ni terreno/masa negativa,8 corrupciones rechazadas, check NetCDF/replay. **CUMPLIDO en representación2.5D**, no en 3D volumétrico y no calibrado en metros reales.
+3. **Compatibilidad con reglas E2 escogidas:** H29 Landlab2.11 SPACE corrió seis pasos por seed con redistribución y salida medibles y balance `suelo almacenado+exportación=masa inicial` (error máximo~1,19e−7kg, inferior0,09216kg preregistrado), control K=0 sin movimiento ni exportación. H30 compartió el **mismo artifact WorldEngine** y construyó un patch triangular estático con cuatro alturas nominales, 2×2, específicamente **no plano** (rango≥0,05m) en cada seed: raycast Bullet correspondió a altura analítica a<1e−12m; cuerpos2kg cayeron~2,5m, apoyaron con contactos positivos sin penetración, controles g0 y sin superficie respondieron; replay, corrupción y NetCDF correctos. [CI con los tres jobs SUCCESS](https://github.com/mxlzz/Nilo_public/actions/runs/45086818016). **CUMPLIDO para compatibilidad separada con Landlab2.5D y Bullet/patch local**, no para colisiones en toda la malla y sin acoplar ambos procesos.
+4. **Sin saldo imposible y distingue estado generado de historia:** H29 baseline inicial fijo por seed separa mapa generado y seis pasos de **erosión observada**, con contabilidad física por paso (no reconstruir sumidero por diferencia ad hoc), y zero-erosion control. H30 usa el relieve original, NO terreno erosionado simultáneamente, con masa del cuerpo y forma triangular auditados. **CUMPLIDO** dentro del banco; no hay historia geológica inferida.
+
+## 2. Limitaciones esenciales
+
+- WorldEngine genera altura en unidades arbitrarias; la conversión `0..50m nominales` es una convención **no calibrada** ni una observación física. Llamar «territorio plausible» se interpreta aquí **como campo espacial no plano y numéricamente compatible**, NO geología real, hidrología correcta o topografía terrestre.
+- El halo de Landlab replica el borde, hay outlet único de altura mínima y suelo nominal0,15m; estas son condiciones de borde declaradas, no geografía espontánea.
+- H30 solo eligió una muestra local de2 triángulos con pendiente mínima>0,05m entre esquinas; no validó todo el terreno ni soporte de cavidad/estructura granular de E3 sobre relieve general. Es deliberado porque E4 es generación/entrada, no fusión multisolvers.
+- **No hay un mismo owner simultáneo** de suelo que erosiona y cuerpo que cae, ni una implementación reanudable de WorldEngine→Landlab→Bullet en el mismo reloj; esto define la brecha específica de **Etapa5 y Etapa6**. H26 además tiene origen fuente de granos persistido solo al final y pérdida de correspondencia source_id→body_id en owner final.
+- Ninguno de los resultados implica visibilidad 3D, organismos, energía mecánico-térmica conservada, depósitos rocosos autoestables ni evolución abierta.
+
+## 3. Decisión
+
+**E4 CERRADA PROVISIONALMENTE solo para validación mínima de estado inicial** usando artefactos externos y campos materiales auditables. E0–E3 ya se habían cerrado de manera análogamente limitada. Etapas5–8 **NO** completadas.
+
+**Siguiente experimento selectivo E5:** demostrar **una consecuencia material causal y compartida** de un solver sobre la entrada de otro, no hacer más tests desconectados. Caso mínimo propuesto: Landlab actualiza `soil_mass_kg`/relieve en un owner de un terreno WorldEngine; Bullet toma exactamente el relieve derivado del owner **antes/después** de erosión para generar superficies de contacto, con diferencia de altura por una intervención `K_sed=0` y ledger de masa cerrado. Eso sería **acoplamiento en un solo sentido** (suelo→contacto), no feedback cuerpo→suelo, y debe ser preregistrado como tal. Evitar interpretar visualización/meshes como inventarios paralelos. [ADR cierre](DECISIONES/ADR-0016_CIERRE_GATE_ETAPA_4.md).
+
+**No integrar `main`, NeuroLab ni subsistemas LLM.**
