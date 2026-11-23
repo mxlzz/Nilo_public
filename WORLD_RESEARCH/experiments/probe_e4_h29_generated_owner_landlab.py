@@ -136,7 +136,7 @@ def validate(ds,raw,expected_hash,seed):
     if not np.isfinite(exported) or exported<0.:
         raise ValueError("Invalid external soil export")
     discrepancy=float(soil.sum()+exported-MASS0)
-    tolerance=max(1e-4,1e-8*MASS0)
+    tolerance=max(1e-4,1e-10*MASS0)
     if abs(discrepancy)>tolerance:
         raise ValueError("Mass budget mismatch "+str(discrepancy))
     return {"remaining_kg":float(soil.sum()),"exported_kg":exported,
@@ -252,8 +252,8 @@ def main(input_file):
          and bb["changed_core_nodes"]>0
          and aa["max_abs_terrain_change_m_nominal"]>0
          and bb["max_abs_terrain_change_m_nominal"]>0)
-    gate("both_mass_ledgers",aa["peak_abs_balance_error_kg"]<=9.216
-         and bb["peak_abs_balance_error_kg"]<=9.216)
+    gate("both_mass_ledgers",aa["peak_abs_balance_error_kg"]<=.09216
+         and bb["peak_abs_balance_error_kg"]<=.09216)
     gate("zero_erodibility_inert",inactive["changed_core_nodes"]==0
          and inactive["export_kg"]==0.)
     gate("exact_replay",np.array_equal(aa["owner"]["soil_mass_kg"].values,
