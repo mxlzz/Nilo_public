@@ -1,0 +1,31 @@
+# Programa de investigación Nilo — coordinación general
+**Decisión aprobada 2026-11-24:** siete líneas independientes en repositorios de mxlzz, con Nilo_public como coordinación, no como dependencia técnica. WorldLab reemplaza el apodo Mundo Paralelo. Nilo 0.7 se conserva como antecedente y baseline; no se presupone que sea la base del futuro Nilo. Estrategia aprobada: reutilización selectiva basada en evidencia, no motores completos por semejanza ni desarrollo propio por defecto.
+
+## Propósito
+Explorar si es posible construir una vida artificial autónoma, situada en un mundo persistente, que aprenda y actúe por motivos propios y pueda ser observada sin dirigirla. Es un objetivo de investigación, no una afirmación de conciencia ni promesa de integración. Cada laboratorio debe poder producir resultados independientes; una conclusión negativa puede justificar detenerlo o sustituirlo.
+
+## Directorio y límites
+- [WorldLab](https://github.com/mxlzz/nilo-worldlab): materia, energía, generación y transformación ambiental. Fuente vigente hasta migración: [rama original](https://github.com/mxlzz/Nilo_public/tree/research/world-foundations-2026-11/WORLD_RESEARCH). No mente ni agentes.
+- [NeuroLab](https://github.com/mxlzz/nilo-neurolab): aprendizaje neuronal aislado. Fuente vigente hasta migración: [rama original](https://github.com/mxlzz/Nilo_public/tree/docs/neurolab-protocolo-20261120/docs/neurolab). Mantener límites, gates y resultados negativos; no reactivar N por reorganización.
+- [BodyLab](https://github.com/mxlzz/nilo-bodylab): fisiología, intercambio material y energético, sentidos, actuadores. No selección deliberada de metas.
+- [EpistemeLab](https://github.com/mxlzz/nilo-epistemelab): formación, validación, revisión y transferencia de conocimiento; no imponer representación simbólica/neuronal ni duplicar plasticidad elemental de NeuroLab.
+- [AgencyLab](https://github.com/mxlzz/nilo-agencylab): generación y selección de prioridades, iniciativa, persistencia, conflictos; no diseñar fisiología ni confundir función de recompensa del evaluador con motivación propia.
+- [SocioLab](https://github.com/mxlzz/nilo-sociolab): interacción, comunicación, cooperación/competencia y transmisión cultural; iniciar con agentes simples, sin afirmar sociedad de Nilo ni presuponer lenguaje.
+- [Observer](https://github.com/mxlzz/nilo-observer): instrumentación, trazas, representación y experiencia de observación sin efectos causales sobre la simulación. No sustituye evaluadores científicos locales ni necesita motor gráfico definitivo.
+
+Los modelos sustitutos permiten investigar hoy. Registrar sus supuestos, fronteras de percepción y limitaciones; ninguna prueba aislada acredita integración. Cada laboratorio elige sus tecnologías tras comparar opciones. No submodules, ABI/esquema obligatorio ni integración antes de necesidad y evidencia. Las posibles interfaces se documentan como propuestas versionadas, no se imponen.
+
+## Reglas de investigación obligatorias
+1. Inicio de cada sesión: leer este documento, AGENTS.md local, estado, plan vigente, decisiones y resultados relevantes; verificar branch/HEAD. En WorldLab/NeuroLab prevalecen los protocolos específicos existentes. Identificar la siguiente unidad y comprobar alineación con objetivo y gate antes de actuar. No repetir tareas ya cerradas ni improvisar objetivos.
+2. Alternativas primero: examinar literatura primaria, código, datos y soluciones parciales existentes; registrar referencias, versiones, disponibilidad, licencia, mantenimiento, coste, límites y evidencia. Distinguir documentación, inspección estática, reproducción y prueba independiente. No fijar un número artificial de antecedentes. Elegir reutilizar, adaptar, combinar, desarrollar, descartar o detener con justificación.
+3. Plan auditable: definir pregunta, alcance/exclusiones, hipótesis falsable, baseline simple, controles, condiciones, métricas y umbral de decisión antes del ensayo. Separar investigación y evaluación; impedir fuga de información. No cambiar criterios post hoc. Comparaciones con presupuesto equivalente cuando corresponda.
+4. Ejecutar unidad mínima; registrar commit, configuración, semillas, entorno, coste, trazas, resultados negativos, errores y limitaciones; preservar evidencia durable y enlace a CI. Test técnico no equivale a éxito científico. Reproducir y evaluar alternativas antes de aumentar complejidad.
+5. Cada gate produce decisión explícita: avanzar, ajustar, repetir por causa justificada, pausar o descartar. Actualizar estado y próxima unidad, con fundamento; cambios de alcance o integración, costes pagos, credenciales, datos privados, borrados y reescritura de historial requieren aprobación específica. No prometer ejecución de fondo ni atribuir experimentos no realizados.
+6. Cada chat escribe solo su repositorio asignado; no modificar otros laboratorios ni motor de Nilo. Dirección general actualiza este índice y decisiones estratégicas. Proponer cambios cruzados mediante enlace a evidencia; evitar duplicación y conflictos. Si cambia HEAD, releer antes de escribir. No iniciar otra campaña en un chat que ya tiene una activa.
+7. Recursos: no asumir presupuesto pago; no usar LLM de pago sin autorización; limitar experimentos intensivos, runner/tiempo/cuotas y registrar consumo. No incluir credenciales, partidas privadas o material propietario. Verificar licencias antes de copiar código externo; no imponer licencia sin decisión. 
+8. Mantener README, AGENTS, ROADMAP, STATUS y registros de evidencia en nuevos labs; adaptar convenciones existentes en WorldLab y NeuroLab sin renombrar por estética. En STATUS: último resultado comprobado, gate, siguiente paso y bloqueos. Cada respuesta al usuario: resumen breve de avances reales y necesidades. 
+
+## Coordinación
+Dirección general: un chat para Nilo_public; un chat por laboratorio. Los chats existentes de WorldLab y NeuroLab se retoman, no se sustituyen antes del corte de migración. Los cinco nuevos chats comienzan por antecedentes y plan, no implementación. La creación de chats es acción de usuario; GitHub es la fuente de verdad técnica. 
+[Auditoría de antecedentes externos](AUDITORIA_DESARROLLOS_EXTERNOS_2026-11-24.md).
+[Registro de migración](MIGRACION_LABORATORIOS_2026-11-24.md).
