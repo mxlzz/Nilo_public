@@ -1,0 +1,85 @@
+name: NeuroLab discriminating natural synaptic writes
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths: ['.github/workflows/neurolab-discriminating-observation.yml', 'experiments/neurolab/h08b_discriminating_observation.py']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mount:
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        arm: [E0, E1, Z]
+    runs-on: windows-2022
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Observe first preregistered natural synaptic write opportunity
+        shell: pwsh
+        env:
+          NL_OPPORTUNITY_ARM: ${{ matrix.arm }}
+          NEUROLAB_CD_FILE_ID: ${{ secrets.NEUROLAB_CD_FILE_ID }}
+          NEUROLAB_DATA_FILE_ID: ${{ secrets.NEUROLAB_DATA_FILE_ID }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:RUNNER_TEMP ('neurolab-cd-' + [guid]::NewGuid().ToString('N'))
+          New-Item -ItemType Directory -Path $root | Out-Null
+          $env:NL_CD_TEMP = $root
+          $iso = Join-Path $root 'original.iso'
+          $mounted = $false
+          try {
+            @'
+          import hashlib, json, os, pathlib, re, shutil, sys, urllib.request, zipfile
+          root=pathlib.Path(os.environ["NL_CD_TEMP"])
+          fid=os.environ.pop("NEUROLAB_CD_FILE_ID","")
+          if not re.fullmatch(r"[A-Za-z0-9_-]{10,200}",fid):sys.exit("secret absent")
+          archive=root/"media.zip"; h=hashlib.sha256(); n=0
+          try:
+              with urllib.request.urlopen("https://drive.usercontent.google.com/download?id="+fid+"&export=download&confirm=t",timeout=90) as a,archive.open("wb") as b:
+                  while block:=a.read(1024*1024):
+                      n+=len(block)
+                      if n>591498236:raise ValueError()
+                      h.update(block);b.write(block)
+          except Exception:
+              sys.exit("transfer unavailable (details suppressed)")
+          if n!=591498236 or h.hexdigest()!="91805784212380b804ec5c3889f2524ff358379c6a0a964e5dadba147c5498af":
+              sys.exit("archive fingerprint mismatch")
+          with zipfile.ZipFile(archive) as z:
+              found=[i for i in z.infolist() if pathlib.PurePosixPath(i.filename).name=="Creatures.iso" and i.file_size==591384576]
+              if len(found)!=1:sys.exit("unique expected ISO not found")
+              ih=hashlib.sha256()
+              with z.open(found[0]) as a,(root/"original.iso").open("wb") as b:
+                  while block:=a.read(1024*1024):ih.update(block);b.write(block)
+          archive.unlink()
+          if ih.hexdigest()!="555ac57e00d2080268da75ef6063708a7ad20f56f9fd79f0507ab3505c91b297":
+              sys.exit("ISO fingerprint mismatch")
+          print(json.dumps({"stage":"verified_image","bytes":591384576,"iso_sha256":ih.hexdigest()}))
+          '@ | python -u -
+            if ($LASTEXITCODE -ne 0) { throw 'Original CD fingerprint gate failed' }
+            Remove-Item Env:NEUROLAB_CD_FILE_ID
+            try {
+              $disk = Mount-DiskImage -ImagePath $iso -StorageType ISO -Access ReadOnly -PassThru
+              $mounted = $true
+              $vol = $disk | Get-Volume | Select-Object -First 1
+              if (-not $vol.DriveLetter) { throw 'No drive letter assigned' }
+              $cd = "$($vol.DriveLetter):\"
+              $driveInfo = [System.IO.DriveInfo]::new($cd)
+              [ordered]@{stage='mounted';type=$driveInfo.DriveType.ToString();label=$vol.FileSystemLabel;filesystem=$vol.FileSystem;read_only_requested=$true} | ConvertTo-Json -Compress
+              if ($vol.FileSystemLabel -ne 'CREATURES' -or $driveInfo.DriveType.ToString() -ne 'CDRom') { throw 'Unexpected mounted medium identity' }
+              $env:NL_MOUNTED_CD = $cd
+              python -u experiments/neurolab/h08b_discriminating_observation.py
+              if ($LASTEXITCODE -ne 0) { throw 'Discriminating observation infrastructure failed' }
+            } catch {
+              [ordered]@{stage='mount_or_inspection_failed';error_type=$_.Exception.GetType().Name;hresult=$_.Exception.HResult} | ConvertTo-Json -Compress
+              throw 'Discriminating observation infrastructure failed'
+            }
+          } finally {
+            if ($mounted) { Dismount-DiskImage -ImagePath $iso -ErrorAction Stop | Out-Null; Write-Host 'PASS: original ISO dismounted' }
+            Remove-Item -LiteralPath $root -Recurse -Force
+            Write-Host 'PASS: temporary CD files removed'
+          }
