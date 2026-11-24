@@ -1,0 +1,80 @@
+name: World research - P0-B joint restart
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/p0b_joint_restart.py
+      - .github/workflows/world-p0b-joint-restart.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  produce:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: h41-raw
+          run-id: 45389348480
+          github-token: ${{ github.token }}
+          path: raw
+      - uses: actions/setup-python@v5
+        id: landlab
+        with:
+          python-version: '3.13'
+      - run: |
+          "${{ steps.landlab.outputs.python-path }}" -m pip install --only-binary=:all: landlab==2.11.0 numpy==2.5.5 xarray==2026.9.0 scipy
+      - uses: actions/setup-python@v5
+        id: bullet
+        with:
+          python-version: '3.11'
+      - run: |
+          "${{ steps.bullet.outputs.python-path }}" -m pip install --only-binary=:all: pybullet==3.2.7 numpy==2.4.6 xarray==2026.9.0 scipy==1.17.1
+      - run: |
+          "${{ steps.bullet.outputs.python-path }}" WORLD_RESEARCH/experiments/p0b_joint_restart.py produce raw/worldengine_two_seeds.npz "${{ steps.landlab.outputs.python-path }}" p0b-checkpoints
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p0b-checkpoints
+          path: p0b-checkpoints
+          retention-days: 30
+  consume:
+    needs: produce
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: h41-raw
+          run-id: 45389348480
+          github-token: ${{ github.token }}
+          path: raw
+      - uses: actions/download-artifact@v4
+        with:
+          name: p0b-checkpoints
+          path: p0b-checkpoints
+      - uses: actions/setup-python@v5
+        id: landlab
+        with:
+          python-version: '3.13'
+      - run: |
+          "${{ steps.landlab.outputs.python-path }}" -m pip install --only-binary=:all: landlab==2.11.0 numpy==2.5.5 xarray==2026.9.0 scipy
+      - uses: actions/setup-python@v5
+        id: bullet
+        with:
+          python-version: '3.11'
+      - run: |
+          "${{ steps.bullet.outputs.python-path }}" -m pip install --only-binary=:all: pybullet==3.2.7 numpy==2.4.6 xarray==2026.9.0 scipy==1.17.1
+      - run: |
+          "${{ steps.bullet.outputs.python-path }}" WORLD_RESEARCH/experiments/p0b_joint_restart.py consume raw/worldengine_two_seeds.npz "${{ steps.landlab.outputs.python-path }}" p0b-checkpoints p0b-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p0b-results
+          path: p0b-results
+          retention-days: 30
