@@ -103,7 +103,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "bafc0b201b16b4d50b2fbcf3c7b903731280fa8e"
           python --version
           python -m pip install --disable-pip-version-check numpy==2.2.6
-      - name: Headless checkpoint continuation without model or Ocelot
+      - name: Diagnose checkpoint continuation without model or Ocelot
         run: |
           python - <<'PY'
           import json, tempfile
@@ -111,19 +111,38 @@ jobs:
           from bigville import create_game
           from bigville.game_persistence import save_game_checkpoint, load_game_checkpoint
           scenario=json.loads(Path('scenarios/simple_resident_food.json').read_text())
+          def diffs(a,b,path='',out=None):
+              if out is None: out=[]
+              if len(out)>=30: return out
+              if type(a)!=type(b):
+                  out.append([path,'type',type(a).__name__,type(b).__name__])
+              elif isinstance(a,dict):
+                  for k in sorted(set(a)|set(b),key=str):
+                      if k not in a or k not in b: out.append([path+'/'+str(k),'missing',k in a,k in b])
+                      else: diffs(a[k],b[k],path+'/'+str(k),out)
+                      if len(out)>=30: break
+              elif isinstance(a,(list,tuple)):
+                  if len(a)!=len(b): out.append([path,'length',len(a),len(b)])
+                  for i,(x,y) in enumerate(zip(a,b)):
+                      diffs(x,y,path+'/'+str(i),out)
+                      if len(out)>=30: break
+              elif a!=b: out.append([path,'value',repr(a)[:180],repr(b)[:180]])
+              return out
           for seed in (305000,305001):
               game=create_game(scenario=scenario,seed=seed,default_backend='simple',autonomous=True,ticks_per_period=None)
               twin=create_game(scenario=scenario,seed=seed,default_backend='simple',autonomous=True,ticks_per_period=None)
               first=game.step()
               second=twin.step()
               assert first['status']==second['status']=='advanced'
-              assert game.world.eng.to_checkpoint_dict()==twin.world.eng.to_checkpoint_dict()
+              d0=diffs(game.world.eng.to_checkpoint_dict(),twin.world.eng.to_checkpoint_dict())
+              assert not d0, d0
               with tempfile.TemporaryDirectory() as d:
                   p=Path(d)/'checkpoint'
                   save_game_checkpoint(game,p)
                   restored=load_game_checkpoint(p)
+                  before=diffs(game.world.eng.to_checkpoint_dict(),restored.world.eng.to_checkpoint_dict())
                   a=game.step(); b=restored.step()
                   assert a['status']==b['status']=='advanced'
-                  assert game.world.eng.to_checkpoint_dict()==restored.world.eng.to_checkpoint_dict()
-                  print('LAB_BIGVILLE',json.dumps({'seed':seed,'same_seed_first_turn':True,'restored_continuation':True,'turn':a['turn']}))
+                  after=diffs(game.world.eng.to_checkpoint_dict(),restored.world.eng.to_checkpoint_dict())
+                  print('LAB_BIGVILLE_DIAG',json.dumps({'seed':seed,'first_turn_equal':True,'before_resume_diffs':before,'after_resume_diffs':after,'turns':[a['turn'],b['turn']],'same_results':a.get('results')==b.get('results')},default=str))
           PY
