@@ -1,0 +1,16 @@
+# H39 — Prerregistro: invalidación nativa del contacto tras cambio de soporte
+
+**2026-11-23, antes de código y ejecución.** H38 [NO aprobada](H38_RESULTADOS_TERRENO_MUTABLE_CUERPO_ACTIVO.md): raycast actualizado pero fuerza de apoyo fantasma. No se conoce la causa interna exacta; Bullet documenta estado de activación y contactos persistentes (`btPersistentManifold`). [Ejemplo upstream sleeping.py](https://github.com/bulletphysics/bullet3/blob/master/examples/pybullet/examples/sleeping.py), [discusión de reinserción de colisionadores](https://pybullet.org/Bullet/phpBB3/viewtopic.php?p=43921.html).
+
+## Hipótesis y comparación
+
+Dos variantes nativas, sin cambiar leyes ni inventarios de H38:
+- A: `replaceHeightfieldIndex` + `changeDynamics(body,-1,activationState=ACTIVATION_STATE_WAKE_UP)` después de modificar terreno. Comprueba si despertar basta para reevaluar los contactos.
+- B: retirar **únicamente el collider estático** (representación derivada del terreno, no stock material), crear una nueva forma heightfield con las alturas del mismo owner y reinstanciar únicamente ese collider con fricción/restitución originales. Despertar cuerpo vivo. No eliminar/recrear esfera ni resetear sus coordenadas o velocidades. Ningún paso físico entre retirada e inserción. La identidad lógica del terreno sigue única; su identificador de collider puede reutilizarse o cambiar, documentar ambos. La caché anterior no se usa para un terreno distinto.
+- Referencia original H38 in situ sin despertar, y control static H38, deben reproducir el diagnóstico previo. Cada variante tendrá activo, sham (idéntica geometría) y replay activo. No ajustar paso, masa, caída, duración, densidad o tolerancias.
+
+## Criterios, iguales a H38 donde corresponde
+
+Misma escena H38 9×9, meseta1m→.9→.8, esfera2kg r.25m, 480+480+480 pasos, gravedad nativa, mismos tiempos y 3752kg totales. Primera fase **exacta a H38**, mismo estado de esfera en paso480. Al aplicar cada actualización, conservar bit a bit pose/orientación/velocidades del cuerpo, su identificador nativo, masa2kg y exactamente dos cuerpos después de actualizar. No reset dinámico; ninguna llamada a removeBody para la esfera. Raycast terreno nuevo dentro .001m. Activo: primer paso de caída delta vz entre -.045 y -.035m/s y ninguna fuerza positiva fantasma; centro asentado1.15/1.05m ±.003m, velocidad<.01m/s, apoyo normal positivo, desplazamiento horizontal<.01m. Máxima penetración de contacto .005m. Sham/estático: centro1.25±.003m, apoyo positivo y velocidad<.01m/s. Masa exportada activo1500kg y controles0, mismo ledger, NetCDF exacto, cinco corrupciones rechazadas, replay exacto por variante.
+
+**Interpretación**: una variante se acepta únicamente si pasa todos sus criterios. Si ambas pasan, elegir A por menor intervención; si A falla y B pasa, elegir B para descensos prescritos de banco, **no** inferir validez para aumentos/deformación simultánea ni atribuir mecanismo interno de H38 como probado. Si ninguna pasa, descartar ambos mecanismos y evaluar otro proveedor (Chrono, etc.), no ajustar parámetros para forzar. Publicar resultados y gates por variante; H38 sigue NO aprobada. La CI global aprueba si al menos una variante pasa y ambos controles de referencia se reproducen. H39 no demuestra erosión, reloj único ni una simulación de mundo completa.
