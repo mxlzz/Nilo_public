@@ -1,0 +1,64 @@
+name: NeuroLab original C1 startup branch observation
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths: ['.github/workflows/neurolab-startup-trace.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  trace:
+    runs-on: windows-2022
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Observe selected initialization branch entries without changing outcomes
+        shell: pwsh
+        env:
+          NEUROLAB_DATA_FILE_ID: ${{ secrets.NEUROLAB_DATA_FILE_ID }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $debugger = Join-Path "${env:ProgramFiles(x86)}" 'Windows Kits\10\Debuggers\x86\cdb.exe'
+          if (-not (Test-Path -LiteralPath $debugger)) {
+            Write-Host 'BLOCKED: Windows x86 SDK debugger not installed in runner'
+            exit 0
+          }
+          $env:NL_CDB = $debugger
+          $env:PYTHONPATH = (Join-Path $pwd 'experiments\neurolab')
+          @'
+          import os,pathlib,re,subprocess,tempfile
+          import h08b_original_launch as base
+          cdb=os.environ.pop("NL_CDB")
+          with tempfile.TemporaryDirectory(prefix="neurolab-startup-trace-") as d:
+              root=pathlib.Path(d); game=base.prepare(root); wing=config=None
+              try:
+                  wing=base.install_wing(root)
+                  config=base.configure_original_paths(game)
+                  points={"init":0x29ff0,"base_fail":0x2a026,"registration_branch":0x2a19a,
+                          "after_command_parse":0x2a23c,"alternate_init":0x2a255,
+                          "open_world":0x2a2e9,"early_return":0x2a307,"success_return":0x2a2c4,
+                          "world_tick":0x247b0}
+                  cmd=root/"observe.txt"
+                  cmd.write_text("\n".join([".echo NL_TRACE_STARTED"]+
+                    [f'bp Creatures+0x{off:x} ".echo NL_HIT_{name}; gc"' for name,off in points.items()]+["g"])+"\n",encoding="ascii")
+                  log=root/"trace.txt"
+                  allowed={"SYSTEMROOT","WINDIR","SYSTEMDRIVE","PATH","TEMP","TMP","USERPROFILE","APPDATA","LOCALAPPDATA","COMPUTERNAME","USERNAME","HOMEDRIVE","HOMEPATH","PROGRAMFILES","PROGRAMFILES(X86)","PROGRAMDATA","PUBLIC","COMSPEC"}
+                  env={k:v for k,v in os.environ.items() if k.upper() in allowed}
+                  try:
+                      with log.open("wb") as out:
+                          proc=subprocess.run([cdb,"-G","-cf",str(cmd),str(game/"Creatures.exe")],cwd=game,env=env,stdin=subprocess.DEVNULL,stdout=out,stderr=subprocess.STDOUT,timeout=35)
+                      base.emit(gate="debugger_exit",returncode=proc.returncode)
+                  except subprocess.TimeoutExpired:
+                      base.emit(gate="debugger_timeout")
+                  s=log.read_bytes().decode("utf-8","replace")
+                  hits=re.findall(r"(?m)^\s*NL_HIT_([a-z_]+)\s*$",s)
+                  base.emit(gate="observed_branch_sequence",hits=hits[:100],trace_started=bool(re.search(r"(?m)^\s*NL_TRACE_STARTED\s*$",s)),breakpoint_error=bool(re.search(r"Unable to resolve|Couldn't resolve|breakpoint.*failed|Syntax error",s,re.I)))
+              finally:
+                  try:
+                      if config is not None:base.remove_original_paths(config)
+                  finally:
+                      if wing is not None:wing.unlink();base.emit(gate="temporary_system_wing_removed")
+          '@ | python -u -
+          if ($LASTEXITCODE -ne 0) { throw 'Startup trace infrastructure failed' }
