@@ -59,6 +59,32 @@ getclass=fn("GetClassNameW",c.c_int,[H,w.LPWSTR,c.c_int])
 gettitle=fn("GetWindowTextW",c.c_int,[H,w.LPWSTR,c.c_int])
 visible=fn("IsWindowVisible",w.BOOL,[H])
 send=fn("SendMessageTimeoutW",H,[H,U,P,c.c_ssize_t,U,U,c.POINTER(P)])
+post=fn("PostMessageW",w.BOOL,[H,U,P,c.c_ssize_t])
+def dismiss_verified_directory_fallback(pid):
+    clicked=False
+    @CB
+    def top(hwnd,lparam):
+        nonlocal clicked
+        n=D();pid_for(hwnd,c.byref(n))
+        if n.value!=pid or not visible(hwnd):return True
+        b=c.create_unicode_buffer(256);getclass(hwnd,b,256)
+        if b.value!="#32770":return True
+        texts=[];ok_buttons=[]
+        @CB
+        def child(h,l):
+            getclass(h,b,256);cls=b.value
+            v=c.create_unicode_buffer(512);res=P()
+            if send(h,0x000D,512,c.addressof(v),2,150,c.byref(res)):
+                if cls=="Static":texts.append(v.value)
+                if cls=="Button" and v.value=="OK":ok_buttons.append(h)
+            return True
+        children(hwnd,child,0)
+        if any("could not locate its Main Directory from the registry" in t and "Using current directory instead." in t for t in texts) and len(ok_buttons)==1:
+            clicked=bool(post(ok_buttons[0],0x00F5,0,0))
+            return False
+        return True
+    enum(top,0)
+    return clicked
 def window_snapshot(pid,root):
     windows=[]
     def clean(s): return s.replace(str(root),"<sandbox>")[:240]
@@ -162,19 +188,23 @@ def main():
             except OSError as e:
                 emit(gate="launch_failed",winerror=getattr(e,"winerror",None));return
             emit(gate="process_created")
-            deadline=time.monotonic()+35; previous=None
+            deadline=time.monotonic()+50; previous=None; accepted=False; result={}
             while time.monotonic()<deadline:
                 if p.poll() is not None:
                     emit(gate="process_exited",exit_code=p.returncode);return
                 snapshot=window_snapshot(p.pid,root)
                 if snapshot!=previous:
                     emit(gate="windows",windows=snapshot);previous=snapshot
+                if any(x["class"]=="#32770" for x in snapshot):
+                    if not accepted and dismiss_verified_directory_fallback(p.pid):
+                        accepted=True
+                        emit(gate="accepted_original_current_directory_fallback")
+                        time.sleep(3);continue
+                    emit(gate="modal_dialog",windows=snapshot);return
                 result=dde_probe()
                 if result.get("connected"):
                     emit(gate="dde",**result)
-                    return
-                if any(x["class"]=="#32770" for x in snapshot):
-                    emit(gate="modal_dialog",dde=result);return
+                    if result.get("constant_query_ok"): return
                 time.sleep(2)
             emit(gate="timeout",dde=result,windows=previous)
         finally:
