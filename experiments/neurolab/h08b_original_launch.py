@@ -220,10 +220,10 @@ def main():
         try:
             wing=install_wing(root)
             config=configure_original_paths(game)
-            try: p=subprocess.Popen([str(game/"Creatures.exe")],cwd=game,env=env,stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+            try: p=subprocess.Popen([str(game/"Creatures.exe"),str(game/"World.sfc")],cwd=game,env=env,stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
             except OSError as e:
                 emit(gate="launch_failed",winerror=getattr(e,"winerror",None));return
-            emit(gate="process_created")
+            emit(gate="process_created",mode="explicit_original_world_file")
             deadline=time.monotonic()+50; previous=None; accepted=False; result={}
             while time.monotonic()<deadline:
                 if p.poll() is not None:
