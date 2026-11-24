@@ -3,7 +3,7 @@ Only authenticated original input; no registry edits, game patches, or retained 
 """
 import ctypes as c
 from ctypes import wintypes as w
-import hashlib, json, os, pathlib, re, shutil, subprocess, sys, tempfile, time, urllib.request, zipfile
+import hashlib, json, os, pathlib, re, shutil, subprocess, sys, tempfile, time, urllib.request, zipfile, winreg
 
 EXPECTED = "df490a704ae5b6f44016b2ac35e899fe30b7550c7666990edb60c0ebddf025dd"
 EXE = "548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7"
@@ -175,15 +175,51 @@ def install_wing(root):
     emit(gate="original_wing_added_to_ephemeral_x86_system_directory")
     return dst
 
+def configure_original_paths(game):
+    # Exact registry construction from original 0x429D00 -> 0x422370;
+    # 0x42A310 lists eight values, 0x42A443 writes and 0x42A46D reads
+    # the HKLM 32-bit view (argument 1). No guesses from later editions.
+    key=r"SOFTWARE\Millennium Interactive\Creatures\1.0"
+    mapping={"Main Directory":str(game)+"\\",
+             "Sound Directory":str(game/"Sounds")+"\\",
+             "Macro Directory":str(game/"Macros")+"\\",
+             "Palette Directory":str(game/"Palettes")+"\\",
+             "Image Directory":str(game/"Images")+"\\",
+             "Genetics Directory":str(game/"Genetics")+"\\",
+             "Body Data":str(game/"Body data")+"\\",
+             "Programs":""}
+    (game/"Macros").mkdir(exist_ok=True)
+    for name in ("Sounds","Palettes","Images","Genetics","Body data"):
+        if not (game/name).is_dir(): raise RuntimeError("original resource directory missing: "+name)
+    view=winreg.KEY_WOW64_32KEY
+    with winreg.CreateKeyEx(winreg.HKEY_LOCAL_MACHINE,key,0,winreg.KEY_SET_VALUE|winreg.KEY_QUERY_VALUE|view) as k:
+        for name,value in mapping.items():
+            try: existing,_=winreg.QueryValueEx(k,name)
+            except FileNotFoundError: pass
+            else:
+                if existing!=value: raise RuntimeError("refusing to overwrite prior installation value: "+name)
+            winreg.SetValueEx(k,name,0,winreg.REG_SZ,value)
+    emit(gate="configured_original_registry_paths",count=len(mapping),view="HKLM32")
+    return key, list(mapping)
+
+def remove_original_paths(config):
+    key,names=config
+    with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,key,0,winreg.KEY_SET_VALUE|winreg.KEY_WOW64_32KEY) as k:
+        for name in names:
+            try: winreg.DeleteValue(k,name)
+            except FileNotFoundError: pass
+    emit(gate="temporary_registry_paths_removed")
+
 def main():
     with tempfile.TemporaryDirectory(prefix="neurolab-launch-") as d:
         root=pathlib.Path(d);game=prepare(root)
         allowed={"SYSTEMROOT","WINDIR","SYSTEMDRIVE","PATH","TEMP","TMP","USERPROFILE","APPDATA","LOCALAPPDATA","COMPUTERNAME","USERNAME","HOMEDRIVE","HOMEPATH","PROGRAMFILES","PROGRAMFILES(X86)","PROGRAMDATA","PUBLIC","COMSPEC"}
         env={k:v for k,v in os.environ.items() if k.upper() in allowed}
         p=None
-        wing=None
+        wing=None; config=None
         try:
             wing=install_wing(root)
+            config=configure_original_paths(game)
             try: p=subprocess.Popen([str(game/"Creatures.exe")],cwd=game,env=env,stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
             except OSError as e:
                 emit(gate="launch_failed",winerror=getattr(e,"winerror",None));return
@@ -212,9 +248,12 @@ def main():
                 if p is not None and p.poll() is None:
                     p.terminate();p.wait(timeout=10)
             finally:
-                if wing is not None:
-                    wing.unlink()
-                    emit(gate="temporary_system_wing_removed")
+                try:
+                    if config is not None: remove_original_paths(config)
+                finally:
+                    if wing is not None:
+                        wing.unlink()
+                        emit(gate="temporary_system_wing_removed")
     emit(gate="cleanup_completed")
 if __name__=="__main__":
     main()
