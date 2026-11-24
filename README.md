@@ -1,3 +1,5 @@
+> **Programa de investigación Nilo (24/11/2026):** siete laboratorios independientes aprobados. [Visión, directorio y reglas comunes](docs/PROGRAMA_INVESTIGACION_NILO.md) · [Estado y procedimiento de migración](docs/MIGRACION_LABORATORIOS_2026-11-24.md). Nilo 0.7 se conserva como versión histórica/baseline; no se presupone su uso como motor futuro. Hasta verificar el traslado, WorldLab y NeuroLab siguen en sus ramas originales. La apertura documental de los cinco nuevos laboratorios no acredita resultados experimentales.
+
 # Nilo 0.7.0 — Reestructuración integral del motor
 
 Nilo 0.7.0 reorganiza la aplicación en módulos de mundo, física, necesidades,
