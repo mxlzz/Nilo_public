@@ -152,22 +152,32 @@ jobs:
                       if len(out)>=30: break
               elif a!=b: out.append([path,'value',repr(a)[:180],repr(b)[:180]])
               return out
+          modes=('affordance_mode','snapshot_mode','rule_batching')
           for seed in (305000,305001):
               game=create_game(scenario=scenario,seed=seed,default_backend='simple',autonomous=True,ticks_per_period=None)
               twin=create_game(scenario=scenario,seed=seed,default_backend='simple',autonomous=True,ticks_per_period=None)
-              first=game.step()
-              second=twin.step()
-              assert first['status']==second['status']=='advanced'
-              d0=diffs(game.world.eng.to_checkpoint_dict(),twin.world.eng.to_checkpoint_dict())
-              assert not d0, d0
+              assert game.step()['status']==twin.step()['status']=='advanced'
+              assert not diffs(game.world.eng.to_checkpoint_dict(),twin.world.eng.to_checkpoint_dict())
               with tempfile.TemporaryDirectory() as d:
                   p=Path(d)/'checkpoint'
                   save_game_checkpoint(game,p)
                   restored=load_game_checkpoint(p)
-                  before=diffs(game.world.eng.to_checkpoint_dict(),restored.world.eng.to_checkpoint_dict())
+                  matched=load_game_checkpoint(p)
+                  original={m:getattr(game,m) for m in modes}
+                  defaults={m:getattr(restored,m) for m in modes}
+                  for m,v in original.items(): setattr(matched,m,v)
+                  assert not diffs(game.world.eng.to_checkpoint_dict(),matched.world.eng.to_checkpoint_dict())
+                  print('LAB_BIGVILLE_MODES',json.dumps({'seed':seed,'original':original,'restored_default':defaults,'restored_matched':{m:getattr(matched,m) for m in modes}}))
+                  first_diff={'default':None,'matched':None}
                   for turn in range(2,13):
-                      a=game.step(); b=restored.step()
-                      assert a['status']==b['status']=='advanced'
-                      after=diffs(game.world.eng.to_checkpoint_dict(),restored.world.eng.to_checkpoint_dict())
-                      print('LAB_BIGVILLE_DIAG',json.dumps({'seed':seed,'first_turn_equal':True,'before_resume_diffs':before if turn==2 else None,'after_resume_diffs':after,'turns':[a['turn'],b['turn']],'same_results':a.get('results')==b.get('results')},default=str))
+                      a=game.step(); b=restored.step(); c=matched.step()
+                      assert a['status']==b['status']==c['status']=='advanced'
+                      baseline=game.world.eng.to_checkpoint_dict()
+                      default_diff=diffs(baseline,restored.world.eng.to_checkpoint_dict())
+                      matched_diff=diffs(baseline,matched.world.eng.to_checkpoint_dict())
+                      for key,items in [('default',default_diff),('matched',matched_diff)]:
+                          if items and first_diff[key] is None:first_diff[key]=turn
+                      if turn in (2,3,12):
+                          print('LAB_BIGVILLE_CONTROL',json.dumps({'seed':seed,'turn':turn,'default_diff':default_diff,'matched_diff':matched_diff},default=str))
+                  print('LAB_BIGVILLE_FIRST_DIFF',json.dumps({'seed':seed,'first_difference':first_diff}))
           PY
