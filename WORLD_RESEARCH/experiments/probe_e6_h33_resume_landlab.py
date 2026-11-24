@@ -58,7 +58,9 @@ def model_from_owner(owner,k):
     return grid,router,solver,int(outlet)
 
 
-def advance(owner,raw,seed,k,first,last):
+def advance(owner,raw,seed,k,first,last,*,max_step=c.TIMESTEPS):
+    if not isinstance(max_step,int) or not 1<=first<=last<=max_step:
+        raise ValueError("Advance outside declared soil horizon")
     if int(owner.attrs["landlab_step"])!=first-1:
         raise ValueError("Attempt to replay already completed physical steps")
     grid,flow,solver,outlet=model_from_owner(owner,k)
@@ -82,7 +84,7 @@ def advance(owner,raw,seed,k,first,last):
             float(suspended+bedload)*c.RHO)
         candidate.attrs["landlab_step"]=step
         candidate.attrs["landlab_t_bench"]=step*c.LANDLAB_DT
-        check=c.validate(candidate,raw,seed,k)
+        check=c.validate(candidate,raw,seed,k,max_step=max_step)
         h29.validate(c.soil_only(candidate),raw,c.SOURCES[seed],seed)
         if candidate.attrs["body_status"]!="reservoir" or (
             not np.array_equal(candidate["body_mass_kg"].values,owner["body_mass_kg"].values)):
