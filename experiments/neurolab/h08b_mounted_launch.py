@@ -1,7 +1,7 @@
 """H-08b.7: original Build 47, verified mounted original CD, no patches.
 Reuse validated original input and window/DDE observer. No installer is executed.
 """
-import os, pathlib, subprocess, tempfile, time, winreg, ctypes as c, re
+import os, pathlib, subprocess, tempfile, time, winreg, ctypes as c, re, shutil
 import h08b_original_launch as base
 
 def dismiss_tip(pid):
@@ -32,7 +32,7 @@ def dismiss_tip(pid):
     base.enum(top,0)
     return clicked
 
-def query_read_only(command,expected=None):
+def query_macro(command,expected=None,kind='number'):
     @base.DDECB
     def cb(*args):return None
     ident=base.D();code=base.init(c.byref(ident),cb,0x10,0)
@@ -57,16 +57,65 @@ def query_read_only(command,expected=None):
             if not 0<n<=128:return {"ok":False,"stage":"length","bytes":int(n)}
             buf=c.create_string_buffer(n);base.getdata(h,c.cast(buf,base.H),n,0)
             val=buf.raw.rstrip(b"\0").decode("ascii","replace").strip()
-            # A numeric response is expected. No arbitrary response bytes enter CI logs.
-            if not re.fullmatch(r"[0-9]{1,10}\|?",val):
-                return {"ok":False,"stage":"format","bytes":int(n)}
-            value=int(val.rstrip("|"))
+            # Strict parsers for known numeric/identity/cell response formats.
+            if kind=="moniker":
+                if not re.fullmatch(r"[0-9a-fA-F]{8}\|?",val):
+                    return {"ok":False,"stage":"moniker_format","bytes":int(n)}
+                value=val.rstrip("|").lower()
+            elif kind=="cell":
+                if not re.fullmatch(r"[0-9]+(?:[|, ]+[0-9]+){6}[|, ]*",val):
+                    return {"ok":False,"stage":"cell_format","bytes":int(n)}
+                value=[int(x) for x in re.findall(r"[0-9]+",val)]
+            else:
+                if not re.fullmatch(r"[0-9]{1,10}\|?",val):
+                    return {"ok":False,"stage":"format","bytes":int(n)}
+                value=int(val.rstrip("|"))
             return {"ok":expected is None or value==expected,"value":value,"bytes":int(n)}
         finally:base.freedata(h)
     finally:
         if conv:base.disconnect(conv)
         for h in handles:base.free(ident,h)
         base.uninit(ident)
+
+def observe_one_norn(game):
+    n=query_macro("dde: putv totl 4 1 0",0)
+    if not n.get("ok"):
+        base.emit(gate="controlled_birth_blocked",count=n);return
+    # A disposable copy of the verified genome; no genetic mutation.
+    dest=game/"Genetics"/"NL01.gen"
+    if dest.exists():raise RuntimeError("test moniker collision")
+    shutil.copyfile(game/"Genetics"/"dad1.gen",dest)
+    if base.digest(dest)!=base.GEN:raise RuntimeError("copied genome hash mismatch")
+    base.emit(gate="controlled_genome",sha256=base.GEN)
+    # C1 documented NEW: CREA TOKN <four chars> sex, with move to the
+    # original Hatchery's first egg placement (x=2408,y=870).
+    # Exactly one request; never retry a mutating macro.
+    birth=query_macro("new: crea tokn nl01 1,mvto 2408 870,dde: putv totl 4 1 0",1)
+    base.emit(gate="controlled_birth",**birth)
+    if not birth.get("ok"):return
+    time.sleep(2)
+    # Always address the same unique Norn by enumeration; verify identity each round.
+    prefix="enum 4 1 0,"
+    suffix=",next"
+    def query(cmd,kind="number",expected=None):
+        t0=time.monotonic_ns()
+        r=query_macro(prefix+cmd+suffix,expected,kind)
+        r["latency_us"]=(time.monotonic_ns()-t0)//1000
+        return r
+    identity=query("dde: getb monk","moniker")
+    base.emit(gate="norn_identity",**identity)
+    if not identity.get("ok"):return
+    for round_ in range(3):
+        if query_macro("dde: putv totl 4 1 0",1).get("ok") is not True:break
+        if query("dde: getb monk","moniker",identity["value"]).get("ok") is not True:break
+        fields={}
+        for chemical in (49,50,51,54,55):
+            fields["chem"+str(chemical)]=query("dde: putv chem "+str(chemical))
+        fields["decision_cell0"]=query("dde: cell 6 0 0","cell")
+        if query("dde: getb monk","moniker",identity["value"]).get("ok") is not True:break
+        base.emit(gate="read_only_norn_sample",round=round_,fields=fields)
+        time.sleep(0.25)
+    base.emit(gate="observation_finished",scope="feasibility only; no reinforcement stimulus or intratick inference")
 
 def main():
     cd=os.environ.pop("NL_MOUNTED_CD","")
@@ -108,13 +157,13 @@ def main():
                     if not tip_closed and dismiss_tip(p.pid):
                         tip_closed=True;base.emit(gate="original_tip_closed");time.sleep(2);continue
                     base.emit(gate="modal_dialog",windows=snapshot);return
-                result=query_read_only("dde: putv 123",123)
+                result=query_macro("dde: putv 123",123)
                 if result.get("stage")!="connect" or snapshot:
                     base.emit(gate="dde_constant",**result)
                 if result.get("ok"):
-                    # Read-only counts, no target selection, mutation or hatching.
                     for name,command in [("norns","dde: putv totl 4 1 0"),("grendels","dde: putv totl 4 2 0")]:
-                        base.emit(gate="world_count",kind=name,**query_read_only(command))
+                        base.emit(gate="world_count",kind=name,**query_macro(command))
+                    observe_one_norn(game)
                     return
                 time.sleep(2)
             base.emit(gate="timeout",dde=result,windows=previous)
