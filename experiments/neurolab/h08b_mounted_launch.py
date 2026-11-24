@@ -118,6 +118,17 @@ def observe_one_norn(game,pid,root):
     base.emit(gate="observation_finished",scope="feasibility only; no reinforcement stimulus or intratick inference")
     # End the independent DDE sampling before attaching; debugger perturbs timing.
     trace_cycles(pid,root,game)
+    # Independent later window, without debugger in between; no state override.
+    # This is a bounded opportunity for the native initialization to finish, not a time prediction.
+    wait_start=time.perf_counter()
+    while time.perf_counter()-wait_start<85:
+        time.sleep(5)
+        if not query_macro("dde: putv 123",123).get("ok"):
+            base.emit(gate="later_window_blocked",reason="DDE not responsive");return
+    if not query_macro("dde: putv totl 4 1 0",1).get("ok") or not query("dde: getb monk","moniker",identity["value"]).get("ok"):
+        base.emit(gate="later_window_blocked",reason="same unique Norn not verified");return
+    base.emit(gate="later_window",elapsed_ms=int((time.perf_counter()-wait_start)*1000),identity_verified=True)
+    trace_cycles(pid,root,game)
 
 def trace_cycles(pid,root,game):
     cdb=pathlib.Path(os.environ.get("ProgramFiles(x86)","C:/Program Files (x86)"))/"Windows Kits"/"10"/"Debuggers"/"x86"/"cdb.exe"
