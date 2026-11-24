@@ -1,0 +1,9 @@
+# H-08b.15 — disponibilidad observada en ambas clases de Decision
+
+24/11/2026. [Preregistro](H08B_15_PREREGISTRO_DISPONIBILIDAD_SINAPTICA_20261124.md) commit ebf857427ed0bde466d58686d55b47de0f60818b; [CI #45488969321](https://github.com/mxlzz/Nilo_public/actions/runs/45488969321) workflow commit c51a91ea09be41185f67f2271a7570fba76ae900; [evidencia íntegra](resultados/h08b_15_eligibility_survey_20261124.json), commit bde86494d084509c5f8cfc912d29ac8060eca579.
+
+**PASS del gate preestablecido:** 3/3 sesiones (≥2 requeridas), 9/9 ventanas válidas y 288/288 consultas CELL válidas. Se observaron 28 pares célula/tipo candidatos sumando las nueve ventanas (no 28 sinapsis ni individuos independientes). En todos los casos la célula1, clase0 y clase1, presentó simultáneamente susceptibilidad agregada y fortaleza agregada positivas, con 128 contactos. En las sesiones también se observaron sumas STW/LTW no nulas y cambios espontáneos; no se aplicó estímulo externo. Los pares de candidatos comunes a todas las ventanas fueron exactamente (1,0) y (1,1).
+
+Conclusión limitada: la nulidad observada en la célula0 clase0 de H08b.14 no es representativa de todas las células. Hay una precondición observacional para seleccionar de antemano célula1 en ambas clases. Los agregados no garantizan coexistencia de susceptibilidad y fortaleza en una misma dendrita; no demuestran aprendizaje ni asociación específica. 288 consultas secuenciales, no snapshots atómicos, tres individuos independientes sin semilla común controlada.
+
+**Siguiente:** H08b.16, observar una transición completa individual de las dendritas de célula1 antes de WTA/migración, validar fuente y correspondencia de slot y contrastar contra el modelo integrado preexistente sin reajustarlo. No añadir dosis ni reactivar N. Main intacto, PR103 draft.
