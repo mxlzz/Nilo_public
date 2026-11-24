@@ -28,3 +28,102 @@ jobs:
           node --version
       - name: Test physical operations and learned procedures
         run: node --test tests/test_sovereign_physical_operations.mjs tests/test_sovereign_procedures.mjs
+
+      - name: Independent contrast probes
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import * as k from './world/index.js';
+          import {localVisibilityRadius} from './world/living-world.js';
+          function fixture(seed=6801) {
+            const w=k.createSovereignGenesis({seed,realEpochMs:0});
+            const [a,b,c]=w.citizens;
+            for(const x of w.citizens) x.position={x:95,y:95};
+            a.position={x:50,y:50}; b.position={x:57,y:50}; c.position={x:59,y:50};
+            a.body.calories=95; a.body.health=100;
+            function add(id,material,mass,geometry) {
+              const o={id,kind:'raw_material',material,quantity:mass,massPerUnitKg:1,holderId:a.id,position:{...a.position},condition:1,provenance:{type:'LAB_INPUT'},...(geometry?{geometry}:{})};
+              w.objects.push(o);a.possessions.push(id);a.knownEntityIds.push(id);return o;
+            }
+            function execute(ops,ids) {return k.executePhysicalOperations(w,a,ops,{inputObjectIds:ids,at:0,workMinutes:30});}
+            return {w,a,b,c,add,execute};
+          }
+          for(const seed of [6801,6802,6803]) {
+            for(const phase of [.5,0]) {
+              const f=fixture(seed);f.w.environment.dayPhase=phase;f.w.environment.precipitation=0;
+              f.add('lab-clay','clay',2);
+              const radius=localVisibilityRadius(f.w,12);
+              const receipt=f.execute([{primitive:'rotate',target:0,angle:30,workJ:10}],['lab-clay']);
+              const proc=k.rememberProcedure(f.w,f.a,receipt,0);
+              function learn(c) {try{k.learnProcedure(f.w,c,proc.id,{kind:'observation',eventId:receipt.eventId},0);return Boolean(k.knownProcedure(f.w,c,proc.id));}catch(e){return false;}}
+              const near=learn(f.b),far=learn(f.c);
+              assert.equal(far,false,'9-unit negative control');
+              if(phase===.5)assert.equal(near,true,'day positive control');
+              console.log('LAB_VISIBILITY',JSON.stringify({seed,phase,radius,nearDistance:7,nearWitness:receipt.observerIds.includes(f.b.id),nearLearned:near,farLearned:far}));
+            }
+            for(const mode of ['single','two']) {
+              const f=fixture(seed);f.add('lab-pot','clay',3,{form:'hollow'});
+              f.add('lab-water1','water',8);f.add('lab-water2','water',8);
+              const ids=mode==='single'?['lab-pot','lab-water1']:['lab-pot','lab-water1','lab-water2'];
+              const ops=[{primitive:'contain',target:1,source:0,workJ:100}];
+              if(mode==='two')ops.push({primitive:'contain',target:2,source:0,workJ:100});
+              let accepted=true,reason=null;try{f.execute(ops,ids);}catch(e){accepted=false;reason=e.message;}
+              const total=f.w.objects.filter(o=>o.geometry?.containedById==='lab-pot').reduce((s,o)=>s+o.quantity*o.massPerUnitKg,0);
+              if(mode==='single')assert.equal(accepted,true,'single positive control');
+              console.log('LAB_CONTAINMENT',JSON.stringify({seed,mode,accepted,reason,total,nominalLimit:12}));
+            }
+            const f=fixture(seed);f.add('lab-clay','clay',2);
+            const action={type:'EXPERIMENT',durationMinutes:30,payload:{inputObjectIds:['lab-clay'],operations:[{primitive:'rotate',target:0,angle:30,workJ:10}]}};
+            const unknown='lab-never-learned';
+            assert.equal(k.knows(f.a,unknown),false);
+            const declared=k.validateCognitiveProposal(f.w,f.a,{concepts:[unknown],actions:[action]});
+            const omitted=k.validateCognitiveProposal(f.w,f.a,{concepts:[],actions:[action]});
+            assert.equal(declared.ok,false);
+            console.log('LAB_EPISTEMIC',JSON.stringify({seed,declared,omitted,scope:'proposal validation only; not evidence of actual LLM knowledge leakage'}));
+            f.w.environment.temperatureC=18;f.a.body.sleepPressure=10;f.a.body.calories=95;
+            f.a.body.hydration=90;const high=k.survivalFallback(f.w,f.a);
+            f.a.body.hydration=10;const low=k.survivalFallback(f.w,f.a);
+            console.log('LAB_REFLEX',JSON.stringify({seed,high:high?.actions?.map(x=>x.type)||null,low:low?.actions?.map(x=>x.type)||null,source:low?.source||null}));
+          }
+          NODE
+  bigville-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: mxlzz/bigville
+          ref: bafc0b201b16b4d50b2fbcf3c7b903731280fa8e
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify source and prepare minimal dependency
+        run: |
+          test "$(git rev-parse HEAD)" = "bafc0b201b16b4d50b2fbcf3c7b903731280fa8e"
+          python --version
+          python -m pip install --disable-pip-version-check numpy==2.2.6
+      - name: Headless checkpoint continuation without model or Ocelot
+        run: |
+          python - <<'PY'
+          import json, tempfile
+          from pathlib import Path
+          from bigville import create_game
+          from bigville.game_persistence import save_game_checkpoint, load_game_checkpoint
+          scenario=json.loads(Path('scenarios/simple_resident_food.json').read_text())
+          for seed in (305000,305001):
+              game=create_game(scenario=scenario,seed=seed,default_backend='simple',autonomous=True,ticks_per_period=None)
+              twin=create_game(scenario=scenario,seed=seed,default_backend='simple',autonomous=True,ticks_per_period=None)
+              first=game.step()
+              second=twin.step()
+              assert first['status']==second['status']=='advanced'
+              assert game.world.eng.to_checkpoint_dict()==twin.world.eng.to_checkpoint_dict()
+              with tempfile.TemporaryDirectory() as d:
+                  p=Path(d)/'checkpoint'
+                  save_game_checkpoint(game,p)
+                  restored=load_game_checkpoint(p)
+                  a=game.step(); b=restored.step()
+                  assert a['status']==b['status']=='advanced'
+                  assert game.world.eng.to_checkpoint_dict()==restored.world.eng.to_checkpoint_dict()
+                  print('LAB_BIGVILLE',json.dumps({'seed':seed,'same_seed_first_turn':True,'restored_continuation':True,'turn':a['turn']}))
+          PY
