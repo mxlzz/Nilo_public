@@ -1,0 +1,70 @@
+name: NeuroLab remote VM capability smoke
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths: ['.github/workflows/neurolab-vm-capability.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qemu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Install distribution QEMU
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends qemu-system-x86 qemu-utils
+          qemu-system-i386 --version
+      - name: Exercise an isolated synthetic guest and QMP
+        shell: bash
+        run: |
+          python - <<'PY'
+          import pathlib, tempfile, subprocess, socket, time, json
+          # Original synthetic BIOS boot sector: write 'OK' to debug port; halt.
+          # No Windows, game, proprietary input, network or guest credentials.
+          with tempfile.TemporaryDirectory() as d:
+              root = pathlib.Path(d)
+              image = root / 'boot.img'
+              code = bytes.fromhex('ba e9 00 b0 4f ee b0 4b ee fa f4 eb fd')
+              image.write_bytes((code.ljust(510, b'\0') + b'\x55\xaa').ljust(1474560,b'\0'))
+              sock = root / 'qmp.sock'
+              log = root / 'guest.log'
+              cmd = ['qemu-system-i386', '-accel','tcg','-machine','pc','-m','32',
+                     '-display','none','-serial','none','-monitor','none','-nic','none',
+                     '-drive',f'file={image},format=raw,if=floppy,readonly=on',
+                     '-boot','a','-S','-qmp',f'unix:{sock},server=on,wait=off',
+                     '-debugcon',f'file:{log}','-no-reboot']
+              p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+              try:
+                  for _ in range(100):
+                      if sock.exists(): break
+                      if p.poll() is not None: raise RuntimeError(p.stderr.read().decode())
+                      time.sleep(.1)
+                  with socket.socket(socket.AF_UNIX) as s:
+                      s.settimeout(10)
+                      s.connect(str(sock))
+                      f = s.makefile('rwb')
+                      assert 'QMP' in json.loads(f.readline())
+                      def qmp(cmd):
+                          f.write((json.dumps({'execute':cmd})+'\n').encode()); f.flush()
+                          while True:
+                              r=json.loads(f.readline())
+                              if 'error' in r: raise RuntimeError(r)
+                              if 'return' in r: return r['return']
+                      qmp('qmp_capabilities')
+                      assert not qmp('query-status')['running']
+                      qmp('cont')
+                      assert qmp('query-status')['running']
+                      for _ in range(200):
+                          if log.exists() and b'OK' in log.read_bytes(): break
+                          time.sleep(.1)
+                      assert b'OK' in log.read_bytes(), 'guest boot marker missing'
+                      qmp('stop')
+                      assert not qmp('query-status')['running']
+                      print('PASS: synthetic x86 guest ran; QMP resumed and paused it; no network or proprietary files.')
+                      qmp('quit')
+                  assert p.wait(timeout=10)==0
+              finally:
+                  if p.poll() is None: p.kill(); p.wait()
+          PY
