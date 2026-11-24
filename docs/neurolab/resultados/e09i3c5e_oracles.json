@@ -1,0 +1,70 @@
+{
+  "G05_G09_G00H": "OPEN",
+  "concept_source_output": 126,
+  "interpretation": "Under unchanged N numeric rules, observed unit reinforcement cannot reach Decision class input. Tick7 relax and tick10 disconnection are additional erasure mechanisms consistent with observed I3c5d. Not a new causal learning trial.",
+  "min_positive_decision_class_signal_stw": 5,
+  "original_20_seed_hashes_verified": true,
+  "original_i3c5d_json_sha256": "b6a97ae5ae765d55330b122050c60b29ffcb9eb95080efa5af5ed5df37658192",
+  "original_max_effect_per_synapse_per_tick": 1,
+  "original_n_branches": 240,
+  "original_positive_effect_cases": {
+    "D0": 16,
+    "D3": 48,
+    "N": 0
+  },
+  "original_positive_effect_ticks": {
+    "D0": 7,
+    "D3": 10
+  },
+  "original_readout_action_changes": {
+    "D0": {
+      "9": 0,
+      "16": 0,
+      "128": 0
+    },
+    "D3": {
+      "9": 0,
+      "16": 0,
+      "128": 0
+    }
+  },
+  "protocol": "NL-EXP-I3c5e-v1",
+  "score_fixture_no_learning": {
+    "0": [
+      80,
+      80
+    ],
+    "1": [
+      80,
+      80
+    ],
+    "5": [
+      81,
+      80
+    ]
+  },
+  "signal_for_stw_0": 0,
+  "signal_for_stw_1": 0,
+  "signal_for_stw_threshold": 1,
+  "study_type": "post hoc read-only numeric oracles; not new learning run",
+  "synthetic_effect_stw1_tick6": {
+    "after_relax": 1,
+    "before_relax": 1,
+    "numeric_effect": 1
+  },
+  "synthetic_effect_stw1_tick7": {
+    "after_relax": 0,
+    "before_relax": 1,
+    "numeric_effect": 1
+  },
+  "synthetic_strength1_tick10": {
+    "lost_connection": true,
+    "strength": 0,
+    "stw": 0
+  },
+  "synthetic_strength1_tick9": {
+    "lost_connection": false,
+    "strength": 1,
+    "stw": 1
+  }
+}

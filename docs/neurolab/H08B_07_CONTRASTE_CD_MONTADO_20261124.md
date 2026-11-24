@@ -1,0 +1,9 @@
+# H-08b.7 — contraste de arranque con el CD original montado
+
+**Fecha:** 2026-11-24. [H-08b.6](H08B_06_MEDIO_COMPLETO_MONTADO_20261124.md) verificó el medio y su montaje. El nuevo contraste [CI #45447365541](https://github.com/mxlzz/Nilo_public/actions/runs/45447365541), commit `f35c4318f235c9766ebb8dfb477d83c6df60c43f`, ejecutó la edición Build47 hasheada en el mismo entorno Windows y configuración del ensayo H-08b.4 intento 4, incorporando la ISO montada de solo lectura y el valor HKLM32 `CD Drive` en formato letra: respaldado por los bytes del original. Resultado observado: proceso creado, ventanas vacías, **salida código 0 antes de 2,04 s**, sin DDE válido ni carga de mundo observada. Retirada de CD Drive, rutas temporales, WinG, desmontaje ISO y eliminación de archivos confirmadas. CI SUCCESS indica diagnóstico completado, NO motor operativo.
+
+**Conclusión acotada:** la presencia del medio montado y la configuración de CD Drive no son suficientes para resolver el cierre. No excluye que la instalación original aporte otros valores o recursos. No repetir ensayos de montaje ni solicitar nuevamente el archivo. No hay evidencia de fallo de red neuronal.
+
+**Próximo diagnóstico:** observar la ruta real de inicialización antes de otra hipótesis de compatibilidad. La rutina `0x429FF0` contiene ramas de retorno temprano en `0x42A026` y `0x42A2F7–0x42A307`, una ruta de inicialización de registros en `0x42A19A`, apertura World.sfc `0x42A2E9` y camino de retorno exitoso `0x42A2C4`. Si existe depurador Windows x86 en runner, una traza limitada a esos puntos de control permitiría separar hipótesis, sin alterar el ejecutable en disco, sin forzar retornos ni omitir comprobaciones. Si no se dispone de observación fiable, priorizar el instalador original en sistema compatible (PE/NE todavía por determinar), no inventar claves. No se inicia medición neuronal ni se reabre N.
+
+PR103 draft, main intacto; no originales propietarios publicados.

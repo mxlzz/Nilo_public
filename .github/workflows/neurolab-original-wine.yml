@@ -1,0 +1,111 @@
+name: NeuroLab original C1 Wine compatibility
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths: ['.github/workflows/neurolab-original-wine.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  wine:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Install distribution Wine and virtual display
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends wine wine32:i386 xvfb xauth x11-utils
+          wine --version
+      - name: Verify and start original game in isolated 32-bit prefix
+        env:
+          NEUROLAB_DATA_FILE_ID: ${{ secrets.NEUROLAB_DATA_FILE_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$(mktemp -d)"
+          trap 'WINEPREFIX="$root/prefix" wineserver -k 2>/dev/null || true; rm -rf "$root"' EXIT
+          export WINEPREFIX="$root/prefix" WINEARCH=win32
+          export WINEDEBUG=-all WINEDLLOVERRIDES="mscoree,mshtml="
+          export NL_ROOT="$root"
+          python - <<'PY'
+          import hashlib, os, pathlib, re, shutil, sys, urllib.request, zipfile
+          r=pathlib.Path(os.environ["NL_ROOT"])
+          fid=os.environ.pop("NEUROLAB_DATA_FILE_ID","")
+          if not re.fullmatch(r"[A-Za-z0-9_-]{10,200}",fid):sys.exit("secret missing")
+          p=r/"data.zip"
+          try:
+              with urllib.request.urlopen("https://drive.usercontent.google.com/download?id="+fid+"&export=download&confirm=t",timeout=45) as a,p.open("wb") as b:
+                  n=0
+                  while x:=a.read(65536):
+                      n+=len(x)
+                      if n>14624092:raise ValueError()
+                      b.write(x)
+          except Exception:
+              sys.exit("transfer failed (details suppressed)")
+          def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+          assert p.stat().st_size==14624092 and sha(p)=="df490a704ae5b6f44016b2ac35e899fe30b7550c7666990edb60c0ebddf025dd"
+          with zipfile.ZipFile(p) as z:
+              files=[i for i in z.infolist() if not i.is_dir()]
+              assert len(files)==1163 and sum(i.file_size for i in files)==37691719 and z.testzip() is None
+              for i in files:
+                  path=pathlib.PurePosixPath(i.filename)
+                  assert not path.is_absolute() and ".." not in path.parts and "\\" not in i.filename and ":" not in i.filename
+                  dst=r.joinpath(*path.parts)
+                  dst.parent.mkdir(parents=True,exist_ok=True)
+                  with z.open(i) as a,dst.open("wb") as b:shutil.copyfileobj(a,b)
+          assert sha(r/"Creatures/Creatures.exe")=="548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7"
+          assert sha(r/"Creatures/Genetics/dad1.gen")=="e2bb4ccf6a4081a128c6c9ffc6eb233452d416717ceef47e78820ca3a152ddd4"
+          p.unlink()
+          print("PASS: exact original input verified")
+          PY
+          unset NEUROLAB_DATA_FILE_ID
+          cat > "$root/probe.sh" <<'SH'
+          set -euo pipefail
+          timeout 60s wineboot -u > "$NL_ROOT/boot.log" 2>&1
+          mkdir -p "$WINEPREFIX/drive_c"
+          mv "$NL_ROOT/Creatures" "$WINEPREFIX/drive_c/Creatures"
+          game="$WINEPREFIX/drive_c/Creatures"
+          mkdir -p "$game/Macros"
+          for name in wing32.dll mfc42.dll msvcirt.dll mfc40.dll msvcrt40.dll; do
+              dll="$(find "$NL_ROOT" -type f -iname "$name" -print -quit)"
+              test -n "$dll"
+              dest="$WINEPREFIX/drive_c/windows/system32/$name"
+              if [ "$name" = wing32.dll ]; then
+                  cp "$dll" "$dest"
+              elif [ "$(dirname "$dll")" != "$game" ]; then
+                  cp "$dll" "$game/$name"
+              fi
+          done
+          export WINEDLLOVERRIDES="mscoree,mshtml=;wing32,mfc42,msvcirt,mfc40,msvcrt40=n,b"
+          key='HKLM\Software\Millennium Interactive\Creatures\1.0'
+          wine reg add "$key" /v 'Main Directory' /t REG_SZ /d 'C:\Creatures\' /f >/dev/null
+          for spec in 'Sound Directory|Sounds' 'Macro Directory|Macros' 'Palette Directory|Palettes' 'Image Directory|Images' 'Genetics Directory|Genetics' 'Body Data|Body data'; do
+              field="$(printf '%s' "$spec" | cut -d '|' -f 1)"
+              folder="$(printf '%s' "$spec" | cut -d '|' -f 2)"
+              wine reg add "$key" /v "$field" /t REG_SZ /d "C:\\Creatures\\$folder\\" /f >/dev/null
+          done
+          wine reg add "$key" /v Programs /t REG_SZ /d "" /f >/dev/null
+          cd "$game"
+          echo "BEGIN: original Build 47, Wine win32 prefix, 16-bit X display"
+          export WINEDEBUG=+seh
+          wine Creatures.exe > "$NL_ROOT/game.log" 2>&1 &
+          pid=$!
+          for i in 1 2 3 4 5 6 7 8; do
+              sleep 3
+              if ! kill -0 "$pid" 2>/dev/null; then
+                  set +e
+                  wait "$pid"; code=$?
+                  set -e
+                  echo "OBSERVED: original process exited code=$code at sample=$i"
+                  break
+              fi
+              echo "OBSERVED: process alive sample=$i"
+              xwininfo -root -tree | grep -iE 'Creatures|WinG|Error|World|Albia|Wine' | head -15 || true
+          done
+          echo "Selected Wine diagnostics (bounded):"
+          grep -Ei 'err:|unhandled exception|exception code|c0000135|c0000005' "$NL_ROOT/game.log" | cut -c1-240 | tail -18 || true
+          wineserver -k || true
+          echo "END: no game files uploaded; private prefix will be removed"
+          SH
+          xvfb-run -a -s '-screen 0 1024x768x16' bash "$root/probe.sh"

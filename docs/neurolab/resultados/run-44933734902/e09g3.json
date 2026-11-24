@@ -1,0 +1,3313 @@
+{
+  "at_least_one_gate_passed": true,
+  "conditions": {
+    "first_index": {
+      "advantage_vs_frozen": 0,
+      "good_reversal": 20,
+      "good_train": 20,
+      "mean_frozen": 1,
+      "mean_reversal": 1,
+      "mean_train": 1,
+      "passed": false,
+      "per_seed": [
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 0,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 1,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 2,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 3,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 4,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 5,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 6,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 7,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 8,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 9,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 10,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 11,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 12,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 13,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 14,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 15,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 16,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 17,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 18,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 1,
+          "reversal": 1,
+          "seed": 19,
+          "train": 1
+        }
+      ]
+    },
+    "random_tie": {
+      "advantage_vs_frozen": 0.5075000000000001,
+      "good_reversal": 20,
+      "good_train": 20,
+      "mean_frozen": 0.4925,
+      "mean_reversal": 1,
+      "mean_train": 1,
+      "passed": true,
+      "per_seed": [
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              66,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 227,
+                "stw": 155,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 251,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 227,
+                "stw": 231,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.5125,
+          "reversal": 1,
+          "seed": 0,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.475,
+          "reversal": 1,
+          "seed": 1,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.575,
+          "reversal": 1,
+          "seed": 2,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              66,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 227,
+                "stw": 155,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 251,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 227,
+                "stw": 231,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.55,
+          "reversal": 1,
+          "seed": 3,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              72,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 238,
+                "stw": 161,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 247,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 3,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 223,
+                "stw": 227,
+                "susceptibility": 228
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 228
+              },
+              {
+                "ltw": 0,
+                "strength": 6,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 3,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.4,
+          "reversal": 1,
+          "seed": 4,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              66,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 227,
+                "stw": 155,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 251,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 227,
+                "stw": 231,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.5375,
+          "reversal": 1,
+          "seed": 5,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              72,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 238,
+                "stw": 161,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 247,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 3,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 223,
+                "stw": 227,
+                "susceptibility": 228
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 228
+              },
+              {
+                "ltw": 0,
+                "strength": 6,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 3,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.5125,
+          "reversal": 1,
+          "seed": 6,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.4375,
+          "reversal": 1,
+          "seed": 7,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              72,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 238,
+                "stw": 161,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 247,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 3,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 223,
+                "stw": 227,
+                "susceptibility": 228
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 228
+              },
+              {
+                "ltw": 0,
+                "strength": 6,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 3,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.5,
+          "reversal": 1,
+          "seed": 8,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.5,
+          "reversal": 1,
+          "seed": 9,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              66,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 227,
+                "stw": 155,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 251,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 227,
+                "stw": 231,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.525,
+          "reversal": 1,
+          "seed": 10,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              66,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 227,
+                "stw": 155,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 251,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 227,
+                "stw": 231,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.4875,
+          "reversal": 1,
+          "seed": 11,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              66,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 227,
+                "stw": 155,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 251,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 227,
+                "stw": 231,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.4125,
+          "reversal": 1,
+          "seed": 12,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              72,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 238,
+                "stw": 161,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 247,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 3,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 223,
+                "stw": 227,
+                "susceptibility": 228
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 228
+              },
+              {
+                "ltw": 0,
+                "strength": 6,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 3,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.4375,
+          "reversal": 1,
+          "seed": 13,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              72,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 238,
+                "stw": 161,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 247,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 3,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 223,
+                "stw": 227,
+                "susceptibility": 228
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 228
+              },
+              {
+                "ltw": 0,
+                "strength": 6,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 3,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.45,
+          "reversal": 1,
+          "seed": 14,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              66,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 227,
+                "stw": 155,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 251,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 227,
+                "stw": 231,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.5625,
+          "reversal": 1,
+          "seed": 15,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              68,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 233,
+                "stw": 157,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 243,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 231,
+                "stw": 235,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 236
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.475,
+          "reversal": 1,
+          "seed": 16,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              66,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 227,
+                "stw": 155,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 251,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 227,
+                "stw": 231,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.45,
+          "reversal": 1,
+          "seed": 17,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              66,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 227,
+                "stw": 155,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 251,
+                "stw": 170,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 227,
+                "stw": 231,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 232
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.4375,
+          "reversal": 1,
+          "seed": 18,
+          "train": 1
+        },
+        {
+          "after_reversal": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              0,
+              255
+            ],
+            "neuron_states": [
+              72,
+              196
+            ],
+            "synapses": [
+              {
+                "ltw": 1,
+                "strength": 241,
+                "stw": 163,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 250,
+                "stw": 172,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 1,
+                "strength": 252,
+                "stw": 214,
+                "susceptibility": 200
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 200
+              }
+            ],
+            "tick": 180
+          },
+          "after_train": {
+            "concept_output": 253,
+            "neuron_outputs": [
+              255,
+              0
+            ],
+            "neuron_states": [
+              196,
+              80
+            ],
+            "synapses": [
+              {
+                "ltw": 0,
+                "strength": 226,
+                "stw": 230,
+                "susceptibility": 231
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 231
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              },
+              {
+                "ltw": 0,
+                "strength": 2,
+                "stw": 0,
+                "susceptibility": 0
+              }
+            ],
+            "tick": 60
+          },
+          "frozen": 0.6125,
+          "reversal": 1,
+          "seed": 19,
+          "train": 1
+        }
+      ]
+    }
+  },
+  "holdout_ticks": 80,
+  "initial_ticks": 60,
+  "protocol": "E09_02G_03_RELOJ_CONTINUO_PRE_REGISTRO-v1",
+  "reversal_ticks": 120,
+  "scope": "five units, prior Concept/Decision WTA outputs, persistent neuron STATE; externally delayed chemicals",
+  "seeds_per_condition": 20
+}

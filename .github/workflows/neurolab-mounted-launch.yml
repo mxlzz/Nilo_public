@@ -1,0 +1,99 @@
+name: NeuroLab documented C1 launcher with mounted CD
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths: ['.github/workflows/neurolab-mounted-launch.yml', 'experiments/neurolab/h08b_mounted_launch.py']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mount:
+    runs-on: windows-2022
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify and mount complete CD, close startup tip, and read world counts
+        shell: pwsh
+        env:
+          NEUROLAB_CD_FILE_ID: ${{ secrets.NEUROLAB_CD_FILE_ID }}
+          NEUROLAB_DATA_FILE_ID: ${{ secrets.NEUROLAB_DATA_FILE_ID }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:RUNNER_TEMP ('neurolab-cd-' + [guid]::NewGuid().ToString('N'))
+          New-Item -ItemType Directory -Path $root | Out-Null
+          $env:NL_CD_TEMP = $root
+          $iso = Join-Path $root 'original.iso'
+          $mounted = $false
+          try {
+            @'
+          import hashlib, json, os, pathlib, re, shutil, sys, urllib.request, zipfile
+          root=pathlib.Path(os.environ["NL_CD_TEMP"])
+          fid=os.environ.pop("NEUROLAB_CD_FILE_ID","")
+          if not re.fullmatch(r"[A-Za-z0-9_-]{10,200}",fid):sys.exit("secret absent")
+          archive=root/"media.zip"; h=hashlib.sha256(); n=0
+          try:
+              with urllib.request.urlopen("https://drive.usercontent.google.com/download?id="+fid+"&export=download&confirm=t",timeout=90) as a,archive.open("wb") as b:
+                  while block:=a.read(1024*1024):
+                      n+=len(block)
+                      if n>591498236:raise ValueError()
+                      h.update(block);b.write(block)
+          except Exception:
+              sys.exit("transfer unavailable (details suppressed)")
+          if n!=591498236 or h.hexdigest()!="91805784212380b804ec5c3889f2524ff358379c6a0a964e5dadba147c5498af":
+              sys.exit("archive fingerprint mismatch")
+          with zipfile.ZipFile(archive) as z:
+              found=[i for i in z.infolist() if pathlib.PurePosixPath(i.filename).name=="Creatures.iso" and i.file_size==591384576]
+              if len(found)!=1:sys.exit("unique expected ISO not found")
+              ih=hashlib.sha256()
+              with z.open(found[0]) as a,(root/"original.iso").open("wb") as b:
+                  while block:=a.read(1024*1024):ih.update(block);b.write(block)
+          archive.unlink()
+          print(json.dumps({"stage":"verified_image","bytes":591384576,"iso_sha256":ih.hexdigest()}))
+          '@ | python -u -
+            if ($LASTEXITCODE -ne 0) { throw 'Original CD fingerprint gate failed' }
+            Remove-Item Env:NEUROLAB_CD_FILE_ID
+            try {
+              $disk = Mount-DiskImage -ImagePath $iso -StorageType ISO -Access ReadOnly -PassThru
+              $mounted = $true
+              $vol = $disk | Get-Volume | Select-Object -First 1
+              if (-not $vol.DriveLetter) { throw 'No drive letter assigned' }
+              $cd = "$($vol.DriveLetter):\"
+              $driveInfo = [System.IO.DriveInfo]::new($cd)
+              [ordered]@{stage='mounted';type=$driveInfo.DriveType.ToString();label=$vol.FileSystemLabel;filesystem=$vol.FileSystem;read_only_requested=$true} | ConvertTo-Json -Compress
+              if ($vol.FileSystemLabel -ne 'CREATURES' -or $driveInfo.DriveType.ToString() -ne 'CDRom') { throw 'Unexpected mounted medium identity' }
+              foreach ($dir in @('', 'INSTALL', 'CREATURE.11', 'INTRO', 'MSREG')) {
+                $target = Join-Path $cd $dir
+                if (Test-Path -LiteralPath $target -PathType Container) {
+                  $records = @(Get-ChildItem -LiteralPath $target | Select-Object -First 60 | ForEach-Object { [ordered]@{name=$_.Name;dir=$_.PSIsContainer;bytes=if($_.PSIsContainer){0}else{$_.Length}} })
+                  [ordered]@{stage='directory';relative=$dir;records=$records} | ConvertTo-Json -Depth 5 -Compress
+                }
+              }
+              $install = Join-Path $cd 'INSTALL'
+              if (Test-Path -LiteralPath $install -PathType Container) {
+                $files = @(Get-ChildItem -LiteralPath $install -Recurse -File | Select-Object -First 200)
+                foreach ($f in $files) {
+                  if ($f.Name -in @('DATA.Z','SETUP.EXE','SETUP.INS','SETUP.INI','SETUP.PKG','SETUP.LST','SETUP.DLL','_SETUP.DLL','SETUP32.EXE')) {
+                    $hash = (Get-FileHash -LiteralPath $f.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+                    $header = New-Object byte[] 64
+                    $stream = [IO.File]::OpenRead($f.FullName)
+                    try { $read = $stream.Read($header,0,$header.Length) } finally { $stream.Dispose() }
+                    $format = 'other'
+                    if ($read -ge 2 -and $header[0] -eq 77 -and $header[1] -eq 90) { $format = 'MZ' }
+                    [ordered]@{stage='installer_file';name=$f.Name;bytes=$f.Length;sha256=$hash;header_type=$format} | ConvertTo-Json -Compress
+                  }
+                }
+              }
+              $env:NL_MOUNTED_CD = $cd
+              python -u experiments/neurolab/h08b_mounted_launch.py
+              if ($LASTEXITCODE -ne 0) { throw 'Mounted original launch infrastructure failed' }
+            } catch {
+              [ordered]@{stage='mount_or_inspection_failed';error_type=$_.Exception.GetType().Name;hresult=$_.Exception.HResult} | ConvertTo-Json -Compress
+              throw 'Mounted CD inspection failed; no game executed'
+            }
+          } finally {
+            if ($mounted) { Dismount-DiskImage -ImagePath $iso -ErrorAction Stop | Out-Null; Write-Host 'PASS: original ISO dismounted' }
+            Remove-Item -LiteralPath $root -Recurse -Force
+            Write-Host 'PASS: temporary CD files removed'
+          }

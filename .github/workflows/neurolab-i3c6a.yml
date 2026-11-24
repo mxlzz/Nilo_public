@@ -1,0 +1,32 @@
+name: NeuroLab I3c6a — original C1 atrophy feedback writer contract
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c6a_atrophy_feedback_audit.py'
+      - 'experiments/neurolab/tests/test_e09_i3c6a_atrophy_feedback_audit.py'
+      - '.github/workflows/neurolab-i3c6a.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-signatures-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check original-hash enforcement and ten x86 signature contracts
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c6a_atrophy_feedback_audit
+      - name: Assert proprietary executable and genome not distributed
+        run: |
+          test ! -e Creatures.exe
+          test ! -e dad1.gen
+          echo "Original SHA verified locally; CI only checks synthetic adversarial fixtures"

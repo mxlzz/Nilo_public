@@ -1,0 +1,51 @@
+name: NeuroLab I3c7d — direct vs metabolic loss regime comparability
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c7d_loss_regime_audit.py'
+      - 'experiments/neurolab/tests/test_e09_i3c7d_loss_regime_audit.py'
+      - '.github/workflows/neurolab-i3c7d.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  neural-loss-regimes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compare C1 gene loss cadence and frozen-readout semantics
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c7d_loss_regime_audit
+      - name: Preserve original two-factor mechanical source code comparison
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c7d_loss_regime_audit --output metrics/i3c7d.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          d=json.load(open('metrics/i3c7d.json'))
+          assert d['protocol']=='NL-AUDIT-I3c7d-v1'
+          assert d['nominal_from_original_gen']==[0,0,16,16]
+          assert d['mechanical_regimes']['Z']['snapshots']['10']['live']==8
+          assert d['mechanical_regimes']['L']['snapshots']['10']['live']==0
+          assert d['mechanical_regimes']['F']['snapshots']['10']['live']==8
+          assert d['G05_G09_G00H']=='OPEN'
+          print('DISTINCT LOSS REGIMES VERIFIED. G05 STILL OPEN.')
+          PY
+          sha256sum metrics/i3c7d.json > metrics/audit.sha256
+      - name: Preserve evidence regardless of outcome
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c7d-direct-metabolic-loss-confound
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

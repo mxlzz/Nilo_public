@@ -1,0 +1,50 @@
+{
+  "protocol": "E09_H_06B_CADENCIA_PRE_REGISTRO-v1",
+  "source": {
+    "exe_sha256": "548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7",
+    "exe_bytes": 387072
+  },
+  "original_pe_static": {
+    "instruction_signatures_verified": 17,
+    "direct_calls_verified": 7,
+    "message_map_fields_verified": 6,
+    "imports": [
+      {
+        "iat_va": "0x44114c",
+        "dll": "USER32.dll",
+        "name": "SetTimer"
+      },
+      {
+        "iat_va": "0x441144",
+        "dll": "USER32.dll",
+        "name": "KillTimer"
+      }
+    ],
+    "world_timer": {
+      "setup_site": "0x411f63",
+      "kill_site": "0x411f7f",
+      "window_global": "0x43f08c",
+      "window_handle_offset": "+0x20",
+      "timer_id": 1,
+      "requested_period_ms": 90,
+      "callback_ptr": "NULL",
+      "message_id": "0x113",
+      "message_handler_va": "0x418960",
+      "world_tick_call": "0x418966 -> 0x4247b0"
+    },
+    "other_timer": {
+      "setup_site": "0x40d078",
+      "requested_period_ms": 500,
+      "different_window_context": true
+    },
+    "gated_direct_call_sites": [
+      "0x424c98",
+      "0x426894"
+    ],
+    "limitations": "static request rate; not measured actual milliseconds; scheduling, pause and phases influence per-creature update frequency"
+  },
+  "gates": {
+    "G_H6_CLOCK_NOMINAL": "verified static",
+    "G_H6_CLOCK_EFFECTIVE": "open"
+  }
+}

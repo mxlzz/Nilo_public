@@ -1,0 +1,46 @@
+name: NeuroLab I3b3 — reuse existing C1 type1 migration feasibility
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3b3_migration_feasibility.py'
+      - 'experiments/neurolab/tests/test_e09_i3b3_migration_feasibility.py'
+      - '.github/workflows/neurolab-i3b3.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  structural-migration-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test all two-source rejection branches and positive extra-source control
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3b3_migration_feasibility
+      - name: Preserve complete structural proof
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3b3_migration_feasibility --output metrics/e09i3b3.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          r=json.load(open("metrics/e09i3b3.json"))
+          assert len(r["rejection_cases"])==8
+          assert len(r["positive_control_three_source_synthetic"])==4
+          assert r["can_migrate_under_current_two_source_topology"] is False
+          assert r["missing_runtime_source_pointer_field"] is True
+          print("Two-source exhausted: 8/8 rejected; three-source positive controls: 4/4 accepted")
+          PY
+      - name: Publish all negative and positive control evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3b3-migration-feasibility
+          path: metrics/
+          retention-days: 90

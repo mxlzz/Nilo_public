@@ -1,0 +1,114 @@
+name: NeuroLab isolated brain E01-E08
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/**'
+      - '.github/workflows/neurolab-e01.yml'
+  pull_request:
+    paths:
+      - 'experiments/neurolab/**'
+      - '.github/workflows/neurolab-e01.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  kernel-unit-tests:
+    name: Neuronal experiments E01-E08
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare results directory
+        run: mkdir -p metrics
+      - name: Compile neuron kernel and test code
+        run: python -m py_compile experiments/neurolab/kernel.py experiments/neurolab/tests/test_kernel.py
+      - name: E01 deterministic numerical oracles and state replay
+        run: python -m unittest discover -s experiments/neurolab/tests -v
+
+      - name: E01 benchmark 100k ticks
+        run: python -m experiments.neurolab.bench | tee metrics/e01_bench.json
+
+      - name: E03 preregistered 20-seed learning and reversal
+        run: python -m experiments.neurolab.e03_protocol | tee metrics/e03.json
+
+      - name: E06 preregistered XOR context generalization
+        run: python -m experiments.neurolab.e06_protocol | tee metrics/e06.json
+
+      - name: E07 preregistered rewiring vs fixed and LRU
+        run: python -m experiments.neurolab.e07_protocol | tee metrics/e07.json
+
+      - name: E08 preregistered recurrent dynamics
+        run: python -m experiments.neurolab.recurrent | tee metrics/e08.json
+
+      - name: E09.02c negative baseline, metrics only (gate failed)
+        run: |
+          python - <<'PY' | tee metrics/e09c_negative.json
+          import json
+          from experiments.neurolab.e09_microlearn_protocol import run_all
+          print(json.dumps(run_all(),indent=2,sort_keys=True))
+          PY
+
+      - name: E09.02d epsilon=0.10 negative variant, metrics only (gate failed)
+        run: |
+          python - <<'PY' | tee metrics/e09d_negative.json
+          import json
+          from experiments.neurolab.e09_exploration_protocol import run_all
+          print(json.dumps(run_all(),indent=2,sort_keys=True))
+          PY
+
+      - name: E09.02e preregistered two-speed synapse reversal
+        run: python -m experiments.neurolab.e09_twinbrain_protocol | tee metrics/e09e_twinsynapse.json
+
+      - name: E09.02g.2 genetic C1 microbrain preregistered 2x2
+        run: python -m experiments.neurolab.e09_microbrain_genetic_protocol | tee metrics/e09g2.json
+
+      - name: E09.02g.3 continuous C1 brain prior-WTA clock
+        run: python -m experiments.neurolab.e09_continuous_protocol | tee metrics/e09g3.json
+
+      - name: E09.02g.4 counterbalanced targets, noise and 3-tick delay
+        run: python -m experiments.neurolab.e09_robustness_protocol | tee metrics/e09g4.json
+
+      - name: E09.02g.5 two concepts with frozen, blind and tabular baselines
+        run: python -m experiments.neurolab.e09_context_protocol | tee metrics/e09g5.json
+
+      - name: E09g5a exploratory temporal context diagnostics
+        run: python -m experiments.neurolab.e09_context_diagnostics | tee metrics/e09g5a_diagnostic.json
+
+      - name: E09g6 preregistered holdout-only perceptual latency and decision state ablations
+        run: python -m experiments.neurolab.e09_context_reset_diagnostics | tee metrics/e09g6.json
+
+      - name: E09g7 observational causal credit audit preserving tick ledger
+        run: python -m experiments.neurolab.e09_causal_ledger --output metrics/e09g7_causal_ledger.json | tee metrics/e09g7_summary.json
+
+      - name: E09g8 paired suppression of mistimed chemistry vs temporal sham
+        run: python -m experiments.neurolab.e09_paired_pulse_protocol | tee metrics/e09g8.json
+
+      - name: E09g9 independent replication on unseen seeds 20 through 99
+        run: python -m experiments.neurolab.e09_oos_replicate | tee metrics/e09g9.json
+
+      - name: E09g10a internal-only two-byte source memory equivalence vs G
+        run: python -m experiments.neurolab.e09_intrinsic_gate | tee metrics/e09g10a.json
+
+      - name: E09g10b delayed feedback with distractors and causal tabular control
+        run: python -m experiments.neurolab.e09_delayed_distractors_protocol | tee metrics/e09g10b.json
+
+      - name: E09g10c exploratory susceptibility trace and chemical pulse counterfactual
+        run: python -m experiments.neurolab.e09_eligibility_audit --output metrics/e09g10c_events.json | tee metrics/e09g10c_summary.json
+
+      - name: Preserve per-seed results and benchmark
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-metrics
+          path: metrics/
+          if-no-files-found: warn
+          retention-days: 90

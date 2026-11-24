@@ -1,0 +1,53 @@
+name: NeuroLab I3c5c — frozen original trunk availability
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c5c_trunk_availability.py'
+      - 'experiments/neurolab/tests/test_e09_i3c5c_trunk_availability.py'
+      - 'docs/neurolab/resultados/e09i3c5c_original_trunk_hashes.json'
+      - '.github/workflows/neurolab-i3c5c.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hash-locked-trunks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check fixed design, original signatures and negative controls
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c5c_trunk_availability
+      - name: Trace 40 trunks to original prefeedback SHA
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c5c_trunk_availability --output metrics/e09i3c5c.json | tee metrics/summary.json
+          python - <<'PY'
+          import json
+          r=json.load(open('metrics/e09i3c5c.json'))
+          assert r['protocol']=='NL-EXP-I3c5c-v1'
+          assert r['seeds']==list(range(1200,1220))
+          assert r['unique_trunks']==40
+          assert r['samples_per_trunk']==125
+          assert r['all_checkpoint_hashes_replayed']
+          assert r['G05_G09_G00H'].startswith('OPEN')
+          print('FIRST ALL ZERO:',r['first_all_zero_tick_counts'])
+          print('FINAL ACTIVE:',r['active_links_at_tick124_counts'])
+          PY
+          sha256sum metrics/e09i3c5c.json > metrics/artifact.sha256
+      - name: Archive every negative and positive trunk
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c5c-pre-feedback-connectivity
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

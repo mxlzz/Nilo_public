@@ -1,0 +1,37 @@
+name: NeuroLab G05-NX01 baseline saturation gate
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths:
+      - experiments/neurolab/g05_nx01_baseline_gate.py
+      - .github/workflows/neurolab-g05-nx01-baselines.yml
+  workflow_dispatch:
+
+jobs:
+  baselines:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Run preregistered development baselines only
+        run: |
+          python experiments/neurolab/g05_nx01_baseline_gate.py --output g05_nx01_baselines_dev.json
+          sha256sum experiments/neurolab/g05_nx01_baseline_gate.py g05_nx01_baselines_dev.json
+          python - <<'PY'
+          import json
+          d=json.load(open('g05_nx01_baselines_dev.json',encoding='utf8'))
+          assert len(d['rows'])==20
+          assert [r['seed'] for r in d['rows']]==list(range(25000,25020))
+          assert d['summary']['TK']['both_phases_perfect']==20
+          assert d['summary']['TK']['mean_composite']==1.0
+          print('STOP: preregistered +0.05 superiority impossible with TK S=1.0')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-g05-nx01-baseline-dev
+          path: g05_nx01_baselines_dev.json
+          retention-days: 90

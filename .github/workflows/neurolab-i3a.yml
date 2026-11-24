@@ -1,0 +1,52 @@
+name: NeuroLab I3a — posthoc chemical reinforcement witness
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3a_diagnostic.py'
+      - 'experiments/neurolab/tests/test_e09_i3a_diagnostic.py'
+      - '.github/workflows/neurolab-i3a.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  witness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Replay original I3 M arm without changing model or reward
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3a_diagnostic --output metrics/e09i3a.json > metrics/i3a_stdout.json
+          python - <<'PY'
+          import json
+          x=json.load(open("metrics/e09i3a.json",encoding="utf-8"))
+          assert x["seeds"]==list(range(200,220))
+          assert x["rates_lab"]==40 and x["precursor_dose"]==80
+          assert x["replay_equivalence"]=="all 8 synapses each tick and final phase state"
+          for phase in ("first","reversed"):
+              s=x["totals"][phase]
+              print(phase,{k:s[k] for k in (
+                  "synapse_samples","chem_positive",
+                  "susceptibility_positive","chem_and_suscept_positive",
+                  "effect_positive","stw_increased","stw_changed","ltw_changed",
+                  "max_chem","max_susceptibility","max_effect",
+                  "missing_target_choices","delivered_precursors")})
+          PY
+      - name: Preserve original M-arm observational event totals
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3a-mechanistic-witness
+          path: metrics/
+          if-no-files-found: warn
+          retention-days: 90

@@ -1,0 +1,1070 @@
+{
+  "schema": "neurolab.h08b.14.v1",
+  "run": 45488311903,
+  "commit": "5987e615bcc75ae4daf97b64b238d30a0388ab2f",
+  "jobs": [
+    {
+      "job_id": 138779534051,
+      "events": [
+        {
+          "gate": "pulse_protocol",
+          "arm": "sham",
+          "chemical": 49,
+          "amount": 0,
+          "scope": "delivery feasibility only; no learning claim"
+        },
+        {
+          "gate": "pulse_birth",
+          "arm": "sham",
+          "ok": true,
+          "value": 1,
+          "bytes": 2,
+          "t0_ns": 2586440934100,
+          "t1_ns": 2586458765700
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "sham",
+          "label": "pre0",
+          "ok": true,
+          "relative_start_us": 12422,
+          "relative_end_us": 49384,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2671491423400,
+              "t1_ns": 2671497584500
+            },
+            "chem50": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2671497619400,
+              "t1_ns": 2671503727700
+            },
+            "chem51": {
+              "ok": true,
+              "value": 2,
+              "bytes": 2,
+              "t0_ns": 2671503733700,
+              "t1_ns": 2671510091100
+            },
+            "chem54": {
+              "ok": true,
+              "value": 4,
+              "bytes": 2,
+              "t0_ns": 2671510126800,
+              "t1_ns": 2671516149500
+            },
+            "chem55": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2671516156100,
+              "t1_ns": 2671522032300
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                62,
+                128,
+                0,
+                0,
+                0,
+                42
+              ],
+              "bytes": 18,
+              "t0_ns": 2671522068700,
+              "t1_ns": 2671528346600
+            }
+          }
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "sham",
+          "label": "pre1",
+          "ok": true,
+          "relative_start_us": 575601,
+          "relative_end_us": 614014,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2672054575200,
+              "t1_ns": 2672061176500
+            },
+            "chem50": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2672061213800,
+              "t1_ns": 2672067212800
+            },
+            "chem51": {
+              "ok": true,
+              "value": 2,
+              "bytes": 2,
+              "t0_ns": 2672067224500,
+              "t1_ns": 2672073541000
+            },
+            "chem54": {
+              "ok": true,
+              "value": 4,
+              "bytes": 2,
+              "t0_ns": 2672073581200,
+              "t1_ns": 2672080126800
+            },
+            "chem55": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2672080162200,
+              "t1_ns": 2672086556600
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                62,
+                128,
+                0,
+                0,
+                0,
+                42
+              ],
+              "bytes": 18,
+              "t0_ns": 2672086596900,
+              "t1_ns": 2672092944800
+            }
+          }
+        },
+        {
+          "gate": "pulse_delivery",
+          "arm": "sham",
+          "chemical": 49,
+          "amount": 0,
+          "baseline": {
+            "ok": true,
+            "value": 0,
+            "bytes": 2,
+            "t0_ns": 2672105841500,
+            "t1_ns": 2672111120500
+          },
+          "post": {
+            "ok": true,
+            "value": 0,
+            "bytes": 2,
+            "t0_ns": 2672111130300,
+            "t1_ns": 2672117751100
+          },
+          "identity_verified": true
+        },
+        {
+          "gate": "delivery_check",
+          "arm": "sham",
+          "delta": 0,
+          "accepted": true
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "sham",
+          "label": "post0",
+          "ok": true,
+          "relative_start_us": 62475,
+          "relative_end_us": 100727,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2672180231100,
+              "t1_ns": 2672186488400
+            },
+            "chem50": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2672186524800,
+              "t1_ns": 2672192538500
+            },
+            "chem51": {
+              "ok": true,
+              "value": 2,
+              "bytes": 2,
+              "t0_ns": 2672192575900,
+              "t1_ns": 2672198854300
+            },
+            "chem54": {
+              "ok": true,
+              "value": 4,
+              "bytes": 2,
+              "t0_ns": 2672198890200,
+              "t1_ns": 2672205102400
+            },
+            "chem55": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2672205137900,
+              "t1_ns": 2672212289800
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                62,
+                128,
+                0,
+                0,
+                0,
+                42
+              ],
+              "bytes": 18,
+              "t0_ns": 2672212326200,
+              "t1_ns": 2672218445900
+            }
+          }
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "sham",
+          "label": "post1",
+          "ok": true,
+          "relative_start_us": 512407,
+          "relative_end_us": 550331,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2672630163400,
+              "t1_ns": 2672636603300
+            },
+            "chem50": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2672636640400,
+              "t1_ns": 2672642964800
+            },
+            "chem51": {
+              "ok": true,
+              "value": 2,
+              "bytes": 2,
+              "t0_ns": 2672643001800,
+              "t1_ns": 2672649096600
+            },
+            "chem54": {
+              "ok": true,
+              "value": 4,
+              "bytes": 2,
+              "t0_ns": 2672649106700,
+              "t1_ns": 2672655782300
+            },
+            "chem55": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2672655821300,
+              "t1_ns": 2672661627300
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                62,
+                128,
+                0,
+                0,
+                0,
+                42
+              ],
+              "bytes": 18,
+              "t0_ns": 2672661636100,
+              "t1_ns": 2672668049000
+            }
+          }
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "sham",
+          "label": "post2",
+          "ok": true,
+          "relative_start_us": 2012488,
+          "relative_end_us": 2049377,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2674130276500,
+              "t1_ns": 2674136201700
+            },
+            "chem50": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 2674136237000,
+              "t1_ns": 2674142255300
+            },
+            "chem51": {
+              "ok": true,
+              "value": 4,
+              "bytes": 2,
+              "t0_ns": 2674142291900,
+              "t1_ns": 2674148511300
+            },
+            "chem54": {
+              "ok": true,
+              "value": 4,
+              "bytes": 2,
+              "t0_ns": 2674148547500,
+              "t1_ns": 2674154564600
+            },
+            "chem55": {
+              "ok": true,
+              "value": 2,
+              "bytes": 2,
+              "t0_ns": 2674154596500,
+              "t1_ns": 2674160813800
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                62,
+                128,
+                0,
+                0,
+                0,
+                42
+              ],
+              "bytes": 18,
+              "t0_ns": 2674160819900,
+              "t1_ns": 2674167123700
+            }
+          }
+        },
+        {
+          "gate": "pulse_finished",
+          "arm": "sham",
+          "delivery_accepted": true,
+          "scope": "technical pilot only"
+        }
+      ]
+    },
+    {
+      "job_id": 138779534310,
+      "events": [
+        {
+          "gate": "pulse_protocol",
+          "arm": "reward",
+          "chemical": 49,
+          "amount": 32,
+          "scope": "delivery feasibility only; no learning claim"
+        },
+        {
+          "gate": "pulse_birth",
+          "arm": "reward",
+          "ok": true,
+          "value": 1,
+          "bytes": 2,
+          "t0_ns": 342093740800,
+          "t1_ns": 342111457100
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "reward",
+          "label": "pre0",
+          "ok": true,
+          "relative_start_us": 12370,
+          "relative_end_us": 49846,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 427143141700,
+              "t1_ns": 427149383600
+            },
+            "chem50": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 427149419900,
+              "t1_ns": 427155445300
+            },
+            "chem51": {
+              "ok": true,
+              "value": 2,
+              "bytes": 2,
+              "t0_ns": 427155479300,
+              "t1_ns": 427161688700
+            },
+            "chem54": {
+              "ok": true,
+              "value": 5,
+              "bytes": 2,
+              "t0_ns": 427161725500,
+              "t1_ns": 427167884100
+            },
+            "chem55": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 427167920300,
+              "t1_ns": 427174130500
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                27,
+                128,
+                0,
+                0,
+                0,
+                133
+              ],
+              "bytes": 19,
+              "t0_ns": 427174166200,
+              "t1_ns": 427180578400
+            }
+          }
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "reward",
+          "label": "pre1",
+          "ok": true,
+          "relative_start_us": 574940,
+          "relative_end_us": 611346,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 427705710800,
+              "t1_ns": 427711908100
+            },
+            "chem50": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 427711915400,
+              "t1_ns": 427718189800
+            },
+            "chem51": {
+              "ok": true,
+              "value": 2,
+              "bytes": 2,
+              "t0_ns": 427718224300,
+              "t1_ns": 427723943100
+            },
+            "chem54": {
+              "ok": true,
+              "value": 5,
+              "bytes": 2,
+              "t0_ns": 427723978200,
+              "t1_ns": 427730019400
+            },
+            "chem55": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 427730025400,
+              "t1_ns": 427735955200
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                27,
+                128,
+                0,
+                0,
+                0,
+                133
+              ],
+              "bytes": 19,
+              "t0_ns": 427735961200,
+              "t1_ns": 427742077000
+            }
+          }
+        },
+        {
+          "gate": "pulse_delivery",
+          "arm": "reward",
+          "chemical": 49,
+          "amount": 32,
+          "baseline": {
+            "ok": true,
+            "value": 0,
+            "bytes": 2,
+            "t0_ns": 427753997100,
+            "t1_ns": 427760747400
+          },
+          "post": {
+            "ok": true,
+            "value": 32,
+            "bytes": 3,
+            "t0_ns": 427760787400,
+            "t1_ns": 427766918100
+          },
+          "identity_verified": true
+        },
+        {
+          "gate": "delivery_check",
+          "arm": "reward",
+          "delta": 32,
+          "accepted": true
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "reward",
+          "label": "post0",
+          "ok": true,
+          "relative_start_us": 62519,
+          "relative_end_us": 99284,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 32,
+              "bytes": 3,
+              "t0_ns": 427829470300,
+              "t1_ns": 427835592500
+            },
+            "chem50": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 427835628700,
+              "t1_ns": 427841647400
+            },
+            "chem51": {
+              "ok": true,
+              "value": 2,
+              "bytes": 2,
+              "t0_ns": 427841688700,
+              "t1_ns": 427848018100
+            },
+            "chem54": {
+              "ok": true,
+              "value": 5,
+              "bytes": 2,
+              "t0_ns": 427848051500,
+              "t1_ns": 427854025200
+            },
+            "chem55": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 427854057800,
+              "t1_ns": 427860121500
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                27,
+                128,
+                0,
+                0,
+                0,
+                133
+              ],
+              "bytes": 19,
+              "t0_ns": 427860156200,
+              "t1_ns": 427866198800
+            }
+          }
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "reward",
+          "label": "post1",
+          "ok": true,
+          "relative_start_us": 512847,
+          "relative_end_us": 549872,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 14,
+              "bytes": 3,
+              "t0_ns": 428279784400,
+              "t1_ns": 428285469700
+            },
+            "chem50": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 428285504900,
+              "t1_ns": 428291789600
+            },
+            "chem51": {
+              "ok": true,
+              "value": 14,
+              "bytes": 3,
+              "t0_ns": 428291795600,
+              "t1_ns": 428297870700
+            },
+            "chem54": {
+              "ok": true,
+              "value": 19,
+              "bytes": 3,
+              "t0_ns": 428297906600,
+              "t1_ns": 428304477900
+            },
+            "chem55": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 428304513900,
+              "t1_ns": 428310497600
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                27,
+                128,
+                0,
+                0,
+                0,
+                133
+              ],
+              "bytes": 19,
+              "t0_ns": 428310503300,
+              "t1_ns": 428316786500
+            }
+          }
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "reward",
+          "label": "post2",
+          "ok": true,
+          "relative_start_us": 2012770,
+          "relative_end_us": 2049945,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 2,
+              "bytes": 2,
+              "t0_ns": 429779721800,
+              "t1_ns": 429785703700
+            },
+            "chem50": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 429785710600,
+              "t1_ns": 429791932900
+            },
+            "chem51": {
+              "ok": true,
+              "value": 12,
+              "bytes": 3,
+              "t0_ns": 429791939100,
+              "t1_ns": 429798102800
+            },
+            "chem54": {
+              "ok": true,
+              "value": 20,
+              "bytes": 3,
+              "t0_ns": 429798108800,
+              "t1_ns": 429804284700
+            },
+            "chem55": {
+              "ok": true,
+              "value": 2,
+              "bytes": 2,
+              "t0_ns": 429804319500,
+              "t1_ns": 429810392100
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                27,
+                128,
+                0,
+                0,
+                0,
+                133
+              ],
+              "bytes": 19,
+              "t0_ns": 429810398200,
+              "t1_ns": 429816860100
+            }
+          }
+        },
+        {
+          "gate": "pulse_finished",
+          "arm": "reward",
+          "delivery_accepted": true,
+          "scope": "technical pilot only"
+        }
+      ]
+    },
+    {
+      "job_id": 138779534585,
+      "events": [
+        {
+          "gate": "pulse_protocol",
+          "arm": "punishment",
+          "chemical": 50,
+          "amount": 32,
+          "scope": "delivery feasibility only; no learning claim"
+        },
+        {
+          "gate": "pulse_birth",
+          "arm": "punishment",
+          "ok": true,
+          "value": 1,
+          "bytes": 2,
+          "t0_ns": 1209785058100,
+          "t1_ns": 1209801248100
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "punishment",
+          "label": "pre0",
+          "ok": true,
+          "relative_start_us": 13337,
+          "relative_end_us": 50777,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 7,
+              "bytes": 2,
+              "t0_ns": 1294833994400,
+              "t1_ns": 1294840230300
+            },
+            "chem50": {
+              "ok": true,
+              "value": 12,
+              "bytes": 3,
+              "t0_ns": 1294840236100,
+              "t1_ns": 1294846547400
+            },
+            "chem51": {
+              "ok": true,
+              "value": 33,
+              "bytes": 3,
+              "t0_ns": 1294846552700,
+              "t1_ns": 1294852912700
+            },
+            "chem54": {
+              "ok": true,
+              "value": 19,
+              "bytes": 3,
+              "t0_ns": 1294852918200,
+              "t1_ns": 1294859044200
+            },
+            "chem55": {
+              "ok": true,
+              "value": 29,
+              "bytes": 3,
+              "t0_ns": 1294859049600,
+              "t1_ns": 1294865161800
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                27,
+                128,
+                0,
+                0,
+                0,
+                140
+              ],
+              "bytes": 19,
+              "t0_ns": 1294865166700,
+              "t1_ns": 1294871395600
+            }
+          }
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "punishment",
+          "label": "pre1",
+          "ok": true,
+          "relative_start_us": 576103,
+          "relative_end_us": 614396,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 3,
+              "bytes": 2,
+              "t0_ns": 1295396759100,
+              "t1_ns": 1295403027000
+            },
+            "chem50": {
+              "ok": true,
+              "value": 5,
+              "bytes": 2,
+              "t0_ns": 1295403032800,
+              "t1_ns": 1295409347700
+            },
+            "chem51": {
+              "ok": true,
+              "value": 30,
+              "bytes": 3,
+              "t0_ns": 1295409353000,
+              "t1_ns": 1295415954000
+            },
+            "chem54": {
+              "ok": true,
+              "value": 19,
+              "bytes": 3,
+              "t0_ns": 1295415959600,
+              "t1_ns": 1295422375800
+            },
+            "chem55": {
+              "ok": true,
+              "value": 29,
+              "bytes": 3,
+              "t0_ns": 1295422381400,
+              "t1_ns": 1295428724000
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                27,
+                128,
+                0,
+                0,
+                0,
+                140
+              ],
+              "bytes": 19,
+              "t0_ns": 1295428729500,
+              "t1_ns": 1295434975600
+            }
+          }
+        },
+        {
+          "gate": "pulse_delivery",
+          "arm": "punishment",
+          "chemical": 50,
+          "amount": 32,
+          "baseline": {
+            "ok": true,
+            "value": 5,
+            "bytes": 2,
+            "t0_ns": 1295447726400,
+            "t1_ns": 1295453738700
+          },
+          "post": {
+            "ok": true,
+            "value": 37,
+            "bytes": 3,
+            "t0_ns": 1295453745100,
+            "t1_ns": 1295459818800
+          },
+          "identity_verified": true
+        },
+        {
+          "gate": "delivery_check",
+          "arm": "punishment",
+          "delta": 32,
+          "accepted": true
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "punishment",
+          "label": "post0",
+          "ok": true,
+          "relative_start_us": 62306,
+          "relative_end_us": 99374,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 2,
+              "bytes": 2,
+              "t0_ns": 1295522155600,
+              "t1_ns": 1295528470700
+            },
+            "chem50": {
+              "ok": true,
+              "value": 16,
+              "bytes": 3,
+              "t0_ns": 1295528506800,
+              "t1_ns": 1295534542300
+            },
+            "chem51": {
+              "ok": true,
+              "value": 36,
+              "bytes": 3,
+              "t0_ns": 1295534547600,
+              "t1_ns": 1295540526500
+            },
+            "chem54": {
+              "ok": true,
+              "value": 17,
+              "bytes": 3,
+              "t0_ns": 1295540532000,
+              "t1_ns": 1295546841200
+            },
+            "chem55": {
+              "ok": true,
+              "value": 40,
+              "bytes": 3,
+              "t0_ns": 1295546846500,
+              "t1_ns": 1295552932100
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                27,
+                128,
+                0,
+                0,
+                0,
+                140
+              ],
+              "bytes": 19,
+              "t0_ns": 1295552937000,
+              "t1_ns": 1295559189100
+            }
+          }
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "punishment",
+          "label": "post1",
+          "ok": true,
+          "relative_start_us": 512993,
+          "relative_end_us": 550299,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 3,
+              "bytes": 2,
+              "t0_ns": 1295972815900,
+              "t1_ns": 1295979033200
+            },
+            "chem50": {
+              "ok": true,
+              "value": 9,
+              "bytes": 2,
+              "t0_ns": 1295979039000,
+              "t1_ns": 1295985504800
+            },
+            "chem51": {
+              "ok": true,
+              "value": 35,
+              "bytes": 3,
+              "t0_ns": 1295985510200,
+              "t1_ns": 1295991545900
+            },
+            "chem54": {
+              "ok": true,
+              "value": 17,
+              "bytes": 3,
+              "t0_ns": 1295991551500,
+              "t1_ns": 1295997885600
+            },
+            "chem55": {
+              "ok": true,
+              "value": 42,
+              "bytes": 3,
+              "t0_ns": 1295997890900,
+              "t1_ns": 1296004029500
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                0,
+                128,
+                0,
+                0,
+                0,
+                140
+              ],
+              "bytes": 18,
+              "t0_ns": 1296004034400,
+              "t1_ns": 1296010114700
+            }
+          }
+        },
+        {
+          "gate": "pulse_sample",
+          "arm": "punishment",
+          "label": "post2",
+          "ok": true,
+          "relative_start_us": 2012987,
+          "relative_end_us": 2050811,
+          "fields": {
+            "chem49": {
+              "ok": true,
+              "value": 1,
+              "bytes": 2,
+              "t0_ns": 1297472809700,
+              "t1_ns": 1297479247700
+            },
+            "chem50": {
+              "ok": true,
+              "value": 0,
+              "bytes": 2,
+              "t0_ns": 1297479281600,
+              "t1_ns": 1297485403300
+            },
+            "chem51": {
+              "ok": true,
+              "value": 16,
+              "bytes": 3,
+              "t0_ns": 1297485408900,
+              "t1_ns": 1297491626300
+            },
+            "chem54": {
+              "ok": true,
+              "value": 13,
+              "bytes": 3,
+              "t0_ns": 1297491631700,
+              "t1_ns": 1297497965200
+            },
+            "chem55": {
+              "ok": true,
+              "value": 27,
+              "bytes": 3,
+              "t0_ns": 1297498006500,
+              "t1_ns": 1297504364800
+            },
+            "decision_cell0": {
+              "ok": true,
+              "value": [
+                0,
+                27,
+                128,
+                0,
+                0,
+                0,
+                140
+              ],
+              "bytes": 19,
+              "t0_ns": 1297504370500,
+              "t1_ns": 1297510626300
+            }
+          }
+        },
+        {
+          "gate": "pulse_finished",
+          "arm": "punishment",
+          "delivery_accepted": true,
+          "scope": "technical pilot only"
+        }
+      ]
+    }
+  ],
+  "scope": "Native CAOS chemical delivery feasibility. Independent individuals; sequential queries, no controlled presynaptic context or causal learning."
+}

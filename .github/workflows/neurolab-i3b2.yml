@@ -1,0 +1,53 @@
+name: NeuroLab I3b2 — LTW phase at logical tick 128
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3b2_ltw_window.py'
+      - 'experiments/neurolab/tests/test_e09_i3b2_ltw_window.py'
+      - '.github/workflows/neurolab-i3b2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ltw-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate existing LTW128 and matched-phase contract
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3b2_ltw_window
+      - name: Run all independent 400-419 seeds and preserve full tick witness
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3b2_ltw_window --output metrics/e09i3b2.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          r=json.load(open("metrics/e09i3b2.json"))
+          assert r["seeds"]==list(range(400,420))
+          assert r["episode_count"]==80
+          assert r["base_tick"]==124
+          assert r["early_injection_tick"]==125
+          assert r["late_injection_tick"]==128
+          assert r["gate_wiring"].startswith("PASS")
+          print("Source action signs:",r["counts"])
+          print("Means LTW/STW by mode:",r["means_by_mode"])
+          for name,x in r["contrasts"].items():
+              print(name,{k:x[k] for k in ("n_seeds","paired_episodes","mean","ci95")})
+          PY
+      - name: Retain all per-tick traces also when the scientific gate is negative
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3b2-ltw128-gate
+          path: metrics/
+          if-no-files-found: warn
+          retention-days: 90

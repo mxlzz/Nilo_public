@@ -1,0 +1,32 @@
+name: NeuroLab I3c5b-H — C1 x86 local-source audit contract
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c5b_exe_static_audit.py'
+      - 'experiments/neurolab/tests/test_e09_i3c5b_exe_static_audit.py'
+      - '.github/workflows/neurolab-i3c5bh.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-auditor-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify anchored PE logic using synthetic adversarial fixture ONLY
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c5b_exe_static_audit
+      - name: Historical source is excluded by design
+        run: |
+          test ! -f Creatures.exe
+          test ! -f dad1.gen
+          echo 'Original EXE was audited separately; CI validates only parser and anchor contracts.'

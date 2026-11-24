@@ -1,0 +1,374 @@
+{
+  "advantage_over_frozen": 0.5075000000000001,
+  "interpretation": "C1-derived rules and own plasticity; no C1 biochemical fidelity",
+  "mean_frozen": 0.4925,
+  "mean_reversal": 0.3,
+  "mean_train": 1,
+  "passed": false,
+  "per_seed": [
+    {
+      "frozen": 0.5125,
+      "reversal": 0,
+      "seed": 0,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.475,
+      "reversal": 1,
+      "seed": 1,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        0
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        255,
+        0
+      ]
+    },
+    {
+      "frozen": 0.575,
+      "reversal": 1,
+      "seed": 2,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        0
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        255,
+        0
+      ]
+    },
+    {
+      "frozen": 0.55,
+      "reversal": 0,
+      "seed": 3,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.4,
+      "reversal": 0,
+      "seed": 4,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.5375,
+      "reversal": 0,
+      "seed": 5,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.5125,
+      "reversal": 0,
+      "seed": 6,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.4375,
+      "reversal": 1,
+      "seed": 7,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        0
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        255,
+        0
+      ]
+    },
+    {
+      "frozen": 0.5,
+      "reversal": 0,
+      "seed": 8,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.5,
+      "reversal": 1,
+      "seed": 9,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        0
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        255,
+        0
+      ]
+    },
+    {
+      "frozen": 0.525,
+      "reversal": 0,
+      "seed": 10,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.4875,
+      "reversal": 0,
+      "seed": 11,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.4125,
+      "reversal": 0,
+      "seed": 12,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.4375,
+      "reversal": 0,
+      "seed": 13,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.45,
+      "reversal": 0,
+      "seed": 14,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.5625,
+      "reversal": 0,
+      "seed": 15,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.475,
+      "reversal": 1,
+      "seed": 16,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        0
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        255,
+        0
+      ]
+    },
+    {
+      "frozen": 0.45,
+      "reversal": 0,
+      "seed": 17,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.4375,
+      "reversal": 0,
+      "seed": 18,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        16
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        0,
+        16
+      ]
+    },
+    {
+      "frozen": 0.6125,
+      "reversal": 1,
+      "seed": 19,
+      "train": 1,
+      "weights_original": [
+        255,
+        0,
+        0,
+        0
+      ],
+      "weights_reversed": [
+        255,
+        255,
+        255,
+        0
+      ]
+    }
+  ],
+  "protocol": "E09_02C_APRENDIZAJE_PRE_REGISTRO-v1",
+  "seeds": 20,
+  "success_reversal_seeds": 6,
+  "success_train_seeds": 20
+}

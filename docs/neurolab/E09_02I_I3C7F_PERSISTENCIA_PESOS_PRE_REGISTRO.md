@@ -1,0 +1,26 @@
+# NeuroLab I3c.7f — preregistro de auditoría post hoc de retención funcional STW/LTW
+
+**21/11/2026 · NL-AUDIT-I3c7f-v1 · antes de desarrollar auditor y pruebas, pero DESPUÉS de observar y examinar I3c.7e.** Estudio de mecanismos **descriptivo, no confirmatorio**. No crear cohortes nuevas, no modificar ni entrenar neuronas, no ampliar tamaño ni elegir ventanas que maximicen resultados.
+
+## Fuente original y su alcance
+
+[I3c.7e](E09_02I_I3C7E_RESULTADO_FACTORIAL_ATROFIA.md) comparó seis brazos sobre las semillas1600..1619, 32 bloques×8 de entrenamiento por fase A/B invertida y 16×8 de evaluación, readouts independientes `frozen` y `active_no_new_reward`. El JSON íntegro del [CI original44969153930](https://github.com/mxlzz/Nilo_public/actions/runs/44969153930), artefacto14733290218, mide **39.359.911 bytes, SHA256 `193ef109e214d33b9779611f1757d3bf23781755d38a0212778ed4269748752c`**. El array de las 20 trazas `per_seed` canónicamente serializado SHA256 `311b387817b4f0d645cf191df99ae701641c11e9329758fe64f1f71701af8f8e`. Una corrección estadística posterior completó IC95 del mismo conjunto sin cambiar `per_seed`, [CI44969437429](https://github.com/mxlzz/Nilo_public/actions/runs/44969437429) SUCCESS siete tests.
+
+**Hallazgo ya conocido (NO predicción ciega):** en segunda fase invertida, M0 ACTIVE conserva ocho dendritas por seed aunque baja a steady0.8177 contra FROZEN0.9521; M16 ACTIVE cae a0.65 y termina con 0/8 en19/20 seeds. El próximo auditor busca si la diferencia se asocia con **peso que alcanza el umbral de contribución STW≥5, LTW de conexiones vivas, chemical residual y cambios de contexto**. G05 permanece abierta.
+
+## Unidad exacta, oráculos y regla de no modificar datos
+
+- No reutilizar seeds1400..1419 de confirmación; usar **sólo** los 20 registros ya disponibles y todas sus combinaciones: dos fases (`first`, `reversed`), seis brazos D0/D16/M0/M16/FD/FM y ambos readouts. Corroborar distribución por `seed`, bloque, posición/tick, acciones, integridad de22.000+ frames y originales SHA por semilla; rechazar cohortes parcial/corrupta en análisis completo.
+- Ejecutar auditor read-only sobre el fichero original (o reejecución idéntica del `per_seed`); reportar inequívocamente **POST-tick** la cantidad de conexiones con `strength>0`, conexiones `strength>0 & STW≥5`, conexiones `strength>0 & LTW>0`, promedio STW de enlaces vivos, promedio LTW de enlaces vivos; no inferir entrada `type0/type1` real de un solo STW≥5 porque la fuente Concept puede estar apagada y hay inhibición.
+- Capturar **cuatro ventanas de evaluación predefinidas iguales** de 32 ticks dentro de cada holdout: 1–32,33–64,65–96,97–128 (sin elegir subgrupos por éxito). Por fase×modo×readout×ventana: media de precisión global; precisión por contexto con sus denominadores; media de enlaces vivos/funcional STW/LTW y fracción de frames/semillas sin señal. Registrar orden y códigos de contexto, de modo que un cambio de precisión no se atribuya falsamente a pérdida si cambia el balance de inputs.
+- Para no confundir **estado interno con acción** por el desfase temporal, el valor post-step del frame NO es la entrada usada para su acción de ese mismo tick; se puede analizar su relación descriptiva con elecciones subsiguientes, no causalidad de ese tick. El test original de `C1ContextBrain` sigue siendo único intérprete de scores.
+- Para cada semilla/brazo y fase, documentar primer tick del holdout en que (a) todas las conexiones están en fuerza0, (b) ninguna conexión viva tiene STW≥5, (c) ninguna viva tiene LTW>0, y (d) final de fase. **Advertencia:** (b)/(c) pueden comenzar ya en tick1 y revertirse; reportar **primera ocurrencia y fracción de tiempo**, sin llamarlo tiempo de muerte irreversible.
+- Comparar FROZEN vs ACTIVE desde el mismo checkpoint, priorizando M0/M16, y también D0/D16 y controles; los químicos pueden tener **arrastre residual** aunque el evaluador no emita nuevos eventos. Verificar `new_feedback_events=0` en TODOS los holdouts y registrar AUC CHEM0/1, sin asumir que la evaluación ACTIVE tiene refuerzo cero.
+- Corroborar sumas de acierto `steady` del JSON original para cada modo/fase/readout, conteos por contexto, y per-seed SHA contra fuente. Incluir total/intervalos agrupados por seed para diferencias post hoc si correspondiere, **sin corregir p-values ni probar superioridad confirmatoria**.
+
+## Puertas y salida
+
+- **G-I3c7f-INTEGRIDAD**: mismo `per_seed` SHA256 completo, 20 semillas, dos fases, seis brazos y dos readouts, 128 frames exactos por combinación y checks de integridad del JSON/umbral.
+- **G-I3c7f-DIAGNOSTICO**: informe dividido en observaciones STW/LTW, pérdida y química residual, con límites por escala y desequilibrio de estímulos. Describir qué explica datos sin reclamar mecanismo suficiente por correlación.
+- No confirmar aprendizaje G05 por este análisis, ni invalidar C1 original; **G05/G09/G00-H ABIERTAS**. No alterar genoma, CHEM, `main`, motor Nilo0.7 ni PR#103 draft.
+- **Futuro:** según lo observado, decidir si hace falta un ensayo independiente que separe **relajación STW/LTW** de **pérdida de fortaleza** con controles del mismo presupuesto, usando un mecanismo ya existente cuando sea posible; no añadirlo ahora.

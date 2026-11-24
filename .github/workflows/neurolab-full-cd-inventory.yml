@@ -1,0 +1,92 @@
+name: NeuroLab full CD inventory (read only)
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths:
+      - '.github/workflows/neurolab-full-cd-inventory.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Download to ephemeral storage and fingerprint original medium
+        env:
+          NEUROLAB_CD_FILE_ID: ${{ secrets.NEUROLAB_CD_FILE_ID }}
+        shell: bash
+        run: |
+          python -u - <<'PY'
+          import hashlib, json, os, pathlib, re, struct, sys, tempfile, urllib.request, zipfile
+          def emit(**v): print(json.dumps(v,ensure_ascii=True),flush=True)
+          fid=os.environ.pop("NEUROLAB_CD_FILE_ID","")
+          if not re.fullmatch(r"[A-Za-z0-9_-]{10,200}",fid):
+              sys.exit("BLOCKED: NEUROLAB_CD_FILE_ID is absent; no media fetched")
+          def safe_name(s):
+              return pathlib.PurePosixPath(s.replace("\\","/")).name[:180]
+          def inspect_pvd(z,i):
+              with z.open(i) as src: head=src.read(64*2448)
+              for stride,offset in [(2048,0),(2352,16),(2352,24),(2448,16),(2448,24)]:
+                  for sector in range(16,33):
+                      p=sector*stride+offset
+                      if head[p:p+7]!=b"\x01CD001\x01": continue
+                      label=head[p+40:p+72].decode("ascii","replace").strip()
+                      lba=struct.unpack_from("<I",head,p+158)[0]
+                      size=struct.unpack_from("<I",head,p+166)[0]
+                      emit(stage="iso9660_descriptor",member=safe_name(i.filename),sector_size=stride,payload_offset=offset,descriptor_sector=sector,volume_label=label,root_extent=lba,root_size=size)
+                      # Only attempt bounded, structurally plausible directory reads.
+                      if sector==16 and 0<size<=262144 and 16<=lba<=100000:
+                          buf=bytearray()
+                          with z.open(i) as src:
+                              for j in range((size+2047)//2048):
+                                  src.seek((lba+j)*stride+offset)
+                                  buf.extend(src.read(2048))
+                          records=[]; pos=0
+                          while pos<size and len(records)<100:
+                              n=buf[pos]
+                              if not n:
+                                  pos=((pos//2048)+1)*2048;continue
+                              if n<34 or pos+n>len(buf):break
+                              rec=buf[pos:pos+n]; ln=rec[32]
+                              if 33+ln>n:break
+                              raw=bytes(rec[33:33+ln]);pos+=n
+                              if raw in (b"\x00",b"\x01"):continue
+                              name=raw.decode("ascii","replace")
+                              records.append({"name":safe_name(name),"directory":bool(rec[25]&2),"size":struct.unpack_from("<I",rec,10)[0]})
+                          emit(stage="iso9660_root",records=records)
+                      return
+              emit(stage="iso9660_descriptor_not_found_in_bounded_prefix",member=safe_name(i.filename))
+          with tempfile.TemporaryDirectory(prefix="neurolab-full-cd-") as d:
+              p=pathlib.Path(d)/"media.zip"; h=hashlib.sha256();size=0
+              try:
+                  req=urllib.request.Request("https://drive.usercontent.google.com/download?id="+fid+"&export=download&confirm=t",headers={"User-Agent":"NeuroLab-CD-inventory/1"})
+                  with urllib.request.urlopen(req,timeout=90) as a,p.open("wb") as b:
+                      while chunk:=a.read(1024*1024):
+                          size+=len(chunk)
+                          if size>591498236:raise ValueError("size limit")
+                          b.write(chunk);h.update(chunk)
+              except Exception:
+                  sys.exit("FAIL: media transfer unavailable or exceeded size (details suppressed)")
+              if size!=591498236:sys.exit("FAIL: archive size differs from Drive metadata")
+              emit(stage="archive_fingerprint",size=size,sha256=h.hexdigest())
+              with zipfile.ZipFile(p) as z:
+                  files=[i for i in z.infolist() if not i.is_dir()]
+                  total=sum(i.file_size for i in files)
+                  if len(files)>20000 or total>4*1024**3:sys.exit("FAIL: archive safety bounds")
+                  if any(pathlib.PurePosixPath(i.filename).is_absolute() or ".." in pathlib.PurePosixPath(i.filename).parts or "\\" in i.filename or ":" in i.filename for i in files):
+                      sys.exit("FAIL: unsafe archive member names")
+                  if z.testzip() is not None:sys.exit("FAIL: archive CRC")
+                  emit(stage="archive_integrity",entries=len(files),uncompressed_bytes=total,crc_ok=True)
+                  candidates=[i for i in files if pathlib.PurePosixPath(i.filename).suffix.lower() in {".iso",".bin",".cue",".img",".ccd",".mdf",".z",".inf",".ini",".cab",".msi"} or safe_name(i.filename).lower() in {"setup.exe","creatures.exe","readme.txt","autorun.inf"}]
+                  emit(stage="inventory",candidates=[{"name":safe_name(i.filename),"bytes":i.file_size} for i in candidates[:100]],candidate_count=len(candidates))
+                  for i in candidates[:100]:
+                      suffix=pathlib.PurePosixPath(i.filename).suffix.lower()
+                      if suffix==".cue" and i.file_size<=65536:
+                          cue=z.read(i).decode("latin1")
+                          tracks=re.findall(r"(?im)^\s*TRACK\s+(\d+)\s+([A-Z0-9/]+)",cue)
+                          emit(stage="cue_tracks",member=safe_name(i.filename),tracks=tracks[:100])
+                      if suffix in {".iso",".bin",".img",".mdf"} and i.file_size>=32768:
+                          inspect_pvd(z,i)
+                  emit(stage="complete",scope="read-only archive inventory; no files executed, extracted to persistent storage, or uploaded")
+          PY

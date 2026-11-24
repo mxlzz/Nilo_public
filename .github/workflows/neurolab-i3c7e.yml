@@ -1,0 +1,78 @@
+name: NeuroLab I3c7e — reward pathway x atrophy 2x2 with active holdout
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c7e_loss_factorial.py'
+      - 'experiments/neurolab/tests/test_e09_i3c7e_loss_factorial.py'
+      - '.github/workflows/neurolab-i3c7e.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preregistered-factorial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Confirm exact E09g5 direct reference and no hidden loss-off in direct-loss16
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c7e_loss_factorial
+      - name: Run full 20 seed 6 arm 2 phase factorial, two holdout dynamics
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c7e_loss_factorial --output metrics/i3c7e.json | tee metrics/summary.json
+          python - <<'PY'
+          import json
+          r=json.load(open("metrics/i3c7e.json"))
+          assert r["protocol"]=="NL-EXP-I3c7e-v1"
+          assert r["seeds"]==list(range(1600,1620))
+          assert r["n_seeds"]==20
+          assert r["modes"]==["D0","D16","M0","M16","FD","FM"]
+          assert r["train_ticks_per_phase"]==256
+          assert r["holdout_ticks_per_readout"]==128
+          assert r["original_direct_gene_protocol_exact_match"]
+          assert len(r["per_seed_sha256"])==20
+          assert all(row[p]["golden_e09g5_neural_equal"]
+                     and row[p]["golden_e09g5_frozen_metrics_equal"]
+                     for row in r["per_seed"] for p in ("first","reversed"))
+          assert r["gates"]["G05"]=="OPEN"
+          # Refactoring the CI/analysis must not alter a single original
+          # neural trajectory: exact aggregate hash of ALL 20 seed traces
+          # from the first SUCCESS run #44969153930, artifact14733290218.
+          import hashlib
+          trace=json.dumps(r["per_seed"],sort_keys=True,separators=(",",":")).encode()
+          assert hashlib.sha256(trace).hexdigest()==(
+              "311b387817b4f0d645cf191df99ae701641c11e9329758fe64f1f71701af8f8e"
+          ),"underlying per-seed neural data changed"
+          for p in ("first","reversed"):
+              for m in r["modes"]:
+                  c=r["paired_contrasts"][p][
+                      "frozen_minus_active_within_each_mode"][m]
+                  assert len(c["ci95"])==2 and c["n_seeds"]==20
+          for p in ("first","reversed"):
+              print("PHASE",p,"STEADY ACTIVE",{
+                  m: r["summary"][p][m]["active_no_new_reward"]["mean_steady"]
+                  for m in r["modes"]
+              })
+              print("PHASE",p,"STEADY FROZEN",{
+                  m: r["summary"][p][m]["frozen"]["mean_steady"]
+                  for m in r["modes"]
+              })
+          PY
+          sha256sum metrics/i3c7e.json > metrics/full.sha256
+      - name: Preserve complete data, including unsuccessful modes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c7e-factorial-reward-loss-active-retention
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

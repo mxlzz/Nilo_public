@@ -1,0 +1,22 @@
+{
+  "protocol": "E09_02I_1B_POOL_DECAY_PRE_REGISTRO-v1",
+  "source": {
+    "exe_sha256": "548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7",
+    "exe_bytes": 387072
+  },
+  "static_evidence": {
+    "signatures_verified": 15,
+    "call_site": "0x4221ed",
+    "callee": "0x419e40",
+    "loop_start": "0x4221cd",
+    "loop_end": "0x4221fd",
+    "slots": 256,
+    "slot_size_bytes": 2,
+    "concentration_byte": 0,
+    "rate_byte": 1,
+    "helper_condition": "only if concentration nonzero",
+    "tick_source": "world/Norn logical counter passed to chemistry"
+  },
+  "confidence": "Verified against exact EXE bytes in local PE32 static read; synthetic CI does not read original EXE",
+  "limits": "No GEN half-life rates re-read, no runtime chemical measurements; rate parameters must be supplied explicitly."
+}

@@ -1,0 +1,4213 @@
+{
+  "schema": "neurolab.h08b.12.v1",
+  "ci_run": 45450393703,
+  "job": 138645568608,
+  "commit": "9fbd67e4b883f9da3ab4083aeab9a074c306ea1a",
+  "trace": {
+    "gate": "cycle_trace",
+    "status": "exited",
+    "elapsed_ms": 6978,
+    "started": true,
+    "events": [
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 42,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 42,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 42,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 42,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 43,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 43,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 43,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 43,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 43,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 44,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 44,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 44,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 44,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 44,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 45,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 45,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 45,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 45,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 45,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 46,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 46,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 46,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 46,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 46,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 47,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 47,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 47,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 47,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 47,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 48,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 48,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 48,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 48,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 48,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 49,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 49,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 49,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 49,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 49,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 50,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 50,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 50,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 50,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 50,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 51,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 51,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 51,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 51,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 51,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 52,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 52,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 52,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 52,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 52,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 53,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 53,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 53,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 53,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 53,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 54,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 54,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 54,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 54,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 54,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 55,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 55,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 55,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 55,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 55,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 56,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 56,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 56,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 56,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 56,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 57,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 57,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 57,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 57,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 57,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 58,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 58,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 58,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 58,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 58,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 59,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 59,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 59,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 59,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 59,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 60,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 60,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 60,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 60,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 60,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 61,
+        "component": "P2"
+      },
+      {
+        "event": "AC",
+        "object": "P1",
+        "tick": 61,
+        "component": "P2"
+      },
+      {
+        "event": "AP",
+        "object": "P1",
+        "tick": 61,
+        "component": "P2"
+      },
+      {
+        "event": "AB",
+        "object": "P2",
+        "tick": 61,
+        "component": "P1"
+      },
+      {
+        "event": "AQ",
+        "object": "P2",
+        "tick": 61,
+        "component": "P1"
+      },
+      {
+        "event": "W",
+        "object": null,
+        "tick": 0,
+        "component": null
+      },
+      {
+        "event": "ALT",
+        "object": "P3",
+        "tick": 62,
+        "component": "P2"
+      }
+    ],
+    "returncode": 0,
+    "hit_markers": [
+      "ALT"
+    ],
+    "marker_mentions": 297,
+    "limit": false,
+    "diagnostic_categories": [],
+    "errors": false,
+    "scope": "debugger-observed order only, not uninstrumented cadence"
+  },
+  "phase_samples": {
+    "gate": "phase_samples",
+    "columns": [
+      "reward49",
+      "punishment50",
+      "reinforcement51",
+      "rewardEcho54",
+      "punishEcho55",
+      "DecisionCHEM0",
+      "DecisionCHEM1",
+      "DecisionCHEM2",
+      "DecisionCHEM3",
+      "ConceptCHEM0",
+      "ConceptCHEM1"
+    ],
+    "states": [
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 42,
+        "values": [
+          113,
+          0,
+          170,
+          208,
+          0,
+          254,
+          0,
+          0,
+          0,
+          169,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 42,
+        "values": [
+          50,
+          0,
+          156,
+          208,
+          0,
+          112,
+          0,
+          0,
+          0,
+          169,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 42,
+        "values": [
+          50,
+          0,
+          156,
+          208,
+          0,
+          112,
+          0,
+          0,
+          0,
+          169,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 42,
+        "values": [
+          50,
+          0,
+          156,
+          208,
+          0,
+          112,
+          0,
+          0,
+          0,
+          169,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 43,
+        "values": [
+          50,
+          0,
+          156,
+          208,
+          0,
+          112,
+          0,
+          0,
+          0,
+          169,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 43,
+        "values": [
+          23,
+          0,
+          123,
+          193,
+          0,
+          49,
+          0,
+          0,
+          0,
+          155,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 43,
+        "values": [
+          23,
+          0,
+          123,
+          193,
+          0,
+          49,
+          0,
+          0,
+          0,
+          155,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 43,
+        "values": [
+          23,
+          0,
+          123,
+          193,
+          0,
+          49,
+          0,
+          0,
+          0,
+          155,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 44,
+        "values": [
+          23,
+          0,
+          123,
+          193,
+          0,
+          49,
+          0,
+          0,
+          0,
+          155,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 44,
+        "values": [
+          10,
+          0,
+          91,
+          169,
+          0,
+          22,
+          0,
+          0,
+          0,
+          122,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 44,
+        "values": [
+          10,
+          0,
+          91,
+          169,
+          0,
+          22,
+          0,
+          0,
+          0,
+          122,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 44,
+        "values": [
+          10,
+          0,
+          91,
+          169,
+          0,
+          22,
+          0,
+          0,
+          0,
+          122,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 45,
+        "values": [
+          10,
+          0,
+          91,
+          169,
+          0,
+          22,
+          0,
+          0,
+          0,
+          122,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 45,
+        "values": [
+          5,
+          0,
+          65,
+          143,
+          0,
+          9,
+          0,
+          0,
+          0,
+          90,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 45,
+        "values": [
+          5,
+          0,
+          65,
+          143,
+          0,
+          9,
+          0,
+          0,
+          0,
+          90,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 45,
+        "values": [
+          5,
+          0,
+          65,
+          143,
+          0,
+          9,
+          0,
+          0,
+          0,
+          90,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 46,
+        "values": [
+          5,
+          0,
+          65,
+          143,
+          0,
+          9,
+          0,
+          0,
+          0,
+          90,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 46,
+        "values": [
+          2,
+          0,
+          46,
+          120,
+          0,
+          4,
+          0,
+          0,
+          0,
+          64,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 46,
+        "values": [
+          2,
+          0,
+          46,
+          120,
+          0,
+          4,
+          0,
+          0,
+          0,
+          64,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 46,
+        "values": [
+          2,
+          0,
+          46,
+          120,
+          0,
+          4,
+          0,
+          0,
+          0,
+          64,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 47,
+        "values": [
+          2,
+          0,
+          46,
+          120,
+          0,
+          4,
+          0,
+          0,
+          0,
+          64,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 47,
+        "values": [
+          1,
+          0,
+          32,
+          100,
+          0,
+          1,
+          0,
+          0,
+          0,
+          45,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 47,
+        "values": [
+          1,
+          0,
+          32,
+          100,
+          0,
+          1,
+          0,
+          0,
+          0,
+          45,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 47,
+        "values": [
+          1,
+          0,
+          32,
+          100,
+          0,
+          1,
+          0,
+          0,
+          0,
+          45,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 48,
+        "values": [
+          1,
+          0,
+          32,
+          100,
+          0,
+          1,
+          0,
+          0,
+          0,
+          45,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 48,
+        "values": [
+          0,
+          0,
+          22,
+          83,
+          0,
+          0,
+          0,
+          0,
+          0,
+          31,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 48,
+        "values": [
+          0,
+          0,
+          22,
+          83,
+          0,
+          0,
+          0,
+          0,
+          0,
+          31,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 48,
+        "values": [
+          0,
+          0,
+          22,
+          83,
+          0,
+          0,
+          0,
+          0,
+          0,
+          31,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 49,
+        "values": [
+          0,
+          0,
+          22,
+          83,
+          0,
+          0,
+          0,
+          0,
+          0,
+          31,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 49,
+        "values": [
+          0,
+          0,
+          16,
+          69,
+          0,
+          0,
+          0,
+          0,
+          0,
+          21,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 49,
+        "values": [
+          0,
+          0,
+          16,
+          69,
+          0,
+          0,
+          0,
+          0,
+          0,
+          21,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 49,
+        "values": [
+          0,
+          0,
+          16,
+          69,
+          0,
+          0,
+          0,
+          0,
+          0,
+          21,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 50,
+        "values": [
+          0,
+          0,
+          16,
+          69,
+          0,
+          0,
+          0,
+          0,
+          0,
+          21,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 50,
+        "values": [
+          0,
+          0,
+          11,
+          57,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 50,
+        "values": [
+          0,
+          0,
+          11,
+          57,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 50,
+        "values": [
+          0,
+          0,
+          11,
+          57,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 51,
+        "values": [
+          0,
+          0,
+          11,
+          57,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 51,
+        "values": [
+          0,
+          0,
+          8,
+          48,
+          0,
+          0,
+          0,
+          0,
+          0,
+          10,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 51,
+        "values": [
+          0,
+          0,
+          8,
+          48,
+          0,
+          0,
+          0,
+          0,
+          0,
+          10,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 51,
+        "values": [
+          0,
+          0,
+          8,
+          48,
+          0,
+          0,
+          0,
+          0,
+          0,
+          10,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 52,
+        "values": [
+          0,
+          0,
+          8,
+          48,
+          0,
+          0,
+          0,
+          0,
+          0,
+          10,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 52,
+        "values": [
+          0,
+          0,
+          6,
+          40,
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 52,
+        "values": [
+          0,
+          0,
+          6,
+          40,
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 52,
+        "values": [
+          0,
+          0,
+          6,
+          40,
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 53,
+        "values": [
+          0,
+          0,
+          6,
+          40,
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 53,
+        "values": [
+          0,
+          0,
+          5,
+          34,
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 53,
+        "values": [
+          0,
+          0,
+          5,
+          34,
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 53,
+        "values": [
+          0,
+          0,
+          5,
+          34,
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 54,
+        "values": [
+          0,
+          0,
+          5,
+          34,
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 54,
+        "values": [
+          0,
+          0,
+          4,
+          28,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 54,
+        "values": [
+          0,
+          0,
+          4,
+          28,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 54,
+        "values": [
+          0,
+          0,
+          4,
+          28,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 55,
+        "values": [
+          0,
+          0,
+          4,
+          28,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 55,
+        "values": [
+          0,
+          0,
+          4,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 55,
+        "values": [
+          0,
+          0,
+          4,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 55,
+        "values": [
+          0,
+          0,
+          4,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 56,
+        "values": [
+          0,
+          0,
+          4,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 56,
+        "values": [
+          0,
+          0,
+          3,
+          20,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 56,
+        "values": [
+          0,
+          0,
+          3,
+          20,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 56,
+        "values": [
+          0,
+          0,
+          3,
+          20,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 57,
+        "values": [
+          0,
+          0,
+          3,
+          20,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 57,
+        "values": [
+          0,
+          0,
+          3,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 57,
+        "values": [
+          0,
+          0,
+          3,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 57,
+        "values": [
+          0,
+          0,
+          3,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 58,
+        "values": [
+          0,
+          0,
+          3,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 58,
+        "values": [
+          0,
+          0,
+          2,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 58,
+        "values": [
+          0,
+          0,
+          2,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 58,
+        "values": [
+          0,
+          0,
+          2,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 59,
+        "values": [
+          0,
+          0,
+          2,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 59,
+        "values": [
+          0,
+          0,
+          2,
+          13,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 59,
+        "values": [
+          0,
+          0,
+          2,
+          13,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 59,
+        "values": [
+          0,
+          0,
+          2,
+          13,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 60,
+        "values": [
+          0,
+          0,
+          2,
+          13,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 60,
+        "values": [
+          0,
+          0,
+          2,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 60,
+        "values": [
+          0,
+          0,
+          2,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 60,
+        "values": [
+          0,
+          0,
+          2,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 61,
+        "values": [
+          0,
+          0,
+          2,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 61,
+        "values": [
+          0,
+          0,
+          2,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 61,
+        "values": [
+          0,
+          0,
+          2,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 61,
+        "values": [
+          0,
+          0,
+          2,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 62,
+        "values": [
+          0,
+          0,
+          2,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 62,
+        "values": [
+          0,
+          0,
+          2,
+          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 62,
+        "values": [
+          0,
+          0,
+          2,
+          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 62,
+        "values": [
+          0,
+          0,
+          2,
+          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 63,
+        "values": [
+          0,
+          0,
+          2,
+          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 63,
+        "values": [
+          0,
+          2,
+          4,
+          8,
+          2,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 63,
+        "values": [
+          0,
+          2,
+          4,
+          8,
+          2,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 63,
+        "values": [
+          0,
+          2,
+          4,
+          8,
+          2,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 64,
+        "values": [
+          0,
+          2,
+          4,
+          8,
+          2,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 64,
+        "values": [
+          0,
+          0,
+          4,
+          7,
+          3,
+          0,
+          1,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 64,
+        "values": [
+          0,
+          0,
+          4,
+          7,
+          3,
+          0,
+          1,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 64,
+        "values": [
+          0,
+          0,
+          4,
+          7,
+          3,
+          0,
+          1,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 65,
+        "values": [
+          0,
+          0,
+          4,
+          7,
+          3,
+          0,
+          1,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 65,
+        "values": [
+          0,
+          0,
+          4,
+          7,
+          2,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 65,
+        "values": [
+          0,
+          0,
+          4,
+          7,
+          2,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 65,
+        "values": [
+          0,
+          0,
+          4,
+          7,
+          2,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 66,
+        "values": [
+          0,
+          0,
+          4,
+          7,
+          2,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 66,
+        "values": [
+          0,
+          0,
+          3,
+          6,
+          1,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 66,
+        "values": [
+          0,
+          0,
+          3,
+          6,
+          1,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 66,
+        "values": [
+          0,
+          0,
+          3,
+          6,
+          1,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 67,
+        "values": [
+          0,
+          0,
+          3,
+          6,
+          1,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 67,
+        "values": [
+          0,
+          0,
+          3,
+          6,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 67,
+        "values": [
+          0,
+          0,
+          3,
+          6,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 67,
+        "values": [
+          0,
+          0,
+          3,
+          6,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 68,
+        "values": [
+          0,
+          0,
+          3,
+          6,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 68,
+        "values": [
+          0,
+          0,
+          2,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 68,
+        "values": [
+          0,
+          0,
+          2,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 68,
+        "values": [
+          0,
+          0,
+          2,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 69,
+        "values": [
+          0,
+          0,
+          2,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 69,
+        "values": [
+          0,
+          0,
+          2,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 69,
+        "values": [
+          0,
+          0,
+          2,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 69,
+        "values": [
+          0,
+          0,
+          2,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 70,
+        "values": [
+          0,
+          0,
+          2,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 70,
+        "values": [
+          0,
+          0,
+          2,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 70,
+        "values": [
+          0,
+          0,
+          2,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 70,
+        "values": [
+          0,
+          0,
+          2,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AC",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 71,
+        "values": [
+          0,
+          0,
+          2,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AP",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 71,
+        "values": [
+          0,
+          0,
+          2,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AB",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 71,
+        "values": [
+          0,
+          0,
+          2,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "phase": "AQ",
+        "chemistry": "P1",
+        "brain": "P2",
+        "tick": 71,
+        "values": [
+          0,
+          0,
+          2,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      }
+    ]
+  },
+  "computed": {
+    "counts": {
+      "AC": 20,
+      "AP": 20,
+      "AB": 20,
+      "AQ": 20,
+      "W": 20,
+      "ALT": 20
+    },
+    "matched_complete_cycles": [
+      {
+        "tick": 43,
+        "pre": [
+          50,
+          0,
+          156,
+          208,
+          0,
+          112,
+          0,
+          0,
+          0,
+          169,
+          0
+        ],
+        "post": [
+          23,
+          0,
+          123,
+          193,
+          0,
+          49,
+          0,
+          0,
+          0,
+          155,
+          0
+        ],
+        "brain_entry": [
+          23,
+          0,
+          123,
+          193,
+          0,
+          49,
+          0,
+          0,
+          0,
+          155,
+          0
+        ],
+        "brain_exit": [
+          23,
+          0,
+          123,
+          193,
+          0,
+          49,
+          0,
+          0,
+          0,
+          155,
+          0
+        ],
+        "decision_reward_predicted": 49,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 44,
+        "pre": [
+          23,
+          0,
+          123,
+          193,
+          0,
+          49,
+          0,
+          0,
+          0,
+          155,
+          0
+        ],
+        "post": [
+          10,
+          0,
+          91,
+          169,
+          0,
+          22,
+          0,
+          0,
+          0,
+          122,
+          0
+        ],
+        "brain_entry": [
+          10,
+          0,
+          91,
+          169,
+          0,
+          22,
+          0,
+          0,
+          0,
+          122,
+          0
+        ],
+        "brain_exit": [
+          10,
+          0,
+          91,
+          169,
+          0,
+          22,
+          0,
+          0,
+          0,
+          122,
+          0
+        ],
+        "decision_reward_predicted": 22,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 45,
+        "pre": [
+          10,
+          0,
+          91,
+          169,
+          0,
+          22,
+          0,
+          0,
+          0,
+          122,
+          0
+        ],
+        "post": [
+          5,
+          0,
+          65,
+          143,
+          0,
+          9,
+          0,
+          0,
+          0,
+          90,
+          0
+        ],
+        "brain_entry": [
+          5,
+          0,
+          65,
+          143,
+          0,
+          9,
+          0,
+          0,
+          0,
+          90,
+          0
+        ],
+        "brain_exit": [
+          5,
+          0,
+          65,
+          143,
+          0,
+          9,
+          0,
+          0,
+          0,
+          90,
+          0
+        ],
+        "decision_reward_predicted": 9,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 46,
+        "pre": [
+          5,
+          0,
+          65,
+          143,
+          0,
+          9,
+          0,
+          0,
+          0,
+          90,
+          0
+        ],
+        "post": [
+          2,
+          0,
+          46,
+          120,
+          0,
+          4,
+          0,
+          0,
+          0,
+          64,
+          0
+        ],
+        "brain_entry": [
+          2,
+          0,
+          46,
+          120,
+          0,
+          4,
+          0,
+          0,
+          0,
+          64,
+          0
+        ],
+        "brain_exit": [
+          2,
+          0,
+          46,
+          120,
+          0,
+          4,
+          0,
+          0,
+          0,
+          64,
+          0
+        ],
+        "decision_reward_predicted": 4,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 47,
+        "pre": [
+          2,
+          0,
+          46,
+          120,
+          0,
+          4,
+          0,
+          0,
+          0,
+          64,
+          0
+        ],
+        "post": [
+          1,
+          0,
+          32,
+          100,
+          0,
+          1,
+          0,
+          0,
+          0,
+          45,
+          0
+        ],
+        "brain_entry": [
+          1,
+          0,
+          32,
+          100,
+          0,
+          1,
+          0,
+          0,
+          0,
+          45,
+          0
+        ],
+        "brain_exit": [
+          1,
+          0,
+          32,
+          100,
+          0,
+          1,
+          0,
+          0,
+          0,
+          45,
+          0
+        ],
+        "decision_reward_predicted": 1,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 48,
+        "pre": [
+          1,
+          0,
+          32,
+          100,
+          0,
+          1,
+          0,
+          0,
+          0,
+          45,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          22,
+          83,
+          0,
+          0,
+          0,
+          0,
+          0,
+          31,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          22,
+          83,
+          0,
+          0,
+          0,
+          0,
+          0,
+          31,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          22,
+          83,
+          0,
+          0,
+          0,
+          0,
+          0,
+          31,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 49,
+        "pre": [
+          0,
+          0,
+          22,
+          83,
+          0,
+          0,
+          0,
+          0,
+          0,
+          31,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          16,
+          69,
+          0,
+          0,
+          0,
+          0,
+          0,
+          21,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          16,
+          69,
+          0,
+          0,
+          0,
+          0,
+          0,
+          21,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          16,
+          69,
+          0,
+          0,
+          0,
+          0,
+          0,
+          21,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 50,
+        "pre": [
+          0,
+          0,
+          16,
+          69,
+          0,
+          0,
+          0,
+          0,
+          0,
+          21,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          11,
+          57,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          11,
+          57,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          11,
+          57,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 51,
+        "pre": [
+          0,
+          0,
+          11,
+          57,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          8,
+          48,
+          0,
+          0,
+          0,
+          0,
+          0,
+          10,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          8,
+          48,
+          0,
+          0,
+          0,
+          0,
+          0,
+          10,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          8,
+          48,
+          0,
+          0,
+          0,
+          0,
+          0,
+          10,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 52,
+        "pre": [
+          0,
+          0,
+          8,
+          48,
+          0,
+          0,
+          0,
+          0,
+          0,
+          10,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          6,
+          40,
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          6,
+          40,
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          6,
+          40,
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 53,
+        "pre": [
+          0,
+          0,
+          6,
+          40,
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          5,
+          34,
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          5,
+          34,
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          5,
+          34,
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 54,
+        "pre": [
+          0,
+          0,
+          5,
+          34,
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          4,
+          28,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          4,
+          28,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          4,
+          28,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 55,
+        "pre": [
+          0,
+          0,
+          4,
+          28,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          4,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          4,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          4,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 56,
+        "pre": [
+          0,
+          0,
+          4,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          3,
+          20,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          3,
+          20,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          3,
+          20,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 57,
+        "pre": [
+          0,
+          0,
+          3,
+          20,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          3,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          3,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          3,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 58,
+        "pre": [
+          0,
+          0,
+          3,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          2,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          2,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          2,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 59,
+        "pre": [
+          0,
+          0,
+          2,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          2,
+          13,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          2,
+          13,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          2,
+          13,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 60,
+        "pre": [
+          0,
+          0,
+          2,
+          13,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          2,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          2,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          2,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      },
+      {
+        "tick": 61,
+        "pre": [
+          0,
+          0,
+          2,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "post": [
+          0,
+          0,
+          2,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "brain_entry": [
+          0,
+          0,
+          2,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "brain_exit": [
+          0,
+          0,
+          2,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "decision_reward_predicted": 0,
+        "decision_reward_match": true,
+        "decision_punish_match": true,
+        "concept_reinforcement_match": true,
+        "post_equals_brain_entry": true,
+        "brain_entry_equals_exit": true
+      }
+    ]
+  },
+  "scope": "exploratory comparison to pre-existing static receptor formula; prechem and postchem measured at call boundaries, not individual emitter/receptor/reaction boundaries. Only intersection of complete event and phase sequences accepted; no clock claim."
+}

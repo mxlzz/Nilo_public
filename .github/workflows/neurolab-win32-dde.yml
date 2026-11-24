@@ -1,0 +1,107 @@
+name: NeuroLab native Win32 DDE feasibility
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths: ['.github/workflows/neurolab-win32-dde.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  win32-dde:
+    runs-on: windows-2022
+    timeout-minutes: 6
+    steps:
+      - name: Compile and run a synthetic x86 DDE request (no proprietary inputs)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $src = @'
+          using System;
+          using System.Text;
+          using System.Threading;
+          using System.Runtime.InteropServices;
+          class Probe {
+            delegate IntPtr Callback(uint type,uint fmt,IntPtr conv,IntPtr h1,IntPtr h2,IntPtr data,UIntPtr a,UIntPtr b);
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)] static extern uint DdeInitializeW(ref uint id,Callback cb,uint flags,uint reserved);
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)] static extern IntPtr DdeCreateStringHandleW(uint id,string s,int cp);
+            [DllImport("user32.dll")] static extern bool DdeFreeStringHandle(uint id,IntPtr h);
+            [DllImport("user32.dll")] static extern IntPtr DdeNameService(uint id,IntPtr name,IntPtr reserved,uint cmd);
+            [DllImport("user32.dll")] static extern IntPtr DdeConnect(uint id,IntPtr service,IntPtr topic,IntPtr ctx);
+            [DllImport("user32.dll")] static extern bool DdeDisconnect(IntPtr c);
+            [DllImport("user32.dll")] static extern uint DdeGetLastError(uint id);
+            [DllImport("user32.dll")] static extern IntPtr DdeClientTransaction(IntPtr data,uint len,IntPtr conv,IntPtr item,uint fmt,uint type,uint timeout,out uint result);
+            [DllImport("user32.dll")] static extern IntPtr DdeCreateDataHandle(uint id,byte[] data,uint len,uint offset,IntPtr item,uint fmt,uint flags);
+            [DllImport("user32.dll")] static extern uint DdeGetData(IntPtr h,byte[] data,uint max,uint offset);
+            [DllImport("user32.dll")] static extern bool DdeFreeDataHandle(IntPtr h);
+            [DllImport("user32.dll")] static extern bool DdeUninitialize(uint id);
+            [StructLayout(LayoutKind.Sequential)] struct MSG { public IntPtr hwnd; public uint msg; public UIntPtr wParam; public IntPtr lParam; public uint time; public int x,y; }
+            [DllImport("user32.dll")] static extern bool PeekMessage(out MSG msg,IntPtr hwnd,uint min,uint max,uint remove);
+            [DllImport("user32.dll")] static extern bool TranslateMessage(ref MSG msg);
+            [DllImport("user32.dll")] static extern IntPtr DispatchMessage(ref MSG msg);
+            static ManualResetEvent ready=new ManualResetEvent(false), stop=new ManualResetEvent(false);
+            static uint sid=0;
+            static Exception serverError;
+            static Callback serverCb=OnServer, clientCb=OnClient;
+            static IntPtr OnClient(uint t,uint f,IntPtr c,IntPtr h1,IntPtr h2,IntPtr d,UIntPtr a,UIntPtr b){return IntPtr.Zero;}
+            static IntPtr OnServer(uint t,uint f,IntPtr c,IntPtr h1,IntPtr h2,IntPtr d,UIntPtr a,UIntPtr b){
+              if(t==0x1062) return new IntPtr(1);
+              if(t==0x20B0 && f==1){
+                byte[] data=Encoding.ASCII.GetBytes("NEUROLAB-DDE-OK\0");
+                return DdeCreateDataHandle(sid,data,(uint)data.Length,0,h2,1,0);
+              }
+              return IntPtr.Zero;
+            }
+            static void Check(bool yes,string message){if(!yes)throw new Exception(message);}
+            static void Server(){
+              IntPtr service=IntPtr.Zero;
+              try {
+                Check(DdeInitializeW(ref sid,serverCb,0,0)==0,"server initialize");
+                service=DdeCreateStringHandleW(sid,"NeuroLabSynthetic",1200);
+                Check(service!=IntPtr.Zero,"server string");
+                Check(DdeNameService(sid,service,IntPtr.Zero,1)!=IntPtr.Zero,"server register");
+                ready.Set();
+                MSG m;
+                while(!stop.WaitOne(5)){
+                  while(PeekMessage(out m,IntPtr.Zero,0,0,1)){TranslateMessage(ref m);DispatchMessage(ref m);}
+                }
+              } catch(Exception e){serverError=e;ready.Set();}
+              finally{
+                if(service!=IntPtr.Zero){DdeNameService(sid,service,IntPtr.Zero,2);DdeFreeStringHandle(sid,service);}
+                if(sid!=0)DdeUninitialize(sid);
+              }
+            }
+            static void Main(){
+              Check(IntPtr.Size==4,"not x86");
+              Console.WriteLine("32-bit process on "+Environment.OSVersion+"; session "+System.Diagnostics.Process.GetCurrentProcess().SessionId);
+              Thread thread=new Thread(Server);thread.IsBackground=true;thread.SetApartmentState(ApartmentState.STA);thread.Start();
+              uint cid=0;
+              IntPtr service=IntPtr.Zero,topic=IntPtr.Zero,item=IntPtr.Zero,conv=IntPtr.Zero,h=IntPtr.Zero;
+              try {
+                Check(ready.WaitOne(15000),"server timeout");if(serverError!=null)throw serverError;
+                Check(DdeInitializeW(ref cid,clientCb,0x10,0)==0,"client initialize");
+                service=DdeCreateStringHandleW(cid,"NeuroLabSynthetic",1200);
+                topic=DdeCreateStringHandleW(cid,"Probe",1200);
+                item=DdeCreateStringHandleW(cid,"SyntheticItem",1200);
+                conv=DdeConnect(cid,service,topic,IntPtr.Zero);Check(conv!=IntPtr.Zero,"connect error "+DdeGetLastError(cid));
+                uint result;
+                h=DdeClientTransaction(IntPtr.Zero,0,conv,item,1,0x20B0,5000,out result);Check(h!=IntPtr.Zero,"request error "+DdeGetLastError(cid));
+                uint n=DdeGetData(h,null,0,0);Check(n>0 && n<128,"data length");
+                byte[] buf=new byte[n];DdeGetData(h,buf,n,0);
+                Check(Encoding.ASCII.GetString(buf).TrimEnd('\0')=="NEUROLAB-DDE-OK","response mismatch");
+                Console.WriteLine("PASS: synthetic native x86 Win32 DDE request and response");
+              } finally {
+                if(h!=IntPtr.Zero)DdeFreeDataHandle(h);if(conv!=IntPtr.Zero)DdeDisconnect(conv);
+                foreach(IntPtr v in new[]{service,topic,item})if(v!=IntPtr.Zero)DdeFreeStringHandle(cid,v);
+                if(cid!=0)DdeUninitialize(cid);stop.Set();thread.Join(5000);
+              }
+            }
+          }
+          '@
+          $file = Join-Path $env:RUNNER_TEMP 'DdeProbe.cs'
+          $exe = Join-Path $env:RUNNER_TEMP 'DdeProbe.exe'
+          Set-Content -LiteralPath $file -Value $src -Encoding UTF8
+          $csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe'
+          & $csc /nologo /platform:x86 /target:exe "/out:$exe" $file
+          if ($LASTEXITCODE -ne 0) { throw 'Compilation failed' }
+          & $exe
+          if ($LASTEXITCODE -ne 0) { throw 'DDE probe failed' }

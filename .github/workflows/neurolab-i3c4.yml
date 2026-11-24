@@ -1,0 +1,61 @@
+name: NeuroLab I3c4 — matched chemical B/Y/P/F adaptation trial
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c4_yoked_metabolic.py'
+      - 'experiments/neurolab/tests/test_e09_i3c4_yoked_metabolic.py'
+      - '.github/workflows/neurolab-i3c4.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  yoked-comparison:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify original I3 chemistry and full Y/F yoking on sample
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c4_yoked_metabolic
+      - name: Run independent cohort 900 through 919 for both mappings
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c4_yoked_metabolic --output metrics/e09i3c4.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          data=json.load(open("metrics/e09i3c4.json",encoding="utf-8"))
+          assert data["seeds"]==list(range(900,920))
+          assert data["n_seeds"]==20
+          assert data["n_contacts"]==4 and data["n_units"]==6
+          assert data["n_train_trials_per_phase"]==60
+          assert data["n_holdout_trials_per_phase"]==36
+          assert data["all_B_Y_F_chemical_trajectories_identical"]
+          assert data["all_pre_migration_neural_paths_identical"]
+          assert data["gate_G05_G09"].startswith("NOT EVALUATED")
+          assert data["migration_acceptances"]["B"]==0
+          assert data["migration_acceptances"]["F"]==0
+          print("Holdout means (first/reversed):",data["mean_holdout_accuracy"])
+          print("Accepted Type1 migrations:",data["migration_acceptances"])
+          print("Seeds with any Y rewiring:",data["seeds_with_Y_migration"])
+          for phase,cts in data["contrasts"].items():
+              for name,x in cts.items():
+                  print(phase,name,{k:x[k] for k in (
+                      "paired_episodes","n_seeds","mean","ci95"
+                  )})
+          PY
+      - name: Preserve full per-seed evidence, even negative learning/migration
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c4-chemical-yoked-four-arm
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

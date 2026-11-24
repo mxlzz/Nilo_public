@@ -1,0 +1,58 @@
+name: NeuroLab E09 TAB1 — E06 exact fair tabular equivalence
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_pair_tabular_equivalence.py'
+      - 'experiments/neurolab/tests/test_e09_pair_tabular_equivalence.py'
+      - '.github/workflows/neurolab-e09-tab1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fair-pair-table:
+    name: Independent exact E06 pair-table equivalence
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Independent tests and edge-case checks
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_pair_tabular_equivalence
+      - name: Replay original E06 training, holdout and diagnostic reversal
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_pair_tabular_equivalence > metrics/e09_tab1.json
+          python - <<'PY'
+          import json
+          p='metrics/e09_tab1.json'
+          d=json.load(open(p))
+          assert d["protocol"]=="E09.05-TAB1-v1"
+          assert d["seeds"]==list(range(20))
+          assert d["n_seeds"]==20
+          assert d["all_equal"] and d["discrepancies"]==0
+          assert d["domain_comparisons"]==38720
+          assert d["original_holdout_comparisons"]==1600
+          assert d["learning_updates"]==4800
+          assert not d["confirmatory_cohort_used"]
+          print("E09 TAB1 equivalence",{
+              k:d[k] for k in ("n_seeds","domain_comparisons",
+                 "original_holdout_comparisons","learning_updates","discrepancies")
+          })
+          PY
+          sha256sum metrics/e09_tab1.json > metrics/full.sha256
+      - name: Preserve JSON results and hash
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-e09-tab1-fair-tabular-exactness
+          path: metrics/
+          if-no-files-found: warn
+          retention-days: 90

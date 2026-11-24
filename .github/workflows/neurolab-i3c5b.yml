@@ -1,0 +1,48 @@
+name: NeuroLab I3c5b — read-only strength-zero audit
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c5b_strength0_audit.py'
+      - 'experiments/neurolab/tests/test_e09_i3c5b_strength0_audit.py'
+      - '.github/workflows/neurolab-i3c5b.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exhausted-contact-observer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Inspect strength-zero signal and numeric transition without mutations
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c5b_strength0_audit
+      - name: Archive model-only result and historical limitation
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c5b_strength0_audit --output metrics/e09i3c5b.json | tee metrics/summary.json
+          python - <<'PY'
+          import json
+          r=json.load(open('metrics/e09i3c5b.json'))
+          assert r['protocol']=='NL-EXP-I3c5b-v1'
+          assert r['model_strength0_transmits_signal']
+          assert 'NOT VERIFIED' in r['historical_strength0_input_gate']
+          assert r['G05_G09_G00H']=='OPEN'
+          PY
+          sha256sum metrics/e09i3c5b.json > metrics/artifact.sha256
+      - name: Preserve model audit, not a historical C1 proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c5b-strength0-readonly
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

@@ -1,0 +1,80 @@
+{
+  "genome_sha256": "e2bb4ccf6a4081a128c6c9ffc6eb233452d416717ceef47e78820ca3a152ddd4",
+  "receptor_count": 43,
+  "brain_receptors": {
+    "88": {
+      "organ": 0,
+      "lobe": 6,
+      "locus": 13,
+      "chemical": 49,
+      "threshold": 0,
+      "nominal": 0,
+      "gain": 255,
+      "flags": 0
+    },
+    "89": {
+      "organ": 0,
+      "lobe": 6,
+      "locus": 14,
+      "chemical": 50,
+      "threshold": 0,
+      "nominal": 0,
+      "gain": 255,
+      "flags": 0
+    },
+    "126": {
+      "organ": 0,
+      "lobe": 8,
+      "locus": 14,
+      "chemical": 52,
+      "threshold": 0,
+      "nominal": 4,
+      "gain": 255,
+      "flags": 1
+    },
+    "127": {
+      "organ": 0,
+      "lobe": 6,
+      "locus": 15,
+      "chemical": 53,
+      "threshold": 0,
+      "nominal": 16,
+      "gain": 255,
+      "flags": 1
+    },
+    "128": {
+      "organ": 0,
+      "lobe": 6,
+      "locus": 16,
+      "chemical": 70,
+      "threshold": 0,
+      "nominal": 16,
+      "gain": 255,
+      "flags": 1
+    },
+    "129": {
+      "organ": 0,
+      "lobe": 8,
+      "locus": 13,
+      "chemical": 51,
+      "threshold": 0,
+      "nominal": 0,
+      "gain": 255,
+      "flags": 0
+    }
+  },
+  "example_pool": {
+    "49": 12,
+    "50": 12,
+    "52": 5,
+    "53": 12
+  },
+  "locus_values": {
+    "88": 11,
+    "89": 11,
+    "126": 0,
+    "127": 5,
+    "128": 16,
+    "129": 0
+  }
+}

@@ -1,0 +1,37 @@
+name: NeuroLab NR01 — fixed 20-world development cohort (NO confirmation)
+
+on:
+  push:
+    branches: ['docs/neurolab-*']
+    paths: ['.github/workflows/neurolab-nr01-development.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preregistered-development:
+    name: NR01.04-A development-only worlds23000-23019
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install existing pinned libraries
+        run: python -m pip install --disable-pip-version-check 'artlib==0.1.12' 'scikit-learn==1.9.1'
+      - name: Pure toy-software analysis invariants
+        run: python -m unittest experiments.neurolab.tests.test_nr01_dev_analysis -v
+      - name: Execute frozen development cohort; do NOT use confirmation seeds
+        run: python -m experiments.neurolab.nr01_development
+      - name: Preserve full results and per-condition incremental logs even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nr01-development-23000-23019
+          path: |
+            metrics/nr01_development_23000_23019.json
+            metrics/nr01_development_23000_23019.jsonl
+          if-no-files-found: warn
+          retention-days: 90

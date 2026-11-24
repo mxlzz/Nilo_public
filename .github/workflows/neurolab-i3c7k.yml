@@ -1,0 +1,72 @@
+name: NeuroLab I3c7k — posthoc STW content to LTW capacity oracle
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c7k_transfer_stw_to_ltw.py'
+      - 'experiments/neurolab/tests/test_e09_i3c7k_transfer_stw_to_ltw.py'
+      - 'docs/neurolab/resultados/e09i3c7g_fuente_huellas.json'
+      - '.github/workflows/neurolab-i3c7k.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fixed-c1-ltw-sufficiency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check source SHA, copied/swap magnitude, frozen semantic identity
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c7k_transfer_stw_to_ltw
+      - name: Reconstruct original twenty I3c7g long checkpoints then change LTW only
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c7k_transfer_stw_to_ltw --output metrics/i3c7k.json | tee metrics/summary.json
+          python - <<'PY'
+          import json
+          d=json.load(open("metrics/i3c7k.json"))
+          assert d["protocol"]=="NL-AUDIT-I3c7k-v1"
+          assert d["source_protocol"]=="NL-EXP-I3c7g-v1"
+          assert d["seeds"]==list(range(1700,1720))
+          assert d["n_seeds"]==20
+          assert d["all_frozen_action_traces_identical"]
+          assert d["STW_original_checkpoint_reused"]
+          assert d["gates"]["G05"]=="OPEN"
+          assert len(d["per_seed_sha256"])==20
+          for r in d["per_seed"]:
+              assert r["frozen_actions_identical_under_all_LTW_variants"]
+              s=r["branches"]["S"]["initial"]
+              c=r["branches"]["C"]["initial"]
+              x=r["branches"]["X"]["initial"]
+              assert s["stw"]==c["stw"]==x["stw"]
+              assert s["strengths"]==c["strengths"]==x["strengths"]
+              assert c["ltw"]==s["stw"]
+              assert x["ltw"]==[s["stw"][(i+4)%8] for i in range(8)]
+              for mode in ("S","C","X"):
+                  assert r["branches"][mode]["active"]["new_feedback_events"]==0
+                  assert r["branches"][mode]["frozen"]["new_feedback_events"]==0
+                  assert r["branches"][mode]["frozen"]["steady"]==r["branches"]["S"]["frozen"]["steady"]
+          print("ORACLE CORE RESULTS",{
+              mode:d["summary"][mode]["active_steady"]
+              for mode in ("S","C","X")
+          })
+          print("PAIRED",d["paired_contrasts"])
+          print("CAPACITY GATE",d["precommitted_capacity_gate"])
+          PY
+          sha256sum metrics/i3c7k.json > metrics/full.sha256
+      - name: Retain all original and oracle outcomes for independent audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c7k-stw-content-instant-ltw-capacity
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

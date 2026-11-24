@@ -1,0 +1,52 @@
+name: NeuroLab I3c4b — original-hash LTW128 gate audit
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c4b_ltw_gate_observer.py'
+      - 'experiments/neurolab/tests/test_e09_i3c4b_ltw_gate_observer.py'
+      - '.github/workflows/neurolab-i3c4b.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  original-gate-witness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check frozen seed hashes and original C1 synapse transition witness
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c4b_ltw_gate_observer
+      - name: Reproduce twenty original seeds and inspect gates of rate128
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c4b_ltw_gate_observer --output metrics/e09i3c4b.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          r=json.load(open("metrics/e09i3c4b.json",encoding="utf-8"))
+          assert r["seeds"]==list(range(900,920))
+          assert r["gate_period"]==128
+          assert r["all_original_per_seed_sha_verified"]
+          assert r["G05_G09"]=="OPEN"
+          for mode in ("B","Y","P","F"):
+              for phase in ("first","reversed"):
+                  x=r["totals"][mode][phase]
+                  assert x["synapse_samples"]==4*x["gate_ticks"]
+                  print(mode,phase,x)
+          PY
+      - name: Preserve exact original-hash per-slot gate traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c4b-ltw-gate-witness
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

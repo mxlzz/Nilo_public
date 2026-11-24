@@ -1,0 +1,54 @@
+name: NeuroLab I3c6b — endogenous chemical quantization threshold
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c6b_feedback_threshold.py'
+      - 'experiments/neurolab/tests/test_e09_i3c6b_feedback_threshold.py'
+      - '.github/workflows/neurolab-i3c6b.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  original-gene-numeric-compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check existing original chemical and class topology functions
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c6b_feedback_threshold
+      - name: Save the full 0..16 two-pair response curves
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c6b_feedback_threshold --output metrics/i3c6b_curve.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          r=json.load(open('metrics/i3c6b_curve.json'))
+          assert r['protocol']=='NL-EXP-I3c6b-v1'
+          assert r['first_locus_count_that_modifies_chem2_or_3']==3
+          assert r['topology']['fixed_eight_synapses']['max_class_loose']==2
+          assert r['topology']['dynamic_four_synapses']['max_class_loose']==1
+          assert r['gates']['G05']=='OPEN'
+          for pair in r['pairs'].values():
+              assert pair['samples'][2]['receptor_value']==16
+              assert pair['samples'][3]['receptor_value']==15
+          print('GENETIC PATH FIRST EFFECTIVE LOOSE COUNT:',3)
+          print('REDUCED CLASS CAPACITIES:',2,1)
+          PY
+          sha256sum metrics/i3c6b_curve.json > metrics/artifact.sha256
+      - name: Preserve original negative and positive outcomes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c6b-genetic-chemical-threshold
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

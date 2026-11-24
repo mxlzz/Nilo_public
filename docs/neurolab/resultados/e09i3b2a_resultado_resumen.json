@@ -1,0 +1,56 @@
+{
+  "protocol": "E09_02I_I3B2A_FORTALEZA_PRE_REGISTRO-v1",
+  "source": {
+    "run_id": 44957588818,
+    "conclusion": "success",
+    "artifact_id": 14728237546,
+    "artifact_name": "neurolab-i3b2a-strength-clearing-witness",
+    "retention_expiry": "2027-02-19"
+  },
+  "cohort": {
+    "seeds": "400..419",
+    "n_episodes": 80,
+    "replayed_previous_I3b2": true,
+    "synapses_per_tick": 8,
+    "post_target_ticks": 12,
+    "branches": 5
+  },
+  "E1": {
+    "LTW_128": 118,
+    "loss_strength_events": 114,
+    "loss_at_tick130": 98,
+    "loss_at_tick135": 16,
+    "ltw_erased": 114,
+    "LTW_136": 4
+  },
+  "E4": {
+    "LTW_128": 314,
+    "loss_strength_events": 44,
+    "loss_at_tick130": 14,
+    "loss_at_tick135": 30,
+    "ltw_erased": 44,
+    "LTW_136": 270
+  },
+  "L1": {
+    "LTW_128": 0,
+    "loss_strength_events": 186,
+    "ltw_erased": 0,
+    "LTW_136": 0
+  },
+  "L4": {
+    "LTW_128": 0,
+    "loss_strength_events": 12,
+    "ltw_erased": 0,
+    "LTW_136": 0
+  },
+  "N": {
+    "LTW_128": 0,
+    "loss_strength_events": 0,
+    "ltw_erased": 0,
+    "LTW_136": 0
+  },
+  "conclusion": "All out-of-gate LTW losses in this reduced model are explained exactly by strength.lost_connection resetting dendrites; historical post-atrophy migration is NOT connected.",
+  "gate_witness": true,
+  "gate_G05": false,
+  "gate_G09": false
+}

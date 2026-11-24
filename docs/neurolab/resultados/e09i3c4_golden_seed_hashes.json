@@ -1,0 +1,33 @@
+{
+  "protocol": "I3c4 corrected original per-seed gold hashes",
+  "source": {
+    "workflow_id": 44960526007,
+    "artifact_id": 14729775966,
+    "artifact_name": "neurolab-i3c4-chemical-yoked-four-arm",
+    "file": "e09i3c4.json"
+  },
+  "hash_canonicalization": "sha256(json.dumps(row,sort_keys=True,separators=(',',':'),ensure_ascii=True).encode('utf-8'))",
+  "seeds": {
+    "900": "3bbfc68b71d5dcb4cdfe23b4d4480165e6ed717d9cc6a322f304f4f138a71e41",
+    "901": "ac2ddca5065476d8e0135334d5568a70192b786fd51c98e055cc8a82d42be1a7",
+    "902": "d8a38896f51ac3e77c20eff41d51faad8231afa0b0ef4792d8a06597fdd35792",
+    "903": "56f603ec0925454c7b3bb39d8b8d208bebc7f761d124edc9ab62b3b6e92e1f8b",
+    "904": "70ab53e48a03666cf73c628fe007baf64748e1ff1aa6d6780b603df147bc015b",
+    "905": "251f0415cde05122a034b199ffc3aa0fb87195da93579f5456c027d625b69852",
+    "906": "a2d1f1eb8df2ce71e456d2cae77347adc194697f0cc116bd3d575a35805bd7f2",
+    "907": "b2876941a49b20ac24d67ea2625aa4c9420b830795b4498b2789ea4998d943b5",
+    "908": "063b381b5dc3e97a19be6afc2cd0a03362a22e8517dfa6ac67e686b013bcedb1",
+    "909": "0c69d74bf891c1d51aeabad3d60eabc7f350044743374b94d99bee144ce8d85f",
+    "910": "9b60a1e69cfbb9b4f505703bac27e269d16aa962892efe0e4687a2e12f80e140",
+    "911": "e09697aa24b7ba75b67751404b79ef17fdb53b29f9f8b61662dc325d69e1aadf",
+    "912": "38d15bc78d0372bcc7f038446d7a44eaff5d9b5a830987bbf02f88c2e7c87be8",
+    "913": "d6e9c2fc6780b3eb0dd7b07adc013d61442a066204dcb443badeea5bc6433474",
+    "914": "a9260df544c8a93e0ae936963652b11ca2d88d137c1e946c03b2fb529e6a2015",
+    "915": "07fff856936049d446134eb516b2915452a90de117bb6dc8b153a4f3a678f73b",
+    "916": "a12d891195fda080447fe08ceeb17c3297aef3b8ab736324529a47d5d53a154d",
+    "917": "ca39a262191ac6bb76e9368d41a0f72e8c840a88027d5a689c115610bb288028",
+    "918": "c1fcd800be2ba2aa7fc3e2774ef0f07071e8f903852750d7870146e3d29dc492",
+    "919": "9a6155561b4bdd8f9535352e5f4635ce20f500690abeb53fbba885afd13e2bff"
+  },
+  "limitations": "This is the preregistered experiment replay baseline for posthoc observer; not an independent outcome cohort."
+}

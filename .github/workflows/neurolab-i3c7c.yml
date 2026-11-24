@@ -1,0 +1,65 @@
+name: NeuroLab I3c7c — original full-trace extinction forensic replay
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c7c_extinction_audit.py'
+      - 'experiments/neurolab/tests/test_e09_i3c7c_extinction_audit.py'
+      - '.github/workflows/neurolab-i3c7c.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  full-replay-and-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Fail on drifted seed SHA, schema, effects or full input provenance
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c7c_extinction_audit
+      - name: Independently replay all twenty original I3c7b development seeds
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c7b_paired_signal --output metrics/i3c7b_exact_replay.json > metrics/original_run_summary.json
+          python - <<'PY'
+          import hashlib
+          data=open("metrics/i3c7b_exact_replay.json","rb").read()
+          actual=hashlib.sha256(data).hexdigest()
+          expected="2660ba63b866abfff469d754ff88cab8941b215b1078a652ddc52dfca0cce8a6"
+          assert actual==expected,(actual,expected)
+          print("FULL 12MB ORIGINAL SHA EXACT MATCH:",actual)
+          PY
+      - name: Produce read-only extinction timeline and credit-source report
+        run: |
+          python -m experiments.neurolab.e09_i3c7c_extinction_audit --input metrics/i3c7b_exact_replay.json --output metrics/i3c7c_forensic.json > metrics/forensic_stdout.json
+          python - <<'PY'
+          import json
+          r=json.load(open("metrics/i3c7c_forensic.json"))
+          assert r["source_original_json_sha256"]=="2660ba63b866abfff469d754ff88cab8941b215b1078a652ddc52dfca0cce8a6"
+          assert r["n_seeds"]==20 and r["n_mapping_coordinates"]==80
+          assert r["timeline"]["C"]["7"]["any_live_stw_at_least5"]==60
+          assert r["timeline"]["C"]["10"]["all_eight_strength_zero"]==80
+          assert r["timeline"]["C"]["11"]["any_type_positive_pre_tick"]==0
+          assert r["readout_transitions"]["C"]["9"]["neutral_wrong_to_right"]==20
+          assert r["readout_transitions"]["C"]["9"]["neutral_right_to_wrong"]==2
+          assert r["readout_transitions"]["C"]["16"]["accuracy_delta_vs_neutral"]==0
+          assert r["G05_G09_G00H"]=="OPEN"
+          print("EXACT ORIGINAL REPLAY VERIFIED; ALL LEARNING GATES STILL OPEN")
+          PY
+          sha256sum metrics/*.json > metrics/file_manifest.sha256
+      - name: Preserve full replay and all negative/positive outcomes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c7c-exact-replay-and-extinction
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

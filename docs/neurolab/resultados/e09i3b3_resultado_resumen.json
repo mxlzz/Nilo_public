@@ -1,0 +1,32 @@
+{
+  "protocol": "E09_02I_I3B3_MIGRACION_VIABILIDAD_PRE_REGISTRO-v1",
+  "source": {
+    "run_id": 44957812410,
+    "conclusion": "success",
+    "artifact_id": 14728317633,
+    "artifact_name": "neurolab-i3b3-migration-feasibility",
+    "retention_expiry": "2027-02-19"
+  },
+  "topology": {
+    "n_units": 6,
+    "n_decision_dendrites": 8,
+    "concept_sources_per_decision_class": 2,
+    "dendrites_per_decision_class": 2,
+    "genetic_migration_type": 1
+  },
+  "two_source": {
+    "trials": 8,
+    "rejections_duplicate_source": 8,
+    "accepted": 0
+  },
+  "three_source_positive_control": {
+    "trials": 4,
+    "accepted": 4,
+    "only_fixture": true
+  },
+  "dynamic_source_pointer_in_brain": false,
+  "gate_structural": true,
+  "gate_learning_G05": "open",
+  "gate_integrated_G09": "open",
+  "interpretation": "No free alternative within saturated reduced brain; no conclusion about full C1 game."
+}

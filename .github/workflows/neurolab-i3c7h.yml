@@ -1,0 +1,82 @@
+name: NeuroLab I3c7h — contingent vs permuted chemical feedback
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c7h_contingency_permutation.py'
+      - 'experiments/neurolab/tests/test_e09_i3c7h_contingency_permutation.py'
+      - '.github/workflows/neurolab-i3c7h.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  same-budget-contingency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test impossibility of divergent exact yokes, shuffled signs and no leaks
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c7h_contingency_permutation
+      - name: Run independent 20 development seeds and preserve all negative samples
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c7h_contingency_permutation --output metrics/i3c7h.json | tee metrics/summary.json
+          python - <<'PY'
+          import json
+          x=json.load(open("metrics/i3c7h.json"))
+          assert x["protocol"]=="NL-EXP-I3c7h-v1"
+          assert x["cohort"]==list(range(1800,1820))
+          assert x["n_seeds"]==20
+          assert x["modes"]==["B","Y","P","F"]
+          assert x["original_C1_M0_training_exact_replay"]
+          assert x["B_Y_neural_and_chemical_identity_each_tick"]
+          assert x["B_Y_F_identical_full_chemistry_each_tick"]
+          assert x["P_reward_count_and_valence_by_context_equal_B"]
+          assert len(x["per_seed_sha256"])==20
+          assert x["gates"]["G05"]=="OPEN"
+          for r in x["per_seed"]:
+              for phase in ("first","reversed"):
+                  p=r["phases"][phase]
+                  assert p["B_exact_I3c7e_M0_reference"]
+                  assert p["B_Y_neural_each_tick_equal"]
+                  assert p["B_Y_F_chemical_each_tick_equal"]
+                  assert p["training"]["B"]["neural_after_each_tick_sha256"] == p["training"]["Y"]["neural_after_each_tick_sha256"]
+                  assert p["training"]["B"]["chemistry_after_each_tick_sha256"] == p["training"]["Y"]["chemistry_after_each_tick_sha256"]
+                  assert p["training"]["B"]["chemistry_after_each_tick_sha256"] == p["training"]["F"]["chemistry_after_each_tick_sha256"]
+                  assert p["readouts"]["B"] == p["readouts"]["Y"]
+                  assert len(p["b_tape"])==len(p["p_tape"])==256
+                  assert p["n_reward_sign_changes"]%2==0
+                  for m in x["modes"]:
+                      for kind in ("frozen","active_no_new_reward"):
+                          assert p["readouts"][m][kind]["n_ticks"]==128
+                          assert p["readouts"][m][kind]["new_feedback_events"]==0
+          for phase in ("first","reversed"):
+              print("PHASE",phase,"MANIPULATION",x["summary"][phase]["permutation"])
+              print("PHASE",phase,"ACTIVE",{
+                  m:x["summary"][phase][m]["active_no_new_reward"]["mean_steady"]
+                  for m in x["modes"]
+              })
+              print("PHASE",phase,"B-P",x["paired_contrasts"][phase][
+                  "B_minus_P"]["active_no_new_reward"])
+              print("PHASE",phase,"B-F",x["paired_contrasts"][phase][
+                  "B_minus_F"]["active_no_new_reward"])
+          print("GATE",x["effective_gate_at_least16_of20"],
+                "INTEREST",x["precommitted_interest_gate"])
+          PY
+          sha256sum metrics/i3c7h.json > metrics/raw.sha256
+      - name: Archive exact data and failures with all source/controller results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c7h-contingency-shuffle-fixed-c1
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

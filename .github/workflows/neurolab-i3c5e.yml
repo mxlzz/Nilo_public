@@ -1,0 +1,51 @@
+name: NeuroLab I3c5e — STW propagation, relaxation and loss
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c5e_signal_gate.py'
+      - 'experiments/neurolab/tests/test_e09_i3c5e_signal_gate.py'
+      - 'docs/neurolab/resultados/e09i3c5d_resumen_y_hashes.json'
+      - '.github/workflows/neurolab-i3c5e.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  numeric-oracles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test original evidence and three independent numeric gates
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c5e_signal_gate
+      - name: Preserve numeric witness and scope of conclusion
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c5e_signal_gate --output metrics/i3c5e_oracles.json | tee metrics/stdout.json
+          python - <<'PY'
+          import json
+          r=json.load(open("metrics/i3c5e_oracles.json"))
+          assert r["protocol"]=="NL-EXP-I3c5e-v1"
+          assert r["min_positive_decision_class_signal_stw"]==5
+          assert r["synthetic_effect_stw1_tick7"]["after_relax"]==0
+          assert r["synthetic_strength1_tick10"]["lost_connection"]
+          assert r["G05_G09_G00H"]=="OPEN"
+          print('ORACLES:',r["concept_source_output"],r["min_positive_decision_class_signal_stw"])
+          PY
+          sha256sum metrics/i3c5e_oracles.json > metrics/artifact.sha256
+      - name: Preserve post hoc numeric evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c5e-stw-gate
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

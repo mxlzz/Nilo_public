@@ -1,0 +1,53 @@
+name: NeuroLab I3c3 — dynamic four-contact Type1 adapter
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c3_dynamic_context.py'
+      - 'experiments/neurolab/tests/test_e09_i3c3_dynamic_context.py'
+      - '.github/workflows/neurolab-i3c3.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dynamic-adapter-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate four-contact source identity, Type1 and checkpoint contracts
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c3_dynamic_context
+      - name: Record synthetic oracle and deterministic replay evidence
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c3_dynamic_context --output metrics/e09i3c3.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          r=json.load(open("metrics/e09i3c3.json",encoding="utf-8"))
+          assert r["n_units"]==6 and r["n_decision_connections"]==4
+          assert r["checkpoint_roundtrip_identical"]
+          assert r["checkpoint_resume_identical"]
+          assert r["type1_accepted"]["migrated"]
+          assert r["type1_accepted"]["cursor_after"]==3
+          assert not r["type1_duplicate_rejected"]["migrated"]
+          assert r["type1_duplicate_rejected"]["cursor_after"]==1
+          assert r["type1_inactive_rejected"]["cursor_after"]==0
+          assert r["gate_learning"].startswith("NOT EVALUATED")
+          print("I3c3 synthetic acceptance, rejection, recipient gating, schema and replay PASSED")
+          PY
+      - name: Preserve test oracle and replay traces even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c3-dynamic-source-oracles
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

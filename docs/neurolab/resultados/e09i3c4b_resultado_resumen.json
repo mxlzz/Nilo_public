@@ -1,0 +1,81 @@
+{
+  "protocol": "E09_02I_I3C4B_GATE128_PRE_REGISTRO-v1",
+  "type": "posthoc_same_20_seed_observer",
+  "source": {
+    "run_id": 44961418723,
+    "conclusion": "success",
+    "specific_tests": 4,
+    "artifact_id": 14729668186,
+    "artifact_name": "neurolab-i3c4b-ltw-gate-witness",
+    "retention_expiry": "2027-02-19",
+    "original_run_id": 44960526007,
+    "original_artifact_id": 14729775966,
+    "per_seed_sha256_exact": true
+  },
+  "cohort": {
+    "seeds": "900..919",
+    "n_seeds": 20,
+    "per_phase_gates": 60,
+    "per_phase_contact_observations": 240,
+    "ticks_first": [
+      128,
+      256,
+      384
+    ],
+    "ticks_reversed": [
+      512,
+      640,
+      768
+    ]
+  },
+  "first": {
+    "B": {
+      "positive_STW": 20,
+      "numeric_LTW_increase": 20,
+      "positive_effect": 8,
+      "strength_zero_before_gate": 225,
+      "numeric_LTW_increase_with_zero_previous_strength": 12
+    },
+    "Y": {
+      "positive_STW": 1,
+      "numeric_LTW_increase": 1,
+      "positive_effect": 1,
+      "strength_zero_before_gate": 140,
+      "migrations_at_gate": 14
+    },
+    "P": {
+      "positive_STW": 1,
+      "numeric_LTW_increase": 1,
+      "positive_effect": 1,
+      "strength_zero_before_gate": 141,
+      "migrations_at_gate": 14
+    }
+  },
+  "reversed": {
+    "B": {
+      "positive_STW": 24,
+      "numeric_LTW_increase": 24,
+      "positive_effect": 8,
+      "strength_zero_before_gate": 218,
+      "numeric_LTW_increase_with_zero_previous_strength": 12
+    },
+    "Y": {
+      "positive_STW": 1,
+      "numeric_LTW_increase": 1,
+      "positive_effect": 1,
+      "strength_zero_before_gate": 121,
+      "migrations_at_gate": 10
+    },
+    "P": {
+      "positive_STW": 2,
+      "numeric_LTW_increase": 2,
+      "positive_effect": 2,
+      "strength_zero_before_gate": 120,
+      "migrations_at_gate": 10
+    }
+  },
+  "ltw_erased_same_gate_units_all_plastic_conditions": 0,
+  "interpretation": "STW positive at LTW128 gate is rare in migration-enabled arms; model B can numerically update LTW on strength-zero slots. Not evidence of robust learning or confirmed C1 full runtime semantics.",
+  "G05": "OPEN",
+  "G09": "OPEN"
+}

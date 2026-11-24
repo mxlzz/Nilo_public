@@ -1,0 +1,54 @@
+{
+  "protocol": "NL-AUDIT-I3c7k-v1",
+  "post_hoc": true,
+  "new_training_seeds": 0,
+  "source_experiment": "NL-EXP-I3c7g-v1",
+  "source_full_json_sha256": "128e92df48b749c046fb9e1b02fce3beb54f4c8b82ed814b067a7c8d0c215d78",
+  "source_20_seed_manifest": "e09i3c7g_fuente_huellas.json",
+  "workflow_run_id": 44987744410,
+  "workflow_status": "success",
+  "tests": 5,
+  "artifact_id": 14740013286,
+  "raw_json_filename": "i3c7k.json",
+  "raw_json_bytes": 82959,
+  "raw_json_sha256": "d67d77d09844ab6699d3e2d56434f21b91d56fb79fb05c882cdd5ea9f4b4fccf",
+  "canonical_per_seed_sha256": "b87545a66e2811c20707f57c40417e092e19156058b26297aefd34846fa3fe5c",
+  "seeds": "1700..1719, original development only",
+  "conditions": {
+    "S": "sham ACTIVE",
+    "C": "LTW=own STW at checkpoint, then ACTIVE",
+    "X": "LTW=other Decision owner STW with identical multiset, then ACTIVE",
+    "F": "original FROZEN reference"
+  },
+  "observed": {
+    "steady_accuracy": {
+      "S": 0.8369791666666666,
+      "C": 0.8859375,
+      "X": 0.63125,
+      "F": 0.9270833333333334
+    },
+    "C_minus_S": {
+      "mean": 0.04895833333333334,
+      "ci95": [
+        0.008333333333333342,
+        0.0890625
+      ]
+    },
+    "C_minus_X": {
+      "mean": 0.2546875,
+      "ci95": [
+        0.13437500000000002,
+        0.36770833333333336
+      ]
+    },
+    "C_minus_S_predeclared_min_improvement": 0.1,
+    "capacity_gate": false,
+    "seed_steady_ge_90_in_reversed_active": {
+      "S": 8,
+      "C": 10,
+      "X": 3
+    }
+  },
+  "conclusion": "Transfer of existing STW content to LTW improves active retention modestly but fails predeclared sufficiency threshold. No justification to implement synthetic instant consolidation or further tune mini C1. Gates G05/G09/G00H OPEN.",
+  "source_control": "Original per-seed SHA verified, original 640 reversed training frames identical and original active/frozen SHAM readouts identical, frozen action traces unchanged across interventions."
+}

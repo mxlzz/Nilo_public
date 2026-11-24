@@ -1,0 +1,78 @@
+{
+  "protocol": "NL-EXP-I3c5d-v1",
+  "original_run": "https://github.com/mxlzz/Nilo_public/actions/runs/44965370419",
+  "original_artifact_id": 14730837789,
+  "original_full_json_sha256": "b6a97ae5ae765d55330b122050c60b29ffcb9eb95080efa5af5ed5df37658192",
+  "n_seeds": 20,
+  "n_mapping_coordinates": 80,
+  "n_branches": 240,
+  "positive_effect_cases": {
+    "N": 0,
+    "D0": 16,
+    "D3": 48
+  },
+  "positive_effect_tick": {
+    "D0": 7,
+    "D3": 10
+  },
+  "effect_by_source": {
+    "D0": {
+      "target": 16,
+      "distractor": 0
+    },
+    "D3": {
+      "target": 16,
+      "distractor": 44
+    }
+  },
+  "max_effect_per_synapse_per_tick": 1,
+  "first_chemical_positive_tick": {
+    "D0": 7,
+    "D3": 10
+  },
+  "all_with_strength_positive_at_first_chemical": {
+    "D0": 80,
+    "D3": 80
+  },
+  "readout_action_changes_vs_N": {
+    "D0": {
+      "9": 0,
+      "16": 0,
+      "128": 0
+    },
+    "D3": {
+      "9": 0,
+      "16": 0,
+      "128": 0
+    }
+  },
+  "max_snapshot_stw_all_branches": 0,
+  "holding_basis": "post hoc artifact reading, no new independent sampling",
+  "gates": {
+    "G05": "OPEN",
+    "G09": "OPEN",
+    "G00H": "OPEN"
+  },
+  "per_seed_sha256": {
+    "1300": "1e3044db32b86cef0634e724b90837cdb24e66af3e1bde2d4f37cc429e3431a9",
+    "1301": "32b8ce36ac37c607c3d6ab8e8a06300a842374bb47c2af36681bb6f374bccc78",
+    "1302": "39641835ee17c67ea53ff3881ded1241446a23082088c3f940250e027fb69abf",
+    "1303": "cad3b48f0b429d3220d5881b67db6ed25a082fbb9ecf4d4ae254cb416b120108",
+    "1304": "8da30e7c4047e87a4c7c000b4b33cd767be0c0f63e5ba1d1391fe7464555c828",
+    "1305": "3a66c35580dd3d51965f4ce614fa5e2921c4618fb898adf09f333262bd3cf4a7",
+    "1306": "c81d57def43028b870d835ee98e3aa2966af26f5c2d7687fca3df543374a3ff2",
+    "1307": "d2594c68aac323f8e9938921e484d1ab5c7305883b5feb87488eb50632270d38",
+    "1308": "4c11a2552e817472385f2c594dd6a134d888471558c8fb11411312f6354676f1",
+    "1309": "02b470ffe9609d8274f827244d79e3e9e8c94548282daede4208813f45c84e5e",
+    "1310": "02538c9624a6a65ff28e2aee62e74a6cbd5a37a861023695743f535e5ec08ef6",
+    "1311": "b8d4015ec5e65ac7cafc08227d371d7a101c3c743862597034a36c030f98d486",
+    "1312": "bd04734a1ee72f310571b9869e0b755c4d16fdb71bc210737e087f70e37240b4",
+    "1313": "0b5262e48280ec43dc2345d2278d87567e318a8b012fb7ea93e3811f703106b5",
+    "1314": "e3b5a3e5e42f718559030bd2d45b7634a0839d31d047e5f5b30e3d83aa95a0d8",
+    "1315": "4dd8d437379256c73004e087abd0024d1296629004a6a4198a9272c5d0890b80",
+    "1316": "4c3d34e4f88d2817b47719514e125f25abad4f7419e2dd8dd4013ab6ff7c3a80",
+    "1317": "300e0a9de42bf8963d152e0d338cecf5e0a94bcdd9ab6cafcab59a6601db5bd7",
+    "1318": "d782302432dd106fcbf42021a201d2700fc1fa58a83c49d33498a5385a0413c5",
+    "1319": "4f516913536bda5fa4a1b4b894ff420d658078054e1e06e51ba4667caf887739"
+  }
+}

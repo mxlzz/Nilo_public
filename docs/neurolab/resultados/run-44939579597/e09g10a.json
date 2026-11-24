@@ -1,0 +1,2252 @@
+{
+  "exact_parity_all_seeds": true,
+  "joint_steady_ge_0_90": {
+    "C": 12,
+    "G": 17,
+    "IG": 17
+  },
+  "limitations": "Equivalence only in two one-hot contexts, not historical C1 or general delayed credit",
+  "logical_extra_state": "two 8-bit Concept outputs + initialization marker",
+  "mean": {
+    "first": {
+      "C": {
+        "early": 0.6359375,
+        "overall": 0.87734375,
+        "steady": 0.9578125000000001
+      },
+      "G": {
+        "early": 0.578125,
+        "overall": 0.8734375,
+        "steady": 0.971875
+      },
+      "IG": {
+        "early": 0.578125,
+        "overall": 0.8734375,
+        "steady": 0.971875
+      }
+    },
+    "reversed": {
+      "C": {
+        "early": 0.6625,
+        "overall": 0.8578125,
+        "steady": 0.9229166666666667
+      },
+      "G": {
+        "early": 0.6234375,
+        "overall": 0.880078125,
+        "steady": 0.965625
+      },
+      "IG": {
+        "early": 0.6234375,
+        "overall": 0.880078125,
+        "steady": 0.965625
+      }
+    }
+  },
+  "n": 20,
+  "per_seed": [
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 19,
+        "intrinsic_suppressed": 19,
+        "metrics": {
+          "C": {
+            "early": 0.8125,
+            "overall": 0.953125,
+            "overall_by_context": [
+              0.953125,
+              0.953125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.71875,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.953125,
+              0.84375
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              1,
+              0.9166666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.71875,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.953125,
+              0.84375
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              1,
+              0.9166666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 15,
+        "intrinsic_suppressed": 15,
+        "metrics": {
+          "C": {
+            "early": 0.84375,
+            "overall": 0.9609375,
+            "overall_by_context": [
+              0.96875,
+              0.953125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.75,
+            "overall": 0.9375,
+            "overall_by_context": [
+              0.953125,
+              0.921875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.75,
+            "overall": 0.9375,
+            "overall_by_context": [
+              0.953125,
+              0.921875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 100
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 18,
+        "intrinsic_suppressed": 18,
+        "metrics": {
+          "C": {
+            "early": 0.6875,
+            "overall": 0.921875,
+            "overall_by_context": [
+              0.921875,
+              0.921875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.5,
+            "overall": 0.875,
+            "overall_by_context": [
+              0.84375,
+              0.90625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.5,
+            "overall": 0.875,
+            "overall_by_context": [
+              0.84375,
+              0.90625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 19,
+        "intrinsic_suppressed": 19,
+        "metrics": {
+          "C": {
+            "early": 0.6875,
+            "overall": 0.734375,
+            "overall_by_context": [
+              0.5,
+              0.96875
+            ],
+            "steady": 0.75,
+            "steady_by_context": [
+              0.5,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.65625,
+            "overall": 0.8203125,
+            "overall_by_context": [
+              0.6875,
+              0.953125
+            ],
+            "steady": 0.875,
+            "steady_by_context": [
+              0.75,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.65625,
+            "overall": 0.8203125,
+            "overall_by_context": [
+              0.6875,
+              0.953125
+            ],
+            "steady": 0.875,
+            "steady_by_context": [
+              0.75,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 101
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 18,
+        "intrinsic_suppressed": 18,
+        "metrics": {
+          "C": {
+            "early": 0.46875,
+            "overall": 0.8359375,
+            "overall_by_context": [
+              0.921875,
+              0.75
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              1,
+              0.9166666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.46875,
+            "overall": 0.8671875,
+            "overall_by_context": [
+              0.921875,
+              0.8125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.46875,
+            "overall": 0.8671875,
+            "overall_by_context": [
+              0.921875,
+              0.8125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 17,
+        "intrinsic_suppressed": 17,
+        "metrics": {
+          "C": {
+            "early": 0.625,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.859375,
+              0.9375
+            ],
+            "steady": 0.9895833333333334,
+            "steady_by_context": [
+              0.9791666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.625,
+            "overall": 0.875,
+            "overall_by_context": [
+              0.8125,
+              0.9375
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              0.9166666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.625,
+            "overall": 0.875,
+            "overall_by_context": [
+              0.8125,
+              0.9375
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              0.9166666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 102
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 16,
+        "intrinsic_suppressed": 16,
+        "metrics": {
+          "C": {
+            "early": 0.53125,
+            "overall": 0.8515625,
+            "overall_by_context": [
+              0.921875,
+              0.78125
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              1,
+              0.9166666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.53125,
+            "overall": 0.84375,
+            "overall_by_context": [
+              0.765625,
+              0.921875
+            ],
+            "steady": 0.9479166666666666,
+            "steady_by_context": [
+              0.8958333333333334,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.53125,
+            "overall": 0.84375,
+            "overall_by_context": [
+              0.765625,
+              0.921875
+            ],
+            "steady": 0.9479166666666666,
+            "steady_by_context": [
+              0.8958333333333334,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 19,
+        "intrinsic_suppressed": 19,
+        "metrics": {
+          "C": {
+            "early": 0.65625,
+            "overall": 0.9140625,
+            "overall_by_context": [
+              0.953125,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.625,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.9375,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.625,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.9375,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 103
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 12,
+        "intrinsic_suppressed": 12,
+        "metrics": {
+          "C": {
+            "early": 0.625,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.890625,
+              0.921875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.6875,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.9375,
+              0.859375
+            ],
+            "steady": 0.96875,
+            "steady_by_context": [
+              1,
+              0.9375
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.6875,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.9375,
+              0.859375
+            ],
+            "steady": 0.96875,
+            "steady_by_context": [
+              1,
+              0.9375
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 16,
+        "intrinsic_suppressed": 16,
+        "metrics": {
+          "C": {
+            "early": 0.6875,
+            "overall": 0.921875,
+            "overall_by_context": [
+              0.90625,
+              0.9375
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.4375,
+            "overall": 0.859375,
+            "overall_by_context": [
+              0.84375,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.4375,
+            "overall": 0.859375,
+            "overall_by_context": [
+              0.84375,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 104
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 15,
+        "intrinsic_suppressed": 15,
+        "metrics": {
+          "C": {
+            "early": 0.84375,
+            "overall": 0.9609375,
+            "overall_by_context": [
+              0.96875,
+              0.953125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.75,
+            "overall": 0.9296875,
+            "overall_by_context": [
+              0.96875,
+              0.890625
+            ],
+            "steady": 0.9895833333333334,
+            "steady_by_context": [
+              1,
+              0.9791666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.75,
+            "overall": 0.9296875,
+            "overall_by_context": [
+              0.96875,
+              0.890625
+            ],
+            "steady": 0.9895833333333334,
+            "steady_by_context": [
+              1,
+              0.9791666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 16,
+        "intrinsic_suppressed": 16,
+        "metrics": {
+          "C": {
+            "early": 0.71875,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.859375,
+              0.953125
+            ],
+            "steady": 0.96875,
+            "steady_by_context": [
+              0.9375,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.71875,
+            "overall": 0.9296875,
+            "overall_by_context": [
+              0.90625,
+              0.953125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.71875,
+            "overall": 0.9296875,
+            "overall_by_context": [
+              0.90625,
+              0.953125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 105
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 16,
+        "intrinsic_suppressed": 16,
+        "metrics": {
+          "C": {
+            "early": 0.53125,
+            "overall": 0.78125,
+            "overall_by_context": [
+              0.921875,
+              0.640625
+            ],
+            "steady": 0.8645833333333334,
+            "steady_by_context": [
+              1,
+              0.7291666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.53125,
+            "overall": 0.84375,
+            "overall_by_context": [
+              0.921875,
+              0.765625
+            ],
+            "steady": 0.9479166666666666,
+            "steady_by_context": [
+              1,
+              0.8958333333333334
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.53125,
+            "overall": 0.84375,
+            "overall_by_context": [
+              0.921875,
+              0.765625
+            ],
+            "steady": 0.9479166666666666,
+            "steady_by_context": [
+              1,
+              0.8958333333333334
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 21,
+        "intrinsic_suppressed": 21,
+        "metrics": {
+          "C": {
+            "early": 0.71875,
+            "overall": 0.7890625,
+            "overall_by_context": [
+              0.625,
+              0.953125
+            ],
+            "steady": 0.8125,
+            "steady_by_context": [
+              0.625,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.71875,
+            "overall": 0.8515625,
+            "overall_by_context": [
+              0.75,
+              0.953125
+            ],
+            "steady": 0.8958333333333334,
+            "steady_by_context": [
+              0.7916666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.71875,
+            "overall": 0.8515625,
+            "overall_by_context": [
+              0.75,
+              0.953125
+            ],
+            "steady": 0.8958333333333334,
+            "steady_by_context": [
+              0.7916666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 106
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 21,
+        "intrinsic_suppressed": 21,
+        "metrics": {
+          "C": {
+            "early": 0.71875,
+            "overall": 0.9296875,
+            "overall_by_context": [
+              0.9375,
+              0.921875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.65625,
+            "overall": 0.9140625,
+            "overall_by_context": [
+              0.9375,
+              0.890625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.65625,
+            "overall": 0.9140625,
+            "overall_by_context": [
+              0.9375,
+              0.890625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 19,
+        "intrinsic_suppressed": 19,
+        "metrics": {
+          "C": {
+            "early": 0.6875,
+            "overall": 0.921875,
+            "overall_by_context": [
+              0.90625,
+              0.9375
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.625,
+            "overall": 0.875,
+            "overall_by_context": [
+              0.9375,
+              0.8125
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              1,
+              0.9166666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.625,
+            "overall": 0.875,
+            "overall_by_context": [
+              0.9375,
+              0.8125
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              1,
+              0.9166666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 107
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 15,
+        "intrinsic_suppressed": 15,
+        "metrics": {
+          "C": {
+            "early": 0.625,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.875,
+              0.921875
+            ],
+            "steady": 0.9895833333333334,
+            "steady_by_context": [
+              0.9791666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.46875,
+            "overall": 0.8671875,
+            "overall_by_context": [
+              0.890625,
+              0.84375
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.46875,
+            "overall": 0.8671875,
+            "overall_by_context": [
+              0.890625,
+              0.84375
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 18,
+        "intrinsic_suppressed": 18,
+        "metrics": {
+          "C": {
+            "early": 0.5625,
+            "overall": 0.7265625,
+            "overall_by_context": [
+              0.515625,
+              0.9375
+            ],
+            "steady": 0.78125,
+            "steady_by_context": [
+              0.5625,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.5625,
+            "overall": 0.859375,
+            "overall_by_context": [
+              0.78125,
+              0.9375
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              0.9166666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.5625,
+            "overall": 0.859375,
+            "overall_by_context": [
+              0.78125,
+              0.9375
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              0.9166666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 108
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 17,
+        "intrinsic_suppressed": 17,
+        "metrics": {
+          "C": {
+            "early": 0.5625,
+            "overall": 0.7890625,
+            "overall_by_context": [
+              0.640625,
+              0.9375
+            ],
+            "steady": 0.8645833333333334,
+            "steady_by_context": [
+              0.7291666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.5625,
+            "overall": 0.828125,
+            "overall_by_context": [
+              0.71875,
+              0.9375
+            ],
+            "steady": 0.9166666666666666,
+            "steady_by_context": [
+              0.8333333333333334,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.5625,
+            "overall": 0.828125,
+            "overall_by_context": [
+              0.71875,
+              0.9375
+            ],
+            "steady": 0.9166666666666666,
+            "steady_by_context": [
+              0.8333333333333334,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 11,
+        "intrinsic_suppressed": 11,
+        "metrics": {
+          "C": {
+            "early": 0.625,
+            "overall": 0.8359375,
+            "overall_by_context": [
+              0.9375,
+              0.734375
+            ],
+            "steady": 0.90625,
+            "steady_by_context": [
+              1,
+              0.8125
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.625,
+            "overall": 0.8359375,
+            "overall_by_context": [
+              0.9375,
+              0.734375
+            ],
+            "steady": 0.90625,
+            "steady_by_context": [
+              1,
+              0.8125
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.625,
+            "overall": 0.8359375,
+            "overall_by_context": [
+              0.9375,
+              0.734375
+            ],
+            "steady": 0.90625,
+            "steady_by_context": [
+              1,
+              0.8125
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 109
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 19,
+        "intrinsic_suppressed": 19,
+        "metrics": {
+          "C": {
+            "early": 0.71875,
+            "overall": 0.921875,
+            "overall_by_context": [
+              0.890625,
+              0.953125
+            ],
+            "steady": 0.9895833333333334,
+            "steady_by_context": [
+              0.9791666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.71875,
+            "overall": 0.9296875,
+            "overall_by_context": [
+              0.90625,
+              0.953125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.71875,
+            "overall": 0.9296875,
+            "overall_by_context": [
+              0.90625,
+              0.953125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 18,
+        "intrinsic_suppressed": 18,
+        "metrics": {
+          "C": {
+            "early": 0.625,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.90625,
+              0.90625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.4375,
+            "overall": 0.859375,
+            "overall_by_context": [
+              0.90625,
+              0.8125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.4375,
+            "overall": 0.859375,
+            "overall_by_context": [
+              0.90625,
+              0.8125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 110
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 18,
+        "intrinsic_suppressed": 18,
+        "metrics": {
+          "C": {
+            "early": 0.53125,
+            "overall": 0.828125,
+            "overall_by_context": [
+              0.921875,
+              0.734375
+            ],
+            "steady": 0.9270833333333334,
+            "steady_by_context": [
+              1,
+              0.8541666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.375,
+            "overall": 0.84375,
+            "overall_by_context": [
+              0.84375,
+              0.84375
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.375,
+            "overall": 0.84375,
+            "overall_by_context": [
+              0.84375,
+              0.84375
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 14,
+        "intrinsic_suppressed": 14,
+        "metrics": {
+          "C": {
+            "early": 0.5625,
+            "overall": 0.671875,
+            "overall_by_context": [
+              0.9375,
+              0.40625
+            ],
+            "steady": 0.7083333333333334,
+            "steady_by_context": [
+              1,
+              0.4166666666666667
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.5625,
+            "overall": 0.8125,
+            "overall_by_context": [
+              0.9375,
+              0.6875
+            ],
+            "steady": 0.8958333333333334,
+            "steady_by_context": [
+              1,
+              0.7916666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.5625,
+            "overall": 0.8125,
+            "overall_by_context": [
+              0.9375,
+              0.6875
+            ],
+            "steady": 0.8958333333333334,
+            "steady_by_context": [
+              1,
+              0.7916666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 111
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 17,
+        "intrinsic_suppressed": 17,
+        "metrics": {
+          "C": {
+            "early": 0.46875,
+            "overall": 0.765625,
+            "overall_by_context": [
+              0.921875,
+              0.609375
+            ],
+            "steady": 0.8645833333333334,
+            "steady_by_context": [
+              1,
+              0.7291666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.46875,
+            "overall": 0.8203125,
+            "overall_by_context": [
+              0.921875,
+              0.71875
+            ],
+            "steady": 0.9375,
+            "steady_by_context": [
+              1,
+              0.875
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.46875,
+            "overall": 0.8203125,
+            "overall_by_context": [
+              0.921875,
+              0.71875
+            ],
+            "steady": 0.9375,
+            "steady_by_context": [
+              1,
+              0.875
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 13,
+        "intrinsic_suppressed": 13,
+        "metrics": {
+          "C": {
+            "early": 0.5625,
+            "overall": 0.8671875,
+            "overall_by_context": [
+              0.796875,
+              0.9375
+            ],
+            "steady": 0.96875,
+            "steady_by_context": [
+              0.9375,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.5625,
+            "overall": 0.890625,
+            "overall_by_context": [
+              0.84375,
+              0.9375
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.5625,
+            "overall": 0.890625,
+            "overall_by_context": [
+              0.84375,
+              0.9375
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 112
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 16,
+        "intrinsic_suppressed": 16,
+        "metrics": {
+          "C": {
+            "early": 0.75,
+            "overall": 0.859375,
+            "overall_by_context": [
+              0.75,
+              0.96875
+            ],
+            "steady": 0.8958333333333334,
+            "steady_by_context": [
+              0.7916666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.75,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.828125,
+              0.96875
+            ],
+            "steady": 0.9479166666666666,
+            "steady_by_context": [
+              0.8958333333333334,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.75,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.828125,
+              0.96875
+            ],
+            "steady": 0.9479166666666666,
+            "steady_by_context": [
+              0.8958333333333334,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 21,
+        "intrinsic_suppressed": 21,
+        "metrics": {
+          "C": {
+            "early": 0.71875,
+            "overall": 0.9296875,
+            "overall_by_context": [
+              0.953125,
+              0.90625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.75,
+            "overall": 0.9375,
+            "overall_by_context": [
+              0.96875,
+              0.90625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.75,
+            "overall": 0.9375,
+            "overall_by_context": [
+              0.96875,
+              0.90625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 113
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 12,
+        "intrinsic_suppressed": 12,
+        "metrics": {
+          "C": {
+            "early": 0.71875,
+            "overall": 0.9296875,
+            "overall_by_context": [
+              0.9375,
+              0.921875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.5625,
+            "overall": 0.8515625,
+            "overall_by_context": [
+              0.9375,
+              0.765625
+            ],
+            "steady": 0.9479166666666666,
+            "steady_by_context": [
+              1,
+              0.8958333333333334
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.5625,
+            "overall": 0.8515625,
+            "overall_by_context": [
+              0.9375,
+              0.765625
+            ],
+            "steady": 0.9479166666666666,
+            "steady_by_context": [
+              1,
+              0.8958333333333334
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 14,
+        "intrinsic_suppressed": 14,
+        "metrics": {
+          "C": {
+            "early": 0.71875,
+            "overall": 0.8828125,
+            "overall_by_context": [
+              0.953125,
+              0.8125
+            ],
+            "steady": 0.9375,
+            "steady_by_context": [
+              1,
+              0.875
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.71875,
+            "overall": 0.859375,
+            "overall_by_context": [
+              0.953125,
+              0.765625
+            ],
+            "steady": 0.90625,
+            "steady_by_context": [
+              1,
+              0.8125
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.71875,
+            "overall": 0.859375,
+            "overall_by_context": [
+              0.953125,
+              0.765625
+            ],
+            "steady": 0.90625,
+            "steady_by_context": [
+              1,
+              0.8125
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 114
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 19,
+        "intrinsic_suppressed": 19,
+        "metrics": {
+          "C": {
+            "early": 0.65625,
+            "overall": 0.890625,
+            "overall_by_context": [
+              0.953125,
+              0.828125
+            ],
+            "steady": 0.96875,
+            "steady_by_context": [
+              1,
+              0.9375
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.625,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.921875,
+              0.890625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.625,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.921875,
+              0.890625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 15,
+        "intrinsic_suppressed": 15,
+        "metrics": {
+          "C": {
+            "early": 0.71875,
+            "overall": 0.9296875,
+            "overall_by_context": [
+              0.921875,
+              0.9375
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.59375,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.921875,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.59375,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.921875,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 115
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 17,
+        "intrinsic_suppressed": 17,
+        "metrics": {
+          "C": {
+            "early": 0.71875,
+            "overall": 0.875,
+            "overall_by_context": [
+              0.953125,
+              0.796875
+            ],
+            "steady": 0.9270833333333334,
+            "steady_by_context": [
+              1,
+              0.8541666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.71875,
+            "overall": 0.8828125,
+            "overall_by_context": [
+              0.953125,
+              0.8125
+            ],
+            "steady": 0.9375,
+            "steady_by_context": [
+              1,
+              0.875
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.71875,
+            "overall": 0.8828125,
+            "overall_by_context": [
+              0.953125,
+              0.8125
+            ],
+            "steady": 0.9375,
+            "steady_by_context": [
+              1,
+              0.875
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 14,
+        "intrinsic_suppressed": 14,
+        "metrics": {
+          "C": {
+            "early": 0.65625,
+            "overall": 0.9140625,
+            "overall_by_context": [
+              0.890625,
+              0.9375
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.625,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.9375,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.625,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.9375,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 116
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 16,
+        "intrinsic_suppressed": 16,
+        "metrics": {
+          "C": {
+            "early": 0.65625,
+            "overall": 0.9140625,
+            "overall_by_context": [
+              0.875,
+              0.953125
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.5625,
+            "overall": 0.890625,
+            "overall_by_context": [
+              0.875,
+              0.90625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.5625,
+            "overall": 0.890625,
+            "overall_by_context": [
+              0.875,
+              0.90625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 17,
+        "intrinsic_suppressed": 17,
+        "metrics": {
+          "C": {
+            "early": 0.59375,
+            "overall": 0.890625,
+            "overall_by_context": [
+              0.859375,
+              0.921875
+            ],
+            "steady": 0.9895833333333334,
+            "steady_by_context": [
+              0.9791666666666666,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.59375,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.875,
+              0.921875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.59375,
+            "overall": 0.8984375,
+            "overall_by_context": [
+              0.875,
+              0.921875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 117
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 14,
+        "intrinsic_suppressed": 14,
+        "metrics": {
+          "C": {
+            "early": 0.65625,
+            "overall": 0.9140625,
+            "overall_by_context": [
+              0.921875,
+              0.90625
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.46875,
+            "overall": 0.8671875,
+            "overall_by_context": [
+              0.859375,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.46875,
+            "overall": 0.8671875,
+            "overall_by_context": [
+              0.859375,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 15,
+        "intrinsic_suppressed": 15,
+        "metrics": {
+          "C": {
+            "early": 0.65625,
+            "overall": 0.6484375,
+            "overall_by_context": [
+              0.984375,
+              0.3125
+            ],
+            "steady": 0.6458333333333334,
+            "steady_by_context": [
+              1,
+              0.2916666666666667
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.65625,
+            "overall": 0.8828125,
+            "overall_by_context": [
+              0.953125,
+              0.8125
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              1,
+              0.9166666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.65625,
+            "overall": 0.8828125,
+            "overall_by_context": [
+              0.953125,
+              0.8125
+            ],
+            "steady": 0.9583333333333334,
+            "steady_by_context": [
+              1,
+              0.9166666666666666
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 118
+    },
+    {
+      "first": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 13,
+        "intrinsic_suppressed": 13,
+        "metrics": {
+          "C": {
+            "early": 0.4375,
+            "overall": 0.8203125,
+            "overall_by_context": [
+              0.734375,
+              0.90625
+            ],
+            "steady": 0.9479166666666666,
+            "steady_by_context": [
+              0.8958333333333334,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.4375,
+            "overall": 0.8125,
+            "overall_by_context": [
+              0.71875,
+              0.90625
+            ],
+            "steady": 0.9375,
+            "steady_by_context": [
+              0.875,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.4375,
+            "overall": 0.8125,
+            "overall_by_context": [
+              0.71875,
+              0.90625
+            ],
+            "steady": 0.9375,
+            "steady_by_context": [
+              0.875,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "reversed": {
+        "exact_brain_state_match": true,
+        "exact_pending_chemistry_match": true,
+        "external_suppressed": 19,
+        "intrinsic_suppressed": 19,
+        "metrics": {
+          "C": {
+            "early": 0.625,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.875,
+              0.9375
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "G": {
+            "early": 0.625,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.9375,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          },
+          "IG": {
+            "early": 0.625,
+            "overall": 0.90625,
+            "overall_by_context": [
+              0.9375,
+              0.875
+            ],
+            "steady": 1,
+            "steady_by_context": [
+              1,
+              1
+            ],
+            "steady_ticks": 96,
+            "total_ticks": 128
+          }
+        }
+      },
+      "seed": 119
+    }
+  ],
+  "protocol": "E09_02G_10A_GATE_INTERNO_PRE_REGISTRO-v1",
+  "seeds": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119
+  ]
+}

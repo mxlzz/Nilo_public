@@ -1,0 +1,83 @@
+{
+  "constructor_like_path": {
+    "chemical_tick_call": "0x40b089",
+    "chemistry_object_loaded_at": "0x40b083: +0x2c1c",
+    "counter_loaded_from_creature_at": "0x40b07c: +0x2c20",
+    "direct_brain_tick_in_approx_range": false,
+    "followed_by": "0x40b090: call 0x40a640",
+    "interpretation": "setup-like function with chemical tick; purpose of state flag inferred, not validated dynamically",
+    "range_approx": [
+      "0x40adf0",
+      "0x40b0c7"
+    ],
+    "regular_tick_flag_check": "0x407543: [creature+0x2cbc], conditional skip",
+    "state_flag_write": "0x40b095: [creature+0x2cbc]=1"
+  },
+  "direct_calls": {
+    "brain": [
+      {
+        "machine_code": "e8fcddffff",
+        "site": "0x405daf",
+        "target": "0x403bb0"
+      },
+      {
+        "machine_code": "e828c6ffff",
+        "site": "0x407583",
+        "target": "0x403bb0"
+      }
+    ],
+    "chemistry": [
+      {
+        "machine_code": "e839c10100",
+        "site": "0x405d32",
+        "target": "0x421e70"
+      },
+      {
+        "machine_code": "e8d6a80100",
+        "site": "0x407595",
+        "target": "0x421e70"
+      },
+      {
+        "machine_code": "e8e26d0100",
+        "site": "0x40b089",
+        "target": "0x421e70"
+      }
+    ],
+    "world_tick": [
+      {
+        "machine_code": "e845be0000",
+        "site": "0x418966",
+        "target": "0x4247b0"
+      },
+      {
+        "machine_code": "e813fbffff",
+        "site": "0x424c98",
+        "target": "0x4247b0"
+      },
+      {
+        "machine_code": "e817dfffff",
+        "site": "0x426894",
+        "target": "0x4247b0"
+      }
+    ]
+  },
+  "limitations": "objdump-aligned direct E8 calls only; not exhaustive for virtual, indirect, alternate decoding, runtime callbacks, observed timing or synaptic causal attribution",
+  "literal_32bit_function_address_file_offsets": {
+    "brain": [],
+    "chemistry": [],
+    "world_tick": []
+  },
+  "order_checks": {
+    "alternate": "0x405d32 chemistry before 0x405daf brain",
+    "normal": "0x407583 brain before 0x407595 chemistry",
+    "world": "0x424884 regular pass before 0x4248c3 alternate pass"
+  },
+  "protocol": "H08a-original-exe-static-routes-v1",
+  "signature_count": 15,
+  "source": {
+    "exe_sha256": "548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7",
+    "exe_size": 387072,
+    "gen_sha256": "e2bb4ccf6a4081a128c6c9ffc6eb233452d416717ceef47e78820ca3a152ddd4",
+    "gen_size": 10001
+  }
+}

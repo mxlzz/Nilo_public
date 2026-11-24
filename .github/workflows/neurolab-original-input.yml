@@ -1,0 +1,62 @@
+name: NeuroLab original-input integrity gate
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths: ['.github/workflows/neurolab-original-input.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integrity:
+    runs-on: windows-2022
+    timeout-minutes: 5
+    steps:
+      - name: Verify original archive without executing or retaining it
+        shell: pwsh
+        env:
+          NEUROLAB_DATA_FILE_ID: ${{ secrets.NEUROLAB_DATA_FILE_ID }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          @'
+          import os, re, hashlib, tempfile, zipfile, pathlib, urllib.request, sys
+          EXPECTED = 'df490a704ae5b6f44016b2ac35e899fe30b7550c7666990edb60c0ebddf025dd'
+          EXE = '548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7'
+          GEN = 'e2bb4ccf6a4081a128c6c9ffc6eb233452d416717ceef47e78820ca3a152ddd4'
+          file_id = os.environ.pop('NEUROLAB_DATA_FILE_ID', '')
+          if not re.fullmatch(r'[A-Za-z0-9_-]{10,200}', file_id):
+              sys.exit('FAIL: required secret missing or invalid')
+          with tempfile.TemporaryDirectory(prefix='neurolab-input-') as d:
+              path = pathlib.Path(d) / 'data.zip'
+              try:
+                  url = 'https://drive.usercontent.google.com/download?id=' + file_id + '&export=download&confirm=t'
+                  req = urllib.request.Request(url, headers={'User-Agent': 'NeuroLab-integrity/1'})
+                  h = hashlib.sha256()
+                  size = 0
+                  with urllib.request.urlopen(req, timeout=45) as response, path.open('wb') as dst:
+                      while chunk := response.read(65536):
+                          size += len(chunk)
+                          if size > 14624092:
+                              raise ValueError('unexpected size')
+                          dst.write(chunk)
+                          h.update(chunk)
+              except Exception:
+                  sys.exit('FAIL: archive transfer unavailable or exceeded expected size (details suppressed)')
+              if size != 14624092 or h.hexdigest() != EXPECTED:
+                  sys.exit('FAIL: archive size or SHA256 mismatch; no extraction')
+              print('PASS: original archive size and SHA256 verified')
+              try:
+                  with zipfile.ZipFile(path) as z:
+                      files = [i for i in z.infolist() if not i.is_dir()]
+                      assert len(files) == 1163
+                      assert sum(i.file_size for i in files) == 37691719
+                      assert z.testzip() is None
+                      def verify(member, digest):
+                          assert hashlib.sha256(z.read(member)).hexdigest() == digest
+                      verify('Creatures/Creatures.exe', EXE)
+                      verify('Creatures/Genetics/dad1.gen', GEN)
+              except Exception:
+                  sys.exit('FAIL: archive/member integrity mismatch (details suppressed)')
+              print('PASS: 1163 files, ZIP CRC, original EXE and GEN hashes verified; nothing executed or uploaded')
+          print('PASS: temporary archive removed')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Original-input integrity gate failed' }

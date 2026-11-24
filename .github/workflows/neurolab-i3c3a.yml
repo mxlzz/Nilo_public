@@ -1,0 +1,55 @@
+name: NeuroLab I3c3a — no-reward migration trajectories
+
+on:
+  push:
+    branches:
+      - 'docs/neurolab-*'
+      - 'work/neurolab-*'
+    paths:
+      - 'experiments/neurolab/e09_i3c3a_migration_stress.py'
+      - 'experiments/neurolab/tests/test_e09_i3c3a_migration_stress.py'
+      - '.github/workflows/neurolab-i3c3a.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  migration-stress:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Fixed inputs and checkpoint continuation contracts
+        run: python -m unittest -v experiments.neurolab.tests.test_e09_i3c3a_migration_stress
+      - name: Execute 20 independent seeds with B and B+ for 256 ticks
+        run: |
+          mkdir -p metrics
+          python -m experiments.neurolab.e09_i3c3a_migration_stress --output metrics/e09i3c3a.json > metrics/stdout.json
+          python - <<'PY'
+          import json
+          x=json.load(open("metrics/e09i3c3a.json",encoding="utf-8"))
+          assert x["seeds"]==list(range(800,820))
+          assert x["ticks_per_seed"]==256
+          assert x["n_seeds"]==20
+          assert x["totals"]["B"]["accepted"]==0
+          assert x["totals"]["B"]["draws_consumed"]==0
+          assert x["gate_trace"].startswith("PASS")
+          assert x["gate_checkpoint"].startswith("PASS")
+          assert x["gate_G05_G09"]=="NOT TESTED"
+          print("B migration disabled:",x["totals"]["B"])
+          print("B+ migration enabled:",x["totals"]["B+"])
+          print("First migration distribution:",
+            [z["branches"]["B+"]["first_accepted_tick"] for z in x["per_seed"]])
+          PY
+      - name: Retain both complete per-tick traces including negative outcomes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurolab-i3c3a-no-reward-migration-traces
+          path: metrics/
+          retention-days: 90
+          if-no-files-found: warn

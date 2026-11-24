@@ -1,0 +1,92 @@
+{
+  "protocol": "E09_02I_I3C4A_TURNOVER_PRE_REGISTRO-v1",
+  "source": {
+    "workflow": 44960961073,
+    "conclusion": "success",
+    "specific_tests": 4,
+    "artifact_id": 14728999464,
+    "artifact_name": "neurolab-i3c4a-turnover-exact-replay",
+    "retention_expiry": "2027-02-19"
+  },
+  "baseline": {
+    "workflow": 44960526007,
+    "artifact_id": 14729775966,
+    "hash_fixture": "docs/neurolab/resultados/e09i3c4_golden_seed_hashes.json"
+  },
+  "cohort": {
+    "seeds": "900..919",
+    "n": 20,
+    "reused_previous_I3c4": true,
+    "all_20_seed_hashes_exact": true
+  },
+  "totals": {
+    "Y_first": {
+      "accepted": 1698,
+      "active_ticks": 1401,
+      "pre_migration_positive_LTW": 0,
+      "pre_migration_positive_STW": 1,
+      "end_LTWs": 0,
+      "end_strength_zero": 49,
+      "completed_intervals_n": 1618,
+      "intervals_mean_ticks": 19.564894932014834,
+      "intervals_median_ticks": 20,
+      "intervals_min": 8,
+      "intervals_max": 42
+    },
+    "Y_reversed": {
+      "accepted": 1679,
+      "active_ticks": 1386,
+      "pre_migration_positive_LTW": 0,
+      "pre_migration_positive_STW": 4,
+      "end_LTWs": 0,
+      "end_strength_zero": 48,
+      "completed_intervals_n": 1599,
+      "intervals_mean_ticks": 20.0281425891182,
+      "intervals_median_ticks": 20,
+      "intervals_min": 11,
+      "intervals_max": 45
+    },
+    "P_first": {
+      "accepted": 1700,
+      "active_ticks": 1402,
+      "pre_migration_positive_LTW": 0,
+      "pre_migration_positive_STW": 1,
+      "end_LTWs": 0,
+      "end_strength_zero": 49,
+      "completed_intervals_n": 1620,
+      "intervals_mean_ticks": 19.537037037037038,
+      "intervals_median_ticks": 20,
+      "intervals_min": 8,
+      "intervals_max": 42
+    },
+    "P_reversed": {
+      "accepted": 1679,
+      "active_ticks": 1385,
+      "pre_migration_positive_LTW": 0,
+      "pre_migration_positive_STW": 3,
+      "end_LTWs": 0,
+      "end_strength_zero": 47,
+      "completed_intervals_n": 1599,
+      "intervals_mean_ticks": 20.0281425891182,
+      "intervals_median_ticks": 20,
+      "intervals_min": 11,
+      "intervals_max": 45
+    }
+  },
+  "B_LTW_at_training_end": {
+    "first": 1,
+    "reversed": 0
+  },
+  "F_LTW_at_training_end": {
+    "first": 0,
+    "reversed": 0
+  },
+  "caveats": [
+    "reused observed cohort, purely exploratory",
+    "intervals closed between migrations do not describe first or last lifetime",
+    "causal source/credit not independently measured",
+    "rates/dose/migration initial and scheduler partially synthetic N"
+  ],
+  "scientific_learning_G05": "OPEN",
+  "integrated_mind_G09": "OPEN"
+}

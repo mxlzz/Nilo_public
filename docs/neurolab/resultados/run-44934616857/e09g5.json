@@ -1,0 +1,7511 @@
+{
+  "advantage_first_vs_blind": 0.4677083333333333,
+  "advantage_first_vs_frozen": 0.44791666666666663,
+  "good_both": 12,
+  "holdout_ticks_per_phase": 128,
+  "limitations": "Concept detectors prewired; tabular has explicit causal provenance; external feedback",
+  "mean_overall": {
+    "blind": {
+      "first": 0.501953125,
+      "reversed": 0.494921875
+    },
+    "frozen": {
+      "first": 0.514453125,
+      "reversed": 0.509375
+    },
+    "neural": {
+      "first": 0.8890625,
+      "reversed": 0.8546875
+    },
+    "tabular": {
+      "first": 1,
+      "reversed": 1
+    }
+  },
+  "mean_steady": {
+    "blind": {
+      "first": 0.4994791666666667,
+      "reversed": 0.496875
+    },
+    "frozen": {
+      "first": 0.5192708333333333,
+      "reversed": 0.5114583333333333
+    },
+    "neural": {
+      "first": 0.9671875,
+      "reversed": 0.9302083333333333
+    },
+    "tabular": {
+      "first": 1,
+      "reversed": 1
+    }
+  },
+  "n_plastic_dendrites": 8,
+  "n_seeds": 20,
+  "n_units": 6,
+  "passed": false,
+  "per_seed": [
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.53125,
+        "overall": 0.515625,
+        "overall_by_context": [
+          0.5625,
+          0.46875
+        ],
+        "steady": 0.5104166666666666,
+        "steady_by_context": [
+          0.6041666666666666,
+          0.4166666666666667
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.5625,
+        "overall": 0.4609375,
+        "overall_by_context": [
+          0.453125,
+          0.46875
+        ],
+        "steady": 0.4270833333333333,
+        "steady_by_context": [
+          0.4583333333333333,
+          0.3958333333333333
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          88
+        ],
+        "neuron_states": [
+          80,
+          85
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 84,
+              "susceptibility": 19
+            },
+            "strength": 121
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 79,
+              "susceptibility": 19
+            },
+            "strength": 113
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 13,
+              "susceptibility": 0
+            },
+            "strength": 25
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 14,
+              "susceptibility": 0
+            },
+            "strength": 25
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 12,
+              "susceptibility": 0
+            },
+            "strength": 18
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 13,
+              "susceptibility": 0
+            },
+            "strength": 19
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 88,
+              "susceptibility": 88
+            },
+            "strength": 80
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 62,
+              "susceptibility": 88
+            },
+            "strength": 76
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          83,
+          0
+        ],
+        "neuron_states": [
+          82,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 33,
+              "susceptibility": 0
+            },
+            "strength": 121
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 35,
+              "susceptibility": 0
+            },
+            "strength": 113
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 87,
+              "susceptibility": 58
+            },
+            "strength": 109
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 82,
+              "susceptibility": 58
+            },
+            "strength": 106
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 89,
+              "susceptibility": 51
+            },
+            "strength": 107
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 83,
+              "susceptibility": 51
+            },
+            "strength": 101
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 36,
+              "susceptibility": 0
+            },
+            "strength": 100
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 38,
+              "susceptibility": 0
+            },
+            "strength": 106
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.5625,
+        "overall": 0.8125,
+        "overall_by_context": [
+          0.6875,
+          0.9375
+        ],
+        "steady": 0.8958333333333334,
+        "steady_by_context": [
+          0.7916666666666666,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.78125,
+        "overall": 0.9375,
+        "overall_by_context": [
+          0.921875,
+          0.953125
+        ],
+        "steady": 0.9895833333333334,
+        "steady_by_context": [
+          0.9791666666666666,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "schedule_blocks_b": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "seed": 0,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999981212,
+          -0.7902848
+        ],
+        [
+          -0.865782272,
+          0.9999999999963304
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.9437050046579217,
+          0.9999999999749389
+        ],
+        [
+          0.9999999999362355,
+          -0.9711769623848712
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.46875,
+        "overall": 0.4921875,
+        "overall_by_context": [
+          0.984375,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.59375,
+        "overall": 0.609375,
+        "overall_by_context": [
+          0.65625,
+          0.5625
+        ],
+        "steady": 0.6145833333333334,
+        "steady_by_context": [
+          0.6875,
+          0.5416666666666666
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.53125,
+        "overall": 0.5703125,
+        "overall_by_context": [
+          0.578125,
+          0.5625
+        ],
+        "steady": 0.5833333333333334,
+        "steady_by_context": [
+          0.5625,
+          0.6041666666666666
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          81
+        ],
+        "neuron_states": [
+          80,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 68,
+              "susceptibility": 22
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 64,
+              "susceptibility": 22
+            },
+            "strength": 116
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 6,
+              "susceptibility": 0
+            },
+            "strength": 25
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 8,
+              "susceptibility": 0
+            },
+            "strength": 25
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 17,
+              "susceptibility": 0
+            },
+            "strength": 22
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 18,
+              "susceptibility": 0
+            },
+            "strength": 20
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 105,
+              "susceptibility": 89
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 99,
+              "susceptibility": 89
+            },
+            "strength": 117
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          83,
+          0
+        ],
+        "neuron_states": [
+          82,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 26,
+              "susceptibility": 0
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 28,
+              "susceptibility": 0
+            },
+            "strength": 116
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 107,
+              "susceptibility": 41
+            },
+            "strength": 130
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 102,
+              "susceptibility": 41
+            },
+            "strength": 120
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 92,
+              "susceptibility": 56
+            },
+            "strength": 131
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 81,
+              "susceptibility": 56
+            },
+            "strength": 117
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 40,
+              "susceptibility": 3
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 43,
+              "susceptibility": 3
+            },
+            "strength": 117
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.6875,
+        "overall": 0.921875,
+        "overall_by_context": [
+          0.921875,
+          0.921875
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.78125,
+        "overall": 0.9453125,
+        "overall_by_context": [
+          0.953125,
+          0.9375
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "schedule_blocks_b": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "seed": 1,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999970643,
+          -0.865782272
+        ],
+        [
+          -0.865782272,
+          0.9999999999963304
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.9769415699078969,
+          0.9999999999362355
+        ],
+        [
+          0.999999999973882,
+          -0.9296312558224393
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.375,
+        "overall": 0.4921875,
+        "overall_by_context": [
+          0.484375,
+          0.5
+        ],
+        "steady": 0.53125,
+        "steady_by_context": [
+          0.5208333333333334,
+          0.5416666666666666
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.53125,
+        "overall": 0.4921875,
+        "overall_by_context": [
+          0.5625,
+          0.421875
+        ],
+        "steady": 0.4791666666666667,
+        "steady_by_context": [
+          0.5416666666666666,
+          0.4166666666666667
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          81
+        ],
+        "neuron_states": [
+          79,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 105,
+              "susceptibility": 73
+            },
+            "strength": 108
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 99,
+              "susceptibility": 73
+            },
+            "strength": 102
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 18,
+              "susceptibility": 18
+            },
+            "strength": 26
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 19,
+              "susceptibility": 18
+            },
+            "strength": 26
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 7,
+              "susceptibility": 0
+            },
+            "strength": 22
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 8,
+              "susceptibility": 0
+            },
+            "strength": 23
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 67,
+              "susceptibility": 21
+            },
+            "strength": 95
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 64,
+              "susceptibility": 21
+            },
+            "strength": 93
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          92,
+          0
+        ],
+        "neuron_states": [
+          88,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 38,
+              "susceptibility": 0
+            },
+            "strength": 108
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 40,
+              "susceptibility": 0
+            },
+            "strength": 102
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 89,
+              "susceptibility": 87
+            },
+            "strength": 77
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 58,
+              "susceptibility": 87
+            },
+            "strength": 76
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 109,
+              "susceptibility": 30
+            },
+            "strength": 130
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 103,
+              "susceptibility": 30
+            },
+            "strength": 120
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 24,
+              "susceptibility": 0
+            },
+            "strength": 95
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 26,
+              "susceptibility": 0
+            },
+            "strength": 93
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.78125,
+        "overall": 0.9453125,
+        "overall_by_context": [
+          0.9375,
+          0.953125
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.53125,
+        "overall": 0.7109375,
+        "overall_by_context": [
+          0.5,
+          0.921875
+        ],
+        "steady": 0.7708333333333334,
+        "steady_by_context": [
+          0.5416666666666666,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "schedule_blocks_b": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "seed": 2,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999981212,
+          -0.7902848
+        ],
+        [
+          -0.7378560000000001,
+          0.9999999999981212
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.9120390697780026,
+          0.9999999999839609
+        ],
+        [
+          0.9999999999900355,
+          -0.8282013081601292
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.625,
+        "overall": 0.5390625,
+        "overall_by_context": [
+          0.546875,
+          0.53125
+        ],
+        "steady": 0.5104166666666666,
+        "steady_by_context": [
+          0.5208333333333334,
+          0.5
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.5,
+        "overall": 0.4609375,
+        "overall_by_context": [
+          0.46875,
+          0.453125
+        ],
+        "steady": 0.4479166666666667,
+        "steady_by_context": [
+          0.4375,
+          0.4583333333333333
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          98,
+          0
+        ],
+        "neuron_states": [
+          92,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 125,
+              "susceptibility": 119
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 98,
+              "susceptibility": 119
+            },
+            "strength": 116
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 21,
+              "susceptibility": 0
+            },
+            "strength": 28
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 23,
+              "susceptibility": 0
+            },
+            "strength": 28
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 13,
+              "susceptibility": 0
+            },
+            "strength": 26
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 15,
+              "susceptibility": 0
+            },
+            "strength": 28
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 87,
+              "susceptibility": 0
+            },
+            "strength": 127
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 82,
+              "susceptibility": 0
+            },
+            "strength": 122
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          0,
+          105
+        ],
+        "neuron_states": [
+          80,
+          96
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 45,
+              "susceptibility": 0
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 45,
+              "susceptibility": 0
+            },
+            "strength": 116
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 66,
+              "susceptibility": 3
+            },
+            "strength": 115
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 62,
+              "susceptibility": 3
+            },
+            "strength": 112
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 127,
+              "susceptibility": 125
+            },
+            "strength": 115
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 78,
+              "susceptibility": 125
+            },
+            "strength": 98
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 31,
+              "susceptibility": 0
+            },
+            "strength": 127
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 32,
+              "susceptibility": 0
+            },
+            "strength": 122
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.71875,
+        "overall": 0.84375,
+        "overall_by_context": [
+          0.953125,
+          0.734375
+        ],
+        "steady": 0.8854166666666666,
+        "steady_by_context": [
+          1,
+          0.7708333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.75,
+        "overall": 0.8046875,
+        "overall_by_context": [
+          0.96875,
+          0.640625
+        ],
+        "steady": 0.8229166666666666,
+        "steady_by_context": [
+          1,
+          0.6458333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "schedule_blocks_b": [
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "seed": 3,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999976514,
+          -0.7902848
+        ],
+        [
+          -0.931280523264,
+          0.9999999999942663
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.9296312558224021,
+          0.9999999999749389
+        ],
+        [
+          0.9999999998388598,
+          -0.9905552670342879
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.46875,
+        "overall": 0.46875,
+        "overall_by_context": [
+          0.4375,
+          0.5
+        ],
+        "steady": 0.46875,
+        "steady_by_context": [
+          0.4166666666666667,
+          0.5208333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.75,
+        "overall": 0.5625,
+        "overall_by_context": [
+          0.609375,
+          0.515625
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0.5416666666666666,
+          0.4583333333333333
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          93
+        ],
+        "neuron_states": [
+          80,
+          88
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 96,
+              "susceptibility": 0
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 91,
+              "susceptibility": 0
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 14,
+              "susceptibility": 0
+            },
+            "strength": 26
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 16,
+              "susceptibility": 0
+            },
+            "strength": 28
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 19,
+              "susceptibility": 0
+            },
+            "strength": 22
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 20,
+              "susceptibility": 0
+            },
+            "strength": 23
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 125,
+              "susceptibility": 122
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 105,
+              "susceptibility": 122
+            },
+            "strength": 117
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          0,
+          84
+        ],
+        "neuron_states": [
+          80,
+          82
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 37,
+              "susceptibility": 0
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 39,
+              "susceptibility": 0
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 113,
+              "susceptibility": 31
+            },
+            "strength": 127
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 107,
+              "susceptibility": 31
+            },
+            "strength": 124
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 98,
+              "susceptibility": 96
+            },
+            "strength": 106
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 82,
+              "susceptibility": 96
+            },
+            "strength": 103
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 46,
+              "susceptibility": 0
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 47,
+              "susceptibility": 0
+            },
+            "strength": 128
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.53125,
+        "overall": 0.734375,
+        "overall_by_context": [
+          0.546875,
+          0.921875
+        ],
+        "steady": 0.8020833333333334,
+        "steady_by_context": [
+          0.6041666666666666,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.5625,
+        "overall": 0.8046875,
+        "overall_by_context": [
+          0.9375,
+          0.671875
+        ],
+        "steady": 0.8854166666666666,
+        "steady_by_context": [
+          1,
+          0.7708333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "schedule_blocks_b": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "seed": 4,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999981212,
+          -0.7902848
+        ],
+        [
+          -0.488,
+          0.9999999999990381
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.7315645440002522,
+          0.9999999999934304
+        ],
+        [
+          0.9999999999927048,
+          -0.8282013081600826
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.40625,
+        "overall": 0.4765625,
+        "overall_by_context": [
+          0.53125,
+          0.421875
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0.5833333333333334,
+          0.4166666666666667
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.53125,
+        "overall": 0.546875,
+        "overall_by_context": [
+          0.5625,
+          0.53125
+        ],
+        "steady": 0.5520833333333334,
+        "steady_by_context": [
+          0.5625,
+          0.5416666666666666
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          83
+        ],
+        "neuron_states": [
+          79,
+          82
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 125,
+              "susceptibility": 82
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 112,
+              "susceptibility": 82
+            },
+            "strength": 115
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 18,
+              "susceptibility": 18
+            },
+            "strength": 16
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 19,
+              "susceptibility": 18
+            },
+            "strength": 18
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 11,
+              "susceptibility": 0
+            },
+            "strength": 22
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 12,
+              "susceptibility": 0
+            },
+            "strength": 23
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 84,
+              "susceptibility": 13
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 78,
+              "susceptibility": 13
+            },
+            "strength": 117
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          0,
+          81
+        ],
+        "neuron_states": [
+          80,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 51,
+              "susceptibility": 0
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 53,
+              "susceptibility": 0
+            },
+            "strength": 115
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 110,
+              "susceptibility": 24
+            },
+            "strength": 122
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 104,
+              "susceptibility": 24
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 70,
+              "susceptibility": 66
+            },
+            "strength": 72
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 66,
+              "susceptibility": 66
+            },
+            "strength": 70
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 34,
+              "susceptibility": 5
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 36,
+              "susceptibility": 5
+            },
+            "strength": 117
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.53125,
+        "overall": 0.8125,
+        "overall_by_context": [
+          0.921875,
+          0.703125
+        ],
+        "steady": 0.90625,
+        "steady_by_context": [
+          1,
+          0.8125
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.65625,
+        "overall": 0.9140625,
+        "overall_by_context": [
+          0.90625,
+          0.921875
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "schedule_blocks_b": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "seed": 5,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999992305,
+          -0.488
+        ],
+        [
+          -0.5904,
+          0.9999999999987976
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.7852516352000827,
+          0.9999999999931746
+        ],
+        [
+          0.9999999999953311,
+          -0.7315645440001292
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5625,
+        "overall": 0.4921875,
+        "overall_by_context": [
+          0.5,
+          0.484375
+        ],
+        "steady": 0.46875,
+        "steady_by_context": [
+          0.4166666666666667,
+          0.5208333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.5625,
+        "overall": 0.4921875,
+        "overall_by_context": [
+          0.5,
+          0.484375
+        ],
+        "steady": 0.46875,
+        "steady_by_context": [
+          0.4166666666666667,
+          0.5208333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.53125,
+        "overall": 0.5078125,
+        "overall_by_context": [
+          0.59375,
+          0.421875
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0.5833333333333334,
+          0.4166666666666667
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          83,
+          0
+        ],
+        "neuron_states": [
+          82,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 93,
+              "susceptibility": 76
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 87,
+              "susceptibility": 76
+            },
+            "strength": 117
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 13,
+              "susceptibility": 0
+            },
+            "strength": 22
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 14,
+              "susceptibility": 0
+            },
+            "strength": 20
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 12,
+              "susceptibility": 0
+            },
+            "strength": 25
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 13,
+              "susceptibility": 0
+            },
+            "strength": 27
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 114,
+              "susceptibility": 32
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 107,
+              "susceptibility": 32
+            },
+            "strength": 116
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          0,
+          82
+        ],
+        "neuron_states": [
+          80,
+          81
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 36,
+              "susceptibility": 0
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 37,
+              "susceptibility": 0
+            },
+            "strength": 117
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 65,
+              "susceptibility": 28
+            },
+            "strength": 101
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 62,
+              "susceptibility": 28
+            },
+            "strength": 98
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 98,
+              "susceptibility": 81
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 93,
+              "susceptibility": 81
+            },
+            "strength": 117
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 43,
+              "susceptibility": 0
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 47,
+              "susceptibility": 0
+            },
+            "strength": 116
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.65625,
+        "overall": 0.9140625,
+        "overall_by_context": [
+          0.90625,
+          0.921875
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.5625,
+        "overall": 0.890625,
+        "overall_by_context": [
+          0.9375,
+          0.84375
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "schedule_blocks_b": [
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "seed": 6,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.999999999998497,
+          -0.67232
+        ],
+        [
+          -0.865782272,
+          0.9999999999970643
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.8900488372224661,
+          0.9999999999850177
+        ],
+        [
+          0.9999999999866276,
+          -0.8900488372225615
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.4375,
+        "overall": 0.4921875,
+        "overall_by_context": [
+          0.484375,
+          0.5
+        ],
+        "steady": 0.5104166666666666,
+        "steady_by_context": [
+          0.5,
+          0.5208333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.46875,
+        "overall": 0.5625,
+        "overall_by_context": [
+          0.515625,
+          0.609375
+        ],
+        "steady": 0.59375,
+        "steady_by_context": [
+          0.5833333333333334,
+          0.6041666666666666
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          84
+        ],
+        "neuron_states": [
+          80,
+          82
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 118,
+              "susceptibility": 54
+            },
+            "strength": 126
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 113,
+              "susceptibility": 54
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 10,
+              "susceptibility": 0
+            },
+            "strength": 15
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 11,
+              "susceptibility": 0
+            },
+            "strength": 15
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 16,
+              "susceptibility": 0
+            },
+            "strength": 33
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 18,
+              "susceptibility": 0
+            },
+            "strength": 34
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 72,
+              "susceptibility": 49
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 64,
+              "susceptibility": 49
+            },
+            "strength": 114
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          0,
+          81
+        ],
+        "neuron_states": [
+          80,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 41,
+              "susceptibility": 12
+            },
+            "strength": 126
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 45,
+              "susceptibility": 12
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 118,
+              "susceptibility": 69
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 107,
+              "susceptibility": 69
+            },
+            "strength": 116
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 78,
+              "susceptibility": 23
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 75,
+              "susceptibility": 23
+            },
+            "strength": 120
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 29,
+              "susceptibility": 0
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 30,
+              "susceptibility": 0
+            },
+            "strength": 114
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.71875,
+        "overall": 0.9296875,
+        "overall_by_context": [
+          0.9375,
+          0.921875
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.53125,
+        "overall": 0.8671875,
+        "overall_by_context": [
+          0.8125,
+          0.921875
+        ],
+        "steady": 0.9791666666666666,
+        "steady_by_context": [
+          0.9583333333333334,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1
+      ],
+      "schedule_blocks_b": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "seed": 7,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999987976,
+          -0.67232
+        ],
+        [
+          -0.7378560000000001,
+          0.9999999999981212
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.8900488372224661,
+          0.9999999999850177
+        ],
+        [
+          0.9999999999805381,
+          -0.9296312558223889
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.40625,
+        "overall": 0.46875,
+        "overall_by_context": [
+          0.5,
+          0.4375
+        ],
+        "steady": 0.4895833333333333,
+        "steady_by_context": [
+          0.4791666666666667,
+          0.5
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.5,
+        "overall": 0.53125,
+        "overall_by_context": [
+          0.484375,
+          0.578125
+        ],
+        "steady": 0.5416666666666666,
+        "steady_by_context": [
+          0.4791666666666667,
+          0.6041666666666666
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.40625,
+        "overall": 0.46875,
+        "overall_by_context": [
+          0.5,
+          0.4375
+        ],
+        "steady": 0.4895833333333333,
+        "steady_by_context": [
+          0.4791666666666667,
+          0.5
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          81,
+          0
+        ],
+        "neuron_states": [
+          80,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 82,
+              "susceptibility": 54
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 78,
+              "susceptibility": 54
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 7,
+              "susceptibility": 0
+            },
+            "strength": 18
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 9,
+              "susceptibility": 0
+            },
+            "strength": 18
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 4,
+              "susceptibility": 0
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 5,
+              "susceptibility": 0
+            },
+            "strength": 22
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 74,
+              "susceptibility": 48
+            },
+            "strength": 110
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 70,
+              "susceptibility": 48
+            },
+            "strength": 104
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          110,
+          0
+        ],
+        "neuron_states": [
+          100,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 35,
+              "susceptibility": 0
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 36,
+              "susceptibility": 0
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 93,
+              "susceptibility": 91
+            },
+            "strength": 81
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 38,
+              "susceptibility": 91
+            },
+            "strength": 72
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 110,
+              "susceptibility": 26
+            },
+            "strength": 126
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 105,
+              "susceptibility": 26
+            },
+            "strength": 120
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 29,
+              "susceptibility": 0
+            },
+            "strength": 110
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 31,
+              "susceptibility": 0
+            },
+            "strength": 104
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.6875,
+        "overall": 0.921875,
+        "overall_by_context": [
+          0.921875,
+          0.921875
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.5625,
+        "overall": 0.75,
+        "overall_by_context": [
+          0.5625,
+          0.9375
+        ],
+        "steady": 0.8125,
+        "steady_by_context": [
+          0.625,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "schedule_blocks_b": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "seed": 8,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999981212,
+          -0.7378560000000001
+        ],
+        [
+          -0.5904,
+          0.9999999999990381
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.8625610465281033,
+          0.9999999999900355
+        ],
+        [
+          0.9999999999927048,
+          -0.7852516352001033
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.4375,
+        "overall": 0.5,
+        "overall_by_context": [
+          0.515625,
+          0.484375
+        ],
+        "steady": 0.5208333333333334,
+        "steady_by_context": [
+          0.5625,
+          0.4791666666666667
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.71875,
+        "overall": 0.5234375,
+        "overall_by_context": [
+          0.5,
+          0.546875
+        ],
+        "steady": 0.4583333333333333,
+        "steady_by_context": [
+          0.3958333333333333,
+          0.5208333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          81
+        ],
+        "neuron_states": [
+          80,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 125,
+              "susceptibility": 87
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 118,
+              "susceptibility": 87
+            },
+            "strength": 122
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 22,
+              "susceptibility": 22
+            },
+            "strength": 27
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 23,
+              "susceptibility": 22
+            },
+            "strength": 26
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 3,
+              "susceptibility": 0
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 4,
+              "susceptibility": 0
+            },
+            "strength": 19
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 71,
+              "susceptibility": 4
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 68,
+              "susceptibility": 4
+            },
+            "strength": 119
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          81,
+          0
+        ],
+        "neuron_states": [
+          80,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 47,
+              "susceptibility": 0
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 51,
+              "susceptibility": 0
+            },
+            "strength": 122
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 113,
+              "susceptibility": 35
+            },
+            "strength": 130
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 108,
+              "susceptibility": 35
+            },
+            "strength": 120
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 87,
+              "susceptibility": 58
+            },
+            "strength": 130
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 82,
+              "susceptibility": 58
+            },
+            "strength": 123
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 28,
+              "susceptibility": 13
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 28,
+              "susceptibility": 13
+            },
+            "strength": 119
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.78125,
+        "overall": 0.9453125,
+        "overall_by_context": [
+          0.9375,
+          0.953125
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.8125,
+        "overall": 0.953125,
+        "overall_by_context": [
+          0.953125,
+          0.953125
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "schedule_blocks_b": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "seed": 9,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999976514,
+          -0.83222784
+        ],
+        [
+          -0.67232,
+          0.999999999998497
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.9549640037263479,
+          0.9999999999679396
+        ],
+        [
+          0.9999999999938632,
+          -0.7315645440001614
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.4375,
+        "overall": 0.5078125,
+        "overall_by_context": [
+          0.5625,
+          0.453125
+        ],
+        "steady": 0.53125,
+        "steady_by_context": [
+          0.5833333333333334,
+          0.4791666666666667
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.625,
+        "overall": 0.5390625,
+        "overall_by_context": [
+          0.515625,
+          0.5625
+        ],
+        "steady": 0.5104166666666666,
+        "steady_by_context": [
+          0.4791666666666667,
+          0.5416666666666666
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          81
+        ],
+        "neuron_states": [
+          78,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 121,
+              "susceptibility": 83
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 113,
+              "susceptibility": 83
+            },
+            "strength": 116
+          },
+          {
+            "dendrite": {
+              "ltw": 1,
+              "stw": 21,
+              "susceptibility": 22
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 1,
+              "stw": 22,
+              "susceptibility": 22
+            },
+            "strength": 22
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 2,
+              "susceptibility": 0
+            },
+            "strength": 25
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 4,
+              "susceptibility": 0
+            },
+            "strength": 27
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 71,
+              "susceptibility": 4
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 68,
+              "susceptibility": 4
+            },
+            "strength": 113
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          81,
+          0
+        ],
+        "neuron_states": [
+          80,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 43,
+              "susceptibility": 0
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 48,
+              "susceptibility": 0
+            },
+            "strength": 123
+          },
+          {
+            "dendrite": {
+              "ltw": 3,
+              "stw": 77,
+              "susceptibility": 39
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 3,
+              "stw": 73,
+              "susceptibility": 39
+            },
+            "strength": 122
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 99,
+              "susceptibility": 51
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 88,
+              "susceptibility": 51
+            },
+            "strength": 115
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 25,
+              "susceptibility": 3
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 29,
+              "susceptibility": 3
+            },
+            "strength": 113
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.71875,
+        "overall": 0.921875,
+        "overall_by_context": [
+          0.953125,
+          0.890625
+        ],
+        "steady": 0.9895833333333334,
+        "steady_by_context": [
+          1,
+          0.9791666666666666
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.6875,
+        "overall": 0.921875,
+        "overall_by_context": [
+          0.9375,
+          0.90625
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "schedule_blocks_b": [
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "seed": 10,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999990381,
+          -0.5904
+        ],
+        [
+          -0.865782272,
+          0.9999999999963304
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.7852516352001033,
+          0.9999999999941639
+        ],
+        [
+          0.9999999999893021,
+          -0.8282013081602522
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.40625,
+        "overall": 0.5234375,
+        "overall_by_context": [
+          0.5,
+          0.546875
+        ],
+        "steady": 0.5625,
+        "steady_by_context": [
+          0.5416666666666666,
+          0.5833333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.59375,
+        "overall": 0.53125,
+        "overall_by_context": [
+          0.546875,
+          0.515625
+        ],
+        "steady": 0.5104166666666666,
+        "steady_by_context": [
+          0.5416666666666666,
+          0.4791666666666667
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          83,
+          0
+        ],
+        "neuron_states": [
+          82,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 103,
+              "susceptibility": 8
+            },
+            "strength": 126
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 98,
+              "susceptibility": 8
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 17,
+              "susceptibility": 0
+            },
+            "strength": 26
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 19,
+              "susceptibility": 0
+            },
+            "strength": 25
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 18,
+              "susceptibility": 18
+            },
+            "strength": 13
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 19,
+              "susceptibility": 18
+            },
+            "strength": 13
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 125,
+              "susceptibility": 87
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 118,
+              "susceptibility": 87
+            },
+            "strength": 122
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          0,
+          81
+        ],
+        "neuron_states": [
+          80,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 37,
+              "susceptibility": 9
+            },
+            "strength": 126
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 39,
+              "susceptibility": 9
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 116,
+              "susceptibility": 69
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 110,
+              "susceptibility": 69
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 66,
+              "susceptibility": 30
+            },
+            "strength": 106
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 62,
+              "susceptibility": 30
+            },
+            "strength": 100
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 45,
+              "susceptibility": 0
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 50,
+              "susceptibility": 0
+            },
+            "strength": 122
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.75,
+        "overall": 0.9375,
+        "overall_by_context": [
+          0.953125,
+          0.921875
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.6875,
+        "overall": 0.921875,
+        "overall_by_context": [
+          0.921875,
+          0.921875
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "schedule_blocks_b": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "seed": 11,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999970643,
+          -0.83222784
+        ],
+        [
+          -0.7902848,
+          0.9999999999981212
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.9549640037263479,
+          0.9999999999599246
+        ],
+        [
+          0.9999999999749389,
+          -0.9437050046579217
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.53125,
+        "overall": 0.421875,
+        "overall_by_context": [
+          0.4375,
+          0.40625
+        ],
+        "steady": 0.3854166666666667,
+        "steady_by_context": [
+          0.4166666666666667,
+          0.3541666666666667
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.34375,
+        "overall": 0.5,
+        "overall_by_context": [
+          0.5,
+          0.5
+        ],
+        "steady": 0.5520833333333334,
+        "steady_by_context": [
+          0.5625,
+          0.5416666666666666
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          81
+        ],
+        "neuron_states": [
+          80,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 74,
+              "susceptibility": 26
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 70,
+              "susceptibility": 26
+            },
+            "strength": 116
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 6,
+              "susceptibility": 0
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 7,
+              "susceptibility": 0
+            },
+            "strength": 15
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 12,
+              "susceptibility": 0
+            },
+            "strength": 22
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 13,
+              "susceptibility": 0
+            },
+            "strength": 22
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 105,
+              "susceptibility": 72
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 100,
+              "susceptibility": 72
+            },
+            "strength": 117
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          0,
+          83
+        ],
+        "neuron_states": [
+          80,
+          82
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 26,
+              "susceptibility": 3
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 29,
+              "susceptibility": 3
+            },
+            "strength": 116
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 93,
+              "susceptibility": 48
+            },
+            "strength": 124
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 82,
+              "susceptibility": 48
+            },
+            "strength": 115
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 84,
+              "susceptibility": 43
+            },
+            "strength": 105
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 79,
+              "susceptibility": 43
+            },
+            "strength": 99
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 37,
+              "susceptibility": 0
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 39,
+              "susceptibility": 0
+            },
+            "strength": 117
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.71875,
+        "overall": 0.9296875,
+        "overall_by_context": [
+          0.921875,
+          0.9375
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.75,
+        "overall": 0.9375,
+        "overall_by_context": [
+          0.9375,
+          0.9375
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "schedule_blocks_b": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "seed": 12,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999990381,
+          -0.5904
+        ],
+        [
+          -0.931280523264,
+          0.9999999999928328
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.8900488372224529,
+          0.9999999999857516
+        ],
+        [
+          0.9999999999783721,
+          -0.9296312558225377
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.625,
+        "overall": 0.53125,
+        "overall_by_context": [
+          0.484375,
+          0.578125
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0.4375,
+          0.5625
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.53125,
+        "overall": 0.4921875,
+        "overall_by_context": [
+          0.484375,
+          0.5
+        ],
+        "steady": 0.4791666666666667,
+        "steady_by_context": [
+          0.5208333333333334,
+          0.4375
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.625,
+        "overall": 0.53125,
+        "overall_by_context": [
+          0.484375,
+          0.578125
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0.4375,
+          0.5625
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.53125,
+        "overall": 0.4921875,
+        "overall_by_context": [
+          0.484375,
+          0.5
+        ],
+        "steady": 0.4791666666666667,
+        "steady_by_context": [
+          0.5208333333333334,
+          0.4375
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          83
+        ],
+        "neuron_states": [
+          80,
+          82
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 75,
+              "susceptibility": 51
+            },
+            "strength": 103
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 71,
+              "susceptibility": 51
+            },
+            "strength": 97
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 2,
+              "susceptibility": 0
+            },
+            "strength": 17
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 3,
+              "susceptibility": 0
+            },
+            "strength": 18
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 21,
+              "susceptibility": 0
+            },
+            "strength": 25
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 23,
+              "susceptibility": 0
+            },
+            "strength": 26
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 108,
+              "susceptibility": 51
+            },
+            "strength": 127
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 102,
+              "susceptibility": 51
+            },
+            "strength": 121
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          0,
+          87
+        ],
+        "neuron_states": [
+          80,
+          84
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 28,
+              "susceptibility": 0
+            },
+            "strength": 103
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 30,
+              "susceptibility": 0
+            },
+            "strength": 97
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 86,
+              "susceptibility": 5
+            },
+            "strength": 131
+          },
+          {
+            "dendrite": {
+              "ltw": 3,
+              "stw": 79,
+              "susceptibility": 5
+            },
+            "strength": 118
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 127,
+              "susceptibility": 122
+            },
+            "strength": 130
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 113,
+              "susceptibility": 122
+            },
+            "strength": 123
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 40,
+              "susceptibility": 2
+            },
+            "strength": 127
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 42,
+              "susceptibility": 2
+            },
+            "strength": 121
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.78125,
+        "overall": 0.9375,
+        "overall_by_context": [
+          0.921875,
+          0.953125
+        ],
+        "steady": 0.9895833333333334,
+        "steady_by_context": [
+          0.9791666666666666,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.46875,
+        "overall": 0.8671875,
+        "overall_by_context": [
+          0.921875,
+          0.8125
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "schedule_blocks_b": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "seed": 13,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999981212,
+          -0.7902848
+        ],
+        [
+          -0.8926258176,
+          0.999999999995413
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.9296312558224021,
+          0.9999999999749389
+        ],
+        [
+          0.9999999999891481,
+          -0.8625610465282522
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0.609375,
+          0.390625
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0.6041666666666666,
+          0.3958333333333333
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.34375,
+        "overall": 0.4375,
+        "overall_by_context": [
+          0.453125,
+          0.421875
+        ],
+        "steady": 0.46875,
+        "steady_by_context": [
+          0.5,
+          0.4375
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          81
+        ],
+        "neuron_states": [
+          80,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 98,
+              "susceptibility": 45
+            },
+            "strength": 124
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 92,
+              "susceptibility": 45
+            },
+            "strength": 114
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 15,
+              "susceptibility": 0
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 16,
+              "susceptibility": 0
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 1,
+              "stw": 1,
+              "susceptibility": 0
+            },
+            "strength": 14
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 2,
+              "susceptibility": 0
+            },
+            "strength": 10
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 70,
+              "susceptibility": 56
+            },
+            "strength": 92
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 66,
+              "susceptibility": 56
+            },
+            "strength": 84
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          0,
+          84
+        ],
+        "neuron_states": [
+          80,
+          82
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 37,
+              "susceptibility": 0
+            },
+            "strength": 124
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 39,
+              "susceptibility": 0
+            },
+            "strength": 114
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 81,
+              "susceptibility": 0
+            },
+            "strength": 130
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 78,
+              "susceptibility": 0
+            },
+            "strength": 121
+          },
+          {
+            "dendrite": {
+              "ltw": 3,
+              "stw": 121,
+              "susceptibility": 97
+            },
+            "strength": 130
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 111,
+              "susceptibility": 97
+            },
+            "strength": 117
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 27,
+              "susceptibility": 16
+            },
+            "strength": 92
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 29,
+              "susceptibility": 16
+            },
+            "strength": 84
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.4375,
+        "overall": 0.8359375,
+        "overall_by_context": [
+          0.90625,
+          0.765625
+        ],
+        "steady": 0.96875,
+        "steady_by_context": [
+          1,
+          0.9375
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.75,
+        "overall": 0.9375,
+        "overall_by_context": [
+          0.96875,
+          0.90625
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "schedule_blocks_b": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "seed": 14,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.999999999995413,
+          -0.9141006540800001
+        ],
+        [
+          -0.7378560000000001,
+          0.9999999999981212
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.9769415699079159,
+          0.9999999999182301
+        ],
+        [
+          0.9999999999756727,
+          -0.9437050046579112
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.6875,
+        "overall": 0.578125,
+        "overall_by_context": [
+          0.5625,
+          0.59375
+        ],
+        "steady": 0.5416666666666666,
+        "steady_by_context": [
+          0.5416666666666666,
+          0.5416666666666666
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.5,
+        "overall": 0.546875,
+        "overall_by_context": [
+          0.5625,
+          0.53125
+        ],
+        "steady": 0.5625,
+        "steady_by_context": [
+          0.6041666666666666,
+          0.5208333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          82,
+          0
+        ],
+        "neuron_states": [
+          81,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 98,
+              "susceptibility": 55
+            },
+            "strength": 113
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 92,
+              "susceptibility": 55
+            },
+            "strength": 110
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 26,
+              "susceptibility": 15
+            },
+            "strength": 27
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 28,
+              "susceptibility": 15
+            },
+            "strength": 26
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 5,
+              "susceptibility": 0
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 6,
+              "susceptibility": 0
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 61,
+              "susceptibility": 24
+            },
+            "strength": 91
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 58,
+              "susceptibility": 24
+            },
+            "strength": 86
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          84,
+          0
+        ],
+        "neuron_states": [
+          82,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 35,
+              "susceptibility": 19
+            },
+            "strength": 113
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 34,
+              "susceptibility": 19
+            },
+            "strength": 110
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 119,
+              "susceptibility": 107
+            },
+            "strength": 131
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 113,
+              "susceptibility": 107
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 88,
+              "susceptibility": 0
+            },
+            "strength": 130
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 83,
+              "susceptibility": 0
+            },
+            "strength": 122
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 22,
+              "susceptibility": 0
+            },
+            "strength": 91
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 25,
+              "susceptibility": 0
+            },
+            "strength": 86
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.46875,
+        "overall": 0.84375,
+        "overall_by_context": [
+          0.921875,
+          0.765625
+        ],
+        "steady": 0.96875,
+        "steady_by_context": [
+          1,
+          0.9375
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.53125,
+        "overall": 0.8671875,
+        "overall_by_context": [
+          0.8125,
+          0.921875
+        ],
+        "steady": 0.9791666666666666,
+        "steady_by_context": [
+          0.9583333333333334,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "schedule_blocks_b": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1
+      ],
+      "seed": 15,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.999999999998497,
+          -0.67232
+        ],
+        [
+          -0.7378560000000001,
+          0.999999999998497
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.8900488372224661,
+          0.9999999999880141
+        ],
+        [
+          0.9999999999695909,
+          -0.9437050046579112
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.40625,
+        "overall": 0.578125,
+        "overall_by_context": [
+          0.578125,
+          0.578125
+        ],
+        "steady": 0.6354166666666666,
+        "steady_by_context": [
+          0.625,
+          0.6458333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.46875,
+        "overall": 0.515625,
+        "overall_by_context": [
+          0.53125,
+          0.5
+        ],
+        "steady": 0.53125,
+        "steady_by_context": [
+          0.5,
+          0.5625
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          82
+        ],
+        "neuron_states": [
+          80,
+          81
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 81,
+              "susceptibility": 32
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 77,
+              "susceptibility": 32
+            },
+            "strength": 118
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 10,
+              "susceptibility": 8
+            },
+            "strength": 18
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 11,
+              "susceptibility": 8
+            },
+            "strength": 18
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 12,
+              "susceptibility": 0
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 13,
+              "susceptibility": 0
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 114,
+              "susceptibility": 56
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 107,
+              "susceptibility": 56
+            },
+            "strength": 121
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          0,
+          131
+        ],
+        "neuron_states": [
+          80,
+          114
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 29,
+              "susceptibility": 0
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 27,
+              "susceptibility": 0
+            },
+            "strength": 118
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 107,
+              "susceptibility": 9
+            },
+            "strength": 131
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 102,
+              "susceptibility": 9
+            },
+            "strength": 116
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 127,
+              "susceptibility": 123
+            },
+            "strength": 131
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 56,
+              "susceptibility": 123
+            },
+            "strength": 116
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 41,
+              "susceptibility": 0
+            },
+            "strength": 129
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 44,
+              "susceptibility": 0
+            },
+            "strength": 121
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.53125,
+        "overall": 0.8828125,
+        "overall_by_context": [
+          0.859375,
+          0.90625
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.5,
+        "overall": 0.640625,
+        "overall_by_context": [
+          0.953125,
+          0.328125
+        ],
+        "steady": 0.6875,
+        "steady_by_context": [
+          1,
+          0.375
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "schedule_blocks_b": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "seed": 16,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999987976,
+          -0.67232
+        ],
+        [
+          -0.8926258176,
+          0.999999999995413
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.9120390697779729,
+          0.9999999999812721
+        ],
+        [
+          0.9999999999586036,
+          -0.9639712029811021
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.53125,
+        "overall": 0.5234375,
+        "overall_by_context": [
+          0.484375,
+          0.5625
+        ],
+        "steady": 0.5208333333333334,
+        "steady_by_context": [
+          0.5416666666666666,
+          0.5
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.53125,
+        "overall": 0.5234375,
+        "overall_by_context": [
+          0.484375,
+          0.5625
+        ],
+        "steady": 0.5208333333333334,
+        "steady_by_context": [
+          0.5416666666666666,
+          0.5
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.3125,
+        "overall": 0.4921875,
+        "overall_by_context": [
+          0.5625,
+          0.421875
+        ],
+        "steady": 0.5520833333333334,
+        "steady_by_context": [
+          0.625,
+          0.4791666666666667
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          83
+        ],
+        "neuron_states": [
+          80,
+          82
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 81,
+              "susceptibility": 16
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 77,
+              "susceptibility": 16
+            },
+            "strength": 121
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 6,
+              "susceptibility": 0
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 7,
+              "susceptibility": 0
+            },
+            "strength": 20
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 17,
+              "susceptibility": 10
+            },
+            "strength": 21
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 18,
+              "susceptibility": 10
+            },
+            "strength": 20
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 95,
+              "susceptibility": 85
+            },
+            "strength": 100
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 90,
+              "susceptibility": 85
+            },
+            "strength": 97
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          101,
+          0
+        ],
+        "neuron_states": [
+          94,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 31,
+              "susceptibility": 0
+            },
+            "strength": 128
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 33,
+              "susceptibility": 0
+            },
+            "strength": 121
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 126,
+              "susceptibility": 124
+            },
+            "strength": 114
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 84,
+              "susceptibility": 124
+            },
+            "strength": 108
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 106,
+              "susceptibility": 17
+            },
+            "strength": 127
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 100,
+              "susceptibility": 17
+            },
+            "strength": 123
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 35,
+              "susceptibility": 0
+            },
+            "strength": 100
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 37,
+              "susceptibility": 0
+            },
+            "strength": 102
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.6875,
+        "overall": 0.921875,
+        "overall_by_context": [
+          0.90625,
+          0.9375
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.53125,
+        "overall": 0.8046875,
+        "overall_by_context": [
+          0.6875,
+          0.921875
+        ],
+        "steady": 0.8958333333333334,
+        "steady_by_context": [
+          0.7916666666666666,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1
+      ],
+      "schedule_blocks_b": [
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "seed": 17,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999992305,
+          -0.488
+        ],
+        [
+          -0.8926258176,
+          0.999999999995413
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.6644556800001291,
+          0.9999999999965054
+        ],
+        [
+          0.9999999999353181,
+          -0.9711769623848816
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          1,
+          0
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          1,
+          0
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.34375,
+        "overall": 0.4375,
+        "overall_by_context": [
+          0.390625,
+          0.484375
+        ],
+        "steady": 0.46875,
+        "steady_by_context": [
+          0.4375,
+          0.5
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.53125,
+        "overall": 0.546875,
+        "overall_by_context": [
+          0.5,
+          0.59375
+        ],
+        "steady": 0.5520833333333334,
+        "steady_by_context": [
+          0.5,
+          0.6041666666666666
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.34375,
+        "overall": 0.4375,
+        "overall_by_context": [
+          0.390625,
+          0.484375
+        ],
+        "steady": 0.46875,
+        "steady_by_context": [
+          0.4375,
+          0.5
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          82,
+          0
+        ],
+        "neuron_states": [
+          81,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 108,
+              "susceptibility": 108
+            },
+            "strength": 125
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 97,
+              "susceptibility": 108
+            },
+            "strength": 118
+          },
+          {
+            "dendrite": {
+              "ltw": 1,
+              "stw": 11,
+              "susceptibility": 0
+            },
+            "strength": 17
+          },
+          {
+            "dendrite": {
+              "ltw": 1,
+              "stw": 12,
+              "susceptibility": 0
+            },
+            "strength": 18
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 8,
+              "susceptibility": 0
+            },
+            "strength": 26
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 9,
+              "susceptibility": 0
+            },
+            "strength": 25
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 81,
+              "susceptibility": 14
+            },
+            "strength": 124
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 77,
+              "susceptibility": 14
+            },
+            "strength": 118
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          126,
+          0
+        ],
+        "neuron_outputs": [
+          0,
+          81
+        ],
+        "neuron_states": [
+          80,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 42,
+              "susceptibility": 0
+            },
+            "strength": 125
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 44,
+              "susceptibility": 0
+            },
+            "strength": 118
+          },
+          {
+            "dendrite": {
+              "ltw": 3,
+              "stw": 70,
+              "susceptibility": 26
+            },
+            "strength": 76
+          },
+          {
+            "dendrite": {
+              "ltw": 3,
+              "stw": 66,
+              "susceptibility": 26
+            },
+            "strength": 74
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 85,
+              "susceptibility": 78
+            },
+            "strength": 115
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 80,
+              "susceptibility": 78
+            },
+            "strength": 112
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 33,
+              "susceptibility": 0
+            },
+            "strength": 124
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 35,
+              "susceptibility": 0
+            },
+            "strength": 118
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.5625,
+        "overall": 0.84375,
+        "overall_by_context": [
+          0.9375,
+          0.75
+        ],
+        "steady": 0.9375,
+        "steady_by_context": [
+          1,
+          0.875
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.6875,
+        "overall": 0.921875,
+        "overall_by_context": [
+          0.921875,
+          0.921875
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "schedule_blocks_b": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "seed": 18,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.999999999995413,
+          -0.8926258176
+        ],
+        [
+          -0.67232,
+          0.9999999999987976
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.8625610465282522,
+          0.9999999999864352
+        ],
+        [
+          0.9999999999812721,
+          -0.9296312558223783
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    },
+    {
+      "blind_first": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "blind_reversed": {
+        "early": 0.5,
+        "overall": 0.5,
+        "overall_by_context": [
+          0,
+          1
+        ],
+        "steady": 0.5,
+        "steady_by_context": [
+          0,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_first": {
+        "early": 0.40625,
+        "overall": 0.4609375,
+        "overall_by_context": [
+          0.515625,
+          0.40625
+        ],
+        "steady": 0.4791666666666667,
+        "steady_by_context": [
+          0.4583333333333333,
+          0.5
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "frozen_reversed": {
+        "early": 0.46875,
+        "overall": 0.5390625,
+        "overall_by_context": [
+          0.5,
+          0.578125
+        ],
+        "steady": 0.5625,
+        "steady_by_context": [
+          0.5416666666666666,
+          0.5833333333333334
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_after_first": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          0,
+          82
+        ],
+        "neuron_states": [
+          80,
+          81
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 97,
+              "susceptibility": 39
+            },
+            "strength": 127
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 92,
+              "susceptibility": 39
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 7,
+              "susceptibility": 0
+            },
+            "strength": 25
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 9,
+              "susceptibility": 0
+            },
+            "strength": 27
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 12,
+              "susceptibility": 0
+            },
+            "strength": 25
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 13,
+              "susceptibility": 0
+            },
+            "strength": 22
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 102,
+              "susceptibility": 65
+            },
+            "strength": 113
+          },
+          {
+            "dendrite": {
+              "ltw": 2,
+              "stw": 96,
+              "susceptibility": 65
+            },
+            "strength": 110
+          }
+        ],
+        "tick": 256
+      },
+      "neural_after_reversal": {
+        "concept_outputs": [
+          0,
+          126
+        ],
+        "neuron_outputs": [
+          86,
+          0
+        ],
+        "neuron_states": [
+          84,
+          80
+        ],
+        "synapses": [
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 37,
+              "susceptibility": 0
+            },
+            "strength": 127
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 38,
+              "susceptibility": 0
+            },
+            "strength": 119
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 111,
+              "susceptibility": 109
+            },
+            "strength": 105
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 90,
+              "susceptibility": 109
+            },
+            "strength": 99
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 82,
+              "susceptibility": 12
+            },
+            "strength": 106
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 78,
+              "susceptibility": 12
+            },
+            "strength": 103
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 36,
+              "susceptibility": 0
+            },
+            "strength": 113
+          },
+          {
+            "dendrite": {
+              "ltw": 4,
+              "stw": 37,
+              "susceptibility": 0
+            },
+            "strength": 110
+          }
+        ],
+        "tick": 512
+      },
+      "neural_first": {
+        "early": 0.78125,
+        "overall": 0.9453125,
+        "overall_by_context": [
+          0.9375,
+          0.953125
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "neural_reversed": {
+        "early": 0.4375,
+        "overall": 0.6953125,
+        "overall_by_context": [
+          0.484375,
+          0.90625
+        ],
+        "steady": 0.78125,
+        "steady_by_context": [
+          0.5625,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "schedule_blocks_a": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "schedule_blocks_b": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "seed": 19,
+      "tabular_first": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      },
+      "tabular_q_after_first": [
+        [
+          0.9999999999963304,
+          -0.8926258176
+        ],
+        [
+          -0.83222784,
+          0.9999999999970643
+        ]
+      ],
+      "tabular_q_after_reverse": [
+        [
+          -0.9120390697780814,
+          0.999999999983044
+        ],
+        [
+          0.9999999999373822,
+          -0.9711769623848626
+        ]
+      ],
+      "tabular_reversed": {
+        "early": 1,
+        "overall": 1,
+        "overall_by_context": [
+          1,
+          1
+        ],
+        "steady": 1,
+        "steady_by_context": [
+          1,
+          1
+        ],
+        "steady_ticks": 96,
+        "total_ticks": 128
+      }
+    }
+  ],
+  "protocol": "E09_02G_05_DOS_CONCEPTOS_PRE_REGISTRO-v1",
+  "train_ticks_per_phase": 256
+}

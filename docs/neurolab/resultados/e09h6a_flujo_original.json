@@ -1,0 +1,55 @@
+{
+  "protocol": "E09_H_06_SCHEDULER_PRE_REGISTRO-v1",
+  "source": {
+    "exe_sha256": "548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7",
+    "exe_bytes": 387072
+  },
+  "evidence": {
+    "verified_instruction_signatures": 24,
+    "verified_direct_calls": 8,
+    "regular": {
+      "entry": "0x407540",
+      "gate_2cbc": "nonzero skips all (0x40754b)",
+      "gate_2ccc": "nonzero skips brain and behavior, chemistry still runs (0x407555/0x4075a2)",
+      "brain_call": "0x407583",
+      "chem_call": "0x407595",
+      "behavior_call": "0x4075a6",
+      "shared_counter": "norn+0x2c20",
+      "increment": "0x4075ab"
+    },
+    "alternate": {
+      "entity_pass": "0x4248c3 calls 0x4075c0 for all indexed creatures with active flag",
+      "contingent": "0x4075ce requires norn+0x2cbc !=0; further state-dependent branches",
+      "callsite": "0x40764b",
+      "chem_first": "0x405d32",
+      "brain_after": "0x405daf",
+      "counter_branches": [
+        "0x407620",
+        "0x40765e"
+      ]
+    },
+    "world": {
+      "main": "0x4247b0",
+      "regular_group_phase": "global+0x43eaac",
+      "phase_values": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "regular_stride": 4,
+      "round_robin_call": "0x424884",
+      "all_creatures_second_pass": "0x4248b5..0x4248d2",
+      "alternate_call": "0x4248c3",
+      "global_tick_counter": "0x43bbb0",
+      "global_increment": "0x4249f1..0x4249f9",
+      "caution": "phase4 and phase0 visit overlapping idx multiples of4 >=4; whether intentional/harmful requires runtime investigation"
+    }
+  },
+  "gates": {
+    "G_H6_FLOW": "partial subset static original verified",
+    "G_H6_CLOCK": "open no wall-clock frequency shown"
+  },
+  "limitations": "No original game executed; indirect callbacks and clock source not exhaustively traced."
+}

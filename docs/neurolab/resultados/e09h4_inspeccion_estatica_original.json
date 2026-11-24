@@ -1,0 +1,49 @@
+{
+  "protocol": "E09_H_04_ENLACE_LOCI_PRE_REGISTRO-v1",
+  "source": {
+    "exe_sha256": "548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7",
+    "exe_bytes": 387072
+  },
+  "binary": {
+    "resolver_vtable_va": "0x43302c",
+    "resolver_va": "0x4030e0",
+    "gene_loader_va": "0x421970",
+    "link_call_site": "0x421a18",
+    "pointer_saved_va": "0x421a6f",
+    "nominal_write_va": "0x421acf",
+    "chemical_receptor_write_va": "0x42200f",
+    "svrule_snapshot_va": "0x403e2c..0x403e59",
+    "svrule_operand_load_va": "0x403fd1",
+    "loci": [
+      {
+        "genetic_receptor_locus": 13,
+        "resolver_va": "0x403183",
+        "lobe_relative_offset": "0xc3",
+        "svrule_opcode": 5,
+        "svrule_operand": "CHEM0"
+      },
+      {
+        "genetic_receptor_locus": 14,
+        "resolver_va": "0x40318b",
+        "lobe_relative_offset": "0xc4",
+        "svrule_opcode": 6,
+        "svrule_operand": "CHEM1"
+      },
+      {
+        "genetic_receptor_locus": 15,
+        "resolver_va": "0x403193",
+        "lobe_relative_offset": "0xc5",
+        "svrule_opcode": 7,
+        "svrule_operand": "CHEM2"
+      },
+      {
+        "genetic_receptor_locus": 16,
+        "resolver_va": "0x40319b",
+        "lobe_relative_offset": "0xc6",
+        "svrule_opcode": 8,
+        "svrule_operand": "CHEM3"
+      }
+    ]
+  },
+  "limits": "Static control flow, no runtime Norn trace, no proof of globally complete scheduler or chemical integration"
+}
