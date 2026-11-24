@@ -17,6 +17,8 @@ def main():
         try:
             wing=base.install_wing(root)
             config=base.configure_original_paths(game)
+            # Original CD remains mounted; official distribution launch option is -embedding.
+            # https://steamdb.info/app/1818340/config/
             # Original 0x411AE2..0x411AFA queries HKLM32 CD Drive with
             # default "D:"; 0x411B02 concatenates a backslash. Match format.
             key=config[0]
@@ -27,10 +29,10 @@ def main():
                 winreg.SetValueEx(k,"CD Drive",0,winreg.REG_SZ,cd[:2]);added_cd=True
             base.emit(gate="original_cd_drive_configured",registry_view="HKLM32",format="drive_letter_colon")
             try:
-                p=subprocess.Popen([str(game/"Creatures.exe")],cwd=game,env=env,stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+                p=subprocess.Popen([str(game/"Creatures.exe"),"-embedding"],cwd=game,env=env,stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
             except OSError as e:
                 base.emit(gate="launch_failed",winerror=getattr(e,"winerror",None));return
-            base.emit(gate="process_created",mode="default_with_mounted_original_CD")
+            base.emit(gate="process_created",mode="documented_embedding_with_mounted_original_CD")
             deadline=time.monotonic()+50; previous=None;result={}
             while time.monotonic()<deadline:
                 if p.poll() is not None:
