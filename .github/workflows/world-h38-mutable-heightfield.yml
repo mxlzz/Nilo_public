@@ -17,5 +17,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: python -m pip install --only-binary=:all: pybullet==3.2.7 numpy==2.4.6 xarray==2026.9.0 scipy
+      - run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy==2.4.6 xarray==2026.9.0 scipy
       - run: python WORLD_RESEARCH/experiments/probe_h38_mutable_heightfield.py
