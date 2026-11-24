@@ -1,0 +1,37 @@
+name: World research - H42 directional cover from H41 states
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/probe_h42_directional_cover.py
+      - .github/workflows/world-h42-directional-cover.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  directional_cover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: h41-results
+          run-id: 45389348480
+          github-token: ${{ github.token }}
+          path: h41-results
+      - run: |
+          python -m pip install --only-binary=:all: pybullet==3.2.7 numpy==2.4.6 xarray==2026.9.0 scipy==1.17.1
+      - run: |
+          python WORLD_RESEARCH/experiments/probe_h42_directional_cover.py h41-results h42-results/result.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: h42-results
+          path: h42-results
+          retention-days: 30
