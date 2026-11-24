@@ -99,10 +99,10 @@ def verify_bundle(folder,raw,seed,k):
     if len(prefix)!=MID*13*8 or sha_bytes(prefix)!=meta["prefix_sha"]:raise ValueError("Prefix bytes")
     state=np.r_[joint[h40.MOTION[0]].values[0],joint[h40.MOTION[1]].values[0],joint[h40.MOTION[2]].values[0],joint[h40.MOTION[3]].values[0]]
     if not np.array_equal(np.frombuffer(prefix,dtype=np.float64).reshape(MID,13)[-1],state):raise ValueError("Prefix endpoint")
-    initial=h40.terrain(c.augment(c.soil_only(joint),seed,c.SOURCES[seed],k),seed)
-    # Original initial patch has initial uniform core soil thickness (one metre).
+    # Derive initial per-core-node mass from the historical H29 total, not a new parameter.
     initial_owner=c.augment(c.soil_only(joint),seed,c.SOURCES[seed],k)
-    initial_owner["soil_mass_kg"].values[:]=np.where(initial_owner["is_core_node"].values!=0,c.RHO*c.AREA*1.,0.)
+    mask=initial_owner["is_core_node"].values!=0
+    initial_owner["soil_mass_kg"].values[:]=np.where(mask,c.MASS0/int(np.count_nonzero(mask)),0.)
     initial=h40.terrain(initial_owner,seed)
     if not np.array_equal(initial,np.asarray(meta["initial_patch"])) or not np.array_equal(h40.terrain(soil,seed),np.asarray(meta["current_patch"])):raise ValueError("Collider recipe")
     return meta,joint,soil,prefix,state
