@@ -1,0 +1,25 @@
+name: NeuroLab authorized original C1 launch
+on:
+  push:
+    branches: [docs/neurolab-protocolo-20261120]
+    paths:
+      - .github/workflows/neurolab-original-launch.yml
+      - experiments/neurolab/h08b_original_launch.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: windows-2022
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verified original launch (authorized) and bounded read-only probe
+        shell: pwsh
+        env:
+          NEUROLAB_DATA_FILE_ID: ${{ secrets.NEUROLAB_DATA_FILE_ID }}
+        run: |
+          python -u experiments/neurolab/h08b_original_launch.py
+          if ($LASTEXITCODE -ne 0) { throw 'Launch probe infrastructure error' }
