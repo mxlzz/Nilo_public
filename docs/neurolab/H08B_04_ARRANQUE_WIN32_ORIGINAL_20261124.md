@@ -1,0 +1,27 @@
+# H-08b.4 — arranque autorizado de C1 Build 47 en Windows remoto
+
+**Fecha:** 2026-11-24. **Alcance:** factibilidad de ejecución de la misma edición auténtica de H-08a, sin medir aprendizaje ni reabrir N. El usuario configuró el secreto de transferencia y autorizó explícitamente la ejecución remota. Se ejecutó una copia desechable del original en runners windows-2022; no se cambió el EXE/GEN, no se publicó material propietario, no se tocó el equipo del usuario. Los resultados de workflow SUCCESS indican que el diagnóstico terminó, **no** que el juego funcione.
+
+## Cinco intentos acotados, cada uno con verificación de SHA256 del ZIP, EXE, GEN
+
+1. [CI 45389185789](https://github.com/mxlzz/Nilo_public/actions/runs/45389185789), commit ba60b81619bb28380029aa8a60d43f65423b86ec: proceso creado; modal WinG Installation Error, rechazó cargar WinG32.DLL en directorio local y pidió ubicación de sistema. DDE no conectado.
+2. [CI 45389298526](https://github.com/mxlzz/Nilo_public/actions/runs/45389298526), commit 4792f74974df88192d1b7a43c43f4be6ca394232: se añadió **solo** la DLL original ausente a SysWOW64 de runner desechable (sin sobrescribir DLL preexistente), MFC42/MSVCIRT locales. Error WinG desapareció; modal de Main Directory no localizado; **conexión DDE Vivarium/Anything verdadera** pero poke Macro no procesado (16396). Se retiró la DLL temporal. No equivale a CAOS funcional.
+3. [CI 45389413959](https://github.com/mxlzz/Nilo_public/actions/runs/45389413959), commit 91cc88241c4b3885569c89d2a6c56010e41ba95e: se aceptó únicamente el aviso explícito de utilizar directorio actual; proceso terminó código 0. Se retiró la DLL temporal.
+4. [CI 45389666539](https://github.com/mxlzz/Nilo_public/actions/runs/45389666539), commit 9ca2e753572b96cf4f40092e5a169941018511d0: se reprodujeron ocho valores de instalación HKLM32 a partir de la rutina original (evidencia debajo); el modal de Main Directory no apareció, proceso terminó código 0. Se retiraron los valores temporales y DLL.
+5. [CI 45389807165](https://github.com/mxlzz/Nilo_public/actions/runs/45389807165), commit 8a93457b570f886631e54e2640b7c7f016ce1c0c: misma preparación, argumento explícito al World.sfc original; proceso terminó código 0. Se retiraron los valores temporales y DLL. No se observó carga del mundo ni respuesta CAOS.
+
+[Auditor de lanzamiento](../../experiments/neurolab/h08b_original_launch.py). [Workflow](../../.github/workflows/neurolab-original-launch.yml). Los intentos no constituyen una campaña científica: la salida limpia de MFC no identifica por sí misma qué condición concreta impidió abrir el mundo. No afirmar que fue exclusivamente el sistema gráfico, ni que faltan archivos determinados.
+
+## Evidencia estática nueva, pertinente a configuración del original
+
+El EXE inspeccionado localmente corresponde a SHA256 548a8388660e8441e391472258a30af5e57fdbb3567056916eae48ea625460d7. Sección .data VA 0x439000, file offset 0x36800.
+
+- 0x429D00..0x429D14 pasa tres cadenas: 0x43AEC0 = Millennium Interactive, 0x439E94 = Creatures, 0x439D40 = 1.0. 0x422370 construye SOFTWARE\ + proveedor + separadores + nombre + versión y abre/crea HKCU y HKLM (0x4224AA y 0x4224CC). 0x422550 elige handle HKLM para arg1=1, consulta valor.
+- 0x42A310 enumera ocho nombres en 0x42A347..0x42A381: Main Directory, Sound Directory, Macro Directory, Palette Directory, Image Directory, Genetics Directory, Body Data, Programs. En 0x42A430..0x42A44E hay bucle de escritura (si argumento de configuración distinto de cero), y 0x42A450..0x42A4F4 lectura con arg1=1. La configuración replica directorios existentes y crea Macros vacío; Programs se deja vacío por default inferido, no se afirma reproducir cada valor del instalador. No se cambió Privileges ni ninguna lógica de registro comercial.
+- 0x42A2E2 carga cadena World.sfc (VA 0x43AE64) y llama a método virtual de apertura 0x42A2E9. Si devuelve 0, ruta 0x42A2F7 devuelve 0 en 0x42A307. Esto es una ruta estática compatible con cierre temprano; **no se ha observado que haya sido la ruta ejecutada**.
+- Launcher.exe original, no ejecutado en estos ensayos, ShellExecuteA en 0x402A1B con nombre Creatures.exe y parámetros/directorio NULL. Por eso usar Launcher por sí mismo no es evidencia de corrección de la causa de cierre. Puede requerirse la instalación real y su entorno de época.
+- Interfaz DDE: se probó servicio Vivarium y tópico Anything con datos CF_TEXT, POKE Macro y REQUEST Macro conforme a documentación histórica [ejemplo C1/C2](https://sheeslostknowledge.blogspot.com/2014/02/connecting-to-creatures-dde-interface.html); consulta de constante, no intervención sobre criatura. No se obtuvo respuesta válida.
+
+## Decisión de alineación
+
+H-08b.4 Windows moderno **PASS arranque parcial y servicio DDE; STOP en carga del mundo**. No medir frecuencia ni química. La vía restante de menor esfuerzo sin medio de Windows antiguo es un contraste Wine de 32 bits en display de 16 bits y prefijo aislado, porque hay [antecedentes comunitarios](https://creatures.fandom.com/wiki/Linux) de C1 ejecutándose en Wine (no específicos de esta edición). No usar Community Edition, parches de motor ni recursos de dudosa procedencia como si fueran el Build 47. Si el contraste falla, evaluar entorno históricamente compatible y manifiesto completo del CD; no prolongar ensayos sin una nueva hipótesis discriminante. QEMU remoto ya verificado H-08b.1. No obtener un SO propietario por el solo hecho de estar archivado. La línea N permanece detenida, G05/G09 abiertas, PR103 draft, main intacto.
