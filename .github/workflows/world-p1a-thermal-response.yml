@@ -1,0 +1,51 @@
+name: World research - P1-A thermal response
+on:
+  push:
+    branches:
+      - research/world-foundations-2026-11
+    paths:
+      - WORLD_RESEARCH/experiments/p1a_thermal_response.py
+      - .github/workflows/world-p1a-thermal-response.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+env:
+  NPY_DISABLE_CPU_FEATURES: X86_V3,X86_V4,AVX512_ICL,AVX512_SPR
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  FIPY_SOLVERS: scipy
+jobs:
+  thermal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: h41-raw
+          run-id: 45389348480
+          github-token: ${{ github.token }}
+          path: raw
+      - uses: actions/download-artifact@v4
+        with:
+          name: p0d-continuous
+          run-id: 45447643891
+          github-token: ${{ github.token }}
+          path: p0d-reference
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.18'
+      - run: |
+          python -m pip install --only-binary=:all: fipy==4.0.3 pybullet==3.2.7 numpy==2.4.6 xarray==2026.9.0 scipy==1.17.1
+          python -m pip freeze
+          lscpu
+      - run: |
+          python WORLD_RESEARCH/experiments/p1a_thermal_response.py raw/worldengine_two_seeds.npz p0d-reference p1a-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1a-results
+          path: p1a-results
+          retention-days: 30
