@@ -1,0 +1,30 @@
+name: External evaluation - CYMONIA
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/external-evaluation.yml']
+  push:
+    branches: ['lab/external-evaluation']
+    paths: ['.github/workflows/external-evaluation.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cymonia-invariants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: mxlzz/CYMONIA
+          ref: 59ad10f94f2a39657339ae1c271746eeeede2ad9
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify baseline
+        run: |
+          test "$(git rev-parse HEAD)" = "59ad10f94f2a39657339ae1c271746eeeede2ad9"
+          node --version
+      - name: Test physical operations and learned procedures
+        run: node --test tests/test_sovereign_physical_operations.mjs tests/test_sovereign_procedures.mjs
