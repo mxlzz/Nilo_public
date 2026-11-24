@@ -77,7 +77,7 @@ def query_macro(command,expected=None,kind='number'):
         for h in handles:base.free(ident,h)
         base.uninit(ident)
 
-def observe_one_norn(game):
+def observe_one_norn(game,pid,root):
     n=query_macro("dde: putv totl 4 1 0",0)
     if not n.get("ok"):
         base.emit(gate="controlled_birth_blocked",count=n);return
@@ -98,9 +98,9 @@ def observe_one_norn(game):
     prefix="enum 4 1 0,"
     suffix=",next"
     def query(cmd,kind="number",expected=None):
-        t0=time.monotonic_ns()
+        t0=time.perf_counter_ns()
         r=query_macro(prefix+cmd+suffix,expected,kind)
-        r["latency_us"]=(time.monotonic_ns()-t0)//1000
+        r["latency_us"]=(time.perf_counter_ns()-t0)//1000
         return r
     identity=query("dde: getb monk","moniker")
     base.emit(gate="norn_identity",**identity)
@@ -116,6 +116,52 @@ def observe_one_norn(game):
         base.emit(gate="read_only_norn_sample",round=round_,fields=fields)
         time.sleep(0.25)
     base.emit(gate="observation_finished",scope="feasibility only; no reinforcement stimulus or intratick inference")
+    # End the independent DDE sampling before attaching; debugger perturbs timing.
+    trace_cycles(pid,root,game)
+
+def trace_cycles(pid,root,game):
+    cdb=pathlib.Path(os.environ.get("ProgramFiles(x86)","C:/Program Files (x86)"))/"Windows Kits"/"10"/"Debuggers"/"x86"/"cdb.exe"
+    if not cdb.is_file():
+        base.emit(gate="trace_blocked",reason="x86 SDK debugger unavailable");return
+    commands=[".echo NL_TRACE_BEGIN","r @$t0=0"]
+    # Each observation point was verified against the original PE.
+    # The callsite has not executed yet; ESI is the Norn pointer for regular
+    # and outer alternate paths. ECX is the chemical or brain object for
+    # the inner alternate paths. No modification of state except breakpoints.
+    points=[
+        ("W",0x247b0,["0","0","0"]),
+        ("RB",0x7583,["@esi","poi(@esi+0x2c20)","@ecx"]),
+        ("RC",0x7595,["@esi","poi(@esi+0x2c20)","@ecx"]),
+        ("RP",0x759a,["@esi","poi(@esi+0x2c20)","poi(@esi+0x2c1c)"]),
+        ("ALT",0x764b,["@esi","poi(@esi+0x2c20)","poi(@esi+0x2c18)"]),
+        ("AC",0x5d32,["@ecx","poi(@esp)","0"]),
+        ("AB",0x5daf,["@ecx","poi(@esp)","0"]),
+    ]
+    for name,off,args in points:
+        # Bounded observation, detach at a fixed number of logged hits.
+        command=f'.printf \"NL_EVT {name} %08x %u %08x\\n\", '+", ".join(args)+'; r @$t0=@$t0+1; .if (@$t0>=120) { qd } .else { gc }'
+        # Escape inner quotes for the breakpoint command string.
+        commands.append(f'bp Creatures+0x{off:x} "'+command.replace('"','\\"')+'"')
+    commands.append("g")
+    cmd=root/"cycles.txt"; cmd.write_text("\n".join(commands)+"\n",encoding="ascii")
+    log=root/"cycles.log";start=time.perf_counter_ns()
+    try:
+        with log.open("wb") as out:
+            proc=subprocess.run([str(cdb),"-G","-p",str(pid),"-cf",str(cmd)],cwd=game,stdin=subprocess.DEVNULL,stdout=out,stderr=subprocess.STDOUT,timeout=18)
+        status="exited"
+    except subprocess.TimeoutExpired:
+        status="timeout"
+    raw=log.read_bytes().decode("utf-8","replace")
+    parsed=re.findall(r"(?m)^\s*NL_EVT (W|RB|RC|RP|ALT|AC|AB) ([0-9a-fA-F]{8}) (\d+) ([0-9a-fA-F]{8})\s*$",raw)
+    aliases={}
+    def alias(s):
+        if int(s,16)==0:return None
+        return aliases.setdefault(s.lower(),"P"+str(len(aliases)+1))
+    events=[{"event":k,"object":alias(p),"tick":int(t),"component":alias(v)} for k,p,t,v in parsed[:120]]
+    base.emit(gate="cycle_trace",status=status,elapsed_ms=(time.perf_counter_ns()-start)//1000000,
+              started=bool(re.search(r"(?m)^\s*NL_TRACE_BEGIN\s*$",raw)),events=events,
+              errors=bool(re.search(r"Syntax error|Unable to resolve|Couldn't resolve|Couldn't set breakpoint|Unable to insert breakpoint",raw,re.I)),
+              scope="debugger-observed order only, not uninstrumented cadence")
 
 def main():
     cd=os.environ.pop("NL_MOUNTED_CD","")
@@ -163,7 +209,7 @@ def main():
                 if result.get("ok"):
                     for name,command in [("norns","dde: putv totl 4 1 0"),("grendels","dde: putv totl 4 2 0")]:
                         base.emit(gate="world_count",kind=name,**query_macro(command))
-                    observe_one_norn(game)
+                    observe_one_norn(game,p.pid,root)
                     return
                 time.sleep(2)
             base.emit(gate="timeout",dde=result,windows=previous)
