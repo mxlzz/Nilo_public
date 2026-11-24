@@ -86,6 +86,30 @@ jobs:
             console.log('LAB_REFLEX',JSON.stringify({seed,high:high?.actions?.map(x=>x.type)||null,low:low?.actions?.map(x=>x.type)||null,source:low?.source||null}));
           }
           NODE
+      - name: Short autonomous world observation without LLM
+        timeout-minutes: 3
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import * as k from './world/index.js';
+          for(const seed of [6801,6802,6803]) {
+            const w=k.createSovereignGenesis({seed,realEpochMs:0});
+            const counts={};let cursor=0;
+            const initial={citizens:w.citizens.length,objects:w.objects.length,procedures:(w.procedures||[]).length};
+            for(let target=30;target<=360;target+=30) {
+              k.advanceWorldTo(w,target*k.REAL_MS_PER_WORLD_MINUTE);
+              assert.equal(w.clock.worldMinute,target);
+              assert.ok(k.verifyLedger(w),'ledger integrity');
+              const retained=w.ledger.filter(e=>e.seq>=cursor);
+              if(retained.length && retained[0].seq>cursor) throw Error('ledger compaction gap');
+              for(const e of retained) {
+                const key=e.type+(e.type==='ACTION_STARTED'||e.type==='ACTION_COMPLETED'?':'+(e.payload?.type||e.payload?.actionType||'?'):'');
+                counts[key]=(counts[key]||0)+1;cursor=e.seq+1;
+              }
+            }
+            console.log('LAB_AUTONOMOUS',JSON.stringify({seed,initial,minute:w.clock.worldMinute,alive:w.citizens.filter(c=>c.alive).length,procedures:(w.procedures||[]).length,knownProcedures:w.citizens.reduce((s,c)=>s+(c.procedureKnowledge||[]).filter(p=>p.active!==false).length,0),counts}));
+          }
+          NODE
   bigville-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -141,8 +165,9 @@ jobs:
                   save_game_checkpoint(game,p)
                   restored=load_game_checkpoint(p)
                   before=diffs(game.world.eng.to_checkpoint_dict(),restored.world.eng.to_checkpoint_dict())
-                  a=game.step(); b=restored.step()
-                  assert a['status']==b['status']=='advanced'
-                  after=diffs(game.world.eng.to_checkpoint_dict(),restored.world.eng.to_checkpoint_dict())
-                  print('LAB_BIGVILLE_DIAG',json.dumps({'seed':seed,'first_turn_equal':True,'before_resume_diffs':before,'after_resume_diffs':after,'turns':[a['turn'],b['turn']],'same_results':a.get('results')==b.get('results')},default=str))
+                  for turn in range(2,13):
+                      a=game.step(); b=restored.step()
+                      assert a['status']==b['status']=='advanced'
+                      after=diffs(game.world.eng.to_checkpoint_dict(),restored.world.eng.to_checkpoint_dict())
+                      print('LAB_BIGVILLE_DIAG',json.dumps({'seed':seed,'first_turn_equal':True,'before_resume_diffs':before if turn==2 else None,'after_resume_diffs':after,'turns':[a['turn'],b['turn']],'same_results':a.get('results')==b.get('results')},default=str))
           PY
