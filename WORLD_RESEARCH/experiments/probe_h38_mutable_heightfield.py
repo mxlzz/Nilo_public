@@ -54,13 +54,13 @@ def owner(soil,out,state,step,mode):
               "body":np.array([0],dtype=np.int32),"xyz":["x","y","z"],
               "quat":["x","y","z","w"]},
        attrs={"step":int(step),"time_s":step*DT,"exported_kg":float(out),
-              "mode":mode,"schema_version":1,"density_kg_m3":RHO,
+              "scenario":mode,"schema_version":1,"density_kg_m3":RHO,
               "node_area_m2":AREA})
 
 def validate(ds,step,mode):
     if set(ds.data_vars)!=set(FIELDS) or any(ds[k].attrs.get("units")!=u for k,u in zip(FIELDS,UNITS)):
         raise ValueError("Wrong inventory schema or units")
-    if ds.attrs["step"]!=step or ds.attrs["time_s"]!=step*DT or ds.attrs["mode"]!=mode:
+    if ds.attrs["step"]!=step or ds.attrs["time_s"]!=step*DT or ds.attrs["scenario"]!=mode:
         raise ValueError("Wrong clock or scenario")
     soil=ds.soil_kg.values
     if soil.shape!=(N,N) or not np.isfinite(soil).all() or (soil<0).any() or (soil[S0==0]!=0).any():
@@ -208,6 +208,7 @@ def main():
     gate("exact_active_replay",a["sha"]==r["sha"] and a["history_sha"]==r["history_sha"]
          and a["epochs"]==r["epochs"] and a["samples"]==r["samples"])
     rejected=negatives(a["owner"])
+    print("WORLD_PHYSICAL_JSON "+json.dumps({"cases":[{k:v for k,v in x.items() if k!="owner"} for x in (a,s,n)],"physical_gates_failed":fail},sort_keys=True,default=scalar),flush=True)
     with tempfile.TemporaryDirectory() as t:
         path=pathlib.Path(t)/"owner.nc"
         a["owner"].to_netcdf(path,engine="scipy")
