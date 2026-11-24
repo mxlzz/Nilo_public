@@ -1,4 +1,4 @@
-name: External evaluation - CYMONIA
+name: External evaluation - Nilo
 on:
   pull_request:
     branches: [main]
@@ -181,3 +181,24 @@ jobs:
                           print('LAB_BIGVILLE_CONTROL',json.dumps({'seed':seed,'turn':turn,'default_diff':default_diff,'matched_diff':matched_diff},default=str))
                   print('LAB_BIGVILLE_FIRST_DIFF',json.dumps({'seed':seed,'first_difference':first_diff}))
           PY
+
+  mineworld-kernel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CARGO_TERM_COLOR: never
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: mxlzz/MineWorld
+          ref: 02b175042c93f13f71b5519dbfd6f2b5a6db8408
+          persist-credentials: false
+          lfs: false
+      - name: Verify pinned source and Rust toolchain
+        run: |
+          test "$(git rev-parse HEAD)" = "02b175042c93f13f71b5519dbfd6f2b5a6db8408"
+          rustc --version
+          cargo --version
+      - name: Focused contract and kernel tests (no Godot, LLM or deployment)
+        run: cargo test --locked -p mineworld-contracts -p mineworld-kernel
