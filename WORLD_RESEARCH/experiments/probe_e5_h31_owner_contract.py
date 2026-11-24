@@ -119,7 +119,7 @@ def soil_only(owner):
     view.attrs={k:v for k,v in owner.attrs.items() if k in allowed}
     return view
 
-def validate(owner,raw,seed,k):
+def validate(owner,raw,seed,k,*,max_step=TIMESTEPS):
     if seed not in SOURCES:
         raise ValueError("Unregistered WorldEngine seed")
     if sha_raw(raw)!=SOURCES[seed]:
@@ -163,7 +163,9 @@ def validate(owner,raw,seed,k):
     if set(owner.attrs)!=attrs_allowed:
         raise ValueError("Unrecognized owner attribute")
     step=owner.attrs.get("landlab_step")
-    if step not in range(TIMESTEPS+1) or owner.attrs.get("landlab_t_bench")!=step*LANDLAB_DT:
+    if not isinstance(max_step,int) or max_step<0:
+        raise ValueError("Invalid declared soil horizon")
+    if step not in range(max_step+1) or owner.attrs.get("landlab_t_bench")!=step*LANDLAB_DT:
         raise ValueError("Invalid Landlab progress")
     if owner.attrs.get("bullet_t_s") not in (0.,BULLET_STEPS*BULLET_DT):
         raise ValueError("Invalid Bullet time")
