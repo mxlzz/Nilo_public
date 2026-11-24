@@ -134,12 +134,30 @@ def trace_cycles(pid,root,game):
         ("RC",0x7595,["@esi","poi(@esi+0x2c20)","@ecx"]),
         ("RP",0x759a,["@esi","poi(@esi+0x2c20)","poi(@esi+0x2c1c)"]),
         ("ALT",0x764b,["@esi","poi(@esi+0x2c20)","poi(@esi+0x2c18)"]),
-        ("AC",0x5d32,["@ecx","poi(@esp)","0"]),
-        ("AB",0x5daf,["@ecx","poi(@esp)","0"]),
+        ("AC",0x5d32,["@ecx","poi(@esp)","poi(@esp+0x1c)"]),
+        ("AP",0x5d37,["poi(@esp+0x1c)","poi(@esp+0x20)","poi(@esp+0x18)"]),
+        ("AB",0x5daf,["@ecx","poi(@esp)","poi(@esp+0x20)"]),
+        ("AQ",0x5db4,["poi(@esp+0x18)","poi(@esp+0x20)","poi(@esp+0x1c)"]),
     ]
     for name,off,args in points:
         # Bounded observation, detach at a fixed number of logged hits.
         command=f'.echo NL_HIT_{name}; .printf \"NL_EVT {name} %08x %u %08x\\n\", '+", ".join(args)+'; r @$t0=@$t0+1; .if (@$t0>=120) { .echo NL_TRACE_LIMIT; qd } .else { gc }'
+        if name in ("AC","AP","AB","AQ","RB","RC","RP"):
+            # Verified stack layout for alternate callsites and ESI Norn for regular.
+            loc={
+                "AC":("@ecx","poi(@esp+0x1c)","poi(@esp)"),
+                "AP":("poi(@esp+0x1c)","poi(@esp+0x18)","poi(@esp+0x20)"),
+                "AB":("poi(@esp+0x20)","@ecx","poi(@esp)"),
+                "AQ":("poi(@esp+0x1c)","poi(@esp+0x18)","poi(@esp+0x20)"),
+                "RB":("poi(@esi+0x2c1c)","@ecx","poi(@esi+0x2c20)"),
+                "RC":("@ecx","poi(@esi+0x2c18)","poi(@esi+0x2c20)"),
+                "RP":("poi(@esi+0x2c1c)","poi(@esi+0x2c18)","poi(@esi+0x2c20)"),
+            }
+            chem,brain,tick=loc[name]
+            vals=[f"by(({chem})+0x{8+2*x:x})" for x in (49,50,51,54,55)]
+            vals += [f"by(({brain})+0x{8+200*lobe+0xc3+k:x})" for lobe,k in [(6,0),(6,1),(6,2),(6,3),(8,0),(8,1)]]
+            state=f'.printf "NL_STATE {name} %08x %08x %u '+(' %u'*11).strip()+'\\n", '+", ".join([chem,brain,tick]+vals)
+            command=command.replace("; r @$t0=@$t0+1","; "+state+"; r @$t0=@$t0+1")
         # Escape inner quotes for the breakpoint command string.
         commands.append(f'bp Creatures+0x{off:x} "'+command.replace('"','\\"')+'"')
     commands.append("g")
@@ -152,15 +170,19 @@ def trace_cycles(pid,root,game):
     except subprocess.TimeoutExpired:
         status="timeout";returncode=None
     raw=log.read_bytes().decode("utf-8","replace")
-    parsed=re.findall(r"NL_EVT\s+(W|RB|RC|RP|ALT|AC|AB)\s+([0-9a-fA-F]{8})\s+(\d+)\s+([0-9a-fA-F]{8})(?=\s|$)",raw)
+    parsed=re.findall(r"NL_EVT\s+(W|RB|RC|RP|ALT|AC|AP|AB|AQ)\s+([0-9a-fA-F]{8})\s+(\d+)\s+([0-9a-fA-F]{8})(?=\s|$)",raw)
     aliases={}
     def alias(s):
         if int(s,16)==0:return None
         return aliases.setdefault(s.lower(),"P"+str(len(aliases)+1))
     events=[{"event":k,"object":alias(p),"tick":int(t),"component":alias(v)} for k,p,t,v in parsed[:120]]
+    state_rows=re.findall(r"NL_STATE\s+(AC|AP|AB|AQ|RB|RC|RP)\s+([0-9a-fA-F]{8})\s+([0-9a-fA-F]{8})\s+(\d+)\s+((?:\d+\s+){10}\d+)(?=\s|$)",raw)
+    states=[{"phase":p,"chemistry":alias(c),"brain":alias(b),"tick":int(t),"values":[int(x) for x in v.split()]} for p,c,b,t,v in state_rows[:120]]
+    states=[v for v in states if len(v["values"])==11 and all(0<=x<=255 for x in v["values"])]
+    base.emit(gate="phase_samples",columns=["reward49","punishment50","reinforcement51","rewardEcho54","punishEcho55","DecisionCHEM0","DecisionCHEM1","DecisionCHEM2","DecisionCHEM3","ConceptCHEM0","ConceptCHEM1"],states=states)
     base.emit(gate="cycle_trace",status=status,elapsed_ms=(time.perf_counter_ns()-start)//1000000,
               started=bool(re.search(r"(?m)^\s*NL_TRACE_BEGIN\s*$",raw)),events=events,
-              returncode=returncode,hit_markers=re.findall(r"(?m)^\s*NL_HIT_(W|RB|RC|RP|ALT|AC|AB)\s*$",raw)[:120],
+              returncode=returncode,hit_markers=re.findall(r"(?m)^\s*NL_HIT_(W|RB|RC|RP|ALT|AC|AP|AB|AQ)\s*$",raw)[:120],
               marker_mentions=raw.count("NL_EVT"),limit=bool(re.search(r"(?m)^\s*NL_TRACE_LIMIT\s*$",raw)),
               diagnostic_categories=[x for x,pattern in [("quote",r"quote|unterminated"),("printf",r"printf.*(?:error|invalid)|(?:error|invalid).*printf"),("bad_register",r"Bad register|Invalid register"),("access",r"memory access error|unable to read|access violation"),("debuggee_exit",r"process .*exited|exit process"),("detach",r"detach"),("breakpoint",r"breakpoint.*(?:error|invalid)|couldn.t set breakpoint"),("syntax",r"syntax error|extra character|illegal") ] if re.search(pattern,raw,re.I)],
               errors=bool(re.search(r"Syntax error|Unable to resolve|Couldn't resolve|Couldn't set breakpoint|Unable to insert breakpoint",raw,re.I)),
