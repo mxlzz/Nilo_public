@@ -108,12 +108,12 @@ def main():
                     if not tip_closed and dismiss_tip(p.pid):
                         tip_closed=True;base.emit(gate="original_tip_closed");time.sleep(2);continue
                     base.emit(gate="modal_dialog",windows=snapshot);return
-                result=query_read_only("dde: putv 123,",123)
+                result=query_read_only("dde: putv 123",123)
                 if result.get("stage")!="connect" or snapshot:
                     base.emit(gate="dde_constant",**result)
                 if result.get("ok"):
                     # Read-only counts, no target selection, mutation or hatching.
-                    for name,command in [("norns","dde: putv totl 4 1 0,"),("grendels","dde: putv totl 4 2 0,")]:
+                    for name,command in [("norns","dde: putv totl 4 1 0"),("grendels","dde: putv totl 4 2 0")]:
                         base.emit(gate="world_count",kind=name,**query_read_only(command))
                     return
                 time.sleep(2)
