@@ -39,12 +39,12 @@ def prepare(root):
     game=root/"Creatures"
     if digest(game/"Creatures.exe")!=EXE or digest(game/"Genetics"/"dad1.gen")!=GEN:
         raise RuntimeError("original member mismatch")
-    for name in ["wing32.dll","mfc42.dll","msvcirt.dll"]:
+    for name in ["mfc42.dll","msvcirt.dll"]:
         found=[p for p in root.rglob("*") if p.is_file() and p.name.lower()==name]
         if len(found)!=1: raise RuntimeError("missing or ambiguous original local dependency: "+name)
         if found[0].parent!=game: shutil.copyfile(found[0],game/found[0].name)
     archive.unlink()
-    emit(gate="verified_original",local_dlls=["wing32.dll","mfc42.dll","msvcirt.dll"])
+    emit(gate="verified_original",local_dlls=["mfc42.dll","msvcirt.dll"])
     return game
 
 u=c.WinDLL("user32",use_last_error=True)
@@ -132,13 +132,32 @@ def dde_probe():
         for h in handles: free(ident,h)
         uninit(ident)
 
+def install_wing(root):
+    # The original WinG DLL explicitly rejected app-local loading in run 45389185789.
+    # Only add the original DLL if absent; never replace an existing Windows file.
+    matches=[p for p in root.rglob("*") if p.is_file() and p.name.lower()=="wing32.dll"]
+    if len(matches)!=1: raise RuntimeError("missing original WinG")
+    src=matches[0]
+    dst=pathlib.Path(os.environ["WINDIR"])/"SysWOW64"/"WING32.dll"
+    if dst.exists():
+        if digest(dst)!=digest(src): raise RuntimeError("different system WinG already present; refusing replacement")
+        emit(gate="existing_identical_system_wing")
+        return None
+    with src.open("rb") as inp,dst.open("xb") as out:
+        shutil.copyfileobj(inp,out)
+    if digest(dst)!=digest(src): raise RuntimeError("system WinG copy mismatch")
+    emit(gate="original_wing_added_to_ephemeral_x86_system_directory")
+    return dst
+
 def main():
     with tempfile.TemporaryDirectory(prefix="neurolab-launch-") as d:
         root=pathlib.Path(d);game=prepare(root)
         allowed={"SYSTEMROOT","WINDIR","SYSTEMDRIVE","PATH","TEMP","TMP","USERPROFILE","APPDATA","LOCALAPPDATA","COMPUTERNAME","USERNAME","HOMEDRIVE","HOMEPATH","PROGRAMFILES","PROGRAMFILES(X86)","PROGRAMDATA","PUBLIC","COMSPEC"}
         env={k:v for k,v in os.environ.items() if k.upper() in allowed}
         p=None
+        wing=None
         try:
+            wing=install_wing(root)
             try: p=subprocess.Popen([str(game/"Creatures.exe")],cwd=game,env=env,stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
             except OSError as e:
                 emit(gate="launch_failed",winerror=getattr(e,"winerror",None));return
@@ -159,8 +178,13 @@ def main():
                 time.sleep(2)
             emit(gate="timeout",dde=result,windows=previous)
         finally:
-            if p is not None and p.poll() is None:
-                p.terminate();p.wait(timeout=10)
+            try:
+                if p is not None and p.poll() is None:
+                    p.terminate();p.wait(timeout=10)
+            finally:
+                if wing is not None:
+                    wing.unlink()
+                    emit(gate="temporary_system_wing_removed")
     emit(gate="cleanup_completed")
 if __name__=="__main__":
     main()
