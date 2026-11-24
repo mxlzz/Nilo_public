@@ -139,7 +139,7 @@ def trace_cycles(pid,root,game):
     ]
     for name,off,args in points:
         # Bounded observation, detach at a fixed number of logged hits.
-        command=f'.printf \"NL_EVT {name} %08x %u %08x\\n\", '+", ".join(args)+'; r @$t0=@$t0+1; .if (@$t0>=120) { qd } .else { gc }'
+        command=f'.echo NL_HIT_{name}; .printf \"NL_EVT {name} %08x %u %08x\\n\", '+", ".join(args)+'; r @$t0=@$t0+1; .if (@$t0>=120) { .echo NL_TRACE_LIMIT; qd } .else { gc }'
         # Escape inner quotes for the breakpoint command string.
         commands.append(f'bp Creatures+0x{off:x} "'+command.replace('"','\\"')+'"')
     commands.append("g")
@@ -148,11 +148,11 @@ def trace_cycles(pid,root,game):
     try:
         with log.open("wb") as out:
             proc=subprocess.run([str(cdb),"-G","-p",str(pid),"-cf",str(cmd)],cwd=game,stdin=subprocess.DEVNULL,stdout=out,stderr=subprocess.STDOUT,timeout=18)
-        status="exited"
+        status="exited";returncode=proc.returncode
     except subprocess.TimeoutExpired:
-        status="timeout"
+        status="timeout";returncode=None
     raw=log.read_bytes().decode("utf-8","replace")
-    parsed=re.findall(r"(?m)^\s*NL_EVT (W|RB|RC|RP|ALT|AC|AB) ([0-9a-fA-F]{8}) (\d+) ([0-9a-fA-F]{8})\s*$",raw)
+    parsed=re.findall(r"NL_EVT\s+(W|RB|RC|RP|ALT|AC|AB)\s+([0-9a-fA-F]{8})\s+(\d+)\s+([0-9a-fA-F]{8})(?=\s|$)",raw)
     aliases={}
     def alias(s):
         if int(s,16)==0:return None
@@ -160,6 +160,9 @@ def trace_cycles(pid,root,game):
     events=[{"event":k,"object":alias(p),"tick":int(t),"component":alias(v)} for k,p,t,v in parsed[:120]]
     base.emit(gate="cycle_trace",status=status,elapsed_ms=(time.perf_counter_ns()-start)//1000000,
               started=bool(re.search(r"(?m)^\s*NL_TRACE_BEGIN\s*$",raw)),events=events,
+              returncode=returncode,hit_markers=re.findall(r"(?m)^\s*NL_HIT_(W|RB|RC|RP|ALT|AC|AB)\s*$",raw)[:120],
+              marker_mentions=raw.count("NL_EVT"),limit=bool(re.search(r"(?m)^\s*NL_TRACE_LIMIT\s*$",raw)),
+              diagnostic_categories=[x for x,pattern in [("quote",r"quote|unterminated"),("printf",r"printf.*(?:error|invalid)|(?:error|invalid).*printf"),("bad_register",r"Bad register|Invalid register"),("access",r"memory access error|unable to read|access violation"),("debuggee_exit",r"process .*exited|exit process"),("detach",r"detach"),("breakpoint",r"breakpoint.*(?:error|invalid)|couldn.t set breakpoint"),("syntax",r"syntax error|extra character|illegal") ] if re.search(pattern,raw,re.I)],
               errors=bool(re.search(r"Syntax error|Unable to resolve|Couldn't resolve|Couldn't set breakpoint|Unable to insert breakpoint",raw,re.I)),
               scope="debugger-observed order only, not uninstrumented cadence")
 
