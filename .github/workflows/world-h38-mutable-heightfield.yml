@@ -1,0 +1,21 @@
+name: World research - H38 native mutable heightfield
+on:
+  push:
+    branches: [research/world-foundations-2026-11]
+    paths:
+      - WORLD_RESEARCH/experiments/probe_h38_mutable_heightfield.py
+      - .github/workflows/world-h38-mutable-heightfield.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mutable_heightfield:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --only-binary=:all: pybullet==3.2.7 numpy==2.4.6 xarray==2026.9.0 scipy
+      - run: python WORLD_RESEARCH/experiments/probe_h38_mutable_heightfield.py
