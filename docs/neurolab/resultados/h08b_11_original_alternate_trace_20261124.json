@@ -1,0 +1,952 @@
+{
+  "schema": "neurolab.h08b.11.v1",
+  "ci_run": 45450061479,
+  "job_id": 138644359765,
+  "source_commit": "fc5504c2e37ca617fe24c2df08cb6b4d127eb897",
+  "observed": [
+    {
+      "gate": "controlled_genome",
+      "sha256": "e2bb4ccf6a4081a128c6c9ffc6eb233452d416717ceef47e78820ca3a152ddd4"
+    },
+    {
+      "gate": "controlled_birth",
+      "ok": true,
+      "value": 1,
+      "bytes": 2
+    },
+    {
+      "gate": "norn_identity",
+      "ok": true,
+      "value": "31306c6e",
+      "bytes": 9,
+      "latency_us": 4151
+    },
+    {
+      "gate": "read_only_norn_sample",
+      "round": 0,
+      "fields": {
+        "chem49": {
+          "ok": true,
+          "value": 3,
+          "bytes": 2,
+          "latency_us": 3876
+        },
+        "chem50": {
+          "ok": true,
+          "value": 2,
+          "bytes": 2,
+          "latency_us": 3720
+        },
+        "chem51": {
+          "ok": true,
+          "value": 6,
+          "bytes": 2,
+          "latency_us": 3663
+        },
+        "chem54": {
+          "ok": true,
+          "value": 6,
+          "bytes": 2,
+          "latency_us": 3724
+        },
+        "chem55": {
+          "ok": true,
+          "value": 2,
+          "bytes": 2,
+          "latency_us": 3989
+        },
+        "decision_cell0": {
+          "ok": true,
+          "value": [
+            0,
+            27,
+            128,
+            0,
+            0,
+            0,
+            134
+          ],
+          "bytes": 19,
+          "latency_us": 3722
+        }
+      }
+    },
+    {
+      "gate": "read_only_norn_sample",
+      "round": 1,
+      "fields": {
+        "chem49": {
+          "ok": true,
+          "value": 0,
+          "bytes": 2,
+          "latency_us": 3753
+        },
+        "chem50": {
+          "ok": true,
+          "value": 0,
+          "bytes": 2,
+          "latency_us": 3922
+        },
+        "chem51": {
+          "ok": true,
+          "value": 5,
+          "bytes": 2,
+          "latency_us": 3657
+        },
+        "chem54": {
+          "ok": true,
+          "value": 7,
+          "bytes": 2,
+          "latency_us": 3944
+        },
+        "chem55": {
+          "ok": true,
+          "value": 1,
+          "bytes": 2,
+          "latency_us": 3876
+        },
+        "decision_cell0": {
+          "ok": true,
+          "value": [
+            0,
+            27,
+            128,
+            0,
+            0,
+            0,
+            134
+          ],
+          "bytes": 19,
+          "latency_us": 3751
+        }
+      }
+    },
+    {
+      "gate": "read_only_norn_sample",
+      "round": 2,
+      "fields": {
+        "chem49": {
+          "ok": true,
+          "value": 0,
+          "bytes": 2,
+          "latency_us": 3973
+        },
+        "chem50": {
+          "ok": true,
+          "value": 0,
+          "bytes": 2,
+          "latency_us": 3590
+        },
+        "chem51": {
+          "ok": true,
+          "value": 3,
+          "bytes": 2,
+          "latency_us": 4157
+        },
+        "chem54": {
+          "ok": true,
+          "value": 6,
+          "bytes": 2,
+          "latency_us": 3971
+        },
+        "chem55": {
+          "ok": true,
+          "value": 0,
+          "bytes": 2,
+          "latency_us": 3604
+        },
+        "decision_cell0": {
+          "ok": true,
+          "value": [
+            0,
+            27,
+            128,
+            0,
+            0,
+            0,
+            134
+          ],
+          "bytes": 19,
+          "latency_us": 3684
+        }
+      }
+    },
+    {
+      "gate": "cycle_trace",
+      "status": "exited",
+      "elapsed_ms": 9749,
+      "started": true,
+      "events": [
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 42,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 42,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 43,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 43,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 43,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 44,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 44,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 44,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 45,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 45,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 45,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 46,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 46,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 46,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 47,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 47,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 47,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 48,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 48,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 48,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 49,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 49,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 49,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 50,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 50,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 50,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 51,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 51,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 51,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 52,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 52,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 52,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 53,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 53,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 53,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 54,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 54,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 54,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 55,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 55,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 55,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 56,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 56,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 56,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 57,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 57,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 57,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 58,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 58,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 58,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 59,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 59,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 59,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 60,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 60,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 60,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 61,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 61,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 61,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 62,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 62,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 62,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 63,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 63,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 63,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 64,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 64,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 64,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 65,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 65,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 65,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 66,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 66,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 66,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 67,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 67,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 67,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 68,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 68,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 68,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 69,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 69,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 69,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 70,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 70,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 70,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 71,
+          "component": "P2"
+        },
+        {
+          "event": "AC",
+          "object": "P1",
+          "tick": 71,
+          "component": null
+        },
+        {
+          "event": "AB",
+          "object": "P2",
+          "tick": 71,
+          "component": null
+        },
+        {
+          "event": "W",
+          "object": null,
+          "tick": 0,
+          "component": null
+        },
+        {
+          "event": "ALT",
+          "object": "P3",
+          "tick": 72,
+          "component": "P2"
+        }
+      ],
+      "returncode": 0,
+      "hit_markers": [
+        "ALT"
+      ],
+      "marker_mentions": 295,
+      "limit": false,
+      "diagnostic_categories": [],
+      "errors": false,
+      "scope": "debugger-observed order only, not uninstrumented cadence"
+    }
+  ],
+  "computed": {
+    "counts": {
+      "AC": 30,
+      "AB": 30,
+      "W": 30,
+      "ALT": 30
+    },
+    "complete_alt_ticks": [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71
+    ]
+  },
+  "limits": "Derived CI output only; pointer aliases per process; alternate route observed, not regular; debugger affects timing; trace begins/ends midcycle; no independent marker agreement; no raw proprietary bytes."
+}
