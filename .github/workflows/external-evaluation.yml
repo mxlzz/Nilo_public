@@ -1,0 +1,204 @@
+name: External evaluation - Nilo
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/external-evaluation.yml']
+  push:
+    branches: ['lab/external-evaluation']
+    paths: ['.github/workflows/external-evaluation.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cymonia-invariants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: mxlzz/CYMONIA
+          ref: 59ad10f94f2a39657339ae1c271746eeeede2ad9
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify baseline
+        run: |
+          test "$(git rev-parse HEAD)" = "59ad10f94f2a39657339ae1c271746eeeede2ad9"
+          node --version
+      - name: Test physical operations and learned procedures
+        run: node --test tests/test_sovereign_physical_operations.mjs tests/test_sovereign_procedures.mjs
+
+      - name: Independent contrast probes
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import * as k from './world/index.js';
+          import {localVisibilityRadius} from './world/living-world.js';
+          function fixture(seed=6801) {
+            const w=k.createSovereignGenesis({seed,realEpochMs:0});
+            const [a,b,c]=w.citizens;
+            for(const x of w.citizens) x.position={x:95,y:95};
+            a.position={x:50,y:50}; b.position={x:57,y:50}; c.position={x:59,y:50};
+            a.body.calories=95; a.body.health=100;
+            function add(id,material,mass,geometry) {
+              const o={id,kind:'raw_material',material,quantity:mass,massPerUnitKg:1,holderId:a.id,position:{...a.position},condition:1,provenance:{type:'LAB_INPUT'},...(geometry?{geometry}:{})};
+              w.objects.push(o);a.possessions.push(id);a.knownEntityIds.push(id);return o;
+            }
+            function execute(ops,ids) {return k.executePhysicalOperations(w,a,ops,{inputObjectIds:ids,at:0,workMinutes:30});}
+            return {w,a,b,c,add,execute};
+          }
+          for(const seed of [6801,6802,6803]) {
+            for(const phase of [.5,0]) {
+              const f=fixture(seed);f.w.environment.dayPhase=phase;f.w.environment.precipitation=0;
+              f.add('lab-clay','clay',2);
+              const radius=localVisibilityRadius(f.w,12);
+              const receipt=f.execute([{primitive:'rotate',target:0,angle:30,workJ:10}],['lab-clay']);
+              const proc=k.rememberProcedure(f.w,f.a,receipt,0);
+              function learn(c) {try{k.learnProcedure(f.w,c,proc.id,{kind:'observation',eventId:receipt.eventId},0);return Boolean(k.knownProcedure(f.w,c,proc.id));}catch(e){return false;}}
+              const near=learn(f.b),far=learn(f.c);
+              assert.equal(far,false,'9-unit negative control');
+              if(phase===.5)assert.equal(near,true,'day positive control');
+              console.log('LAB_VISIBILITY',JSON.stringify({seed,phase,radius,nearDistance:7,nearWitness:receipt.observerIds.includes(f.b.id),nearLearned:near,farLearned:far}));
+            }
+            for(const mode of ['single','two']) {
+              const f=fixture(seed);f.add('lab-pot','clay',3,{form:'hollow'});
+              f.add('lab-water1','water',8);f.add('lab-water2','water',8);
+              const ids=mode==='single'?['lab-pot','lab-water1']:['lab-pot','lab-water1','lab-water2'];
+              const ops=[{primitive:'contain',target:1,source:0,workJ:100}];
+              if(mode==='two')ops.push({primitive:'contain',target:2,source:0,workJ:100});
+              let accepted=true,reason=null;try{f.execute(ops,ids);}catch(e){accepted=false;reason=e.message;}
+              const total=f.w.objects.filter(o=>o.geometry?.containedById==='lab-pot').reduce((s,o)=>s+o.quantity*o.massPerUnitKg,0);
+              if(mode==='single')assert.equal(accepted,true,'single positive control');
+              console.log('LAB_CONTAINMENT',JSON.stringify({seed,mode,accepted,reason,total,nominalLimit:12}));
+            }
+            const f=fixture(seed);f.add('lab-clay','clay',2);
+            const action={type:'EXPERIMENT',durationMinutes:30,payload:{inputObjectIds:['lab-clay'],operations:[{primitive:'rotate',target:0,angle:30,workJ:10}]}};
+            const unknown='lab-never-learned';
+            assert.equal(k.knows(f.a,unknown),false);
+            const declared=k.validateCognitiveProposal(f.w,f.a,{concepts:[unknown],actions:[action]});
+            const omitted=k.validateCognitiveProposal(f.w,f.a,{concepts:[],actions:[action]});
+            assert.equal(declared.ok,false);
+            console.log('LAB_EPISTEMIC',JSON.stringify({seed,declared,omitted,scope:'proposal validation only; not evidence of actual LLM knowledge leakage'}));
+            f.w.environment.temperatureC=18;f.a.body.sleepPressure=10;f.a.body.calories=95;
+            f.a.body.hydration=90;const high=k.survivalFallback(f.w,f.a);
+            f.a.body.hydration=10;const low=k.survivalFallback(f.w,f.a);
+            console.log('LAB_REFLEX',JSON.stringify({seed,high:high?.actions?.map(x=>x.type)||null,low:low?.actions?.map(x=>x.type)||null,source:low?.source||null}));
+          }
+          NODE
+      - name: Short autonomous world observation without LLM
+        timeout-minutes: 3
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import * as k from './world/index.js';
+          for(const seed of [6801,6802,6803]) {
+            const w=k.createSovereignGenesis({seed,realEpochMs:0});
+            const counts={};let cursor=0;
+            const initial={citizens:w.citizens.length,objects:w.objects.length,procedures:(w.procedures||[]).length};
+            for(let target=30;target<=360;target+=30) {
+              k.advanceWorldTo(w,target*k.REAL_MS_PER_WORLD_MINUTE);
+              assert.equal(w.clock.worldMinute,target);
+              assert.ok(k.verifyLedger(w),'ledger integrity');
+              const retained=w.ledger.filter(e=>e.seq>=cursor);
+              if(retained.length && retained[0].seq>cursor) throw Error('ledger compaction gap');
+              for(const e of retained) {
+                const key=e.type+(e.type==='ACTION_STARTED'||e.type==='ACTION_COMPLETED'?':'+(e.payload?.type||e.payload?.actionType||'?'):'');
+                counts[key]=(counts[key]||0)+1;cursor=e.seq+1;
+              }
+            }
+            console.log('LAB_AUTONOMOUS',JSON.stringify({seed,initial,minute:w.clock.worldMinute,alive:w.citizens.filter(c=>c.alive).length,procedures:(w.procedures||[]).length,knownProcedures:w.citizens.reduce((s,c)=>s+(c.procedureKnowledge||[]).filter(p=>p.active!==false).length,0),counts}));
+          }
+          NODE
+  bigville-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: mxlzz/bigville
+          ref: bafc0b201b16b4d50b2fbcf3c7b903731280fa8e
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify source and prepare minimal dependency
+        run: |
+          test "$(git rev-parse HEAD)" = "bafc0b201b16b4d50b2fbcf3c7b903731280fa8e"
+          python --version
+          python -m pip install --disable-pip-version-check numpy==2.2.6
+      - name: Diagnose checkpoint continuation without model or Ocelot
+        run: |
+          python - <<'PY'
+          import json, tempfile
+          from pathlib import Path
+          from bigville import create_game
+          from bigville.game_persistence import save_game_checkpoint, load_game_checkpoint
+          scenario=json.loads(Path('scenarios/simple_resident_food.json').read_text())
+          def diffs(a,b,path='',out=None):
+              if out is None: out=[]
+              if len(out)>=30: return out
+              if type(a)!=type(b):
+                  out.append([path,'type',type(a).__name__,type(b).__name__])
+              elif isinstance(a,dict):
+                  for k in sorted(set(a)|set(b),key=str):
+                      if k not in a or k not in b: out.append([path+'/'+str(k),'missing',k in a,k in b])
+                      else: diffs(a[k],b[k],path+'/'+str(k),out)
+                      if len(out)>=30: break
+              elif isinstance(a,(list,tuple)):
+                  if len(a)!=len(b): out.append([path,'length',len(a),len(b)])
+                  for i,(x,y) in enumerate(zip(a,b)):
+                      diffs(x,y,path+'/'+str(i),out)
+                      if len(out)>=30: break
+              elif a!=b: out.append([path,'value',repr(a)[:180],repr(b)[:180]])
+              return out
+          modes=('affordance_mode','snapshot_mode','rule_batching')
+          for seed in (305000,305001):
+              game=create_game(scenario=scenario,seed=seed,default_backend='simple',autonomous=True,ticks_per_period=None)
+              twin=create_game(scenario=scenario,seed=seed,default_backend='simple',autonomous=True,ticks_per_period=None)
+              assert game.step()['status']==twin.step()['status']=='advanced'
+              assert not diffs(game.world.eng.to_checkpoint_dict(),twin.world.eng.to_checkpoint_dict())
+              with tempfile.TemporaryDirectory() as d:
+                  p=Path(d)/'checkpoint'
+                  save_game_checkpoint(game,p)
+                  restored=load_game_checkpoint(p)
+                  matched=load_game_checkpoint(p)
+                  original={m:getattr(game,m) for m in modes}
+                  defaults={m:getattr(restored,m) for m in modes}
+                  for m,v in original.items(): setattr(matched,m,v)
+                  assert not diffs(game.world.eng.to_checkpoint_dict(),matched.world.eng.to_checkpoint_dict())
+                  print('LAB_BIGVILLE_MODES',json.dumps({'seed':seed,'original':original,'restored_default':defaults,'restored_matched':{m:getattr(matched,m) for m in modes}}))
+                  first_diff={'default':None,'matched':None}
+                  for turn in range(2,13):
+                      a=game.step(); b=restored.step(); c=matched.step()
+                      assert a['status']==b['status']==c['status']=='advanced'
+                      baseline=game.world.eng.to_checkpoint_dict()
+                      default_diff=diffs(baseline,restored.world.eng.to_checkpoint_dict())
+                      matched_diff=diffs(baseline,matched.world.eng.to_checkpoint_dict())
+                      for key,items in [('default',default_diff),('matched',matched_diff)]:
+                          if items and first_diff[key] is None:first_diff[key]=turn
+                      if turn in (2,3,12):
+                          print('LAB_BIGVILLE_CONTROL',json.dumps({'seed':seed,'turn':turn,'default_diff':default_diff,'matched_diff':matched_diff},default=str))
+                  print('LAB_BIGVILLE_FIRST_DIFF',json.dumps({'seed':seed,'first_difference':first_diff}))
+          PY
+
+  mineworld-kernel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CARGO_TERM_COLOR: never
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: mxlzz/MineWorld
+          ref: 02b175042c93f13f71b5519dbfd6f2b5a6db8408
+          persist-credentials: false
+          lfs: false
+      - name: Verify pinned source and Rust toolchain
+        run: |
+          test "$(git rev-parse HEAD)" = "02b175042c93f13f71b5519dbfd6f2b5a6db8408"
+          rustc --version
+          cargo --version
+      - name: Focused contract and kernel tests (no Godot, LLM or deployment)
+        run: cargo test --locked -p mineworld-contracts -p mineworld-kernel
